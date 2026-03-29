@@ -1,8 +1,8 @@
 ---
 title: "Broadcom VMware買収によるインフラ基盤への影響 調査レポート"
 date: 2026-03-29
-category: "infrastructure"
-tags: ["VMware", "Broadcom", "仮想化", "ライセンス", "vSphere", "VCF", "移行"]
+category: "一般リサーチ"
+tags: ["VMware", "Broadcom", "仮想化", "ライセンス", "vSphere", "VCF", "移行", "infrastructure"]
 excerpt: "BroadcomによるVMware買収（690億ドル）の経緯、ライセンス体系変更、日本市場への影響、顧客訴訟・規制動向、代替プラットフォームへの移行動向を網羅的にまとめた調査レポート。"
 draft: false
 ---

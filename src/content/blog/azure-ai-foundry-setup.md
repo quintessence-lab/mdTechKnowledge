@@ -1,7 +1,7 @@
 ---
 title: "Azure AI Foundry 初期セットアップ手順書"
 date: 2026-03-29
-category: "azure"
+category: "その他技術"
 tags: ["Azure", "AI Foundry", "VNet", "Private Endpoint", "Codex"]
 excerpt: "Azure AI Foundryの初期セットアップ手順（ハブ・プロジェクト作成、VNet/PE設定、モデルデプロイ、RBAC設定等）をまとめた手順書。"
 draft: false

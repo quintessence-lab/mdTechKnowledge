@@ -1,7 +1,7 @@
 ---
 title: "Copilot Cowork 導入ガイド（閉域網対応・端末要件）"
 date: 2026-03-29
-category: "microsoft365"
+category: "その他技術"
 tags: ["Microsoft 365", "Copilot", "Copilot Cowork", "閉域網", "ExpressRoute", "Claude"]
 excerpt: "Microsoft Copilot Coworkの導入手順書。閉域網（ExpressRoute）環境での制約・課題と端末要件を含む包括的なガイド。"
 draft: false

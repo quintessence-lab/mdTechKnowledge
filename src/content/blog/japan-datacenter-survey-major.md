@@ -1,8 +1,8 @@
 ---
 title: "日本全国の主要データセンター調査結果"
 date: 2026-03-29
-category: "infrastructure"
-tags: ["データセンター", "AWS", "Azure", "Google Cloud", "NTT", "KDDI", "Equinix", "印西"]
+category: "一般リサーチ"
+tags: ["データセンター", "AWS", "Azure", "Google Cloud", "NTT", "KDDI", "Equinix", "印西", "infrastructure"]
 excerpt: "日本国内の主要データセンター事業者（クラウド・通信・専業）の拠点・規模・PUE・市場動向を網羅的に調査したレポート。"
 draft: false
 ---
