@@ -1,6 +1,6 @@
 ---
 title: "Git の基本コマンドまとめ"
-date: 2024-12-01
+date: 2026-03-29
 category: "Claude技術解説"
 tags: ["Git", "バージョン管理", "CLI"]
 excerpt: "日常的に使う Git コマンドをまとめました。"

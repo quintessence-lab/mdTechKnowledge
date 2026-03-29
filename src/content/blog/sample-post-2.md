@@ -1,6 +1,6 @@
 ---
 title: "TypeScript の型ユーティリティ一覧"
-date: 2024-12-15
+date: 2026-03-29
 category: "その他技術"
 tags: ["TypeScript", "型", "ユーティリティ"]
 excerpt: "Partial, Pick, Omit など、TypeScript の組み込み型ユーティリティの使い方。"
