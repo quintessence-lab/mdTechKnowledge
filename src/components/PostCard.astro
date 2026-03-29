@@ -1,6 +1,4 @@
 ---
-import TagList from './TagList.astro';
-
 interface Props {
   title: string;
   slug: string;
@@ -27,7 +25,9 @@ const dateStr = date.toLocaleDateString('ja-JP', {
   <h2 class="post-card-title">{title}</h2>
   {excerpt && <p class="post-card-excerpt">{excerpt}</p>}
   <div class="post-card-tags">
-    <TagList tags={tags} />
+    {tags.map((tag) => (
+      <span class="tag">{tag}</span>
+    ))}
   </div>
 </a>
 
@@ -86,5 +86,17 @@ const dateStr = date.toLocaleDateString('ja-JP', {
 
   .post-card-tags {
     margin-top: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.8rem;
+    background-color: var(--color-tag-bg);
+    color: var(--color-tag-text);
+    border-radius: 4px;
   }
 </style>
