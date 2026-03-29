@@ -1,0 +1,169 @@
+---
+interface Props {
+  posts: { slug: string; title: string; category: string; tags: string[]; excerpt?: string }[];
+}
+
+const { posts } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+
+<div class="search-container">
+  <input
+    type="text"
+    id="search-input"
+    class="search-input"
+    placeholder="記事を検索..."
+    autocomplete="off"
+  />
+  <div id="search-results" class="search-results"></div>
+</div>
+
+<script type="application/json" id="search-data" set:html={JSON.stringify(posts)} />
+<script define:vars={{ base }}>
+  window.__BASE_URL__ = base;
+</script>
+
+<script>
+  async function initSearch() {
+    const Fuse = (await import('fuse.js')).default;
+    const dataEl = document.getElementById('search-data');
+    const input = document.getElementById('search-input') as HTMLInputElement;
+    const resultsEl = document.getElementById('search-results');
+    if (!dataEl || !input || !resultsEl) return;
+
+    const posts = JSON.parse(dataEl.textContent || '[]');
+    const base = (window as any).__BASE_URL__ || '/';
+
+    const fuse = new Fuse(posts, {
+      keys: [
+        { name: 'title', weight: 0.6 },
+        { name: 'tags', weight: 0.3 },
+        { name: 'category', weight: 0.1 },
+      ],
+      threshold: 0.4,
+      includeScore: true,
+      minMatchCharLength: 1,
+    });
+
+    input.addEventListener('input', () => {
+      const query = input.value.trim();
+      if (!query) {
+        resultsEl.innerHTML = '';
+        return;
+      }
+
+      const results = fuse.search(query);
+      if (results.length === 0) {
+        resultsEl.innerHTML = '<p class="no-results">該当する記事が見つかりませんでした。</p>';
+        return;
+      }
+
+      resultsEl.innerHTML = results
+        .map(({ item }) => {
+          const tags = item.tags.map((t: string) => `<span class="result-tag">${t}</span>`).join('');
+          return `
+            <a href="${base}blog/${item.slug}/" class="result-card">
+              <div class="result-meta">
+                <span class="result-category">${item.category}</span>
+              </div>
+              <h3 class="result-title">${item.title}</h3>
+              ${item.excerpt ? `<p class="result-excerpt">${item.excerpt}</p>` : ''}
+              <div class="result-tags">${tags}</div>
+            </a>
+          `;
+        })
+        .join('');
+    });
+  }
+
+  initSearch();
+</script>
+
+<style>
+  .search-container {
+    width: 100%;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-family: var(--font-sans);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius);
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-input:focus {
+    border-color: var(--color-primary);
+  }
+
+  .search-results {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+</style>
+
+<style is:global>
+  .result-card {
+    display: block;
+    padding: 1rem;
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.2s;
+  }
+
+  .result-card:hover {
+    box-shadow: var(--shadow-md);
+    text-decoration: none;
+  }
+
+  .result-meta {
+    margin-bottom: 0.25rem;
+  }
+
+  .result-category {
+    font-size: 0.8rem;
+    color: var(--color-accent);
+  }
+
+  .result-title {
+    font-size: 1.1rem;
+    margin: 0 0 0.5rem 0;
+    color: var(--color-text);
+  }
+
+  .result-excerpt {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .result-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .result-tag {
+    font-size: 0.75rem;
+    padding: 0.15rem 0.5rem;
+    background-color: var(--color-tag-bg);
+    color: var(--color-tag-text);
+    border-radius: 4px;
+  }
+
+  .no-results {
+    color: var(--color-text-muted);
+    text-align: center;
+    padding: 2rem 0;
+  }
+</style>

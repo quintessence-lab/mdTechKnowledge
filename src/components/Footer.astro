@@ -1,0 +1,59 @@
+---
+const base = import.meta.env.BASE_URL;
+const year = new Date().getFullYear();
+const links = [
+  { label: 'ホーム', href: `${base}` },
+  { label: 'タグ', href: `${base}tags/` },
+  { label: 'カテゴリ', href: `${base}categories/` },
+  { label: '検索', href: `${base}search/` },
+  { label: 'プライバシーポリシー', href: `${base}privacy/` },
+];
+---
+
+<footer class="footer">
+  <div class="footer-inner">
+    <nav class="footer-links">
+      {links.map((link) => (
+        <a href={link.href}>{link.label}</a>
+      ))}
+    </nav>
+    <p class="copyright">&copy; {year} mdTechKnowledge</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background-color: var(--color-bg-secondary);
+    border-top: 1px solid var(--color-border);
+    padding: 2rem 1rem;
+    margin-top: auto;
+  }
+
+  .footer-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .footer-links a {
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+  }
+
+  .footer-links a:hover {
+    color: var(--color-primary);
+  }
+
+  .copyright {
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+  }
+</style>

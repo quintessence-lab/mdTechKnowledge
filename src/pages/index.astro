@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog'))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout title="ホーム">
+  <h1 class="page-title">記事一覧</h1>
+  <div class="post-grid">
+    {posts.map((post) => (
+      <PostCard
+        title={post.data.title}
+        slug={post.slug}
+        category={post.data.category}
+        tags={post.data.tags}
+        date={post.data.date}
+        excerpt={post.data.excerpt}
+      />
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  .page-title {
+    margin-bottom: 1.5rem;
+  }
+
+  .post-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+
+  @media (max-width: 640px) {
+    .post-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

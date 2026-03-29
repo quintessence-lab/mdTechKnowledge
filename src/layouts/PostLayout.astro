@@ -1,0 +1,175 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import TagList from '../components/TagList.astro';
+
+interface Props {
+  title: string;
+  date: Date;
+  updatedDate?: Date;
+  category: string;
+  tags: string[];
+  rawContent: string;
+}
+
+const { title, date, updatedDate, category, tags, rawContent } = Astro.props;
+const base = import.meta.env.BASE_URL;
+
+const dateStr = date.toLocaleDateString('ja-JP', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+const updatedStr = updatedDate?.toLocaleDateString('ja-JP', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+---
+
+<BaseLayout title={title}>
+  <nav class="breadcrumb">
+    <a href={base}>ホーム</a>
+    <span class="sep">/</span>
+    <a href={`${base}categories/${category}/`}>{category}</a>
+    <span class="sep">/</span>
+    <span>{title}</span>
+  </nav>
+
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">{title}</h1>
+      <div class="post-meta">
+        <time>{dateStr}</time>
+        {updatedStr && <span class="updated">（更新: {updatedStr}）</span>}
+        <a href={`${base}categories/${category}/`} class="post-category">{category}</a>
+      </div>
+      <TagList tags={tags} />
+    </header>
+
+    <div class="post-content">
+      <slot />
+    </div>
+
+    <div class="markdown-copy-section">
+      <div class="copy-header">
+        <h2>Markdown ソース</h2>
+        <button class="copy-btn" id="copy-md-btn">コピー</button>
+      </div>
+      <pre class="raw-markdown" id="raw-markdown"><code set:text={rawContent} /></pre>
+    </div>
+  </article>
+</BaseLayout>
+
+<script>
+  const btn = document.getElementById('copy-md-btn');
+  const raw = document.getElementById('raw-markdown');
+  if (btn && raw) {
+    btn.addEventListener('click', async () => {
+      const text = raw.textContent || '';
+      await navigator.clipboard.writeText(text);
+      btn.textContent = 'コピーしました!';
+      setTimeout(() => { btn.textContent = 'コピー'; }, 2000);
+    });
+  }
+</script>
+
+<style>
+  .breadcrumb {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .breadcrumb a {
+    color: var(--color-text-muted);
+  }
+
+  .breadcrumb a:hover {
+    color: var(--color-primary);
+  }
+
+  .sep {
+    margin: 0 0.4rem;
+  }
+
+  .post-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .post-title {
+    font-size: 1.8rem;
+    margin: 0 0 0.75rem 0;
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .updated {
+    color: var(--color-accent);
+  }
+
+  .post-category {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .post-category:hover {
+    text-decoration: underline;
+  }
+
+  .post-content {
+    margin-bottom: 3rem;
+  }
+
+  .markdown-copy-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--color-border);
+  }
+
+  .copy-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
+  .copy-header h2 {
+    font-size: 1.2rem;
+    margin: 0;
+  }
+
+  .copy-btn {
+    padding: 0.4rem 1rem;
+    font-size: 0.875rem;
+    font-family: var(--font-sans);
+    color: var(--color-bg-secondary);
+    background-color: var(--color-primary);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .copy-btn:hover {
+    background-color: var(--color-primary-hover);
+  }
+
+  .raw-markdown {
+    max-height: 400px;
+    overflow-y: auto;
+    background-color: var(--color-code-bg);
+    color: #d4d4d4;
+    font-size: 0.85rem;
+    padding: 1rem;
+    border-radius: var(--radius);
+  }
+</style>

@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('blog')).filter((p) => !p.data.draft);
+  const categories = new Set<string>();
+  for (const post of posts) {
+    categories.add(post.data.category);
+  }
+  return [...categories].map((category) => ({
+    params: { category },
+    props: {
+      category,
+      posts: posts
+        .filter((p) => p.data.category === category)
+        .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()),
+    },
+  }));
+}
+
+const { category, posts } = Astro.props;
+---
+
+<BaseLayout title={`カテゴリ: ${category}`}>
+  <h1 class="page-title">カテゴリ: {category}</h1>
+  <p class="result-count">{posts.length} 件の記事</p>
+  <div class="post-grid">
+    {posts.map((post: any) => (
+      <PostCard
+        title={post.data.title}
+        slug={post.slug}
+        category={post.data.category}
+        tags={post.data.tags}
+        date={post.data.date}
+        excerpt={post.data.excerpt}
+      />
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  .page-title {
+    margin-bottom: 0.5rem;
+  }
+
+  .result-count {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .post-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+
+  @media (max-width: 640px) {
+    .post-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

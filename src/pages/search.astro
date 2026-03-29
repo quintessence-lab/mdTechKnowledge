@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Search from '../components/Search.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog'))
+  .filter((p) => !p.data.draft)
+  .map((p) => ({
+    slug: p.slug,
+    title: p.data.title,
+    category: p.data.category,
+    tags: p.data.tags,
+    excerpt: p.data.excerpt || '',
+  }));
+---
+
+<BaseLayout title="検索">
+  <h1 class="page-title">記事を検索</h1>
+  <Search posts={posts} />
+</BaseLayout>
+
+<style>
+  .page-title {
+    margin-bottom: 1.5rem;
+  }
+</style>

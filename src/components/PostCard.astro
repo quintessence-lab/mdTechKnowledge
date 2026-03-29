@@ -1,0 +1,96 @@
+---
+import TagList from './TagList.astro';
+
+interface Props {
+  title: string;
+  slug: string;
+  category: string;
+  tags: string[];
+  date: Date;
+  excerpt?: string;
+}
+
+const { title, slug, category, tags, date, excerpt } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const dateStr = date.toLocaleDateString('ja-JP', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+---
+
+<article class="post-card">
+  <a href={`${base}blog/${slug}/`} class="post-card-link">
+    <div class="post-card-meta">
+      <span class="post-card-date">{dateStr}</span>
+      <a href={`${base}categories/${category}/`} class="post-card-category">{category}</a>
+    </div>
+    <h2 class="post-card-title">{title}</h2>
+    {excerpt && <p class="post-card-excerpt">{excerpt}</p>}
+  </a>
+  <div class="post-card-tags">
+    <TagList tags={tags} />
+  </div>
+</article>
+
+<style>
+  .post-card {
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    transition: box-shadow 0.2s, background-color 0.2s;
+  }
+
+  .post-card:hover {
+    box-shadow: var(--shadow-md);
+    background-color: var(--color-card-hover);
+  }
+
+  .post-card-link {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .post-card-link:hover {
+    text-decoration: none;
+  }
+
+  .post-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .post-card-date {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+  }
+
+  .post-card-category {
+    font-size: 0.8rem;
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .post-card-category:hover {
+    text-decoration: underline;
+  }
+
+  .post-card-title {
+    font-size: 1.15rem;
+    margin: 0 0 0.5rem 0;
+    color: var(--color-text);
+  }
+
+  .post-card-excerpt {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .post-card-tags {
+    margin-top: 0.75rem;
+  }
+</style>

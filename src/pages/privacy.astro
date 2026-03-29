@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="プライバシーポリシー">
+  <h1 class="page-title">プライバシーポリシー</h1>
+
+  <div class="policy-content">
+    <h2>当サイトについて</h2>
+    <p>当サイト（mdTechKnowledge）は、技術的なナレッジを Markdown 形式で公開・共有するためのサイトです。</p>
+
+    <h2>個人情報の収集について</h2>
+    <p>当サイトでは、ユーザーの個人情報を収集・保存することはありません。</p>
+
+    <h2>アクセス解析について</h2>
+    <p>当サイトでは、サイトの利用状況を把握するためにアクセス解析ツールを使用する場合があります。これらのツールは、Cookie を使用してユーザーのアクセス情報を収集しますが、個人を特定する情報は含まれません。</p>
+
+    <h2>免責事項</h2>
+    <p>当サイトに掲載されている情報の正確性には細心の注意を払っておりますが、内容の正確性・完全性・有用性について保証するものではありません。当サイトの情報を利用することによって生じたいかなる損害についても責任を負いません。</p>
+
+    <h2>著作権について</h2>
+    <p>当サイトに掲載されているコンテンツの著作権は、当サイト管理者に帰属します。無断転載・複製はご遠慮ください。</p>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-title {
+    margin-bottom: 1.5rem;
+  }
+
+  .policy-content h2 {
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+  }
+
+  .policy-content p {
+    color: var(--color-text-muted);
+    margin-bottom: 1rem;
+    line-height: 1.8;
+  }
+</style>
