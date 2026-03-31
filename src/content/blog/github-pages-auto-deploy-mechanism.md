@@ -2,7 +2,7 @@
 title: "GitHub Pages 自動デプロイの仕組み"
 date: 2026-04-01
 category: "Claude技術解説"
-tags: ["GitHub Actions", "GitHub Pages", "Astro", "CI/CD", "静的サイト"]
+tags: ["GitHub Actions", "GitHub Pages", "Astro", "CICD", "静的サイト"]
 excerpt: "git push だけでサイトが自動更新される理由と、GitHub Actions・SSG・ホスティングの各パーツの役割を解説。"
 draft: false
 ---
