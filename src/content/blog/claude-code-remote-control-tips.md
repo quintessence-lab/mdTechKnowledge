@@ -25,30 +25,30 @@ Cowork起動時の問題:
 
 ## 実行順序
 
-### ① ユーザーがスキルを呼び出す
+### 1. ユーザーがスキルを呼び出す
 ```
 ユーザー:「リモートを起動して」
 ```
 
-### ② Claude がSKILL.mdを読み込み、実行すべきコマンドを認識
+### 2. Claude がSKILL.mdを読み込み、実行すべきコマンドを認識
 ```
 トリガー条件: "リモートセッションを起動して" に一致
 → ~/.claude/skills/remote-control/SKILL.md を参照
 → 方法1（スクリプトファイル使用）を選択
 ```
 
-### ③ Bashツールで以下を実行
+### 3. Bashツールで以下を実行
 ```powershell
 Start-Process powershell -ArgumentList '-NoExit', '-ExecutionPolicy', 'Bypass', '-File', 'C:\Users\%username%\clauderc\claude-remote.ps1'
 ```
 
-### ④ 新しいPowerShellウィンドウが開き、claude-remote.ps1 が実行される
+### 4. 新しいPowerShellウィンドウが開き、claude-remote.ps1 が実行される
 
 > **注意**: `claude-remote.ps1` は**ローカル端末上**に配置されたPowerShellスクリプトです（クラウド上ではなく、操作している端末のファイルシステム上に存在します）。
 >
 > スクリプトの詳細内容については、本ドキュメント（`claude-code-remote-control-tips.md`）の「方法2: インラインコマンド」セクションを参照してください。
 
-### ⑤ claude が起動し、Remote Control モードで待機
+### 5. claude が起動し、Remote Control モードで待機
 ```
 > QRコードが表示される
 > スマートフォンのClaudeアプリでスキャン
