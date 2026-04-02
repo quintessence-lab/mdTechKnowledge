@@ -297,23 +297,26 @@ E3またはE5ライセンスに追加できるAIアシスタント機能。**Exc
 
 ---
 
-### 両ライセンスの比較表
+### ライセンス全体比較表
 
-| 機能 | M365 Copilotアドオン（$30） | M365 E7（$99） |
-|------|:---:|:---:|
-| Word/Excel/PowerPoint Copilot | ✅ | ✅ |
-| Outlook/Teams Copilot | ✅ | ✅ |
-| Agent Mode（Office内） | ✅ | ✅ |
-| Copilot Cowork | ✅（Frontierプレビュー） | ✅（同上） |
-| Work IQ | ✅ | ✅ |
-| Agent 365 | ❌ | ✅ |
-| Microsoft Entra Suite | ❌ | ✅ |
-| E5セキュリティ全機能 | ❌（E5が別途必要） | ✅ |
-| Defender全スイート | ❌ | ✅ |
-| Purview全スイート | ❌ | ✅ |
-| Power BI Pro | ❌ | ✅ |
-| **前提ライセンス** | E3/E5が別途必要 | 単体完結 |
-| **実質合計コスト** | E3+Copilot=$69 / E5+Copilot=$90 | $99 |
+| 機能 | E3（$39） | E5（$60） | Copilotアドオン（+$30） | E7（$99） |
+|------|:---:|:---:|:---:|:---:|
+| Word/Excel/PowerPoint Copilot | ❌ | ❌ | ✅ | ✅ |
+| Outlook/Teams Copilot | ❌ | ❌ | ✅ | ✅ |
+| Agent Mode（Office内） | ❌ | ❌ | ✅ | ✅ |
+| Copilot Cowork | ❌ | ❌ | ✅（Frontierプレビュー） | ✅（同上） |
+| Work IQ | ❌ | ❌ | ✅ | ✅ |
+| Agent 365 | ❌ | ❌ | ❌ | ✅ |
+| Microsoft Entra Suite | ❌ | ❌ | ❌ | ✅ |
+| Security Copilot | ❌ | ✅（4月20日〜） | ❌ | ✅ |
+| Defender全スイート | 一部 | ✅ | ❌ | ✅ |
+| Purview全スイート | 一部 | ✅ | ❌ | ✅ |
+| Power BI Pro | ❌ | ✅ | ❌ | ✅ |
+| Teams Phone System | ❌ | ✅ | ❌ | ✅ |
+| **前提ライセンス** | 単体完結 | 単体完結 | E3/E5が別途必要 | 単体完結 |
+| **月額コスト** | $39 | $60 | +$30（E3/E5に追加） | $99 |
+
+> ※ Copilotアドオン列は「E3またはE5に追加した場合の追加費用と機能」を示す。単体では購入不可。
 
 ---
 
