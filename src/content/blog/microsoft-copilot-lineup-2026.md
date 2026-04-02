@@ -174,3 +174,35 @@ Copilot Coworkの機能を中心とした次世代エージェント機能。$15
 | **Excel Agent Mode GA** | デスクトップ版で一般提供開始 | GA済み |
 | **Claude（Anthropic）モデル統合** | CopilotでOpenAI / Anthropic Claude両モデルを自動選択または手動切替 | 展開中 |
 | **Copilot Chat廃止（Office内）** | Word・Excel・PowerPoint・OneNote内の無料Copilot Chatパネルを廃止 | 2026年4月15日〜 |
+
+---
+
+## 2026年4月15日以降に必要なプラン
+
+### 法人向け（商用テナント）
+
+| 組織規模 | 変更内容 | 引き続き使うために必要なプラン |
+|----------|----------|-------------------------------|
+| **2,000席以上** | Word/Excel/PowerPoint/OneNote内のCopilot Chatが**完全廃止** | **Microsoft 365 Copilot**（$30/ユーザー/月）の購入が必須 |
+| **300〜2,000席未満** | 「標準アクセス」に格下げ（混雑時に応答品質・速度が低下） | 無料枠は残る。フル機能は**Microsoft 365 Copilot**（$30/ユーザー/月）が必要 |
+| **300席以下** | 同上（標準アクセスに格下げ） | 無料枠は残る。フル機能は**Microsoft 365 Copilot Business**（$21/ユーザー/月）が必要 |
+
+- **有料のMicrosoft 365 Copilotライセンス保有者は変更なし**（引き続きフル機能を利用可能）
+- ラベル変更：有料ユーザーは「**M365 Copilot (Premium)**」、無料ユーザーは「**Copilot Chat (Basic)**」と表示
+
+### 個人向け
+
+| プラン | 4月15日以降の影響 |
+|--------|----------------|
+| **Microsoft 365 Personal / Family** | 今回の変更は法人テナント向けのため**個人プランへの直接影響はなし**。月60クレジットの制限内でWord・Excel等のCopilotを引き続き利用可能 |
+| **Microsoft 365 Premium**（$199/年） | クレジット上限なし。Researcher・Deep Research・Analyst等の機能を含む |
+
+### 影響を受けないサービス
+
+- **Outlook** → 対象外。4月15日以降も無料で継続利用可能
+- **ブラウザ版 Copilot Chat**（copilot.cloud.microsoft）→ 引き続き無料利用可能
+- **Copilotスタンドアロンアプリ** → 引き続き無料利用可能
+
+### 変更の背景
+
+Microsoftは2025年9月にCopilot ChatをOfficeアプリ内サイドパネルとして無料提供し始めたが、わずか半年足らずで方針を撤回。「エンタープライズグレードのAI機能は有料ティアが前提」と説明している。
