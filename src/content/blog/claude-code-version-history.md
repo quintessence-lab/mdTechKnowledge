@@ -1,14 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
+updatedDate: 2026-04-03
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code 2.0〜2.1系の主要バージョンを一覧整理。スキル統合・Worktree隔離・Agent Teams・1Mコンテキストなど主要マイルストーンを解説。"
+excerpt: "Claude Code 2.0〜2.1系の主要バージョンを一覧整理。スキル統合・Worktree隔離・Agent Teams・1Mコンテキスト・Buddy コンパニオンなど主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-03-30
-**現在の最新バージョン**: 2.1.86
+**最終更新**: 2026-04-03
+**現在の最新バージョン**: 2.1.90
 
 ---
 
@@ -23,6 +24,8 @@ draft: false
 | **2.1.71** | /loop コマンド、Cron スケジューリング |
 | **2.1.75** | Opus 4.6 で 1M コンテキスト ウィンドウ |
 | **2.1.84** | Windows PowerShell ツール（プレビュー） |
+| **2.1.89** | PreToolUse defer、PermissionDenied フック、CRLF 二重化修正、autocompact ループ修正 |
+| **2.1.90** | /powerup コマンド、auto モード境界遵守修正、PowerShell セキュリティ強化 |
 | **2.0.60** | バックグラウンド エージェント サポート |
 | **2.0.64** | エージェント async 実行、Named sessions（/rename） |
 | **2.0.72** | Claude in Chrome ベータ |
@@ -32,7 +35,48 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.86（最新）
+### 2.1.90（最新）
+- `/powerup` コマンド追加 — アニメーション デモ付きのインタラクティブ レッスンで Claude Code の機能を学習
+- `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE` 環境変数追加（オフライン環境向け）
+- `.husky` を保護ディレクトリに追加（acceptEdits モード）
+- **auto モードがユーザーの明示的な境界（「push しないで」等）を無視する問題を修正**
+- レート制限ダイアログの無限ループ クラッシュ修正
+- `--resume` 時の deferred tools/MCP サーバーでの完全キャッシュ ミス修正（v2.1.69 リグレッション）
+- PostToolUse format-on-save フック後の連続 Edit/Write エラー修正
+- PowerShell セキュリティ強化: 末尾 `&` バイパス、アーカイブ展開 TOCTOU、パース失敗時の deny ルール劣化修正
+- `Get-DnsClientCache` と `ipconfig /displaydns` を auto-allow から除外（DNS キャッシュ プライバシー）
+- MCP ツール スキーマ キャッシュ最適化、SSE 大規模フレーム線形処理化
+- `/resume` プロジェクト セッション並列読み込み改善
+
+### 2.1.89
+- `PreToolUse` フックに `"defer"` パーミッション判定追加 — ヘッドレス セッション一時停止対応
+- `CLAUDE_CODE_NO_FLICKER=1` 環境変数（alt-screen レンダリング）
+- `PermissionDenied` フック追加（`{retry: true}` でリトライ可能）
+- 名前付きサブエージェントを `@` メンション候補に追加
+- `MCP_CONNECTION_NONBLOCKING=true` で `-p` モード時の MCP 接続待機スキップ
+- **`/buddy` コマンド追加**（エイプリルフール イースターエッグ、4月1日以降も動作継続）
+  - 入力ボックスの横に ASCII アートの小さな生き物（Companion）を常駐表示
+  - 生き物の種類はランダム割り当て（ゴースト、子猫、タコなど）、固有名も自動付与（Cinder, Waffleth 等）
+  - コーディング中のイベントに反応して吹き出しでコメント（`post_response` / `addressed` / `pet` トリガー）
+  - `"companionEnabled": true/false`（settings.json）で有効・無効切り替え可能
+  - Bedrock 環境では動作しない制限あり、吹き出しは英語のみ（多言語対応は未実装）
+- **Edit/Write ツールが Windows で CRLF を二重化する問題を修正**
+- **CJK/絵文字を含むプロンプト履歴が 4KB 境界でドロップされる問題を修正**
+- **Windows Terminal Preview 1.25 で Shift+Enter が送信になる問題を修正**
+- **Windows PowerShell 5.1 で stderr プログレス出力が失敗と誤報告される問題を修正**
+- `StructuredOutput` スキーマ キャッシュ バグ修正（複数スキーマ時 ≈50% 失敗率）
+- 長時間セッションでの大規模 JSON 入力メモリ リーク修正
+- autocompact スラッシュ ループ修正（3回連続上限到達でエラー停止）
+- ネストされた CLAUDE.md の長セッション再注入修正
+- LSP サーバー クラッシュ後のゾンビ状態修正（自動再起動化）
+- 1GB 超ファイルへの Edit ツール OOM クラッシュ修正
+- **思考サマリーがインタラクティブ セッションでデフォルト非生成に変更**
+- `Edit` が `Bash` で閲覧済みファイルに別途 `Read` なしで動作するよう変更
+
+### 2.1.87
+- Cowork Dispatch でメッセージが配信されない問題を修正
+
+### 2.1.86
 - `X-Claude-Code-Session-Id` ヘッダー追加
 - `.jj` と `.sl` を VCS 除外リストに追加
 - ファイル操作のアウト・オブ・メモリ クラッシュ修正
@@ -274,6 +318,7 @@ draft: false
 ### セキュリティ対応
 | バージョン | 内容 |
 |-----------|------|
+| 2.1.90 | PowerShell バイパス・TOCTOU・deny ルール劣化修正、DNS キャッシュ プライバシー |
 | 2.1.7 | Wildcard パーミッション セキュリティ修正 |
 | 2.1.2 | Bash コマンド インジェクション修正 |
 | 2.1.0 | 敏感データ ロギング公開修正 |
@@ -281,6 +326,7 @@ draft: false
 ### パフォーマンス改善
 | バージョン | 内容 |
 |-----------|------|
+| 2.1.90 | MCP スキーマ キャッシュ最適化、SSE 線形処理化、セッション並列読み込み |
 | 2.1.86 | JSON エスケープ不要化でトークン削減 |
 | 2.1.74 | Streaming API メモリ リーク修正 |
 | 2.1.29 | Resume パフォーマンス 68% 削減 |
@@ -289,6 +335,7 @@ draft: false
 ### Windows 対応
 | バージョン | 内容 |
 |-----------|------|
+| 2.1.89 | CRLF 二重化修正、Shift+Enter 修正、PowerShell stderr 誤報告修正 |
 | 2.1.84 | PowerShell ツール追加（プレビュー） |
 | 2.1.2 | Winget インストール サポート |
 | 2.1.0 | テキスト スタイル Windows ミスアライメント修正 |
