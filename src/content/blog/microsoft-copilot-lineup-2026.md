@@ -248,3 +248,85 @@ E3・E5はCopilot Chatへのアクセス前提資格にはなるが、Word/Excel
 |---|---|---|
 | M365 E3 | $36/ユーザー/月 | $39/ユーザー/月 |
 | M365 E5 | $57/ユーザー/月 | $60/ユーザー/月 |
+
+---
+
+## E7 vs Microsoft 365 Copilot アドオン 徹底比較
+
+### Microsoft 365 Copilot アドオン（$30/ユーザー/月）
+
+E3またはE5ライセンスに追加できるAIアシスタント機能。**Excel・PowerPoint・Word内でのCopilot利用は可能。**
+
+| アプリ | Copilot利用 | Agent Mode |
+|--------|------------|------------|
+| Word | ✅ | ✅ |
+| Excel | ✅ | ✅（デスクトップ版GA済み） |
+| PowerPoint | ✅ | ✅（4月末までにロールアウト完了予定） |
+| Outlook | ✅ | ✅ |
+| Teams | ✅ | ✅ |
+
+- **Copilot Cowork**：Frontierプレビュー参加で利用可能（正式GA後はこのアドオンで利用可）
+- **Agent 365**：❌ 含まれない（別途 $15/ユーザー/月）
+- **前提**：E3またはE5ライセンスが別途必要
+
+---
+
+### Microsoft 365 E7（Frontier Suite）$99/ユーザー/月
+
+**2026年5月1日より一般販売開始。E5の全機能にCopilot・Agent 365・Entra Suiteを一体化した統合スイート。**
+
+#### 含まれるもの
+
+| 機能 | 内容 |
+|------|------|
+| **M365 Copilot（$30相当）** | Word/Excel/PowerPoint/Outlook/Teams内のAI機能・Agent Mode |
+| **Agent 365（$15相当）** | 企業内AIエージェントの統合管理基盤 |
+| **Microsoft Entra Suite（$12相当）** | AIエージェントをIDとして管理・ガバナンス |
+| **Work IQ** | ユーザーの作業パターン・組織ダイナミクスのセマンティックグラフ |
+| **Copilot Cowork** | 長時間・多段階タスクの自律実行（Frontierプレビュー） |
+| **E5の全機能** | Defender・Purview・Power BI Pro・Teams Phone System等 |
+
+#### Agent 365 とは
+
+企業内AIエージェントの**統合コントロールプレーン**。
+
+- Microsoft製・パートナー製・カスタム全エージェントの一元管理
+- 全エージェントの動作監視・ログ取得
+- Microsoft Defenderと統合したエージェント向けセキュリティ
+- AIエージェントを「従業員と同格の一級市民ID」として管理
+
+---
+
+### 両ライセンスの比較表
+
+| 機能 | M365 Copilotアドオン（$30） | M365 E7（$99） |
+|------|:---:|:---:|
+| Word/Excel/PowerPoint Copilot | ✅ | ✅ |
+| Outlook/Teams Copilot | ✅ | ✅ |
+| Agent Mode（Office内） | ✅ | ✅ |
+| Copilot Cowork | ✅（Frontierプレビュー） | ✅（同上） |
+| Work IQ | ✅ | ✅ |
+| Agent 365 | ❌ | ✅ |
+| Microsoft Entra Suite | ❌ | ✅ |
+| E5セキュリティ全機能 | ❌（E5が別途必要） | ✅ |
+| Defender全スイート | ❌ | ✅ |
+| Purview全スイート | ❌ | ✅ |
+| Power BI Pro | ❌ | ✅ |
+| **前提ライセンス** | E3/E5が別途必要 | 単体完結 |
+| **実質合計コスト** | E3+Copilot=$69 / E5+Copilot=$90 | $99 |
+
+---
+
+### E7はE3/E5の上位版か？
+
+E7はE3/E5の**垂直方向のティア上位版**（後継ではなく新層）。E5の全機能を内包した上でAI機能を追加。MicrosoftがE5以来2015年以来初めて新設した新ティア。
+
+### 移行コストの比較
+
+| 現在の構成 | 月額 | → E7 | 差額 |
+|---|---|---|---|
+| E3 + Copilotアドオン | $39+$30 = **$69** | $99 | **+$30**（Agent 365・Entraの対価） |
+| E5 + Copilotアドオン | $60+$30 = **$90** | $99 | **+$9**（割安感あり） |
+| E5 + Copilot + Entra + Agent 365 | $60+$30+$12+$15 = **$117** | $99 | **▲$18（約15%削減）** |
+
+→ **E5ユーザーにとってE7はほぼコスト中立**で、Agent 365とEntra Suiteが付いてくるため5月以降は移行を検討する価値が高い。
