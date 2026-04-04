@@ -911,6 +911,57 @@ stdio (docker)      docker container        なし
 
 ---
 
+## 補足: Agent Teams in-processモードでの稼働確認
+
+Claude Code の Agent Teams 機能で複数エージェント（チームメイト）を稼働させた場合、
+in-processモードでは以下の方法で確認・操作する。
+
+### 基本操作
+
+| キー | 動作 |
+|---|---|
+| **Shift+Down** | チームメイト間を循環切り替え（次のエージェントに移動） |
+| **Ctrl+T** | タスクリスト表示（全体の進捗・ステータス確認） |
+| **Escape** | 現在のチームメイトに割り込み（中断して指示を出す） |
+
+### チームメイトの管理
+
+スラッシュコマンドではなく、**自然言語でリードエージェントに指示**する:
+
+```
+# 新しいチームメイトを生成
+Spawn a security reviewer teammate to audit the auth module.
+
+# チームメイトの状況確認を指示
+Wait for your teammates to complete their tasks before proceeding.
+
+# チームメイトの終了
+Ask the researcher teammate to shut down.
+```
+
+### モード設定
+
+| 設定値 | 動作 |
+|---|---|
+| `"auto"`（デフォルト） | tmuxセッション内 → split panes、それ以外 → in-process |
+| `"in-process"` | 常にメインターミナル1画面内で動作 |
+| `"split-panes"` | 常にtmux/iTerm2で分割ペイン表示 |
+
+```bash
+# 一時的に指定（セッション単位）
+claude --teammate-mode in-process
+
+# 恒久的に設定（~/.claude.json に追記）
+{ "teammateMode": "in-process" }
+```
+
+### 注意点
+
+- in-processモードでは `/resume` でセッション再開するとチームメイトが消える可能性がある
+- tmux未使用環境ではデフォルトで in-process モードが適用される
+
+---
+
 ## まとめ
 
 - **MCPとは**: AIクライアントと外部ツールを繋ぐ標準プロトコル（AIのUSB規格）
