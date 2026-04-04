@@ -72,6 +72,12 @@ code {
   border-radius: 4px;
 }
 
+code.slash-cmd {
+  color: #2563eb;
+  font-weight: 700;
+  background-color: #e0e7ff;
+}
+
 pre {
   font-family: var(--font-mono);
   font-size: 0.9em;

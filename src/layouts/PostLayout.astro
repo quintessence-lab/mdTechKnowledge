@@ -71,6 +71,13 @@ const updatedStr = updatedDate?.toLocaleDateString('ja-JP', {
       setTimeout(() => { btn.textContent = 'コピー'; }, 2000);
     });
   }
+
+  document.querySelectorAll('.post-content code').forEach((el) => {
+    const text = el.textContent || '';
+    if (/^\/[a-z][\w-]*$/i.test(text.trim())) {
+      el.classList.add('slash-cmd');
+    }
+  });
 </script>
 
 <style>
