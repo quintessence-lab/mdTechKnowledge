@@ -17,21 +17,21 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
-| **2.1.0** | スキル統合、Vim 拡張、Plan モード、Agent Teams 基盤 |
-| **2.1.32** | Claude Opus 4.6、自動メモリ、Agent Teams マルチエージェント |
-| **2.1.49** | Worktree 隔離、--worktree フラグ |
-| **2.1.59** | 自動メモリ保存、/copy コマンド |
-| **2.1.71** | /loop コマンド、Cron スケジューリング |
-| **2.1.75** | Opus 4.6 で 1M コンテキスト ウィンドウ |
-| **2.1.84** | Windows PowerShell ツール（プレビュー） |
-| **2.1.89** | PreToolUse defer、PermissionDenied フック、CRLF 二重化修正、autocompact ループ修正 |
-| **2.1.90** | /powerup コマンド、auto モード境界遵守修正、PowerShell セキュリティ強化 |
-| **2.1.91** | MCP ツール結果永続化オーバーライド、プラグイン実行ファイル同梱、トランスクリプトチェーン修正 |
 | **2.1.92** | Bedrock 対話型セットアップ、/cost モデル別内訳、/release-notes バージョンピッカー、Write ツール高速化 |
-| **2.0.60** | バックグラウンド エージェント サポート |
-| **2.0.64** | エージェント async 実行、Named sessions（/rename） |
-| **2.0.72** | Claude in Chrome ベータ |
+| **2.1.91** | MCP ツール結果永続化オーバーライド、プラグイン実行ファイル同梱、トランスクリプトチェーン修正 |
+| **2.1.90** | /powerup コマンド、auto モード境界遵守修正、PowerShell セキュリティ強化 |
+| **2.1.89** | PreToolUse defer、PermissionDenied フック、CRLF 二重化修正、autocompact ループ修正 |
+| **2.1.84** | Windows PowerShell ツール（プレビュー） |
+| **2.1.75** | Opus 4.6 で 1M コンテキスト ウィンドウ |
+| **2.1.71** | /loop コマンド、Cron スケジューリング |
+| **2.1.59** | 自動メモリ保存、/copy コマンド |
+| **2.1.49** | Worktree 隔離、--worktree フラグ |
+| **2.1.32** | Claude Opus 4.6、自動メモリ、Agent Teams マルチエージェント |
+| **2.1.0** | スキル統合、Vim 拡張、Plan モード、Agent Teams 基盤 |
 | **2.0.74** | LSP（Language Server Protocol）ツール |
+| **2.0.72** | Claude in Chrome ベータ |
+| **2.0.64** | エージェント async 実行、Named sessions（/rename） |
+| **2.0.60** | バックグラウンド エージェント サポート |
 
 ---
 
