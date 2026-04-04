@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-04-03
+updatedDate: 2026-04-04
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
 excerpt: "Claude Code 2.0〜2.1系の主要バージョンを一覧整理。スキル統合・Worktree隔離・Agent Teams・1Mコンテキスト・Buddy コンパニオンなど主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-04-03
-**現在の最新バージョン**: 2.1.90
+**最終更新**: 2026-04-04
+**現在の最新バージョン**: 2.1.92
 
 ---
 
@@ -26,6 +26,8 @@ draft: false
 | **2.1.84** | Windows PowerShell ツール（プレビュー） |
 | **2.1.89** | PreToolUse defer、PermissionDenied フック、CRLF 二重化修正、autocompact ループ修正 |
 | **2.1.90** | /powerup コマンド、auto モード境界遵守修正、PowerShell セキュリティ強化 |
+| **2.1.91** | MCP ツール結果永続化オーバーライド、プラグイン実行ファイル同梱、トランスクリプトチェーン修正 |
+| **2.1.92** | Bedrock 対話型セットアップ、/cost モデル別内訳、/release-notes バージョンピッカー、Write ツール高速化 |
 | **2.0.60** | バックグラウンド エージェント サポート |
 | **2.0.64** | エージェント async 実行、Named sessions（/rename） |
 | **2.0.72** | Claude in Chrome ベータ |
@@ -35,7 +37,29 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.90（最新）
+### 2.1.92（最新）
+- **`forceRemoteSettingsRefresh` ポリシー設定追加** — CLI 起動時にリモート管理設定の取得完了までブロックし、取得失敗時は終了する fail-closed 方式
+- **Bedrock 対話型セットアップウィザード** — ログイン画面で「3rd-party platform」選択時に AWS 認証、リージョン設定、資格情報検証、モデルピン留めをガイド
+- **`/cost` のモデル別・キャッシュヒット内訳表示** — サブスクリプションユーザー向けに詳細なコスト内訳を表示
+- **`/release-notes` が対話型バージョンピッカーに** — バージョンを選んでリリースノートを確認可能に
+- **Remote Control セッション名のデフォルトプレフィックス** — ホスト名を使用（例: `myhost-graceful-unicorn`）、`--remote-control-session-name-prefix` で上書き可能
+- **プロンプトキャッシュ期限切れ通知** — Pro ユーザーがセッションに戻った際、次のターンで送信される非キャッシュトークン数をフッターに表示
+- 大きなファイルに対する Write ツールの diff 計算速度が **60% 向上**（タブ/`&`/`$` を含むファイル）
+- tmux ウィンドウ強制終了後にサブエージェント生成が失敗する問題を修正
+- 拡張思考が空白のみのテキストブロックを生成した際の API 400 エラー修正
+- フルスクリーンモードのスクロールバックで同じメッセージが重複表示される問題を修正
+- `/tag` コマンドと `/vim` コマンドを削除（vim モード切替は `/config` → Editor mode から）
+
+### 2.1.91
+- **MCP ツール結果の永続化オーバーライド** — `_meta["anthropic/maxResultSizeChars"]` アノテーション（最大 500K）により、DB スキーマ等の大きな結果がトランケーションされずに通過可能に
+- **`disableSkillShellExecution` 設定追加** — スキル・カスタムスラッシュコマンド・プラグインコマンドでのインラインシェル実行を無効化
+- **ディープリンクでの複数行プロンプト対応** — `claude-cli://open?q=` でエンコードされた改行（`%0A`）が拒否されなくなった
+- **プラグインの実行ファイル同梱** — プラグインが `bin/` 以下に実行ファイルを配置し、Bash ツールからベアコマンドとして呼び出し可能に
+- `--resume` 時に非同期トランスクリプト書き込み失敗で会話履歴が失われる可能性のあるトランスクリプトチェーン断絶を修正
+- iTerm2、kitty、WezTerm、Ghostty、Windows Terminal で `cmd+delete` が行頭まで削除しない問題を修正
+- Edit ツールがより短い `old_string` アンカーを使用し、出力トークンを削減
+
+### 2.1.90
 - `/powerup` コマンド追加 — アニメーション デモ付きのインタラクティブ レッスンで Claude Code の機能を学習
 - `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE` 環境変数追加（オフライン環境向け）
 - `.husky` を保護ディレクトリに追加（acceptEdits モード）
