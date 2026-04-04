@@ -1,7 +1,7 @@
 ---
-title: "Claude Code リモートセッション起動の重要Tips"
+title: "【重要Tips】Claude Code リモートセッション起動"
 date: 2026-03-29
-updatedDate: 2026-03-29
+updatedDate: 2026-04-04
 category: "Claude技術解説"
 tags: ["Claude Code", "リモートセッション", "Remote Control", "OAuth認証", "PowerShell"]
 excerpt: "Cowork経由でClaude Codeを起動する際のOAuthトークン問題と、Remote Controlセッションを正しく起動するための手順を解説する。"
