@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-04-04
+updatedDate: 2026-04-08
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code 2.0〜2.1系の主要バージョンを一覧整理。スキル統合・Worktree隔離・Agent Teams・1Mコンテキスト・Buddy コンパニオンなど主要マイルストーンを解説。"
+excerpt: "Claude Code 2.0〜2.1系の主要バージョンを一覧整理。Bedrock Mantle対応・スキル統合・Worktree隔離・Agent Teams・1Mコンテキスト・Buddy コンパニオンなど主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-04-04
-**現在の最新バージョン**: 2.1.92
+**最終更新**: 2026-04-08
+**現在の最新バージョン**: 2.1.96
 
 ---
 
@@ -17,6 +17,8 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.96** | Bedrock Mantle 認証修正（2.1.94 リグレッション） |
+| **2.1.94** | Amazon Bedrock Mantle 対応、デフォルト effort を high に変更、Slack MCP 連携改善、CJK テキスト化け修正 |
 | **2.1.92** | Bedrock 対話型セットアップ、`/cost` モデル別内訳、`/release-notes` バージョンピッカー、Write ツール高速化 |
 | **2.1.91** | MCP ツール結果永続化オーバーライド、プラグイン実行ファイル同梱、トランスクリプトチェーン修正 |
 | **2.1.90** | `/powerup` コマンド、auto モード境界遵守修正、PowerShell セキュリティ強化 |
@@ -37,7 +39,23 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.92（最新）
+### 2.1.96（最新）
+- **Bedrock 認証エラー修正** — `AWS_BEARER_TOKEN_BEDROCK` または `CLAUDE_CODE_SKIP_BEDROCK_AUTH` 使用時に `403 "Authorization header is missing"` でリクエストが失敗する問題を修正（2.1.94 でのリグレッション）
+
+### 2.1.94
+- **Amazon Bedrock Mantle 対応** — `CLAUDE_CODE_USE_MANTLE=1` を設定することで Mantle 経由の Bedrock を利用可能に
+- **デフォルト effort レベル変更** — API キー、Bedrock/Vertex/Foundry、Team、Enterprise ユーザーのデフォルトが「medium」から「high」に変更（`/effort` で制御可能）
+- **Slack MCP 連携改善** — send-message ツール呼び出し時にクリック可能なチャンネルリンク付きのコンパクトな `Slacked #channel` ヘッダーを表示
+- **プラグインスキル改善** — `"skills": ["./"]` で宣言されたスキルがディレクトリ名ではなくフロントマターの `name` を呼び出し名として使用
+- **フック機能追加** — `keep-coding-instructions` フロントマターフィールド対応、`hookSpecificOutput.sessionTitle` で `UserPromptSubmit` フックからセッションタイトル設定可能に
+- 429 レート制限で長い `Retry-After` ヘッダー返却時にエージェントがスタックして見える問題を修正
+- macOS で Console ログインがキーチェインロック時に無言で失敗する問題を修正（`claude doctor` で診断可能に）
+- プラグインスキルの YAML フロントマターで定義されたフックが無視される問題を修正
+- 長時間セッションでスクロールバックに同じ diff が繰り返し表示される問題を修正
+- **CJK およびマルチバイトテキストが UTF-8 シーケンス分割時に U+FFFD に化ける問題を修正**
+- `--resume` が他のワークツリーのセッションを直接再開できるように改善
+
+### 2.1.92
 - **`forceRemoteSettingsRefresh` ポリシー設定追加** — CLI 起動時にリモート管理設定の取得完了までブロックし、取得失敗時は終了する fail-closed 方式
 - **Bedrock 対話型セットアップウィザード** — ログイン画面で「3rd-party platform」選択時に AWS 認証、リージョン設定、資格情報検証、モデルピン留めをガイド
 - **`/cost` のモデル別・キャッシュヒット内訳表示** — サブスクリプションユーザー向けに詳細なコスト内訳を表示
