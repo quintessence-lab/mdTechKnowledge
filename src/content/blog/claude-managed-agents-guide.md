@@ -7,6 +7,8 @@ excerpt: "Claude Managed Agentsのアーキテクチャ（Brain/Session/Hands分
 draft: false
 ---
 
+<iframe src="/mdTechKnowledge/guides/claude-managed-agents-guide.html" width="100%" height="4000" style="border: none; border-radius: 8px;" loading="lazy"></iframe>
+
 ## Managed Agents とは何か
 
 **Claude Managed Agents** は、クラウドホスト型AIエージェントを構築・デプロイするためのAPI群（2026年4月8日 Public Beta リリース）。サンドボックス実行、チェックポイント、認証情報管理、権限スコーピング、トレーシングなど、本番エージェントに必要なインフラをAnthropicが一括管理する。開発者はエージェントのロジックに集中でき、プロトタイプから本番稼働まで**最大10倍高速**に短縮できる。

@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Managed Agents 簡易ガイド</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07070d;
+  --surface: #0f0f18;
+  --surface2: #161625;
+  --border: #1e1e30;
+  --border2: #2a2a42;
+  --text: #d8d8e8;
+  --text-dim: #8888a8;
+  --accent-purple: #a78bfa;
+  --accent-blue: #60a5fa;
+  --accent-green: #4ade80;
+  --accent-orange: #fb923c;
+  --accent-red: #f87171;
+  --accent-pink: #f472b6;
+  --gradient-hero: linear-gradient(135deg, #ff6b4a 0%, #a78bfa 40%, #60a5fa 100%);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 14px;
+}
+.page { max-width: 1080px; margin: 0 auto; padding: 24px 16px 60px; }
+
+/* ── Hero ── */
+.hero {
+  text-align: center;
+  padding: 48px 20px 36px;
+  position: relative;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%; transform: translateX(-50%);
+  width: 320px; height: 320px;
+  background: radial-gradient(circle, rgba(167,139,250,.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero .badge {
+  display: inline-block;
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  padding: 4px 14px; border-radius: 99px;
+  background: rgba(167,139,250,.12); color: var(--accent-purple);
+  border: 1px solid rgba(167,139,250,.25);
+  margin-bottom: 16px; text-transform: uppercase;
+}
+.hero h1 {
+  font-size: 32px; font-weight: 900; line-height: 1.3;
+  background: var(--gradient-hero);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  margin-bottom: 10px;
+}
+.hero .sub { color: var(--text-dim); font-size: 13px; font-weight: 300; }
+
+/* ── Section ── */
+.section { margin-top: 40px; }
+.section-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--accent-purple); margin-bottom: 6px;
+}
+.section-title {
+  font-size: 20px; font-weight: 800; margin-bottom: 16px; color: #f0f0ff;
+}
+
+/* ── Cards ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px 20px;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+}
+
+/* ── Architecture ── */
+.arch-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+@media (max-width: 640px) { .arch-grid { grid-template-columns: 1fr; } }
+.arch-box {
+  border-radius: 12px;
+  padding: 18px 14px;
+  text-align: center;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 6px;
+}
+.arch-box .icon { font-size: 26px; }
+.arch-box b { font-size: 13px; }
+.arch-box .desc { font-size: 11px; color: var(--text-dim); line-height: 1.5; }
+.brain { background: linear-gradient(160deg, #1a1040, #251860); border: 1px solid #5b21b6; }
+.session { background: linear-gradient(160deg, #1a0a10, #35122a); border: 1px solid #be185d; }
+.hands { background: linear-gradient(160deg, #0a1a30, #0e2e55); border: 1px solid #2563eb; }
+.infra-bar {
+  background: linear-gradient(90deg, rgba(167,139,250,.08), rgba(96,165,250,.08));
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  text-align: center;
+  font-size: 12px; font-weight: 600;
+  color: var(--text-dim);
+}
+.infra-bar span { color: var(--accent-purple); }
+.arch-arrow {
+  text-align: center; color: #333; font-size: 14px; margin: 6px 0;
+  letter-spacing: 4px;
+}
+
+/* ── Comparison ── */
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 700px) { .compare-grid { grid-template-columns: 1fr; } }
+.cmp-card { padding: 20px 16px; }
+.cmp-card .cmp-icon { font-size: 28px; margin-bottom: 6px; }
+.cmp-card h3 { font-size: 16px; font-weight: 800; margin-bottom: 2px; }
+.cmp-card .tag {
+  display: inline-block;
+  font-size: 10px; font-weight: 700;
+  padding: 2px 10px; border-radius: 99px;
+  margin-bottom: 12px;
+}
+.cmp-card ul { list-style: none; font-size: 12px; line-height: 2; }
+.cmp-card ul li::before { content: '→ '; opacity: .4; }
+.cmp-card .price {
+  margin-top: 12px; padding-top: 10px;
+  border-top: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--text-dim);
+}
+.c-code::before { background: var(--accent-blue); }
+.c-code .tag { background: rgba(96,165,250,.12); color: var(--accent-blue); }
+.c-sdk::before { background: var(--accent-green); }
+.c-sdk .tag { background: rgba(74,222,128,.12); color: var(--accent-green); }
+.c-ma::before { background: var(--accent-purple); }
+.c-ma .tag { background: rgba(167,139,250,.12); color: var(--accent-purple); }
+
+/* ── Table ── */
+.table-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow-x: auto;
+}
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+th {
+  background: var(--surface2);
+  padding: 10px 14px; text-align: left;
+  font-weight: 600; color: var(--text-dim);
+  font-size: 11px; letter-spacing: .5px;
+  white-space: nowrap;
+}
+td { padding: 10px 14px; border-top: 1px solid var(--border); white-space: nowrap; }
+td:first-child { color: #ccc; font-weight: 500; }
+.y { color: var(--accent-green); }
+.n { color: #444; }
+.p { color: #fbbf24; }
+
+/* ── Workflow ── */
+.flow {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  margin: 8px 0;
+  flex-wrap: wrap;
+}
+.flow-step {
+  flex: 1; min-width: 130px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 14px 12px;
+  text-align: center;
+  position: relative;
+}
+.flow-step:first-child { border-radius: 10px 0 0 10px; }
+.flow-step:last-child { border-radius: 0 10px 10px 0; }
+.flow-step .num {
+  display: inline-block;
+  width: 22px; height: 22px;
+  line-height: 22px;
+  border-radius: 50%;
+  background: var(--accent-purple);
+  color: #fff;
+  font-size: 11px; font-weight: 700;
+  margin-bottom: 6px;
+}
+.flow-step .ftitle { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+.flow-step .fdesc { font-size: 10px; color: var(--text-dim); line-height: 1.4; }
+.flow-step + .flow-step::after {
+  content: '▸'; position: absolute;
+  left: -6px; top: 50%; transform: translateY(-50%);
+  color: var(--accent-purple); font-size: 12px;
+}
+
+/* ── Security ── */
+.sec-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 640px) { .sec-row { grid-template-columns: 1fr; } }
+.sec-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+}
+.sec-box h4 { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+.sec-box p { font-size: 11px; color: var(--text-dim); line-height: 1.6; }
+
+/* ── Use Cases ── */
+.usecase-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 640px) { .usecase-grid { grid-template-columns: 1fr; } }
+.uc {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px 18px;
+  position: relative;
+  overflow: hidden;
+}
+.uc::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+}
+.uc.uc-code::before { background: var(--accent-blue); }
+.uc.uc-prod::before { background: var(--accent-green); }
+.uc.uc-fin::before { background: var(--accent-orange); }
+.uc.uc-meet::before { background: var(--accent-pink); }
+.uc.uc-cs::before { background: var(--accent-red); }
+.uc.uc-hr::before { background: #a78bfa; }
+.uc .uc-icon { font-size: 24px; margin-bottom: 6px; }
+.uc h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.uc .uc-who { font-size: 10px; color: var(--text-dim); margin-bottom: 8px; font-weight: 500; }
+.uc p { font-size: 12px; color: var(--text-dim); line-height: 1.6; margin-bottom: 8px; }
+.uc .uc-example {
+  background: var(--surface2);
+  border-left: 2px solid var(--border2);
+  padding: 8px 12px;
+  border-radius: 0 6px 6px 0;
+  font-size: 11px; color: #bbb; line-height: 1.5;
+}
+.uc .uc-example b { color: var(--text); }
+
+/* ── Adopters ── */
+.adopter-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.adopter {
+  flex: 1; min-width: 140px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+}
+.adopter h4 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.adopter p { font-size: 11px; color: var(--text-dim); line-height: 1.5; }
+
+/* ── Pricing ── */
+.pricing-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px 20px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.pricing-big {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 36px; font-weight: 700;
+  color: var(--accent-purple);
+}
+.pricing-big small { font-size: 14px; color: var(--text-dim); font-weight: 400; }
+.pricing-details { font-size: 12px; color: var(--text-dim); line-height: 1.8; }
+
+/* ── CTA vs ── */
+.vs-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px 20px;
+}
+.vs-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 10px; color: var(--accent-blue); }
+.vs-card p { font-size: 12px; color: var(--text-dim); line-height: 1.7; margin-bottom: 8px; }
+
+.footer {
+  text-align: center;
+  color: #333;
+  font-size: 10px;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #1a1a2a;
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ═══════ HERO ═══════ -->
+<div class="hero">
+  <div class="badge">Public Beta — 2026年4月8日リリース</div>
+  <h1>Claude Managed Agents<br>簡易ガイド</h1>
+  <p class="sub">アーキテクチャ・比較・ユースケースまで、必要な情報をこの1ページに</p>
+</div>
+
+<!-- ═══════ WHAT ═══════ -->
+<div class="section">
+  <div class="section-label">Overview</div>
+  <div class="section-title">Managed Agents とは何か</div>
+  <div class="card">
+    <p style="font-size:13px;line-height:1.8;">
+      <b>Claude Managed Agents</b>は、クラウドホスト型AIエージェントを構築・デプロイするためのAPI群です。
+      サンドボックス実行、チェックポイント、認証情報管理、権限スコーピング、トレーシングなど、
+      本番エージェントに必要なインフラをAnthropicが一括管理。
+      開発者はエージェントのロジックに集中でき、プロトタイプから本番稼働まで<b>最大10倍高速</b>に短縮できます。
+    </p>
+  </div>
+</div>
+
+<!-- ═══════ ARCHITECTURE ═══════ -->
+<div class="section">
+  <div class="section-label">Architecture</div>
+  <div class="section-title">🏗️ Brain と Hands の分離アーキテクチャ</div>
+  <div class="card">
+    <div class="arch-grid">
+      <div class="arch-box brain">
+        <span class="icon">🧠</span>
+        <b>Brain（頭脳）</b>
+        <span class="desc">Claudeモデル＋ハーネス<br>推論ループ・ツール選択<br>コンテキスト管理</span>
+      </div>
+      <div class="arch-box session">
+        <span class="icon">📋</span>
+        <b>Session（セッション）</b>
+        <span class="desc">永続的イベントログ<br>チェックポイント保存<br>障害時の状態復元</span>
+      </div>
+      <div class="arch-box hands">
+        <span class="icon">🤲</span>
+        <b>Hands（実行環境）</b>
+        <span class="desc">サンドボックスコンテナ<br>bash・ファイル操作<br>Web検索・MCP連携</span>
+      </div>
+    </div>
+    <div class="arch-arrow">▼ ▼ ▼ 各コンポーネントが独立してスケール ▼ ▼ ▼</div>
+    <div class="infra-bar">☁️ <span>Anthropic マネージドインフラ</span> — 自動スケーリング ・ 認証保管 ・ エラー回復 ・ セッショントレーシング</div>
+    <p style="font-size:11px;color:var(--text-dim);margin-top:12px;line-height:1.6;">
+      従来はセッション・ハーネス・サンドボックスが1つのコンテナに同居。クラッシュでセッションデータが消失し、
+      デバッグにもユーザーデータを含むコンテナへの直接アクセスが必要でした。
+      Managed Agentsでは各レイヤーを分離し、BrainとHandsを独立してスケールさせることで、信頼性と安全性を両立しています。
+    </p>
+  </div>
+</div>
+
+<!-- ═══════ WORKFLOW ═══════ -->
+<div class="section">
+  <div class="section-label">Workflow</div>
+  <div class="section-title">📐 基本ワークフロー</div>
+  <div class="card">
+    <div class="flow">
+      <div class="flow-step">
+        <div class="num">1</div>
+        <div class="ftitle">Agent定義</div>
+        <div class="fdesc">モデル・システムプロンプト<br>ツール・MCP・スキル</div>
+      </div>
+      <div class="flow-step">
+        <div class="num">2</div>
+        <div class="ftitle">Environment作成</div>
+        <div class="fdesc">コンテナ設定<br>パッケージ・ネットワーク</div>
+      </div>
+      <div class="flow-step">
+        <div class="num">3</div>
+        <div class="ftitle">Session開始</div>
+        <div class="fdesc">永続的な実行単位<br>切断後も状態維持</div>
+      </div>
+      <div class="flow-step">
+        <div class="num">4</div>
+        <div class="ftitle">Event送信</div>
+        <div class="fdesc">ユーザーメッセージ送信<br>SSEでリアルタイム応答</div>
+      </div>
+      <div class="flow-step">
+        <div class="num">5</div>
+        <div class="ftitle">操作 / 中断</div>
+        <div class="fdesc">途中で方向修正<br>状態を失わず中断可能</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ COMPARISON ═══════ -->
+<div class="section">
+  <div class="section-label">Comparison</div>
+  <div class="section-title">Claude Code / Agent SDK / Managed Agents 比較</div>
+  <div class="compare-grid">
+    <div class="card cmp-card c-code">
+      <div class="cmp-icon">💻</div>
+      <h3>Claude Code</h3>
+      <span class="tag">ローカル CLI / クラウド版</span>
+      <ul>
+        <li>ターミナルで対話的にコーディング</li>
+        <li>ローカル or クラウドサンドボックス</li>
+        <li>GitHubリポジトリ経由でデータ連携</li>
+        <li>開発者が直接操作・リアルタイム</li>
+        <li>CLAUDE.md でカスタマイズ</li>
+      </ul>
+      <div class="price">トークン課金のみ</div>
+    </div>
+    <div class="card cmp-card c-sdk">
+      <div class="cmp-icon">🔧</div>
+      <h3>Agent SDK</h3>
+      <span class="tag">セルフホスト ライブラリ</span>
+      <ul>
+        <li>Python / TypeScript ライブラリ</li>
+        <li>エージェントループを自動管理</li>
+        <li>自前サーバーでホスティング</li>
+        <li>細かいアーキテクチャ制御</li>
+        <li>Claude Codeと同じハーネスを利用可能</li>
+      </ul>
+      <div class="price">トークン + 自前インフラ費</div>
+    </div>
+    <div class="card cmp-card c-ma">
+      <div class="cmp-icon">🚀</div>
+      <h3>Managed Agents</h3>
+      <span class="tag">フルマネージド ✨ NEW</span>
+      <ul>
+        <li>API定義 → Anthropicが実行</li>
+        <li>サンドボックス自動構築</li>
+        <li>チェックポイント＆障害復旧</li>
+        <li>マルチエージェント（プレビュー）</li>
+        <li>Console統合トレーシング</li>
+      </ul>
+      <div class="price">トークン + $0.08 / セッション時間</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ TABLE ═══════ -->
+<div class="section">
+  <div class="section-label">Detail</div>
+  <div class="section-title">詳細比較テーブル</div>
+  <div class="table-wrap">
+    <table>
+      <tr><th>比較項目</th><th>Claude Code</th><th>Agent SDK</th><th>Managed Agents</th></tr>
+      <tr><td>実行環境</td><td>ローカル / クラウドサンドボックス</td><td>自前サーバー</td><td>Anthropicクラウド</td></tr>
+      <tr><td>インフラ管理</td><td class="n">不要（ローカル）</td><td class="n">自前で必要</td><td class="y">✓ 完全マネージド</td></tr>
+      <tr><td>長時間タスク</td><td class="p">△ セッション限定</td><td class="p">△ 自前で構築</td><td class="y">✓ 数時間〜対応</td></tr>
+      <tr><td>チェックポイント</td><td class="n">—</td><td class="n">自前実装</td><td class="y">✓ 自動保存</td></tr>
+      <tr><td>エラー回復</td><td class="n">手動</td><td class="n">自前実装</td><td class="y">✓ 自動復旧</td></tr>
+      <tr><td>マルチエージェント</td><td class="p">サブエージェント</td><td class="p">自前で構築</td><td class="y">✓ Research Preview</td></tr>
+      <tr><td>セキュリティ</td><td>ローカル権限 / サンドボックス</td><td>自前管理</td><td class="y">✓ 隔離コンテナ + Vault</td></tr>
+      <tr><td>可観測性</td><td class="p">ターミナル出力</td><td class="n">自前構築</td><td class="y">✓ Console統合</td></tr>
+      <tr><td>Git連携</td><td class="y">✓ プロキシ経由</td><td class="p">自前実装</td><td class="y">✓ トークン隔離</td></tr>
+      <tr><td>主な用途</td><td>対話的コーディング</td><td>カスタムエージェント</td><td>本番エージェント運用</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════ Claude Code on the web vs MA ═══════ -->
+<div class="section">
+  <div class="section-label">FAQ</div>
+  <div class="section-title">Claude Code クラウド版との違い</div>
+  <div class="vs-card">
+    <h4>💻 Claude Code on the web（クラウド版）</h4>
+    <p>クラウド上の隔離サンドボックスでClaude Codeセッションを実行。git認証情報はサンドボックス外のプロキシが管理し、
+       GitHubリポジトリを介して成果物をやり取りします。<b>コーディングに特化</b>した対話型ツールです。</p>
+    <h4 style="color:var(--accent-purple);margin-top:12px;">🚀 Managed Agents</h4>
+    <p>Claude Codeのハーネスを「メタハーネス」として包含する上位レイヤー。コーディングだけでなく、
+       文書処理・タスク自動化・マルチエージェントなど汎用用途に対応。
+       APIとして外部システムに組み込み、顧客向けプロダクトとして提供することを想定しています。</p>
+    <p style="margin-top:8px;padding:10px 14px;background:var(--surface2);border-radius:8px;font-size:11px;">
+      <b>共通点:</b> git認証のセキュリティモデル（トークン隔離パターン）は同じ。Managed Agentsはこの設計を継承・拡張しています。
+    </p>
+  </div>
+</div>
+
+<!-- ═══════ SECURITY ═══════ -->
+<div class="section">
+  <div class="section-label">Security</div>
+  <div class="section-title">🔒 セキュリティモデル</div>
+  <div class="sec-row">
+    <div class="sec-box">
+      <h4>🔐 認証情報の隔離</h4>
+      <p>Gitトークンはサンドボックス初期化時にcloneに使われ、エージェントが直接触れない設計。
+         MCP用OAuthトークンはセキュアVaultに保管し、専用プロキシ経由でツール呼び出し。</p>
+    </div>
+    <div class="sec-box">
+      <h4>📦 サンドボックス隔離</h4>
+      <p>各セッションは独立したクラウドコンテナで実行。ファイルシステムとネットワークの両面で隔離。
+         組織ごとにセッションが分離され、Anthropicの標準データ保持ポリシーが適用。</p>
+    </div>
+    <div class="sec-box">
+      <h4>🛡️ スコープ付き権限</h4>
+      <p>エージェントが実行できるツール・アクセスできるリソースを細かく制限。
+         意図しない操作や権限昇格のリスクを最小化。</p>
+    </div>
+    <div class="sec-box">
+      <h4>📊 可観測性</h4>
+      <p>Claude Consoleでセッショントレーシング、ツール呼び出し、エージェントの判断、
+         失敗モードを検査可能。統合分析とトラブルシューティングツールを提供。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ USE CASES ═══════ -->
+<div class="section">
+  <div class="section-label">Use Cases</div>
+  <div class="section-title">💡 具体的なユースケース</div>
+  <div class="usecase-grid">
+
+    <div class="uc uc-code">
+      <div class="uc-icon">⚙️</div>
+      <h4>コーディングエージェント</h4>
+      <div class="uc-who">対象: 開発チーム・DevOps</div>
+      <p>コードベースを読み取り、修正計画を立て、実装してPRを作成するまでを自律的に実行。CI/CDパイプラインと連携し、バグ修正や機能追加を自動化。</p>
+      <div class="uc-example">
+        <b>Sentry の事例:</b> フラグが立ったバグの根本原因分析→修正コード作成→PR作成を一気通貫で自動処理
+      </div>
+    </div>
+
+    <div class="uc uc-prod">
+      <div class="uc-icon">📋</div>
+      <h4>プロダクティビティエージェント</h4>
+      <div class="uc-who">対象: ナレッジワーカー・PMチーム</div>
+      <p>プロジェクトに「AI Teammate」として参加し、タスクを拾い上げて作業。スライド、スプレッドシート、Webサイトなどの成果物を生成。数十タスクの並列実行も可能。</p>
+      <div class="uc-example">
+        <b>Notion の事例:</b> コーディングからスライド・スプレッドシート作成まで、ワークスペース内で直接Claudeに委任。チーム全体で成果物を共同編集
+      </div>
+    </div>
+
+    <div class="uc uc-fin">
+      <div class="uc-icon">📊</div>
+      <h4>財務・法務エージェント</h4>
+      <div class="uc-who">対象: 財務部門・法務部門</div>
+      <p>契約書や財務レポートの大量文書を処理し、重要情報を抽出・分類。定型的なレビュー業務の自動化やリスク箇所のハイライトに活用。</p>
+      <div class="uc-example">
+        <b>活用例:</b> 四半期決算の大量資料を読み込み、KPI変動の要因分析レポートを自動生成
+      </div>
+    </div>
+
+    <div class="uc uc-meet">
+      <div class="uc-icon">🤝</div>
+      <h4>会議準備エージェント</h4>
+      <div class="uc-who">対象: 営業・事業開発</div>
+      <p>会議前に各参加者をリサーチし、過去のやり取りや最新ニュースをまとめて提示。CRM・カレンダー・議事録ツールとMCP連携で動作。</p>
+      <div class="uc-example">
+        <b>導入実績:</b> アイデアから本番稼働まで数日で実現。カスタムツールで自社カレンダー・連絡先データを統合
+      </div>
+    </div>
+
+    <div class="uc uc-hr">
+      <div class="uc-icon">👥</div>
+      <h4>HR・社内業務エージェント</h4>
+      <div class="uc-who">対象: 人事・管理部門</div>
+      <p>SlackやTeamsから指示を送り、スプレッドシート・スライド・アプリなどの成果物を受け取る。入社手続き、研修資料作成、社内問い合わせ対応など。</p>
+      <div class="uc-example">
+        <b>楽天の事例:</b> プロダクト・営業・マーケ・財務・HRの各部門に専門エージェントを配置。それぞれ1週間以内に本番稼働
+      </div>
+    </div>
+
+    <div class="uc uc-cs">
+      <div class="uc-icon">🎧</div>
+      <h4>カスタマーサポートエージェント</h4>
+      <div class="uc-who">対象: CS部門・サービス運用</div>
+      <p>問い合わせ内容を分析し、ナレッジベースを検索して回答案を生成。複雑な問い合わせにはチケット起票や関連情報の収集まで自律的に処理。</p>
+      <div class="uc-example">
+        <b>活用例:</b> ユーザーの問い合わせ→FAQ検索→回答ドラフト→必要に応じてエスカレーション起票を一連で自動化
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════ ADOPTERS ═══════ -->
+<div class="section">
+  <div class="section-label">Early Adopters</div>
+  <div class="section-title">🏢 早期導入企業</div>
+  <div class="adopter-row">
+    <div class="adopter">
+      <h4>Notion</h4>
+      <p>ワークスペース内でコーディング・スライド・スプレッドシートをClaudeに委任。数十タスク並列実行。</p>
+    </div>
+    <div class="adopter">
+      <h4>楽天</h4>
+      <p>5部門に専門エージェント配置。Slack/Teams連携で指示→成果物受取。各1週間以内に稼働。</p>
+    </div>
+    <div class="adopter">
+      <h4>Asana</h4>
+      <p>AI Teammatesがプロジェクト内タスクを自律的に処理。高度機能の出荷速度が劇的に向上。</p>
+    </div>
+    <div class="adopter">
+      <h4>Sentry</h4>
+      <p>バグ検出→根本原因分析→修正コード作成→PR作成を完全自動化。</p>
+    </div>
+    <div class="adopter">
+      <h4>Vibecode</h4>
+      <p>インフラ構築が10倍以上高速化。開発者体験の大幅向上を報告。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ PRICING ═══════ -->
+<div class="section">
+  <div class="section-label">Pricing</div>
+  <div class="section-title">💰 料金体系</div>
+  <div class="pricing-card">
+    <div>
+      <div class="pricing-big">$0.08<small> / セッション時間</small></div>
+    </div>
+    <div class="pricing-details">
+      ＋ 標準のClaude Platformトークン料金<br>
+      別途アクセス費用やプラットフォーム料金なし<br>
+      新規APIアカウントには初期テスト用クレジット付与<br>
+      全Claude APIアカウントでデフォルトアクセス可能
+    </div>
+  </div>
+  <p style="font-size:11px;color:var(--text-dim);margin-top:10px;line-height:1.6;">
+    ※ 24エージェント × 8時間/日 運用の場合、セッション費だけで約$15.36/日（推論コスト別）。
+    大規模運用前にコストシミュレーションを推奨。
+  </p>
+</div>
+
+<!-- ═══════ GETTING STARTED ═══════ -->
+<div class="section">
+  <div class="section-label">Getting Started</div>
+  <div class="section-title">🚀 はじめるには</div>
+  <div class="card" style="font-size:12px;line-height:1.9;">
+    <p><b>1.</b> <a href="https://platform.claude.com/docs/en/managed-agents/quickstart" style="color:var(--accent-purple);">ドキュメント</a>を確認</p>
+    <p><b>2.</b> Claude ConsoleからAgent・Environment・Sessionを作成</p>
+    <p><b>3.</b> CLIからもデプロイ可能: <code style="background:var(--surface2);padding:2px 8px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11px;">managed-agents-2026-04-01</code> ベータヘッダーを指定</p>
+    <p><b>4.</b> Claude Codeユーザーは <code style="background:var(--surface2);padding:2px 8px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11px;">"start onboarding for managed agents in Claude API"</code> で開始</p>
+    <p style="color:var(--text-dim);margin-top:8px;">※ Research Preview 機能: マルチエージェント調整 / アウトカム評価 / メモリ</p>
+  </div>
+</div>
+
+<div class="footer">
+  Sources: Anthropic Blog, Claude API Docs, SiliconANGLE, The Register, The New Stack — April 2026<br>
+  本ガイドは2026年4月11日時点の情報に基づいています
+</div>
+
+</div>
+</body>
+</html>
