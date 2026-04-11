@@ -1,9 +1,10 @@
 ---
 title: "画像ホスティングサービス セキュリティ比較 — Cloudinary / ImgBB / GitHub Pages"
 date: 2026-04-11
+updatedDate: 2026-04-11
 category: "その他技術"
-tags: ["セキュリティ", "画像ホスティング", "Cloudinary", "GitHub Pages", "静的サイト"]
-excerpt: "静的サイト用の画像ホスティング3サービスをセキュリティ観点で比較。HTTPS・認証・EXIF・アクセス制御・プライバシーなど8項目で評価。"
+tags: ["セキュリティ", "画像ホスティング", "Cloudinary", "GitHub Pages", "静的サイト", "GitHub Actions"]
+excerpt: "静的サイト用の画像ホスティング3サービスをセキュリティ観点で比較。HTTPS・認証・EXIF・アクセス制御・プライバシーなど8項目で評価。Cloudinary + GitHub Pages連携構成図付き。"
 draft: false
 ---
 
@@ -115,6 +116,89 @@ ImgBB自体のサーバーが侵害されたわけではないが、マルウェ
 - **本格運用・セキュリティ重視** → **Cloudinary** が最適。EXIF自動除去、画像最適化、エンタープライズ級のセキュリティ認証を備える
 - **画像が少量で外部依存を避けたい** → **GitHub リポジトリ内配置**。EXIF は事前に手動除去すること
 - **ImgBB** は手軽だがセキュリティ・信頼性に課題があり、ビジネス用途では推奨しない
+
+## Cloudinary + GitHub Pages 連携構成図
+
+Cloudinary を画像CDNとして利用し、Astro + GitHub Actions + GitHub Pages で静的サイトを運用する場合の全体像を示す。
+
+### データフロー
+
+```
+┌──────────┐         ┌──────────────┐
+│  管理者   │──(1)──▶│  Cloudinary  │
+│ (ブラウザ) │  画像を  │  (クラウド)   │
+└──────────┘ アップ   │              │
+              ロード   │  画像を保存・  │
+                      │  変換・配信   │
+                      └──────┬───────┘
+                             │
+                        画像URL発行
+                  (例: res.cloudinary.com/
+                    motenashi/image/...)
+                             │
+                             ▼
+┌──────────┐         ┌──────────────┐
+│  管理者   │──(2)──▶│  GitHub リポ  │
+│ (エディタ) │  MDに   │              │
+└──────────┘ URL貼付  │ content/     │
+                      │  sample.md   │
+                      └──────┬───────┘
+                             │
+                        (3) git push
+                             │
+                             ▼
+                      ┌──────────────┐
+                      │GitHub Actions│
+                      │              │
+                      │ astro build  │
+                      │  → HTML生成   │
+                      └──────┬───────┘
+                             │
+                        (4) デプロイ
+                             │
+                             ▼
+                      ┌──────────────┐
+                      │ GitHub Pages │
+                      │  (静的HTML)   │
+                      └──────┬───────┘
+                             │
+                        (5) ユーザーがアクセス
+                             │
+                             ▼
+┌──────────┐         ┌──────────────┐
+│ サイト    │◀───────│  ブラウザ     │
+│ 閲覧者   │  HTMLを  │  HTMLを取得   │──(6)──▶ Cloudinary
+└──────────┘  表示    └──────────────┘  画像を    から画像を
+                                       直接取得    高速配信
+```
+
+### 各ステップの説明
+
+| ステップ | 内容 |
+|---------|------|
+| **(1)** | CloudinaryのダッシュボードまたはAPIで画像をアップロード |
+| **(2)** | 発行されたURLをMarkdownの `image` フィールドに記載 |
+| **(3)** | GitHubにpush |
+| **(4)** | GitHub Actionsが `astro build` を実行し、GitHub Pagesにデプロイ |
+| **(5)** | 閲覧者がサイトにアクセスし、HTMLを取得 |
+| **(6)** | HTML内の `<img src="res.cloudinary.com/...">` をブラウザがCloudinaryのCDNから直接取得 |
+
+### この構成のメリット
+
+- **GitHubリポジトリに画像ファイルを保存しない** — リポジトリが軽量に保たれる
+- **画像はCloudinaryのCDNから配信** — 高速配信、自動リサイズ・フォーマット変換が可能
+- **MDファイルにはURLだけ記載** — コンテンツとアセットの分離
+
+### Markdownでの記載例
+
+```markdown
+---
+name: "サンプルレストラン"
+image: "https://res.cloudinary.com/motenashi/image/upload/w_800,q_auto,f_auto/restaurant/photo.jpg"
+---
+```
+
+URLパラメータ（`w_800,q_auto,f_auto`）を付与するだけで、サーバー側でリサイズ・最適化が自動適用される。
 
 ## Cloudinary 利用時のURL例
 
