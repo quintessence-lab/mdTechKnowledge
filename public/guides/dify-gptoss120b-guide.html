@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dify + GPT-OSS 120B 物理サーバ構成ガイド</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#fafaf8;--surface:#fff;--text:#1a1a1a;--text2:#555;--accent:#2e5090;--accent2:#1a3764;--border:#e2e0d8;--code-bg:#f4f3ef;--tag-bg:#eef3fb;--tag-text:#2e5090}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);line-height:1.85;font-size:15px;-webkit-font-smoothing:antialiased}
+.container{max-width:820px;margin:0 auto;padding:0 24px}
+header{padding:72px 0 48px;border-bottom:1px solid var(--border)}
+header h1{font-size:32px;font-weight:700;color:var(--accent2);letter-spacing:-0.5px;margin-bottom:8px}
+header p.sub{font-size:20px;color:var(--accent);font-weight:500}
+header .meta{margin-top:16px;font-size:13px;color:var(--text2)}
+nav.toc{padding:32px 0;border-bottom:1px solid var(--border)}
+nav.toc h2{font-size:14px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text2);margin-bottom:16px;font-weight:500}
+nav.toc ol{list-style:none;counter-reset:toc}
+nav.toc li{counter-increment:toc}
+nav.toc li a{display:block;padding:6px 0;color:var(--text);text-decoration:none;font-size:15px;border-bottom:1px solid transparent;transition:color .2s}
+nav.toc li a:hover{color:var(--accent)}
+nav.toc li a::before{content:counter(toc) ". ";color:var(--accent);font-weight:500;font-family:'IBM Plex Mono',monospace;font-size:13px;margin-right:4px}
+section{padding:48px 0 32px;border-bottom:1px solid var(--border)}
+section:last-of-type{border-bottom:none;padding-bottom:80px}
+h2{font-size:24px;font-weight:700;color:var(--accent2);margin-bottom:20px;letter-spacing:-0.3px}
+h3{font-size:18px;font-weight:700;color:var(--accent);margin:32px 0 14px}
+h4{font-size:15px;font-weight:700;color:var(--text);margin:24px 0 10px}
+p{margin-bottom:16px;color:var(--text)}
+ul,ol{margin:0 0 20px 20px}
+li{margin-bottom:8px}
+li strong{color:var(--accent2)}
+.diagram-wrapper{margin:28px 0;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;overflow-x:auto}
+.diagram-wrapper svg{display:block;margin:0 auto;max-width:100%;height:auto}
+.diagram-caption{font-size:13px;color:var(--text2);text-align:center;margin-top:12px;font-weight:500}
+table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px}
+thead th{background:var(--accent);color:#fff;padding:10px 14px;text-align:left;font-weight:500;font-size:13px}
+thead th:first-child{border-radius:6px 0 0 0}
+thead th:last-child{border-radius:0 6px 0 0}
+tbody td{padding:10px 14px;border-bottom:1px solid var(--border)}
+tbody tr:hover{background:#f8f7f4}
+.tag{display:inline-block;background:var(--tag-bg);color:var(--tag-text);padding:2px 10px;border-radius:4px;font-size:13px;font-weight:500;font-family:'IBM Plex Mono',monospace}
+.callout{background:#f0f4fa;border-left:3px solid var(--accent);padding:16px 20px;border-radius:0 8px 8px 0;margin:24px 0;font-size:14px;color:var(--accent2)}
+.callout strong{display:block;margin-bottom:4px}
+code{font-family:'IBM Plex Mono',monospace;background:var(--code-bg);padding:2px 6px;border-radius:3px;font-size:13px}
+footer{padding:32px 0;text-align:center;font-size:13px;color:var(--text2);border-top:1px solid var(--border)}
+@media(max-width:640px){
+  header{padding:48px 0 32px}
+  header h1{font-size:24px}
+  header p.sub{font-size:17px}
+  h2{font-size:20px}
+  .diagram-wrapper{padding:12px}
+  table{font-size:13px}
+  thead th,tbody td{padding:8px 10px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>Dify + GPT-OSS 120B</h1>
+  <p class="sub">物理サーバ構成ガイド</p>
+  <p class="meta">作成日: 2026年4月8日</p>
+</header>
+
+<nav class="toc">
+  <h2>目次</h2>
+  <ol>
+    <li><a href="#sec1">Difyとは</a></li>
+    <li><a href="#sec2">GPT-OSS 120Bの特徴</a></li>
+    <li><a href="#sec3">物理サーバ構成例</a></li>
+    <li><a href="#sec4">まとめ</a></li>
+  </ol>
+</nav>
+
+<!-- ===== Section 1 ===== -->
+<section id="sec1">
+  <h2>1. Difyとは</h2>
+  <p>Difyは、LLMアプリケーションを構築・デプロイするためのオープンソースのローコード/ノーコードプラットフォームです。チャットボット、AIアシスタント、コンテンツ生成ツールなどを少ないコードで素早く開発できます。</p>
+
+  <h3>主な機能</h3>
+  <ul>
+    <li><strong>ビジュアルワークフロービルダー:</strong> ノーコードでAIロジックをGUIで構築・テスト</li>
+    <li><strong>マルチLLM対応:</strong> GPT、Claude、Llama3など数百のモデルとシームレスに連携</li>
+    <li><strong>RAGパイプライン:</strong> 社内ドキュメントをベクトルDBに取り込み、AIが参照しながら回答</li>
+    <li><strong>プラグインシステム:</strong> 外部API、MCP、ツールとの柔軟な連携</li>
+    <li><strong>多様なデプロイ:</strong> チャットボット、API、Webアプリとして公開可能</li>
+  </ul>
+
+  <div class="diagram-wrapper">
+    <svg width="100%" viewBox="0 0 680 520" xmlns="http://www.w3.org/2000/svg">
+      <defs><marker id="a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <rect x="40" y="40" width="600" height="420" rx="20" fill="#EEEDFE" stroke="#534AB7" stroke-width=".5"/>
+      <text x="340" y="72" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="15" font-weight="600" fill="#3C3489">Dify platform</text>
+      <rect x="240" y="100" width="200" height="44" rx="8" fill="#F1EFE8" stroke="#5F5E5A" stroke-width=".5"/>
+      <text x="340" y="126" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="14" font-weight="600" fill="#2C2C2A">ユーザー / 開発者</text>
+      <line x1="340" y1="144" x2="340" y2="175" stroke="#888" stroke-width="1.5" marker-end="url(#a1)"/>
+      <rect x="140" y="175" width="400" height="56" rx="8" fill="#E1F5EE" stroke="#0F6E56" stroke-width=".5"/>
+      <text x="340" y="198" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="14" font-weight="600" fill="#085041">ビジュアルワークフロービルダー</text>
+      <text x="340" y="218" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="12" fill="#0F6E56">ノーコードでAIロジックを構築</text>
+      <line x1="200" y1="231" x2="200" y2="270" stroke="#888" stroke-width="1.5" marker-end="url(#a1)"/>
+      <line x1="340" y1="231" x2="340" y2="270" stroke="#888" stroke-width="1.5" marker-end="url(#a1)"/>
+      <line x1="480" y1="231" x2="480" y2="270" stroke="#888" stroke-width="1.5" marker-end="url(#a1)"/>
+      <rect x="100" y="270" width="160" height="56" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width=".5"/>
+      <text x="180" y="293" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="14" font-weight="600" fill="#0C447C">LLM連携</text>
+      <text x="180" y="313" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="12" fill="#185FA5">GPT, Claude, Llama…</text>
+      <rect x="280" y="270" width="120" height="56" rx="8" fill="#FAECE7" stroke="#993C1D" stroke-width=".5"/>
+      <text x="340" y="293" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="14" font-weight="600" fill="#712B13">RAG</text>
+      <text x="340" y="313" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="12" fill="#993C1D">社内データ検索</text>
+      <rect x="420" y="270" width="160" height="56" rx="8" fill="#FAEEDA" stroke="#854F0B" stroke-width=".5"/>
+      <text x="500" y="293" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="14" font-weight="600" fill="#633806">プラグイン</text>
+      <text x="500" y="313" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="12" fill="#854F0B">ツール, MCP, API</text>
+      <line x1="200" y1="326" x2="200" y2="365" stroke="#888" stroke-width="1.5" marker-end="url(#a1)"/>
+      <line x1="340" y1="326" x2="340" y2="365" stroke="#888" stroke-width="1.5" marker-end="url(#a1)"/>
+      <line x1="480" y1="326" x2="480" y2="365" stroke="#888" stroke-width="1.5" marker-end="url(#a1)"/>
+      <rect x="140" y="365" width="400" height="56" rx="8" fill="#EAF3DE" stroke="#3B6D11" stroke-width=".5"/>
+      <text x="340" y="388" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="14" font-weight="600" fill="#27500A">AIアプリとしてデプロイ</text>
+      <text x="340" y="408" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="12" fill="#3B6D11">チャットボット, API, Webアプリ</text>
+    </svg>
+    <div class="diagram-caption">図1: Difyプラットフォームの全体構成</div>
+  </div>
+</section>
+
+<!-- ===== Section 2 ===== -->
+<section id="sec2">
+  <h2>2. GPT-OSS 120Bの特徴</h2>
+  <p>GPT-OSS 120BはOpenAIが公開したオープンウェイトの推論モデルです。Mixture of Experts（MoE）アーキテクチャを採用しており、以下の特徴があります。</p>
+
+  <table>
+    <thead><tr><th>項目</th><th>内容</th></tr></thead>
+    <tbody>
+      <tr><td>総パラメータ数</td><td>117B（1,170億）</td></tr>
+      <tr><td>アクティブパラメータ数</td><td>5.1B（51億）/ 推論時</td></tr>
+      <tr><td>アーキテクチャ</td><td><span class="tag">Mixture of Experts (MoE)</span></td></tr>
+      <tr><td>量子化</td><td>MXFP4（学習時に適用済み）</td></tr>
+      <tr><td>必要GPU</td><td>NVIDIA H100 80GB × 1枚、またはAMD MI300X</td></tr>
+      <tr><td>コンテキスト長</td><td>128Kトークン</td></tr>
+      <tr><td>ライセンス</td><td><span class="tag">Apache 2.0</span>（商用利用可）</td></tr>
+    </tbody>
+  </table>
+
+  <p>MoEにより、モデル全体は117Bと大規模ですが、推論時にアクティブになるパラメータは5.1Bのみです。これにより、H100 1枚で十分な推論速度を実現しています。</p>
+</section>
+
+<!-- ===== Section 3 ===== -->
+<section id="sec3">
+  <h2>3. 物理サーバ構成例</h2>
+
+  <h3>3.1 全体構成</h3>
+  <p>Dify + GPT-OSS 120Bの本番構成は、大きく4つの層に分かれます。</p>
+
+  <table>
+    <thead><tr><th>層</th><th>構成要素</th><th>役割</th></tr></thead>
+    <tbody>
+      <tr><td>フロントエンド</td><td>Nginx / ロードバランサ</td><td>リクエスト振り分け、SSL終端</td></tr>
+      <tr><td>アプリケーション層</td><td>Dify（Docker / K8s）</td><td>ワークフロー実行、API、Worker</td></tr>
+      <tr><td>推論層</td><td>vLLM + H100 GPUサーバ</td><td>GPT-OSS 120Bの推論処理</td></tr>
+      <tr><td>データ層</td><td>PostgreSQL / Weaviate / Redis</td><td>メタデータ、ベクトル検索、キャッシュ</td></tr>
+    </tbody>
+  </table>
+
+  <div class="diagram-wrapper">
+    <svg width="100%" viewBox="0 0 680 580" xmlns="http://www.w3.org/2000/svg">
+      <defs><marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <rect x="250" y="20" width="180" height="44" rx="8" fill="#F1EFE8" stroke="#5F5E5A" stroke-width=".5"/>
+      <text x="340" y="46" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="14" font-weight="600" fill="#2C2C2A">ユーザー</text>
+      <line x1="340" y1="64" x2="340" y2="95" stroke="#888" stroke-width="1.5" marker-end="url(#a2)"/>
+      <rect x="210" y="95" width="260" height="44" rx="8" fill="#EEEDFE" stroke="#534AB7" stroke-width=".5"/>
+      <text x="340" y="121" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="14" font-weight="600" fill="#3C3489">ロードバランサ (Nginx)</text>
+      <line x1="340" y1="139" x2="340" y2="170" stroke="#888" stroke-width="1.5" marker-end="url(#a2)"/>
+      <rect x="60" y="170" width="560" height="100" rx="16" fill="#E1F5EE" stroke="#0F6E56" stroke-width=".5"/>
+      <text x="340" y="195" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="14" font-weight="600" fill="#085041">Dify アプリケーション層 (Docker)</text>
+      <rect x="85" y="210" width="150" height="44" rx="8" fill="#9FE1CB" stroke="#0F6E56" stroke-width=".5"/>
+      <text x="160" y="236" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="12" fill="#04342C">Web / API サーバ</text>
+      <rect x="265" y="210" width="150" height="44" rx="8" fill="#9FE1CB" stroke="#0F6E56" stroke-width=".5"/>
+      <text x="340" y="236" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="12" fill="#04342C">ワークフローエンジン</text>
+      <rect x="445" y="210" width="150" height="44" rx="8" fill="#9FE1CB" stroke="#0F6E56" stroke-width=".5"/>
+      <text x="520" y="236" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="12" fill="#04342C">Worker (Celery)</text>
+      <line x1="230" y1="270" x2="230" y2="310" stroke="#888" stroke-width="1.5" marker-end="url(#a2)"/>
+      <line x1="450" y1="270" x2="450" y2="310" stroke="#888" stroke-width="1.5" marker-end="url(#a2)"/>
+      <rect x="60" y="310" width="560" height="110" rx="16" fill="#FAECE7" stroke="#993C1D" stroke-width=".5"/>
+      <text x="340" y="335" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="14" font-weight="600" fill="#712B13">推論サーバ群 (OpenAI互換API)</text>
+      <rect x="85" y="350" width="150" height="56" rx="8" fill="#F5C4B3" stroke="#993C1D" stroke-width=".5"/>
+      <text x="160" y="373" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="14" font-weight="600" fill="#4A1B0C">Server A</text>
+      <text x="160" y="393" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="12" fill="#993C1D">H100 80GB × 1</text>
+      <rect x="265" y="350" width="150" height="56" rx="8" fill="#F5C4B3" stroke="#993C1D" stroke-width=".5"/>
+      <text x="340" y="373" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="14" font-weight="600" fill="#4A1B0C">Server B</text>
+      <text x="340" y="393" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="12" fill="#993C1D">H100 80GB × 1</text>
+      <rect x="445" y="350" width="150" height="56" rx="8" fill="#F5C4B3" stroke="#993C1D" stroke-width=".5"/>
+      <text x="520" y="373" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="14" font-weight="600" fill="#4A1B0C">Server C</text>
+      <text x="520" y="393" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="12" fill="#993C1D">H100 80GB × 1</text>
+      <line x1="230" y1="420" x2="230" y2="440" stroke="#888" stroke-width="1.5" marker-end="url(#a2)"/>
+      <line x1="450" y1="420" x2="450" y2="440" stroke="#888" stroke-width="1.5" marker-end="url(#a2)"/>
+      <rect x="60" y="440" width="560" height="100" rx="16" fill="#E6F1FB" stroke="#185FA5" stroke-width=".5"/>
+      <text x="340" y="465" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="14" font-weight="600" fill="#0C447C">データ層</text>
+      <rect x="85" y="480" width="150" height="44" rx="8" fill="#B5D4F4" stroke="#185FA5" stroke-width=".5"/>
+      <text x="160" y="506" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="12" fill="#042C53">PostgreSQL</text>
+      <rect x="265" y="480" width="150" height="44" rx="8" fill="#B5D4F4" stroke="#185FA5" stroke-width=".5"/>
+      <text x="340" y="506" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="12" fill="#042C53">Weaviate (Vector)</text>
+      <rect x="445" y="480" width="150" height="44" rx="8" fill="#B5D4F4" stroke="#185FA5" stroke-width=".5"/>
+      <text x="520" y="506" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="12" fill="#042C53">Redis (Cache)</text>
+    </svg>
+    <div class="diagram-caption">図2: 本番サーバ構成図</div>
+  </div>
+
+  <h3>3.2 推論サーバのスケーリング</h3>
+  <p>GPT-OSS 120BはMXFP4量子化により1枚のH100 80GBで完結して動作します。そのため、複数GPUを導入する場合は「同じモデルを複数インスタンス立てて水平にスケールする」方式となります。</p>
+
+  <h4>H100枚数の目安</h4>
+  <table>
+    <thead><tr><th>構成</th><th>同時ユーザー</th><th>適した用途</th><th>冗長性</th></tr></thead>
+    <tbody>
+      <tr><td><code>H100 × 1</code></td><td>数名〜十数名</td><td>PoC・小規模社内利用</td><td>なし</td></tr>
+      <tr><td><code>H100 × 2〜3</code></td><td>数十名</td><td>部門展開・本番運用</td><td>あり</td></tr>
+      <tr><td><code>H100 × 4+</code></td><td>数百名〜</td><td>全社展開・外部公開</td><td>高い</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3.3 GPU間連携の方式</h3>
+
+  <div class="callout">
+    <strong>重要: GPU同士は直接連携しない</strong>
+    各H100が独立した推論サーバとして動作し、ロードバランサがリクエストを振り分けるだけのシンプルな構成です。
+  </div>
+
+  <ul>
+    <li>各H100が1台ずつ完結した推論サーバとして動作する</li>
+    <li>GPU間通信（NVLink、InfiniBand）は不要</li>
+    <li>サーバ間ネットワークは通常の1GbE / 10GbEで十分</li>
+    <li>推論エンジン（vLLM等）がOpenAI互換APIを提供し、Difyから呼び出す</li>
+    <li>サーバを1台追加すれば、そのまま処理能力が1台分増える</li>
+  </ul>
+
+  <div class="diagram-wrapper">
+    <svg width="100%" viewBox="0 0 680 460" xmlns="http://www.w3.org/2000/svg">
+      <defs><marker id="a3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <rect x="220" y="30" width="240" height="44" rx="8" fill="#E1F5EE" stroke="#0F6E56" stroke-width=".5"/>
+      <text x="340" y="56" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="14" font-weight="600" fill="#085041">Dify ワークフロー</text>
+      <line x1="340" y1="74" x2="340" y2="110" stroke="#888" stroke-width="1.5" marker-end="url(#a3)"/>
+      <rect x="180" y="110" width="320" height="50" rx="8" fill="#EEEDFE" stroke="#534AB7" stroke-width=".5"/>
+      <text x="340" y="131" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="14" font-weight="600" fill="#3C3489">推論用ロードバランサ</text>
+      <text x="340" y="149" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="12" fill="#534AB7">ラウンドロビン / 最小負荷</text>
+      <line x1="230" y1="160" x2="130" y2="210" stroke="#888" stroke-width="1.5" marker-end="url(#a3)"/>
+      <line x1="340" y1="160" x2="340" y2="210" stroke="#888" stroke-width="1.5" marker-end="url(#a3)"/>
+      <line x1="450" y1="160" x2="550" y2="210" stroke="#888" stroke-width="1.5" marker-end="url(#a3)"/>
+      <rect x="50" y="210" width="160" height="120" rx="12" fill="#FAECE7" stroke="#993C1D" stroke-width=".5"/>
+      <text x="130" y="238" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="14" font-weight="600" fill="#712B13">推論サーバ A</text>
+      <rect x="70" y="256" width="120" height="56" rx="8" fill="#F5C4B3" stroke="#993C1D" stroke-width=".5"/>
+      <text x="130" y="278" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="12" fill="#4A1B0C">vLLM</text>
+      <text x="130" y="298" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="12" fill="#4A1B0C">H100 × 1</text>
+      <rect x="260" y="210" width="160" height="120" rx="12" fill="#FAECE7" stroke="#993C1D" stroke-width=".5"/>
+      <text x="340" y="238" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="14" font-weight="600" fill="#712B13">推論サーバ B</text>
+      <rect x="280" y="256" width="120" height="56" rx="8" fill="#F5C4B3" stroke="#993C1D" stroke-width=".5"/>
+      <text x="340" y="278" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="12" fill="#4A1B0C">vLLM</text>
+      <text x="340" y="298" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="12" fill="#4A1B0C">H100 × 1</text>
+      <rect x="470" y="210" width="160" height="120" rx="12" fill="#FAECE7" stroke="#993C1D" stroke-width=".5"/>
+      <text x="550" y="238" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="14" font-weight="600" fill="#712B13">推論サーバ C</text>
+      <rect x="490" y="256" width="120" height="56" rx="8" fill="#F5C4B3" stroke="#993C1D" stroke-width=".5"/>
+      <text x="550" y="278" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="12" fill="#4A1B0C">vLLM</text>
+      <text x="550" y="298" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="12" fill="#4A1B0C">H100 × 1</text>
+      <line x1="210" y1="350" x2="470" y2="350" stroke="#B4B2A9" stroke-width="1" stroke-dasharray="5 5"/>
+      <text x="340" y="378" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="13" fill="#5F5E5A">GPU間通信なし — 各サーバは完全に独立</text>
+      <rect x="100" y="405" width="480" height="44" rx="8" fill="#F1EFE8" stroke="#5F5E5A" stroke-width=".5"/>
+      <text x="340" y="424" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="12" fill="#444441">※ モデル分割（テンソル並列）が必要な巨大モデルとは異なり</text>
+      <text x="340" y="441" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="12" fill="#444441">GPT-OSS 120B は1GPU完結のため、単純な水平スケールで対応</text>
+    </svg>
+    <div class="diagram-caption">図3: H100複数枚の連携方式（水平スケール）</div>
+  </div>
+
+  <h4>モデル分割が必要なケースとの比較</h4>
+  <table>
+    <thead><tr><th></th><th>GPT-OSS 120B</th><th>Llama 405B等</th></tr></thead>
+    <tbody>
+      <tr><td>スケール方式</td><td>水平スケール（独立インスタンス）</td><td>テンソル並列（モデル分割）</td></tr>
+      <tr><td>GPU間通信</td><td>不要</td><td>NVLink / InfiniBand必須</td></tr>
+      <tr><td>追加の容易さ</td><td>1台単位で追加可能</td><td>セット単位で追加</td></tr>
+      <tr><td>運用の複雑さ</td><td>低い</td><td>高い</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3.4 推論サーバの推奨スペック（1台あたり）</h3>
+  <table>
+    <thead><tr><th>項目</th><th>推奨スペック</th></tr></thead>
+    <tbody>
+      <tr><td>GPU</td><td>NVIDIA H100 80GB SXM × 1</td></tr>
+      <tr><td>CPU</td><td>32コア以上（AMD EPYC / Intel Xeon）</td></tr>
+      <tr><td>メモリ</td><td>128GB以上</td></tr>
+      <tr><td>ストレージ</td><td>NVMe SSD 1TB以上（モデルウェイト格納用）</td></tr>
+      <tr><td>ネットワーク</td><td>10GbE（GPU間通信は不要）</td></tr>
+      <tr><td>推論エンジン</td><td>vLLM / TGI（OpenAI互換APIを提供）</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== Section 4 ===== -->
+<section id="sec4">
+  <h2>4. まとめ</h2>
+  <p>GPT-OSS 120BはMoEアーキテクチャとMXFP4量子化により、H100 1枚で完結して動作します。このため、スケールアウトはWebサーバと同様のシンプルな水平スケールで対応でき、GPU間の高速インターコネクトも不要です。</p>
+  <p>推奨アプローチとしては、まず1枚のH100で検証を開始し、利用者の増加に応じて推論サーバを追加していく段階的な拡張が最もリスクが低く効率的です。</p>
+  <p>Difyはこの推論サーバ群をOpenAI互換APIとして登録するだけで接続でき、ワークフロービルダーやRAGなどの高レベル機能をすぐに活用できます。</p>
+</section>
+
+</div>
+
+<footer>
+  <div class="container">Dify + GPT-OSS 120B 物理サーバ構成ガイド — 2026年4月</div>
+</footer>
+
+</body>
+</html>
