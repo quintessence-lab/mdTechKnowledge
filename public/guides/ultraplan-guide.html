@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ultraplan 完全ガイド</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --text3: #6a6760;
+    --purple: #8b7ff0;
+    --purple-dim: rgba(139,127,240,0.12);
+    --teal: #3ecfa0;
+    --teal-dim: rgba(62,207,160,0.1);
+    --amber: #f0b429;
+    --amber-dim: rgba(240,180,41,0.1);
+    --blue: #4fa8e8;
+    --blue-dim: rgba(79,168,232,0.1);
+    --gray-dim: rgba(255,255,255,0.05);
+    --radius: 10px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── header ── */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 56px 48px 48px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--purple);
+    background: var(--purple-dim);
+    border: 1px solid rgba(139,127,240,0.25);
+    border-radius: 4px;
+    padding: 3px 10px;
+    margin-bottom: 20px;
+  }
+  header h1 {
+    font-size: 2.6rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -.02em;
+    margin-bottom: 16px;
+  }
+  header h1 span { color: var(--purple); }
+  header p {
+    color: var(--text2);
+    max-width: 600px;
+    font-size: 16px;
+  }
+  .meta {
+    margin-top: 24px;
+    display: flex;
+    gap: 24px;
+    font-size: 12px;
+    color: var(--text3);
+  }
+  .meta span { display: flex; align-items: center; gap: 6px; }
+  .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--text3); }
+
+  /* ── nav ── */
+  nav {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 48px;
+    border-bottom: 1px solid var(--border);
+  }
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+  nav a {
+    display: block;
+    padding: 16px 18px;
+    font-size: 13px;
+    color: var(--text2);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color .2s, border-color .2s;
+  }
+  nav a:hover { color: var(--text); border-color: var(--border2); }
+
+  /* ── main layout ── */
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 48px 80px;
+  }
+
+  section { padding: 56px 0 0; }
+  h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  h2 .num {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: var(--purple-dim);
+    border: 1px solid rgba(139,127,240,0.25);
+    color: var(--purple);
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 28px;
+    margin-right: 12px;
+    vertical-align: middle;
+  }
+  h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 28px 0 10px;
+  }
+  p { color: var(--text2); margin-bottom: 14px; }
+  p:last-child { margin-bottom: 0; }
+  strong { color: var(--text); font-weight: 500; }
+
+  /* ── cards ── */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 14px;
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .card p { font-size: 13.5px; margin-bottom: 0; }
+
+  /* ── highlight block ── */
+  .callout {
+    border-left: 3px solid var(--purple);
+    background: var(--purple-dim);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 16px 20px;
+    margin: 20px 0;
+    font-size: 13.5px;
+    color: var(--text2);
+  }
+  .callout.amber { border-color: var(--amber); background: var(--amber-dim); }
+  .callout.teal  { border-color: var(--teal);  background: var(--teal-dim); }
+
+  /* ── code ── */
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 7px;
+    color: var(--purple);
+  }
+  pre {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin: 16px 0;
+    overflow-x: auto;
+  }
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 12.5px;
+    color: var(--text2);
+    display: block;
+    line-height: 1.7;
+  }
+
+  /* ── table ── */
+  .table-wrap { overflow-x: auto; margin: 20px 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  th {
+    text-align: left;
+    padding: 10px 16px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  td {
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    color: var(--text2);
+    vertical-align: top;
+  }
+  tr:nth-child(odd) td { background: var(--gray-dim); }
+
+  /* ── status badges ── */
+  .badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-right: 6px;
+    white-space: nowrap;
+  }
+  .badge-gray   { background: rgba(255,255,255,0.06); color: var(--text2); border: 1px solid var(--border2); }
+  .badge-amber  { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(240,180,41,.2); }
+  .badge-purple { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(139,127,240,.2); }
+  .badge-teal   { background: var(--teal-dim); color: var(--teal); border: 1px solid rgba(62,207,160,.2); }
+
+  /* ── diagram wrapper ── */
+  .diagram-wrap {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 20px;
+    margin: 28px 0;
+    overflow-x: auto;
+  }
+  .diagram-label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--text3);
+    margin-bottom: 18px;
+  }
+  .diagram-wrap svg { display: block; width: 100%; max-width: 840px; }
+
+  /* SVG内テキスト用 */
+  .diagram-wrap svg text { font-family: 'Noto Sans JP', sans-serif; }
+
+  /* SVG color classes – light values on dark bg */
+  .diagram-wrap svg .c-purple rect, .diagram-wrap svg .c-purple circle, .diagram-wrap svg .c-purple ellipse { fill: rgba(139,127,240,0.15); stroke: rgba(139,127,240,0.45); }
+  .diagram-wrap svg .c-purple text  { fill: #cbc6f8; }
+  .diagram-wrap svg .c-teal rect, .diagram-wrap svg .c-teal circle, .diagram-wrap svg .c-teal ellipse { fill: rgba(62,207,160,0.12); stroke: rgba(62,207,160,0.4); }
+  .diagram-wrap svg .c-teal text  { fill: #7de8c4; }
+  .diagram-wrap svg .c-amber rect, .diagram-wrap svg .c-amber circle, .diagram-wrap svg .c-amber ellipse { fill: rgba(240,180,41,0.12); stroke: rgba(240,180,41,0.4); }
+  .diagram-wrap svg .c-amber text  { fill: #f5cd74; }
+  .diagram-wrap svg .c-gray rect, .diagram-wrap svg .c-gray circle, .diagram-wrap svg .c-gray ellipse { fill: rgba(255,255,255,0.06); stroke: rgba(255,255,255,0.18); }
+  .diagram-wrap svg .c-gray text  { fill: #b8b5ab; }
+  .diagram-wrap svg .c-blue rect, .diagram-wrap svg .c-blue circle, .diagram-wrap svg .c-blue ellipse { fill: rgba(79,168,232,0.12); stroke: rgba(79,168,232,0.4); }
+  .diagram-wrap svg .c-blue text  { fill: #89c6f0; }
+  .diagram-wrap svg text.th { font-size: 13px; font-weight: 700; fill: #dedad2; }
+  .diagram-wrap svg text.ts { font-size: 11.5px; fill: #9e9b91; }
+  .diagram-wrap svg text.t  { font-size: 13px; fill: #dedad2; }
+  .diagram-wrap svg line, .diagram-wrap svg path.connector { stroke: rgba(255,255,255,0.22); }
+  .diagram-wrap svg .arr { stroke: rgba(255,255,255,0.22); }
+
+  /* ── grid ── */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 18px 0; }
+  @media (max-width: 600px) { .grid2 { grid-template-columns: 1fr; } }
+
+  /* ── requirement list ── */
+  ul.req { list-style: none; margin: 12px 0; }
+  ul.req li {
+    padding: 8px 0 8px 20px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text2);
+    font-size: 13.5px;
+    position: relative;
+  }
+  ul.req li::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+  ul.req li:last-child { border-bottom: none; }
+
+  /* ── footer ── */
+  footer {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 48px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  @media (max-width: 640px) {
+    header, main, nav, footer { padding-left: 20px; padding-right: 20px; }
+    header h1 { font-size: 1.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">Claude Code / Research Preview</div>
+  <h1>Ultraplan<br><span>完全ガイド</span></h1>
+  <p>Anthropic が Claude Code に追加したクラウドベースのプランニング機能。ターミナルを解放しながら、ブラウザで計画をレビューして実行先を選択できる。</p>
+  <div class="meta">
+    <span><span class="dot"></span>2026年4月時点</span>
+    <span><span class="dot"></span>Claude Code v2.1.91 以降</span>
+    <span><span class="dot"></span>Research Preview</span>
+  </div>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="#overview">概要</a></li>
+    <li><a href="#architecture">アーキテクチャ</a></li>
+    <li><a href="#github">GitHub連携</a></li>
+    <li><a href="#terminal">ターミナル返却</a></li>
+    <li><a href="#requirements">利用条件</a></li>
+    <li><a href="#tips">使い分け</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<!-- ─── 1. 概要 ─── -->
+<section id="overview">
+  <h2><span class="num">1</span>Ultraplan とは</h2>
+  <p>従来の Claude Code では、<code>/plan</code> を実行するとターミナルがロックされ、計画が完成するまで別作業ができなかった。Ultraplan はプランニングのフェーズをAnthropicのクラウド（CCR）に移すことで、この問題を解決する。</p>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">ターミナルが自由</div>
+      <p>計画はクラウドで生成される。ローカルは3秒ごとのポーリングのみで、別ブランチの作業や複数セッションの並行実行が可能。</p>
+    </div>
+    <div class="card">
+      <div class="card-title">ブラウザでリッチなレビュー</div>
+      <p>インラインコメント・絵文字リアクション・アウトラインサイドバーを使い、計画の特定箇所を指定して修正依頼できる。</p>
+    </div>
+    <div class="card">
+      <div class="card-title">実行先を選択</div>
+      <p>承認後に「クラウドで実行してPRを作成」か「ターミナルに計画を戻して実行」かを選べる。</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Opus 4.6 × 最大30分</div>
+      <p>クラウドセッションは最大30分のコンピューティング時間を確保し、大規模なアーキテクチャ分析にも対応する。</p>
+    </div>
+  </div>
+
+  <h3>起動方法（3通り）</h3>
+  <pre><code># 方法A: スラッシュコマンド（確認ダイアログあり）
+/ultraplan migrate the auth service from sessions to JWTs
+
+# 方法B: プロンプト内にキーワード（確認ダイアログあり）
+I need an ultraplan for refactoring the payment module
+
+# 方法C: ローカルプランから昇格（確認なし）
+# /plan 実行 → 承認ダイアログで「Refine with Ultraplan」を選択</code></pre>
+
+  <div class="callout">
+    Remote Control と Ultraplan は同時に利用できない。どちらも claude.ai/code インターフェースを使うため、Ultraplan 起動時に Remote Control は切断される。
+  </div>
+</section>
+
+<!-- ─── 2. アーキテクチャ ─── -->
+<section id="architecture">
+  <h2><span class="num">2</span>全体アーキテクチャ</h2>
+  <p>ローカルターミナル、Anthropic CCR（クラウド）、ブラウザ、GitHub の4つのコンポーネントが連携する。</p>
+
+  <div class="diagram-wrap">
+    <div class="diagram-label">図1 — 全体アーキテクチャ</div>
+    <svg width="100%" viewBox="0 0 680 508" role="img">
+      <title>Ultraplan 全体アーキテクチャ</title>
+      <desc>ローカル環境からAnthropicクラウドを経由してブラウザでレビューし、GitHubまたはターミナルに結果を返すフロー</desc>
+      <defs>
+        <marker id="arr1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+      <text class="ts" x="95" y="13" text-anchor="middle" style="fill:#9e9b91;font-size:11px">ローカル環境</text>
+      <text class="ts" x="577" y="46" text-anchor="middle" style="fill:#9e9b91;font-size:11px">ブラウザ</text>
+      <rect x="195" y="12" width="272" height="308" rx="14" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="6 4"/>
+      <text class="ts" x="331" y="28" text-anchor="middle" style="fill:#6a6760;font-size:11px">Anthropic CCR</text>
+      <g class="c-gray">
+        <rect x="20" y="22" width="150" height="56" rx="8" stroke-width="0.5"/>
+        <text class="th" x="95" y="43" text-anchor="middle" dominant-baseline="central" style="fill:#b8b5ab;font-size:13px;font-weight:700">ターミナル</text>
+        <text class="ts" x="95" y="62" text-anchor="middle" dominant-baseline="central" style="fill:#9e9b91;font-size:11px">起動・ポーリング</text>
+      </g>
+      <g class="c-gray">
+        <rect x="20" y="112" width="150" height="56" rx="8" stroke-width="0.5"/>
+        <text class="th" x="95" y="132" text-anchor="middle" dominant-baseline="central" style="fill:#b8b5ab;font-size:13px;font-weight:700">GitHub リポジトリ</text>
+        <text class="ts" x="95" y="151" text-anchor="middle" dominant-baseline="central" style="fill:#9e9b91;font-size:11px">スナップショット元</text>
+      </g>
+      <g class="c-purple">
+        <rect x="208" y="36" width="246" height="44" rx="8" stroke-width="0.5"/>
+        <text class="th" x="331" y="54" text-anchor="middle" dominant-baseline="central" style="fill:#cbc6f8;font-size:13px;font-weight:700">スナップショット</text>
+        <text class="ts" x="331" y="72" text-anchor="middle" dominant-baseline="central" style="fill:#a9a2f0;font-size:11px">起動時のコードを同期</text>
+      </g>
+      <g class="c-purple">
+        <rect x="208" y="108" width="246" height="56" rx="8" stroke-width="0.5"/>
+        <text class="th" x="331" y="128" text-anchor="middle" dominant-baseline="central" style="fill:#cbc6f8;font-size:13px;font-weight:700">Planning Agent</text>
+        <text class="ts" x="331" y="147" text-anchor="middle" dominant-baseline="central" style="fill:#a9a2f0;font-size:11px">Opus 4.6 / 最大30分</text>
+      </g>
+      <g class="c-purple">
+        <rect x="208" y="196" width="246" height="44" rx="8" stroke-width="0.5"/>
+        <text class="th" x="331" y="214" text-anchor="middle" dominant-baseline="central" style="fill:#cbc6f8;font-size:13px;font-weight:700">プランモード</text>
+        <text class="ts" x="331" y="231" text-anchor="middle" dominant-baseline="central" style="fill:#a9a2f0;font-size:11px">Simple / Visual / Deep</text>
+      </g>
+      <g class="c-amber">
+        <rect x="208" y="268" width="246" height="44" rx="8" stroke-width="0.5"/>
+        <text class="th" x="331" y="286" text-anchor="middle" dominant-baseline="central" style="fill:#f5cd74;font-size:13px;font-weight:700">セキュアプロキシ</text>
+        <text class="ts" x="331" y="303" text-anchor="middle" dominant-baseline="central" style="fill:#e8b84a;font-size:11px">git操作を検証・仲介</text>
+      </g>
+      <g class="c-blue">
+        <rect x="498" y="56" width="158" height="114" rx="8" stroke-width="0.5"/>
+        <text class="th" x="577" y="82" text-anchor="middle" dominant-baseline="central" style="fill:#89c6f0;font-size:13px;font-weight:700">ブラウザレビュー</text>
+        <text class="ts" x="577" y="103" text-anchor="middle" dominant-baseline="central" style="fill:#6db6e8;font-size:11px">インラインコメント</text>
+        <text class="ts" x="577" y="121" text-anchor="middle" dominant-baseline="central" style="fill:#6db6e8;font-size:11px">絵文字リアクション</text>
+        <text class="ts" x="577" y="139" text-anchor="middle" dominant-baseline="central" style="fill:#6db6e8;font-size:11px">実行先を選択</text>
+      </g>
+      <g class="c-teal">
+        <rect x="195" y="354" width="195" height="56" rx="8" stroke-width="0.5"/>
+        <text class="th" x="292" y="374" text-anchor="middle" dominant-baseline="central" style="fill:#7de8c4;font-size:13px;font-weight:700">クラウドで実行</text>
+        <text class="ts" x="292" y="393" text-anchor="middle" dominant-baseline="central" style="fill:#59d4aa;font-size:11px">PR を自動作成</text>
+      </g>
+      <g class="c-gray">
+        <rect x="430" y="354" width="218" height="56" rx="8" stroke-width="0.5"/>
+        <text class="th" x="539" y="374" text-anchor="middle" dominant-baseline="central" style="fill:#b8b5ab;font-size:13px;font-weight:700">テレポート</text>
+        <text class="ts" x="539" y="393" text-anchor="middle" dominant-baseline="central" style="fill:#9e9b91;font-size:11px">計画をローカルへ返却</text>
+      </g>
+      <g class="c-amber">
+        <rect x="20" y="430" width="155" height="44" rx="8" stroke-width="0.5"/>
+        <text class="th" x="97" y="448" text-anchor="middle" dominant-baseline="central" style="fill:#f5cd74;font-size:13px;font-weight:700">GitHub (remote)</text>
+        <text class="ts" x="97" y="465" text-anchor="middle" dominant-baseline="central" style="fill:#e8b84a;font-size:11px">Pull Request 作成</text>
+      </g>
+      <g class="c-gray">
+        <rect x="430" y="430" width="218" height="56" rx="8" stroke-width="0.5"/>
+        <text class="th" x="539" y="450" text-anchor="middle" dominant-baseline="central" style="fill:#b8b5ab;font-size:13px;font-weight:700">ターミナル ダイアログ</text>
+        <text class="ts" x="539" y="469" text-anchor="middle" dominant-baseline="central" style="fill:#9e9b91;font-size:11px">Implement / New / Cancel</text>
+      </g>
+      <path d="M170,50 L208,58" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" marker-end="url(#arr1)"/>
+      <path d="M170,140 L208,72" fill="none" stroke="#3ecfa0" stroke-width="1.2" marker-end="url(#arr1)"/>
+      <line x1="331" y1="80" x2="331" y2="108" stroke="rgba(255,255,255,0.22)" stroke-width="1" marker-end="url(#arr1)"/>
+      <line x1="331" y1="164" x2="331" y2="196" stroke="rgba(255,255,255,0.22)" stroke-width="1" marker-end="url(#arr1)"/>
+      <line x1="331" y1="240" x2="331" y2="268" stroke="rgba(255,255,255,0.22)" stroke-width="1" marker-end="url(#arr1)"/>
+      <path d="M454,136 L498,113" fill="none" stroke="#8b7ff0" stroke-width="1.2" marker-end="url(#arr1)"/>
+      <path d="M498,170 L498,336 L292,336 L292,354" fill="none" stroke="#4fa8e8" stroke-width="1" marker-end="url(#arr1)"/>
+      <path d="M580,170 L580,336 L539,336 L539,354" fill="none" stroke="#4fa8e8" stroke-width="1" marker-end="url(#arr1)"/>
+      <path d="M292,410 L292,424 L97,424 L97,430" fill="none" stroke="#3ecfa0" stroke-width="1.2" marker-end="url(#arr1)"/>
+      <line x1="539" y1="410" x2="539" y2="430" stroke="rgba(255,255,255,0.22)" stroke-width="1" marker-end="url(#arr1)"/>
+      <line x1="22" y1="498" x2="48" y2="498" stroke="rgba(255,255,255,0.22)" stroke-width="1" marker-end="url(#arr1)"/>
+      <text style="fill:#6a6760;font-size:10px" x="54" y="502">通常フロー</text>
+      <line x1="160" y1="498" x2="186" y2="498" stroke="#3ecfa0" stroke-width="1.2" marker-end="url(#arr1)"/>
+      <text style="fill:#6a6760;font-size:10px" x="192" y="502">GitHub 同期</text>
+      <line x1="290" y1="498" x2="316" y2="498" stroke="#8b7ff0" stroke-width="1.2" marker-end="url(#arr1)"/>
+      <text style="fill:#6a6760;font-size:10px" x="322" y="502">AI 計画送信</text>
+      <line x1="420" y1="498" x2="446" y2="498" stroke="#4fa8e8" stroke-width="1" marker-end="url(#arr1)"/>
+      <text style="fill:#6a6760;font-size:10px" x="452" y="502">ブラウザ承認</text>
+    </svg>
+  </div>
+
+  <h3>プランモードの3種類（サーバー側A/Bで自動割り当て）</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>モード</th><th>特徴</th><th>見分け方</th></tr>
+      <tr><td><strong>Simple Plan</strong></td><td>ローカルプランと同等の軽量解析。ファイルリストと変更ステップを出力。</td><td>箇条書きのみ、図なし</td></tr>
+      <tr><td><strong>Visual Plan</strong></td><td>Simple に加えて Mermaid / ASCII 図を自動生成。依存関係の循環なども視覚化。</td><td>計画内に図が含まれる</td></tr>
+      <tr><td><strong>Deep Plan</strong></td><td>サブエージェントによるリスク評価・アーキテクチャレビューを含む多角的分析。</td><td>リスク評価セクションがある</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ─── 3. GitHub 連携 ─── -->
+<section id="github">
+  <h2><span class="num">3</span>GitHub 連携の仕組み</h2>
+
+  <h3>スナップショット取得（起動時）</h3>
+  <p>Ultraplan を起動すると、その時点のリポジトリ状態が CCR に同期される。これは <strong>点時間のコピー</strong> であり、起動後にローカルで加えた変更はクラウドセッションには反映されない。コミット＆プッシュ後に起動するのがベストプラクティス。</p>
+
+  <div class="callout amber">
+    <strong>注意：</strong> Ultraplan は <code>origin</code> という名前のリモートからGitHub URLを探す。Bitbucket を origin にしてGitHubをセカンダリリモートにしている場合、認証エラーになる既知の不具合がある（回避策：GitHubリモートを origin にリネームする）。
+  </div>
+
+  <h3>セキュアプロキシ（git操作の仲介）</h3>
+  <p>クラウドセッション内のgitクライアントは、実際のGitHubトークンを持たない。代わりに <strong>スコープ付き一時認証情報</strong> を使ってAnthropicのセキュアプロキシに接続し、プロキシが検証・変換してGitHubへ転送する。</p>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">認証情報の隔離</div>
+      <p>GitHubトークンはVM内に入らない。漏洩リスクをゼロにする設計。</p>
+    </div>
+    <div class="card">
+      <div class="card-title">操作の制限</div>
+      <p>指定ブランチへの push のみ許可。clone・fetch・PR作成は可能。意図しないブランチへの書き込みを防止。</p>
+    </div>
+    <div class="card">
+      <div class="card-title">監査ログ</div>
+      <p>アウトバウンド通信はすべてプロキシ経由。完全に記録される。</p>
+    </div>
+    <div class="card">
+      <div class="card-title">ネットワーク制限</div>
+      <p>デフォルトは許可ドメインリストに限定。プロキシは GitHub 操作専用で、ネットワークアクセス設定とは独立している。</p>
+    </div>
+  </div>
+
+  <h3>利用条件（GitHub）</h3>
+  <ul class="req">
+    <li>GitHub リポジトリが必須（GitLab・Bitbucket・ローカルのみのリポジトリは不可）</li>
+    <li>Claude GitHub App をリポジトリにインストール済みであること</li>
+    <li>Amazon Bedrock・Google Cloud Vertex AI・Microsoft Foundry では利用不可</li>
+    <li>Team / Enterprise プランは Self-hosted GitHub Enterprise Server もサポート</li>
+  </ul>
+</section>
+
+<!-- ─── 4. ターミナル返却 ─── -->
+<section id="terminal">
+  <h2><span class="num">4</span>ターミナルへの返却メカニズム</h2>
+  <p>起動後のターミナルはポーリングのみで自由を保ちつつ、ブラウザで承認された結果を受け取る。</p>
+
+  <div class="diagram-wrap">
+    <div class="diagram-label">図2 — ステータス確認とポーリング</div>
+    <svg width="100%" viewBox="0 0 680 370" role="img">
+      <title>ターミナルのステータス確認と返却フロー詳細</title>
+      <desc>Ultraplan起動後にターミナルで確認できるステータスインジケーターの状態遷移と、/tasksコマンドの詳細</desc>
+      <defs>
+        <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+      <text style="fill:#6a6760;font-size:10px" x="200" y="13" text-anchor="middle">ターミナルのプロンプトに表示</text>
+      <text style="fill:#6a6760;font-size:10px" x="500" y="13" text-anchor="middle">/ tasks コマンドの詳細</text>
+      <rect x="20" y="20" width="362" height="196" rx="12" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1" stroke-dasharray="5 3"/>
+      <g class="c-gray">
+        <rect x="36" y="38" width="328" height="44" rx="8" stroke-width="0.5"/>
+        <text dominant-baseline="central" text-anchor="middle" x="200" y="56" style="fill:#b8b5ab;font-size:13px;font-weight:700">◇ ultraplan running</text>
+        <text dominant-baseline="central" text-anchor="middle" x="200" y="74" style="fill:#9e9b91;font-size:11px">コードベースを解析中 — 別作業が可能</text>
+      </g>
+      <line x1="200" y1="82" x2="200" y2="100" stroke="rgba(255,255,255,0.22)" stroke-width="1" marker-end="url(#arr2)"/>
+      <g class="c-amber">
+        <rect x="36" y="100" width="328" height="44" rx="8" stroke-width="0.5"/>
+        <text dominant-baseline="central" text-anchor="middle" x="200" y="118" style="fill:#f5cd74;font-size:13px;font-weight:700">◇ needs clarification</text>
+        <text dominant-baseline="central" text-anchor="middle" x="200" y="136" style="fill:#e8b84a;font-size:11px">ブラウザで追加情報が必要</text>
+      </g>
+      <line x1="200" y1="144" x2="200" y2="162" stroke="rgba(255,255,255,0.22)" stroke-width="1" marker-end="url(#arr2)"/>
+      <g class="c-purple">
+        <rect x="36" y="162" width="328" height="44" rx="8" stroke-width="0.5"/>
+        <text dominant-baseline="central" text-anchor="middle" x="200" y="180" style="fill:#cbc6f8;font-size:13px;font-weight:700">◆ ultraplan ready</text>
+        <text dominant-baseline="central" text-anchor="middle" x="200" y="198" style="fill:#a9a2f0;font-size:11px">計画完成 → ブラウザのURLを開く</text>
+      </g>
+      <text style="fill:#6a6760;font-size:10px" x="200" y="232" text-anchor="middle">3秒ごとにポーリング（この間もターミナルは自由）</text>
+      <g class="c-gray">
+        <rect x="416" y="20" width="240" height="196" rx="8" stroke-width="0.5"/>
+        <text dominant-baseline="central" text-anchor="middle" x="536" y="50" style="fill:#b8b5ab;font-size:13px;font-weight:700">/ tasks</text>
+        <text x="436" y="78" style="fill:#9e9b91;font-size:12px">セッションリンク</text>
+        <text x="436" y="100" style="fill:#6a6760;font-size:11px">ブラウザで開くURLを表示</text>
+        <text x="436" y="128" style="fill:#9e9b91;font-size:12px">エージェント アクティビティ</text>
+        <text x="436" y="150" style="fill:#6a6760;font-size:11px">何を調査中かをログで確認</text>
+        <text x="436" y="178" style="fill:#9e9b91;font-size:12px">Stop ultraplan</text>
+        <text x="436" y="200" style="fill:#6a6760;font-size:11px">中断してセッションをアーカイブ</text>
+      </g>
+      <line x1="200" y1="244" x2="200" y2="268" stroke="rgba(255,255,255,0.22)" stroke-width="1" marker-end="url(#arr2)"/>
+      <text style="fill:#6a6760;font-size:10px" x="200" y="262" text-anchor="middle">ブラウザで承認</text>
+      <g class="c-teal">
+        <rect x="20" y="274" width="300" height="80" rx="8" stroke-width="0.5"/>
+        <text dominant-baseline="central" text-anchor="middle" x="170" y="298" style="fill:#7de8c4;font-size:13px;font-weight:700">クラウド実行を選択</text>
+        <text x="40" y="320" style="fill:#59d4aa;font-size:11px">ターミナル: 短い通知テキストのみ届く</text>
+        <text x="40" y="340" style="fill:#59d4aa;font-size:11px">計画内容は届かない → PR が GitHub に作成</text>
+      </g>
+      <g class="c-gray">
+        <rect x="356" y="274" width="300" height="80" rx="8" stroke-width="0.5"/>
+        <text dominant-baseline="central" text-anchor="middle" x="506" y="298" style="fill:#b8b5ab;font-size:13px;font-weight:700">テレポートを選択</text>
+        <text x="376" y="320" style="fill:#9e9b91;font-size:11px">計画の全文がターミナルに注入される</text>
+        <text x="376" y="340" style="fill:#9e9b91;font-size:11px">Implement / New / Cancel の3択</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="diagram-label">図3 — ターミナル返却メカニズム詳細</div>
+    <svg width="100%" viewBox="0 0 680 440" role="img">
+      <title>Ultraplan ターミナル返却メカニズム詳細</title>
+      <desc>3秒ポーリングによりCCRの状態を監視し、ブラウザ承認後にexecutionTargetに応じてクラウド通知またはテレポートでターミナルに返却されるフロー</desc>
+      <defs>
+        <marker id="arr3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+      <g class="c-gray">
+        <rect x="20" y="20" width="200" height="56" rx="8" stroke-width="0.5"/>
+        <text dominant-baseline="central" text-anchor="middle" x="120" y="40" style="fill:#b8b5ab;font-size:13px;font-weight:700">ターミナル</text>
+        <text dominant-baseline="central" text-anchor="middle" x="120" y="59" style="fill:#9e9b91;font-size:10px">pollForApprovedExitPlanMode()</text>
+      </g>
+      <path d="M220,42 L440,42" fill="none" stroke="#8b7ff0" stroke-width="1" marker-end="url(#arr3)"/>
+      <path d="M440,56 L220,56" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arr3)"/>
+      <text style="fill:#8b7ff0;font-size:10px" x="330" y="36" text-anchor="middle">3秒ごとにポーリング</text>
+      <text style="fill:#6a6760;font-size:10px" x="330" y="68" text-anchor="middle">◆ ready で応答</text>
+      <g class="c-purple">
+        <rect x="440" y="20" width="220" height="56" rx="8" stroke-width="0.5"/>
+        <text dominant-baseline="central" text-anchor="middle" x="550" y="40" style="fill:#cbc6f8;font-size:13px;font-weight:700">CCR クラウドセッション</text>
+        <text dominant-baseline="central" text-anchor="middle" x="550" y="59" style="fill:#a9a2f0;font-size:11px">executionTarget を設定</text>
+      </g>
+      <rect x="20" y="100" width="640" height="1" fill="rgba(255,255,255,0.08)"/>
+      <text style="fill:#6a6760;font-size:10px" x="340" y="118" text-anchor="middle">ブラウザ承認後、executionTarget の値で分岐</text>
+      <rect x="20" y="128" width="305" height="290" rx="12" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.8" stroke-dasharray="5 3"/>
+      <text style="fill:#6a6760;font-size:10px" x="172" y="148" text-anchor="middle">executionTarget = 'remote'</text>
+      <g class="c-teal">
+        <rect x="36" y="158" width="274" height="80" rx="8" stroke-width="0.5"/>
+        <text dominant-baseline="central" text-anchor="middle" x="173" y="182" style="fill:#7de8c4;font-size:13px;font-weight:700">ターミナルに通知のみ</text>
+        <text x="56" y="206" style="fill:#59d4aa;font-size:11px">計画内容は届かない</text>
+        <text x="56" y="224" style="fill:#59d4aa;font-size:11px">インジケーターが消える</text>
+      </g>
+      <line x1="173" y1="238" x2="173" y2="268" stroke="rgba(255,255,255,0.22)" stroke-width="1" marker-end="url(#arr3)"/>
+      <g class="c-gray">
+        <rect x="36" y="268" width="274" height="68" rx="8" stroke-width="0.5"/>
+        <text dominant-baseline="central" text-anchor="middle" x="173" y="290" style="fill:#b8b5ab;font-size:13px;font-weight:700">表示されるメッセージ</text>
+        <text x="56" y="312" style="fill:#9e9b91;font-size:11px">Results will land as a pull</text>
+        <text x="56" y="328" style="fill:#9e9b91;font-size:11px">request when session finishes.</text>
+      </g>
+      <line x1="173" y1="336" x2="173" y2="368" stroke="rgba(255,255,255,0.22)" stroke-width="1" marker-end="url(#arr3)"/>
+      <g class="c-amber">
+        <rect x="36" y="368" width="274" height="40" rx="8" stroke-width="0.5"/>
+        <text dominant-baseline="central" text-anchor="middle" x="173" y="388" style="fill:#f5cd74;font-size:13px;font-weight:700">GitHub に PR が作成される</text>
+      </g>
+      <rect x="355" y="128" width="305" height="290" rx="12" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.8" stroke-dasharray="5 3"/>
+      <text style="fill:#6a6760;font-size:10px" x="507" y="148" text-anchor="middle">executionTarget = 'local'</text>
+      <g class="c-gray">
+        <rect x="371" y="158" width="274" height="80" rx="8" stroke-width="0.5"/>
+        <text dominant-baseline="central" text-anchor="middle" x="508" y="182" style="fill:#b8b5ab;font-size:13px;font-weight:700">計画全文がターミナルに注入</text>
+        <text x="391" y="206" style="fill:#9e9b91;font-size:11px">webセッションはアーカイブ</text>
+        <text x="391" y="224" style="fill:#9e9b91;font-size:11px">ターミナルがポーリングを検知</text>
+      </g>
+      <line x1="508" y1="238" x2="508" y2="268" stroke="rgba(255,255,255,0.22)" stroke-width="1" marker-end="url(#arr3)"/>
+      <g class="c-purple">
+        <rect x="371" y="268" width="274" height="120" rx="8" stroke-width="0.5"/>
+        <text dominant-baseline="central" text-anchor="middle" x="508" y="292" style="fill:#cbc6f8;font-size:13px;font-weight:700">Ultraplan approved ダイアログ</text>
+        <text x="391" y="316" style="fill:#a9a2f0;font-size:11.5px">① Implement here</text>
+        <text x="408" y="334" style="fill:#9390d0;font-size:10.5px">現在の会話に計画を注入して続行</text>
+        <text x="391" y="354" style="fill:#a9a2f0;font-size:11.5px">② Start new session　③ Cancel</text>
+        <text x="408" y="372" style="fill:#9390d0;font-size:10.5px">新規 / ファイルに保存して後回し</text>
+      </g>
+    </svg>
+  </div>
+
+  <h3>返却内容の違い（実行先による比較）</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th></th><th>クラウド実行（remote）</th><th>テレポート（local）</th></tr>
+      <tr><td><strong>ターミナルに届くもの</strong></td><td>短い通知テキストのみ</td><td>計画の全文</td></tr>
+      <tr><td><strong>ダイアログ</strong></td><td>なし（インジケーターが消えるだけ）</td><td>「Ultraplan approved」3択</td></tr>
+      <tr><td><strong>最終成果物</strong></td><td>GitHub PR（ブラウザで確認）</td><td>ローカルで実行した結果</td></tr>
+      <tr><td><strong>向いているケース</strong></td><td>自己完結した変更、CI/CDに乗せる場合</td><td>環境変数・内部サービス依存の作業</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ─── 5. 利用条件 ─── -->
+<section id="requirements">
+  <h2><span class="num">5</span>利用条件</h2>
+  <ul class="req">
+    <li>Claude Code バージョン <strong>v2.1.91 以降</strong></li>
+    <li>Claude Code on the web アカウント（<span class="badge badge-gray">Pro</span><span class="badge badge-gray">Max</span><span class="badge badge-gray">Team</span><span class="badge badge-gray">Enterprise</span>）</li>
+    <li>GitHub リポジトリが接続済みであること</li>
+    <li>Claude GitHub App がリポジトリにインストール済みであること</li>
+    <li>Amazon Bedrock / Google Cloud Vertex AI / Microsoft Foundry では利用不可</li>
+    <li>Self-hosted GitHub Enterprise Server は Team・Enterprise プランのみ対応</li>
+  </ul>
+  <div class="callout">
+    ステータス：Research Preview。フィードバックにより動作・機能は変更される場合がある。
+  </div>
+</section>
+
+<!-- ─── 6. 使い分け ─── -->
+<section id="tips">
+  <h2><span class="num">6</span>使い分けとベストプラクティス</h2>
+
+  <h3>Ultraplan を使うべきケース</h3>
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">大規模移行・リファクタリング</div>
+      <p>複数ファイルにまたがる変更や、アーキテクチャ上の決定が伴う作業。計画に30分かけることで実装のやり直しを防ぐ。</p>
+    </div>
+    <div class="card">
+      <div class="card-title">計画レビューを共有したい</div>
+      <p>ブラウザURLを共有すれば、チームメンバーが計画をレビューできる。</p>
+    </div>
+  </div>
+
+  <h3>ローカルプランを使うべきケース</h3>
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">小さな変更・素早い反復</div>
+      <p>ローカルプランはターミナル上で即座にフィードバックできる。単純なタスクにUltraplanのオーバーヘッドは不要。</p>
+    </div>
+    <div class="card">
+      <div class="card-title">カスタムツール依存</div>
+      <p>ローカルのMCPサーバーやカスタムツールが必要な場合、クラウドセッションからはアクセスできない。</p>
+    </div>
+  </div>
+
+  <h3>ベストプラクティス</h3>
+  <ul class="req">
+    <li>Ultraplan 起動前に必ず <code>git commit &amp;&amp; git push</code> する。コミット前の変更はスナップショットに含まれない可能性がある。</li>
+    <li>まずローカルプランで方向性を確認し、「Refine with Ultraplan」で昇格させると精度が高くなる。</li>
+    <li>プロジェクトルートに <code>CLAUDE.md</code> を置き、スタック・規約・触ってはいけないファイルを記述しておく。</li>
+    <li>タスク説明は具体的に。「auth をリファクタリング」より「/api/auth のセッション認証をJWTに置き換え、エンドポイントシグネチャを維持する」のほうが精度が上がる。</li>
+  </ul>
+</section>
+
+</main>
+
+<footer>
+  <span>Ultraplan 完全ガイド — Claude Code Research Preview</span>
+  <span>2026年4月 時点</span>
+</footer>
+
+</body>
+</html>
