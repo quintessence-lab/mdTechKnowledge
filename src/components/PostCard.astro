@@ -5,12 +5,18 @@ interface Props {
   category: string;
   tags: string[];
   date: Date;
+  updatedDate?: Date;
   excerpt?: string;
 }
 
-const { title, slug, category, tags, date, excerpt } = Astro.props;
+const { title, slug, category, tags, date, updatedDate, excerpt } = Astro.props;
 const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/';
 const dateStr = date.toLocaleDateString('ja-JP', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+const updatedStr = updatedDate?.toLocaleDateString('ja-JP', {
   year: 'numeric',
   month: '2-digit',
   day: '2-digit',
@@ -21,6 +27,7 @@ const dateStr = date.toLocaleDateString('ja-JP', {
   <div class="post-card-meta">
     <span class="post-card-date">{dateStr}</span>
     <span class="post-card-category">{category}</span>
+    {updatedStr && <span class="post-card-updated">更新：{updatedStr}</span>}
   </div>
   <h2 class="post-card-title">{title}</h2>
   {excerpt && <p class="post-card-excerpt">{excerpt}</p>}
@@ -70,6 +77,13 @@ const dateStr = date.toLocaleDateString('ja-JP', {
 
   .post-card-category:hover {
     text-decoration: underline;
+  }
+
+  .post-card-updated {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-left: auto;
+    color: var(--color-accent);
   }
 
   .post-card-title {

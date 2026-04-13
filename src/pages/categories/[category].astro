@@ -15,7 +15,7 @@ export async function getStaticPaths() {
       category,
       posts: posts
         .filter((p) => p.data.category === category)
-        .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()),
+        .sort((a, b) => (b.data.updatedDate ?? b.data.date).valueOf() - (a.data.updatedDate ?? a.data.date).valueOf()),
     },
   }));
 }
@@ -34,6 +34,7 @@ const { category, posts } = Astro.props;
         category={post.data.category}
         tags={post.data.tags}
         date={post.data.date}
+        updatedDate={post.data.updatedDate}
         excerpt={post.data.excerpt}
       />
     ))}
