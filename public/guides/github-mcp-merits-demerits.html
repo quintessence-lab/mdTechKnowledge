@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub MCP サーバ導入のメリットとデメリット</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f6fb;
+    --surface: #ffffff;
+    --surface2: #eef1f8;
+    --border: #d0d7e3;
+    --border-light: #e4e9f2;
+    --text: #1e293b;
+    --text-muted: #5a6a82;
+    --text-dim: #8896ab;
+    --accent: #2563eb;
+    --accent-light: #dbeafe;
+    --accent2: #7c3aed;
+    --accent2-light: #ede9fe;
+    --green: #059669;
+    --green-light: #d1fae5;
+    --orange: #d97706;
+    --orange-light: #fef3c7;
+    --red: #dc2626;
+    --red-light: #fee2e2;
+    --cyan: #0891b2;
+    --cyan-light: #cffafe;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2d1b69 50%, #1e3a5f 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 56px 24px 44px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(99,179,255,0.15) 0%, transparent 60%),
+                radial-gradient(circle at 70% 50%, rgba(167,139,250,0.12) 0%, transparent 60%);
+  }
+  .hero h1 { font-size: 26px; font-weight: 900; letter-spacing: -0.5px; position: relative; color: #fff; }
+  .hero .sub { color: rgba(255,255,255,0.7); font-size: 13px; margin-top: 12px; position: relative; }
+  .hero .meta { display: inline-flex; gap: 12px; margin-top: 18px; position: relative; }
+  .hero .meta span {
+    font-size: 11px; color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.12);
+    padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .container { max-width: 880px; margin: 0 auto; padding: 0 20px; }
+
+  section { padding: 44px 0; border-bottom: 1px solid var(--border-light); }
+  section:last-child { border-bottom: none; }
+
+  h2 { font-size: 19px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+  h2 .icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  h3 { font-size: 15px; font-weight: 700; color: var(--accent); margin: 24px 0 10px; }
+  p { margin-bottom: 12px; font-size: 14px; }
+  code { background: var(--surface2); padding: 1px 6px; border-radius: 4px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--accent2); }
+
+  .site-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 18px 0; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border-light); border-radius: 10px; padding: 16px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .stat-card .num { font-size: 28px; font-weight: 900; font-family: 'IBM Plex Mono', monospace; color: var(--accent); }
+  .stat-card .label { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+  .tab-bar { display: flex; gap: 6px; margin-bottom: 16px; justify-content: center; }
+  .tab-btn {
+    padding: 8px 18px; border-radius: 8px; border: 1.5px solid var(--border);
+    background: var(--surface); color: var(--text-muted); font-size: 12px; font-weight: 600;
+    cursor: pointer; font-family: inherit; transition: all 0.2s;
+  }
+  .tab-btn.active { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
+  .tab-btn:hover:not(.active) { border-color: var(--text-dim); background: var(--surface2); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .svg-wrap {
+    background: var(--surface); border: 1px solid var(--border-light); border-radius: 12px;
+    padding: 20px 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); overflow-x: auto;
+  }
+  .svg-wrap svg { display: block; margin: 0 auto; width: 100%; max-width: 580px; }
+  .diagram-note { margin-top: 12px; padding: 10px 16px; font-size: 12px; border-radius: 8px; }
+
+  .merit-card, .demerit-card {
+    background: var(--surface); border-radius: 10px; padding: 18px 22px; margin: 12px 0;
+    border-left: 4px solid; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .merit-card { border-left-color: var(--green); }
+  .demerit-card { border-left-color: var(--red); }
+  .merit-card .card-num, .demerit-card .card-num { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; margin-bottom: 3px; }
+  .merit-card .card-num { color: var(--green); }
+  .demerit-card .card-num { color: var(--red); }
+  .merit-card .card-title, .demerit-card .card-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .merit-card p, .demerit-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 0; }
+
+  .auth-detail {
+    background: var(--surface); border: 1px solid var(--border-light); border-radius: 10px;
+    padding: 20px; margin: 14px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13px; }
+  th { background: var(--surface2); font-weight: 600; text-align: left; padding: 9px 12px; border-bottom: 2px solid var(--border); color: var(--accent); font-size: 12px; }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border-light); color: var(--text-muted); }
+  tr:hover td { background: var(--surface2); }
+  .check { color: var(--green); font-weight: 700; }
+  .cross { color: var(--red); font-weight: 700; }
+
+  .verdict {
+    background: linear-gradient(135deg, var(--accent-light), var(--accent2-light));
+    border: 1px solid var(--accent); border-radius: 12px; padding: 24px; margin: 18px 0;
+  }
+  .verdict h3 { color: var(--accent); font-size: 16px; margin: 0 0 10px; }
+  .verdict p { font-size: 14px; }
+
+  .timing-list { margin: 14px 0; padding: 0; list-style: none; }
+  .timing-list li { position: relative; padding: 6px 0 6px 22px; font-size: 13px; color: var(--text-muted); }
+  .timing-list li::before { content: '▸'; position: absolute; left: 4px; color: var(--orange); font-weight: 700; }
+
+  .context-box { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 18px 0; }
+  .ctx-card { background: var(--surface); border: 1px solid var(--border-light); border-radius: 10px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .ctx-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 10px; }
+  .ctx-card .ctx-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; }
+  .ctx-card .ctx-row .val { font-weight: 600; }
+
+  .footer { text-align: center; padding: 28px 20px; font-size: 11px; color: var(--text-dim); border-top: 1px solid var(--border-light); }
+
+  @media (max-width: 640px) {
+    .site-stats { grid-template-columns: repeat(2, 1fr); }
+    .context-box { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 21px; }
+  }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+  section { animation: fadeUp 0.4s ease-out both; }
+  section:nth-child(2) { animation-delay: 0.05s; }
+  section:nth-child(3) { animation-delay: 0.1s; }
+  section:nth-child(4) { animation-delay: 0.15s; }
+  section:nth-child(5) { animation-delay: 0.2s; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>GitHub MCP サーバ導入の<br>メリットとデメリット</h1>
+  <p class="sub">mdTechKnowledge を対象に Claude が実地検証した比較レポート</p>
+  <div class="meta"><span>2026-04-13</span><span>検証: Web フェッチ実施済</span></div>
+</div>
+
+<div class="container">
+
+  <!-- 1. Site Overview -->
+  <section>
+    <h2><span class="icon" style="background:var(--accent-light)">📊</span>対象サイトの概要</h2>
+    <p>mdTechKnowledge は Astro + GitHub Pages で運用されている技術ナレッジサイト。Markdown 中心で記述されており、Claude Code・MCP・Copilot など AI 関連技術が体系的にまとめられている。</p>
+    <div class="site-stats">
+      <div class="stat-card"><div class="num">32</div><div class="label">総記事数</div></div>
+      <div class="stat-card"><div class="num">4</div><div class="label">カテゴリ</div></div>
+      <div class="stat-card"><div class="num">18</div><div class="label">Claude技術解説</div></div>
+      <div class="stat-card"><div class="num">9</div><div class="label">その他技術</div></div>
+    </div>
+  </section>
+
+  <!-- 2. Architecture Diagrams -->
+  <section>
+    <h2><span class="icon" style="background:var(--accent2-light)">🏗️</span>構成図の比較</h2>
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('without', this)">従来構成（MCP なし）</button>
+      <button class="tab-btn" onclick="switchTab('with', this)">MCP あり構成</button>
+    </div>
+
+    <div id="tab-without" class="tab-panel active">
+      <div class="svg-wrap">
+        <svg viewBox="0 0 540 440" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="20" width="520" height="130" rx="10" fill="none" stroke="#059669" stroke-width="1.5" stroke-dasharray="6,3"/>
+          <text x="20" y="14" fill="#059669" font-size="11" font-weight="600" font-family="'IBM Plex Mono',monospace">あなたの端末</text>
+          <rect x="30" y="50" width="110" height="70" rx="8" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
+          <text x="85" y="78" text-anchor="middle" font-size="18">👤</text>
+          <text x="85" y="96" text-anchor="middle" fill="#065f46" font-size="11" font-weight="600" font-family="'IBM Plex Mono',monospace">あなた</text>
+          <text x="85" y="110" text-anchor="middle" fill="#059669" font-size="9" font-family="'IBM Plex Mono',monospace">エディタ</text>
+          <rect x="180" y="50" width="130" height="70" rx="8" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
+          <text x="245" y="78" text-anchor="middle" font-size="18">📁</text>
+          <text x="245" y="96" text-anchor="middle" fill="#065f46" font-size="11" font-weight="600" font-family="'IBM Plex Mono',monospace">ローカル git</text>
+          <text x="245" y="110" text-anchor="middle" fill="#059669" font-size="9" font-family="'IBM Plex Mono',monospace">git add / commit</text>
+          <rect x="350" y="50" width="160" height="70" rx="8" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
+          <text x="430" y="78" text-anchor="middle" font-size="18">⌨️</text>
+          <text x="430" y="96" text-anchor="middle" fill="#065f46" font-size="11" font-weight="600" font-family="'IBM Plex Mono',monospace">ターミナル</text>
+          <text x="430" y="110" text-anchor="middle" fill="#059669" font-size="9" font-family="'IBM Plex Mono',monospace">git push origin main</text>
+          <line x1="140" y1="85" x2="175" y2="85" stroke="#059669" stroke-width="1.5"/><polygon points="180,85 173,81 173,89" fill="#059669"/>
+          <text x="158" y="79" fill="#059669" font-size="9" text-anchor="middle" font-family="'IBM Plex Mono',monospace">編集</text>
+          <line x1="310" y1="85" x2="345" y2="85" stroke="#059669" stroke-width="1.5"/><polygon points="350,85 343,81 343,89" fill="#059669"/>
+          <text x="328" y="79" fill="#059669" font-size="9" text-anchor="middle" font-family="'IBM Plex Mono',monospace">push</text>
+
+          <rect x="10" y="190" width="520" height="90" rx="10" fill="none" stroke="#d97706" stroke-width="1.5" stroke-dasharray="6,3"/>
+          <text x="20" y="184" fill="#d97706" font-size="11" font-weight="600" font-family="'IBM Plex Mono',monospace">GitHub（クラウド）</text>
+          <rect x="80" y="210" width="170" height="55" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+          <text x="165" y="233" text-anchor="middle" font-size="16">🐙</text>
+          <text x="165" y="250" text-anchor="middle" fill="#92400e" font-size="11" font-weight="600" font-family="'IBM Plex Mono',monospace">GitHub Repo</text>
+          <rect x="300" y="210" width="180" height="55" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+          <text x="390" y="233" text-anchor="middle" font-size="16">🌐</text>
+          <text x="390" y="250" text-anchor="middle" fill="#92400e" font-size="11" font-weight="600" font-family="'IBM Plex Mono',monospace">GitHub Pages</text>
+          <line x1="430" y1="150" x2="195" y2="206" stroke="#d97706" stroke-width="2"/><polygon points="195,210 193,201 201,204" fill="#d97706"/>
+          <text x="340" y="172" fill="#d97706" font-size="9" font-family="'IBM Plex Mono',monospace">git push</text>
+          <line x1="250" y1="237" x2="296" y2="237" stroke="#d97706" stroke-width="1.5"/><polygon points="300,237 293,233 293,241" fill="#d97706"/>
+          <text x="275" y="230" fill="#d97706" font-size="9" text-anchor="middle" font-family="'IBM Plex Mono',monospace">自動ビルド</text>
+
+          <rect x="10" y="320" width="520" height="80" rx="10" fill="none" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="6,3"/>
+          <text x="20" y="314" fill="#7c3aed" font-size="11" font-weight="600" font-family="'IBM Plex Mono',monospace">Claude (claude.ai)</text>
+          <rect x="140" y="338" width="260" height="50" rx="8" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="270" y="358" text-anchor="middle" font-size="16">🤖</text>
+          <text x="270" y="376" text-anchor="middle" fill="#5b21b6" font-size="11" font-weight="600" font-family="'IBM Plex Mono',monospace">Claude — 会話のみ（コード生成）</text>
+
+          <line x1="270" y1="334" x2="270" y2="155" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="6,4"/>
+          <polygon points="270,155 266,162 274,162" fill="#7c3aed"/>
+          <text x="320" y="270" fill="#7c3aed" font-size="9" font-family="'IBM Plex Mono',monospace">コピペで連携</text>
+
+          <rect x="20" y="412" width="500" height="18" rx="4" fill="#fee2e2"/>
+          <text x="270" y="424" fill="#dc2626" font-size="9" text-anchor="middle" font-family="'IBM Plex Mono',monospace">⚠️ Claude はリポジトリに直接アクセスできない → コピペ往復が必要</text>
+        </svg>
+      </div>
+    </div>
+
+    <div id="tab-with" class="tab-panel">
+      <div class="svg-wrap">
+        <svg viewBox="0 0 540 580" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="20" width="520" height="120" rx="10" fill="none" stroke="#059669" stroke-width="1.5" stroke-dasharray="6,3"/>
+          <text x="20" y="14" fill="#059669" font-size="11" font-weight="600" font-family="'IBM Plex Mono',monospace">あなたの端末（変更なし）</text>
+          <rect x="30" y="46" width="110" height="66" rx="8" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
+          <text x="85" y="72" text-anchor="middle" font-size="16">👤</text>
+          <text x="85" y="89" text-anchor="middle" fill="#065f46" font-size="11" font-weight="600" font-family="'IBM Plex Mono',monospace">あなた</text>
+          <text x="85" y="103" text-anchor="middle" fill="#059669" font-size="9" font-family="'IBM Plex Mono',monospace">エディタ</text>
+          <rect x="180" y="46" width="125" height="66" rx="8" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
+          <text x="242" y="72" text-anchor="middle" font-size="16">📁</text>
+          <text x="242" y="89" text-anchor="middle" fill="#065f46" font-size="11" font-weight="600" font-family="'IBM Plex Mono',monospace">ローカル git</text>
+          <text x="242" y="103" text-anchor="middle" fill="#059669" font-size="9" font-family="'IBM Plex Mono',monospace">add / commit</text>
+          <rect x="345" y="46" width="165" height="66" rx="8" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
+          <text x="427" y="72" text-anchor="middle" font-size="16">⌨️</text>
+          <text x="427" y="89" text-anchor="middle" fill="#065f46" font-size="11" font-weight="600" font-family="'IBM Plex Mono',monospace">ターミナル</text>
+          <text x="427" y="103" text-anchor="middle" fill="#059669" font-size="9" font-family="'IBM Plex Mono',monospace">git push（従来通り）</text>
+          <line x1="140" y1="79" x2="175" y2="79" stroke="#059669" stroke-width="1.5"/><polygon points="180,79 173,75 173,83" fill="#059669"/>
+          <line x1="305" y1="79" x2="340" y2="79" stroke="#059669" stroke-width="1.5"/><polygon points="345,79 338,75 338,83" fill="#059669"/>
+
+          <rect x="10" y="180" width="520" height="130" rx="10" fill="none" stroke="#d97706" stroke-width="1.5" stroke-dasharray="6,3"/>
+          <text x="20" y="174" fill="#d97706" font-size="11" font-weight="600" font-family="'IBM Plex Mono',monospace">GitHub（クラウド）</text>
+          <rect x="30" y="208" width="140" height="55" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+          <text x="100" y="230" text-anchor="middle" font-size="14">🐙</text>
+          <text x="100" y="248" text-anchor="middle" fill="#92400e" font-size="11" font-weight="600" font-family="'IBM Plex Mono',monospace">GitHub Repo</text>
+          <rect x="200" y="208" width="140" height="55" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+          <text x="270" y="230" text-anchor="middle" font-size="14">🌐</text>
+          <text x="270" y="248" text-anchor="middle" fill="#92400e" font-size="11" font-weight="600" font-family="'IBM Plex Mono',monospace">GitHub Pages</text>
+          <rect x="370" y="198" width="140" height="78" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+          <text x="440" y="224" text-anchor="middle" font-size="14">🔌</text>
+          <text x="440" y="242" text-anchor="middle" fill="#1e40af" font-size="11" font-weight="600" font-family="'IBM Plex Mono',monospace">GitHub API</text>
+          <text x="440" y="258" text-anchor="middle" fill="#2563eb" font-size="9" font-family="'IBM Plex Mono',monospace">REST / GraphQL</text>
+          <line x1="427" y1="140" x2="120" y2="204" stroke="#d97706" stroke-width="2"/><polygon points="120,208 118,199 126,202" fill="#d97706"/>
+          <text x="300" y="164" fill="#d97706" font-size="9" font-family="'IBM Plex Mono',monospace">git push</text>
+          <line x1="170" y1="235" x2="196" y2="235" stroke="#d97706" stroke-width="1.5"/><polygon points="200,235 193,231 193,239" fill="#d97706"/>
+
+          <!-- Auth badge -->
+          <rect x="370" y="283" width="140" height="18" rx="4" fill="#fee2e2"/>
+          <text x="440" y="295" fill="#dc2626" font-size="8" text-anchor="middle" font-weight="600" font-family="'IBM Plex Mono',monospace">🔐 PAT / OAuth 認証必須</text>
+
+          <rect x="10" y="350" width="520" height="80" rx="10" fill="none" stroke="#0891b2" stroke-width="1.5" stroke-dasharray="6,3"/>
+          <text x="20" y="344" fill="#0891b2" font-size="11" font-weight="600" font-family="'IBM Plex Mono',monospace">MCP Server（Anthropic ホスト型）</text>
+          <rect x="100" y="368" width="340" height="48" rx="8" fill="#cffafe" stroke="#0891b2" stroke-width="1.5"/>
+          <text x="270" y="389" text-anchor="middle" font-size="14">🔗</text>
+          <text x="270" y="406" text-anchor="middle" fill="#164e63" font-size="11" font-weight="600" font-family="'IBM Plex Mono',monospace">GitHub MCP Server — ファイル取得 / Issue / PR</text>
+
+          <line x1="440" y1="280" x2="440" y2="364" stroke="#0891b2" stroke-width="1.5"/>
+          <polygon points="440,368 436,361 444,361" fill="#0891b2"/>
+          <polygon points="440,280 436,287 444,287" fill="#0891b2"/>
+          <text x="478" y="328" fill="#0891b2" font-size="9" font-family="'IBM Plex Mono',monospace">API呼出</text>
+
+          <rect x="10" y="468" width="520" height="80" rx="10" fill="none" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="6,3"/>
+          <text x="20" y="462" fill="#7c3aed" font-size="11" font-weight="600" font-family="'IBM Plex Mono',monospace">Claude (claude.ai)</text>
+          <rect x="100" y="486" width="340" height="48" rx="8" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="270" y="507" text-anchor="middle" font-size="14">🤖</text>
+          <text x="270" y="524" text-anchor="middle" fill="#5b21b6" font-size="11" font-weight="600" font-family="'IBM Plex Mono',monospace">Claude — MCP でリポジトリ参照可能</text>
+
+          <line x1="270" y1="482" x2="270" y2="420" stroke="#7c3aed" stroke-width="1.5"/>
+          <polygon points="270,420 266,427 274,427" fill="#7c3aed"/>
+          <polygon points="270,482 266,475 274,475" fill="#7c3aed"/>
+          <text x="230" y="454" fill="#7c3aed" font-size="9" font-family="'IBM Plex Mono',monospace">JSON-RPC</text>
+
+          <rect x="15" y="556" width="510" height="18" rx="4" fill="#fee2e2"/>
+          <text x="270" y="568" fill="#dc2626" font-size="9" text-anchor="middle" font-family="'IBM Plex Mono',monospace">⚠ ツール定義 + API レスポンスがコンテキストを消費 ／ PAT 認証が必須</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="diagram-note" style="background:var(--orange-light); color:var(--orange);">⚠ どちらの構成でも、端末側の git 操作（add / commit / push）は一切変わらない。</div>
+  </section>
+
+  <!-- 3. Merits -->
+  <section>
+    <h2><span class="icon" style="background:var(--green-light)">✅</span>メリット</h2>
+    <div class="merit-card"><div class="card-num">MERIT 01</div><div class="card-title">リポジトリの構造的探索が可能</div><p>ファイルツリーを直接一覧できる。Web フェッチではカテゴリページから URL をたどる必要があるが、MCP なら「src/content/blog/ 以下のファイルを全部見せて」のような指示で即座にアクセスできる。</p></div>
+    <div class="merit-card"><div class="card-num">MERIT 02</div><div class="card-title">Markdown ソースをノイズなしで取得</div><p>Web フェッチではビルド後の HTML が返り、ナビゲーション・フッター・スタイル情報が混入する。MCP なら .md の生データが取れるため、解析・要約時のノイズが少ない。</p></div>
+    <div class="merit-card"><div class="card-num">MERIT 03</div><div class="card-title">リポジトリ内の横断検索</div><p>コード検索ツールにより、特定キーワードを含む記事をリポジトリ全体から探索できる。Web フェッチではサイト内検索（JS 動作）が利用できないため、MCP の優位性がある。</p></div>
+    <div class="merit-card"><div class="card-num">MERIT 04</div><div class="card-title">Issue / PR 操作の統合</div><p>Claude との会話内から直接 Issue 作成や PR 作成が可能。ナレッジの改善提案を Issue 化したり、修正内容を PR として提出するワークフローが会話内で完結する。</p></div>
+    <div class="merit-card"><div class="card-num">MERIT 05</div><div class="card-title">スケーラビリティ</div><p>記事が 100 件を超えてカテゴリが複雑化した場合、Web フェッチでは一覧取得に複数回アクセスが必要。MCP ならファイルツリーから一括探索でき、規模拡大に強い。</p></div>
+  </section>
+
+  <!-- 4. Demerits -->
+  <section>
+    <h2><span class="icon" style="background:var(--red-light)">⚠️</span>デメリット</h2>
+
+    <div class="demerit-card" style="border-left-color:#d97706; background:linear-gradient(135deg, #fffbeb, #ffffff);">
+      <div class="card-num" style="color:#d97706">⚠ DEMERIT 01 — 最重要</div>
+      <div class="card-title">認証トークン（PAT）のセキュリティリスク</div>
+      <p>Public リポジトリであっても MCP 経由では PAT または OAuth 認証が必須。Web フェッチでは認証不要で公開 URL を読むだけだが、MCP では必ずトークンを AI に渡す必要がある。</p>
+    </div>
+
+    <div class="auth-detail">
+      <h3 style="margin-top:0; color:var(--red); font-size:13px;">PAT のアクセス範囲が自リポジトリに限定されない</h3>
+      <p style="font-size:12px;">PAT は発行時に自動的に <strong>全 Public リポジトリへの読み取り権</strong> を持つ。自分の mdTechKnowledge だけでなく、GitHub 上のあらゆる Public リポジトリにアクセス可能な状態で AI に渡すことになり、悪意ある Public リポジトリを通じたプロンプトインジェクション攻撃のリスクがある。</p>
+      <h3 style="color:var(--red); font-size:13px;">PAT スコープ設定の複雑さ</h3>
+      <p style="font-size:12px;">35 以上のスコープ選択肢があり、適切な判断が難しい。Classic PAT で広いスコープを設定すると、Private リポジトリや組織リソースまで AI にアクセスさせてしまう危険がある。</p>
+      <table>
+        <thead><tr><th>トークン種別</th><th>アクセス制御</th><th>ツール表示</th><th>リスク</th></tr></thead>
+        <tbody>
+          <tr><td>Classic PAT (<code>ghp_</code>)</td><td>スコープ単位（広い）</td><td>自動フィルタ</td><td style="color:var(--red)">広範囲・漏洩時の影響大</td></tr>
+          <tr><td>Fine-grained PAT</td><td>リポジトリ単位（狭い）</td><td>全ツール表示</td><td style="color:var(--orange)">スコープ検出非対応</td></tr>
+          <tr><td>OAuth</td><td>認可時に選択</td><td>スコープチャレンジ</td><td style="color:var(--text-muted)">組織ポリシーに依存</td></tr>
+        </tbody>
+      </table>
+      <h3 style="color:var(--red); font-size:13px;">Web フェッチとの認証比較</h3>
+      <table>
+        <thead><tr><th>項目</th><th>Web フェッチ</th><th>MCP（PAT 認証）</th></tr></thead>
+        <tbody>
+          <tr><td>認証</td><td class="check">不要（公開 URL）</td><td class="cross">必須（PAT or OAuth）</td></tr>
+          <tr><td>アクセス範囲</td><td class="check">指定 URL のみ</td><td class="cross">PAT スコープの全リポジトリ</td></tr>
+          <tr><td>トークン管理</td><td class="check">なし</td><td class="cross">発行・保管・ローテーション必要</td></tr>
+          <tr><td>漏洩リスク</td><td class="check">なし</td><td class="cross">設定ファイル・環境変数から漏洩の可能性</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="demerit-card"><div class="card-num">DEMERIT 02</div><div class="card-title">コンテキストの常時消費</div><p>ツール定義（スキーマ）が会話コンテキストに常時載り、数百〜1,000+ トークンを消費する。小規模サイトではこのオーバーヘッドが相対的に大きい。</p></div>
+    <div class="demerit-card"><div class="card-num">DEMERIT 03</div><div class="card-title">初期セットアップのコスト</div><p>PAT の発行（35+ スコープから適切な選定）、MCP サーバの登録、接続確認が必要。Web フェッチは URL 指定だけで即利用可能。</p></div>
+    <div class="demerit-card"><div class="card-num">DEMERIT 04</div><div class="card-title">push は Claude からできない</div><p>MCP 経由でリポジトリを「読む」ことはできるが、ファイル変更の push はできない。デプロイのトリガーは従来通り端末からの手動 push が必要。</p></div>
+    <div class="demerit-card"><div class="card-num">DEMERIT 05</div><div class="card-title">Web フェッチで十分なケースが多い</div><p>今回の検証で確認した通り、カテゴリページが整理されていれば Web フェッチだけで記事一覧の取得→本文読み込みが問題なく行える。</p></div>
+    <div class="demerit-card"><div class="card-num">DEMERIT 06</div><div class="card-title">Claude Code 前提の機能が多い</div><p>Issue 作成・PR 作成・Actions 監視などは Claude Code での利用を主に想定。claude.ai の Web チャットからはこれらの恩恵が限定的。</p></div>
+  </section>
+
+  <!-- 5. Verification -->
+  <section>
+    <h2><span class="icon" style="background:var(--cyan-light)">🔬</span>実地検証結果</h2>
+    <p>Claude が Web フェッチで mdTechKnowledge に実際にアクセスした結果:</p>
+    <table>
+      <thead><tr><th>取得対象</th><th>結果</th><th>備考</th></tr></thead>
+      <tbody>
+        <tr><td>カテゴリ一覧</td><td class="check">✅ 成功</td><td>4カテゴリ・全記事タイトル取得</td></tr>
+        <tr><td>個別記事の本文</td><td class="check">✅ 成功</td><td>MCP アーキテクチャ記事で確認</td></tr>
+        <tr><td>コードブロック</td><td class="check">✅ 成功</td><td>ASCII 図・JSON・bash 等</td></tr>
+        <tr><td>テーブル</td><td class="check">✅ 成功</td><td>Markdown テーブルも再現</td></tr>
+        <tr><td>サイト内検索</td><td class="cross">❌ 不可</td><td>JS 動作のため web_fetch 非対応</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 6. Context -->
+  <section>
+    <h2><span class="icon" style="background:var(--orange-light)">📐</span>コンテキスト消費の比較</h2>
+    <div class="context-box">
+      <div class="ctx-card" style="border-top:3px solid var(--green);">
+        <h4 style="color:var(--green)">Web フェッチ</h4>
+        <div class="ctx-row"><span>会話開始時</span><span class="val" style="color:var(--green)">≈ 0 トークン</span></div>
+        <div class="ctx-row"><span>認証</span><span class="val" style="color:var(--green)">不要</span></div>
+        <div class="ctx-row"><span>記事取得時</span><span class="val">本文 + ナビ混入</span></div>
+        <div class="ctx-row"><span>総合効率</span><span class="val" style="color:var(--green)">少量参照に有利</span></div>
+      </div>
+      <div class="ctx-card" style="border-top:3px solid var(--accent2);">
+        <h4 style="color:var(--accent2)">MCP あり</h4>
+        <div class="ctx-row"><span>会話開始時</span><span class="val" style="color:var(--red)">≈ 1,000+ トークン</span></div>
+        <div class="ctx-row"><span>認証</span><span class="val" style="color:var(--red)">PAT 必須</span></div>
+        <div class="ctx-row"><span>記事取得時</span><span class="val">本文のみ（ノイズ少）</span></div>
+        <div class="ctx-row"><span>総合効率</span><span class="val" style="color:var(--accent2)">大量参照に有利</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Verdict -->
+  <section>
+    <h2><span class="icon" style="background:var(--accent-light)">💡</span>結論と推奨</h2>
+    <div class="verdict">
+      <h3>現時点の推奨: Web フェッチ運用を継続</h3>
+      <p>32 記事・4 カテゴリの現規模では、Web フェッチで十分対応可能。コンテキスト消費に加え、PAT の発行・管理・セキュリティリスクを考慮すると、認証不要で即利用可能な Web フェッチの方がコスト対効果が高い。</p>
+    </div>
+    <h3>MCP 導入を検討すべきタイミング</h3>
+    <ul class="timing-list">
+      <li>記事数が 100 件を超え、カテゴリが複雑化した場合</li>
+      <li>Claude との会話内から Issue / PR を直接操作したい場合</li>
+      <li>Markdown ソースの生データを正確に取得する必要がある場合</li>
+      <li>複数リポジトリを横断して検索したい場合</li>
+    </ul>
+    <h3>MCP 導入時のセキュリティ推奨事項</h3>
+    <ul class="timing-list">
+      <li>Fine-grained PAT を使用し、対象リポジトリを明示的に限定する</li>
+      <li>読み取り専用のスコープに制限する（書き込み権限を付与しない）</li>
+      <li>PAT の有効期限を設定し、定期的にローテーションする</li>
+      <li><code>.mcp.json</code> を <code>.gitignore</code> に追加し、誤コミットを防止する</li>
+      <li>環境変数で PAT を管理し、設定ファイルに直接書かない</li>
+    </ul>
+    <h3>併用という選択肢</h3>
+    <p>Web フェッチと MCP は排他的ではない。通常の参照は Web フェッチで行い、構造的探索や操作が必要なときだけ MCP を利用する併用方式も現実的な選択肢である。</p>
+  </section>
+
+</div>
+
+<div class="footer">mdTechKnowledge MCP 比較レポート — Claude (claude.ai) による Web フェッチ実地検証に基づく — 2026-04-13</div>
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
