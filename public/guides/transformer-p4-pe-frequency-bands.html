@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PE 次元別周波数の差</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    line-height: 1.6;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { font-size: 0.85rem; color: var(--text2); margin-bottom: 16px; }
+
+  .container { max-width: 720px; margin: 0 auto; }
+
+  canvas { display: block; margin: 0 auto; border-radius: 8px; }
+
+  .legend {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.78rem; font-family: 'JetBrains Mono', monospace;
+  }
+  .legend-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+  .note {
+    text-align: center; font-size: 0.78rem; color: var(--text2); margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>次元別正弦波の周波数差</h2>
+  <p class="subtitle">低次元（2i が小さい）は高周波、高次元は低周波になる</p>
+
+  <canvas id="chart" width="700" height="360"></canvas>
+
+  <div class="legend" id="legend"></div>
+  <div class="note">横軸: position (0〜50)　｜　縦軸: PE値 (-1〜+1)</div>
+</div>
+
+<script>
+const canvas = document.getElementById('chart');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+const D_MODEL = 512;
+const MAX_POS = 50;
+
+const PAD = { left: 46, right: 20, top: 20, bottom: 36 };
+const plotW = W - PAD.left - PAD.right;
+const plotH = H - PAD.top - PAD.bottom;
+
+const dims = [
+  { dim: 0,  color: '#8b7ff0', label: 'dim=0 (高周波)' },
+  { dim: 6,  color: '#4fa8e8', label: 'dim=6' },
+  { dim: 12, color: '#3ecfa0', label: 'dim=12' },
+  { dim: 24, color: '#f0b429', label: 'dim=24 (低周波)' },
+];
+
+function peVal(pos, dim) {
+  const i = Math.floor(dim / 2);
+  const freq = pos / Math.pow(10000, (2 * i) / D_MODEL);
+  return dim % 2 === 0 ? Math.sin(freq) : Math.cos(freq);
+}
+
+function xToCanvas(pos) { return PAD.left + (pos / MAX_POS) * plotW; }
+function yToCanvas(val) { return PAD.top + ((1 - val) / 2) * plotH; }
+
+// Build legend
+const legendDiv = document.getElementById('legend');
+dims.forEach(d => {
+  const item = document.createElement('div');
+  item.className = 'legend-item';
+  item.innerHTML = `<div class="legend-dot" style="background:${d.color}"></div>${d.label}`;
+  legendDiv.appendChild(item);
+});
+
+// Animation
+let progress = 0;
+const ANIM_DURATION = 2000; // ms
+let startTime = null;
+
+function drawFrame(timestamp) {
+  if (!startTime) startTime = timestamp;
+  progress = Math.min((timestamp - startTime) / ANIM_DURATION, 1);
+  const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+  const visiblePos = eased * MAX_POS;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Background
+  ctx.fillStyle = '#161820';
+  ctx.fillRect(PAD.left, PAD.top, plotW, plotH);
+
+  // Grid lines
+  ctx.strokeStyle = '#1e2028';
+  ctx.lineWidth = 1;
+  for (let v = -1; v <= 1; v += 0.5) {
+    const y = yToCanvas(v);
+    ctx.beginPath();
+    ctx.moveTo(PAD.left, y);
+    ctx.lineTo(PAD.left + plotW, y);
+    ctx.stroke();
+  }
+  for (let p = 0; p <= MAX_POS; p += 10) {
+    const x = xToCanvas(p);
+    ctx.beginPath();
+    ctx.moveTo(x, PAD.top);
+    ctx.lineTo(x, PAD.top + plotH);
+    ctx.stroke();
+  }
+
+  // Zero line
+  ctx.strokeStyle = '#2a2c36';
+  ctx.lineWidth = 1;
+  const zeroY = yToCanvas(0);
+  ctx.beginPath();
+  ctx.moveTo(PAD.left, zeroY);
+  ctx.lineTo(PAD.left + plotW, zeroY);
+  ctx.stroke();
+
+  // Axes labels
+  ctx.fillStyle = '#9e9b91';
+  ctx.font = '10px JetBrains Mono';
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'middle';
+  for (let v = -1; v <= 1; v += 0.5) {
+    ctx.fillText(v.toFixed(1), PAD.left - 6, yToCanvas(v));
+  }
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  for (let p = 0; p <= MAX_POS; p += 10) {
+    ctx.fillText(p.toString(), xToCanvas(p), PAD.top + plotH + 4);
+  }
+
+  // Axis titles
+  ctx.font = '11px Noto Sans JP';
+  ctx.fillText('position', PAD.left + plotW / 2, PAD.top + plotH + 20);
+
+  // Draw waves
+  dims.forEach(d => {
+    ctx.strokeStyle = d.color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    let started = false;
+    for (let p = 0; p <= visiblePos; p += 0.2) {
+      const x = xToCanvas(p);
+      const y = yToCanvas(peVal(p, d.dim));
+      if (!started) { ctx.moveTo(x, y); started = true; }
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  });
+
+  if (progress < 1) {
+    requestAnimationFrame(drawFrame);
+  }
+}
+
+requestAnimationFrame(drawFrame);
+</script>
+</body>
+</html>

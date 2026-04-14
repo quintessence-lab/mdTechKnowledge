@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3種類のAttention比較</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .subtitle {
+    font-size: 0.85rem; color: var(--text2);
+    margin-bottom: 20px; line-height: 1.6;
+  }
+  .columns {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .col {
+    background: var(--bg2);
+    border-radius: 10px;
+    padding: 16px 12px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .col-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .col-title.encoder { color: var(--teal); }
+  .col-title.decoder-masked { color: var(--amber); }
+  .col-title.cross { color: var(--purple); }
+  .qkv-info {
+    font-size: 0.7rem;
+    color: var(--text2);
+    text-align: center;
+    margin-bottom: 12px;
+    line-height: 1.5;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .qkv-info span.q { color: var(--purple); }
+  .qkv-info span.k { color: var(--amber); }
+  .qkv-info span.v { color: var(--teal); }
+
+  svg { width: 100%; height: auto; display: block; }
+  svg text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    fill: var(--text);
+  }
+  svg text.label-small {
+    font-size: 9px;
+    fill: var(--text2);
+  }
+
+  .where-box {
+    margin-top: 16px;
+    background: var(--bg3);
+    border-radius: 8px;
+    padding: 12px;
+    max-width: 900px;
+    margin-left: auto; margin-right: auto;
+  }
+  .where-box h3 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text2);
+  }
+  .where-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    font-size: 0.75rem;
+  }
+  .where-item {
+    text-align: center;
+    line-height: 1.6;
+  }
+  .where-item strong { display: block; margin-bottom: 4px; }
+  .where-item .enc { color: var(--teal); }
+  .where-item .dec { color: var(--amber); }
+  .where-item .crs { color: var(--purple); }
+
+  @media (max-width: 640px) {
+    .columns { grid-template-columns: 1fr; max-width: 320px; }
+    .where-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div>
+  <h2>3種類のAttentionの比較</h2>
+  <p class="subtitle">Transformerで使われる3つのAttentionは、Q・K・Vのソースと接続パターンが異なる</p>
+
+  <div class="columns">
+    <!-- Encoder Self-Attention -->
+    <div class="col">
+      <div class="col-title encoder">Encoder Self-Attention</div>
+      <div class="qkv-info">
+        <span class="q">Q</span>=Encoder &nbsp;
+        <span class="k">K</span>=Encoder &nbsp;
+        <span class="v">V</span>=Encoder
+      </div>
+      <svg viewBox="0 0 200 220">
+        <!-- Tokens -->
+        <text x="30" y="30" text-anchor="middle">x₁</text>
+        <text x="75" y="30" text-anchor="middle">x₂</text>
+        <text x="120" y="30" text-anchor="middle">x₃</text>
+        <text x="165" y="30" text-anchor="middle">x₄</text>
+        <text x="100" y="18" text-anchor="middle" class="label-small">入力（Encoder）</text>
+
+        <!-- Output -->
+        <text x="30" y="210" text-anchor="middle">z₁</text>
+        <text x="75" y="210" text-anchor="middle">z₂</text>
+        <text x="120" y="210" text-anchor="middle">z₃</text>
+        <text x="165" y="210" text-anchor="middle">z₄</text>
+        <text x="100" y="195" text-anchor="middle" class="label-small">出力</text>
+
+        <!-- All-to-all connections -->
+        <g stroke="#3ecfa0" stroke-width="1" opacity="0.35">
+          <!-- z1 attends to all -->
+          <line x1="30" y1="38" x2="30" y2="185"/>
+          <line x1="75" y1="38" x2="30" y2="185"/>
+          <line x1="120" y1="38" x2="30" y2="185"/>
+          <line x1="165" y1="38" x2="30" y2="185"/>
+          <!-- z2 attends to all -->
+          <line x1="30" y1="38" x2="75" y2="185"/>
+          <line x1="75" y1="38" x2="75" y2="185"/>
+          <line x1="120" y1="38" x2="75" y2="185"/>
+          <line x1="165" y1="38" x2="75" y2="185"/>
+          <!-- z3 attends to all -->
+          <line x1="30" y1="38" x2="120" y2="185"/>
+          <line x1="75" y1="38" x2="120" y2="185"/>
+          <line x1="120" y1="38" x2="120" y2="185"/>
+          <line x1="165" y1="38" x2="120" y2="185"/>
+          <!-- z4 attends to all -->
+          <line x1="30" y1="38" x2="165" y2="185"/>
+          <line x1="75" y1="38" x2="165" y2="185"/>
+          <line x1="120" y1="38" x2="165" y2="185"/>
+          <line x1="165" y1="38" x2="165" y2="185"/>
+        </g>
+
+        <!-- Circles at tokens -->
+        <g fill="#3ecfa0">
+          <circle cx="30" cy="38" r="4"/>
+          <circle cx="75" cy="38" r="4"/>
+          <circle cx="120" cy="38" r="4"/>
+          <circle cx="165" cy="38" r="4"/>
+        </g>
+
+        <!-- Center label -->
+        <rect x="55" y="100" width="90" height="24" rx="4" fill="#1e2028" stroke="#3ecfa0" stroke-width="1" opacity="0.8"/>
+        <text x="100" y="116" text-anchor="middle" fill="#3ecfa0" font-size="10">全位置 → 全位置</text>
+      </svg>
+    </div>
+
+    <!-- Decoder Masked Self-Attention -->
+    <div class="col">
+      <div class="col-title decoder-masked">Decoder Masked Self-Attn</div>
+      <div class="qkv-info">
+        <span class="q">Q</span>=Decoder &nbsp;
+        <span class="k">K</span>=Decoder &nbsp;
+        <span class="v">V</span>=Decoder
+      </div>
+      <svg viewBox="0 0 200 220">
+        <text x="30" y="30" text-anchor="middle">y₁</text>
+        <text x="75" y="30" text-anchor="middle">y₂</text>
+        <text x="120" y="30" text-anchor="middle">y₃</text>
+        <text x="165" y="30" text-anchor="middle">y₄</text>
+        <text x="100" y="18" text-anchor="middle" class="label-small">入力（Decoder）</text>
+
+        <text x="30" y="210" text-anchor="middle">z₁</text>
+        <text x="75" y="210" text-anchor="middle">z₂</text>
+        <text x="120" y="210" text-anchor="middle">z₃</text>
+        <text x="165" y="210" text-anchor="middle">z₄</text>
+        <text x="100" y="195" text-anchor="middle" class="label-small">出力</text>
+
+        <!-- Lower-triangular connections only -->
+        <g stroke="#f0b429" stroke-width="1" opacity="0.35">
+          <!-- z1: only y1 -->
+          <line x1="30" y1="38" x2="30" y2="185"/>
+          <!-- z2: y1,y2 -->
+          <line x1="30" y1="38" x2="75" y2="185"/>
+          <line x1="75" y1="38" x2="75" y2="185"/>
+          <!-- z3: y1,y2,y3 -->
+          <line x1="30" y1="38" x2="120" y2="185"/>
+          <line x1="75" y1="38" x2="120" y2="185"/>
+          <line x1="120" y1="38" x2="120" y2="185"/>
+          <!-- z4: y1,y2,y3,y4 -->
+          <line x1="30" y1="38" x2="165" y2="185"/>
+          <line x1="75" y1="38" x2="165" y2="185"/>
+          <line x1="120" y1="38" x2="165" y2="185"/>
+          <line x1="165" y1="38" x2="165" y2="185"/>
+        </g>
+
+        <!-- Masked connections (dashed, red) -->
+        <g stroke="#dc3232" stroke-width="0.8" opacity="0.2" stroke-dasharray="3,3">
+          <!-- z1 cannot see y2,y3,y4 -->
+          <line x1="75" y1="38" x2="30" y2="185"/>
+          <line x1="120" y1="38" x2="30" y2="185"/>
+          <line x1="165" y1="38" x2="30" y2="185"/>
+          <!-- z2 cannot see y3,y4 -->
+          <line x1="120" y1="38" x2="75" y2="185"/>
+          <line x1="165" y1="38" x2="75" y2="185"/>
+          <!-- z3 cannot see y4 -->
+          <line x1="165" y1="38" x2="120" y2="185"/>
+        </g>
+
+        <g fill="#f0b429">
+          <circle cx="30" cy="38" r="4"/>
+          <circle cx="75" cy="38" r="4"/>
+          <circle cx="120" cy="38" r="4"/>
+          <circle cx="165" cy="38" r="4"/>
+        </g>
+
+        <rect x="50" y="100" width="100" height="24" rx="4" fill="#1e2028" stroke="#f0b429" stroke-width="1" opacity="0.8"/>
+        <text x="100" y="116" text-anchor="middle" fill="#f0b429" font-size="10">過去の位置のみ</text>
+      </svg>
+    </div>
+
+    <!-- Decoder Cross-Attention -->
+    <div class="col">
+      <div class="col-title cross">Decoder Cross-Attention</div>
+      <div class="qkv-info">
+        <span class="q">Q</span>=Decoder &nbsp;
+        <span class="k">K</span>=Encoder &nbsp;
+        <span class="v">V</span>=Encoder
+      </div>
+      <svg viewBox="0 0 200 220">
+        <!-- Encoder tokens (top) -->
+        <text x="30" y="30" text-anchor="middle" fill="#3ecfa0">x₁</text>
+        <text x="75" y="30" text-anchor="middle" fill="#3ecfa0">x₂</text>
+        <text x="120" y="30" text-anchor="middle" fill="#3ecfa0">x₃</text>
+        <text x="165" y="30" text-anchor="middle" fill="#3ecfa0">x₄</text>
+        <text x="100" y="18" text-anchor="middle" class="label-small" fill="#3ecfa0">Encoder出力（K, V）</text>
+
+        <!-- Decoder tokens (bottom) -->
+        <text x="30" y="210" text-anchor="middle" fill="#8b7ff0">z₁</text>
+        <text x="75" y="210" text-anchor="middle" fill="#8b7ff0">z₂</text>
+        <text x="120" y="210" text-anchor="middle" fill="#8b7ff0">z₃</text>
+        <text x="165" y="210" text-anchor="middle" fill="#8b7ff0">z₄</text>
+        <text x="100" y="195" text-anchor="middle" class="label-small" fill="#8b7ff0">Decoder（Q）</text>
+
+        <!-- All decoder tokens attend to all encoder tokens -->
+        <g stroke="#8b7ff0" stroke-width="1" opacity="0.3">
+          <line x1="30" y1="38" x2="30" y2="185"/>
+          <line x1="75" y1="38" x2="30" y2="185"/>
+          <line x1="120" y1="38" x2="30" y2="185"/>
+          <line x1="165" y1="38" x2="30" y2="185"/>
+
+          <line x1="30" y1="38" x2="75" y2="185"/>
+          <line x1="75" y1="38" x2="75" y2="185"/>
+          <line x1="120" y1="38" x2="75" y2="185"/>
+          <line x1="165" y1="38" x2="75" y2="185"/>
+
+          <line x1="30" y1="38" x2="120" y2="185"/>
+          <line x1="75" y1="38" x2="120" y2="185"/>
+          <line x1="120" y1="38" x2="120" y2="185"/>
+          <line x1="165" y1="38" x2="120" y2="185"/>
+
+          <line x1="30" y1="38" x2="165" y2="185"/>
+          <line x1="75" y1="38" x2="165" y2="185"/>
+          <line x1="120" y1="38" x2="165" y2="185"/>
+          <line x1="165" y1="38" x2="165" y2="185"/>
+        </g>
+
+        <g fill="#3ecfa0">
+          <circle cx="30" cy="38" r="4"/>
+          <circle cx="75" cy="38" r="4"/>
+          <circle cx="120" cy="38" r="4"/>
+          <circle cx="165" cy="38" r="4"/>
+        </g>
+
+        <rect x="40" y="100" width="120" height="24" rx="4" fill="#1e2028" stroke="#8b7ff0" stroke-width="1" opacity="0.8"/>
+        <text x="100" y="116" text-anchor="middle" fill="#8b7ff0" font-size="10">Enc全位置 → Dec全位置</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="where-box">
+    <h3>使用される場所とポイント</h3>
+    <div class="where-grid">
+      <div class="where-item">
+        <strong class="enc">Encoder Self-Attention</strong>
+        Encoderブロック内<br>
+        入力文の全単語が互いを参照<br>
+        マスクなし（双方向）
+      </div>
+      <div class="where-item">
+        <strong class="dec">Masked Self-Attention</strong>
+        Decoderブロック内（1層目）<br>
+        生成済みトークンのみ参照<br>
+        Causal Maskで未来を遮断
+      </div>
+      <div class="where-item">
+        <strong class="crs">Cross-Attention</strong>
+        Decoderブロック内（2層目）<br>
+        QはDecoder、K・VはEncoder<br>
+        入力文の情報を取り込む橋渡し
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

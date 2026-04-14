@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attention重み × Value の加重和</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .subtitle {
+    font-size: 0.85rem; color: var(--text2);
+    margin-bottom: 20px; line-height: 1.6;
+  }
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* Formula display */
+  .formula-box {
+    background: var(--bg2);
+    border-radius: 10px;
+    padding: 14px 20px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .formula-box .formula {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--purple);
+  }
+
+  /* Table-like layout */
+  .calc-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+  }
+  .calc-row {
+    display: grid;
+    grid-template-columns: 60px 70px 20px 1fr 20px 1fr;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--bg3);
+  }
+  .calc-row:last-child {
+    border-bottom: none;
+  }
+  .calc-header {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text2);
+    padding-bottom: 4px;
+    border-bottom: 2px solid var(--bg3);
+  }
+  .token-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+  .weight-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--amber);
+    text-align: center;
+    background: var(--bg3);
+    padding: 4px 6px;
+    border-radius: 4px;
+  }
+  .op {
+    text-align: center;
+    color: var(--text2);
+    font-size: 0.9rem;
+  }
+  .vec {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--blue);
+    background: var(--bg3);
+    padding: 4px 8px;
+    border-radius: 4px;
+    text-align: center;
+  }
+  .result-vec {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--teal);
+    background: var(--bg3);
+    padding: 4px 8px;
+    border-radius: 4px;
+    text-align: center;
+  }
+
+  /* Weight bar */
+  .weight-bar {
+    height: 4px;
+    border-radius: 2px;
+    background: var(--amber);
+    margin-top: 2px;
+  }
+
+  /* Stage sections */
+  .stage {
+    background: var(--bg2);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+  }
+  .stage-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .stage-title .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  /* Sum section */
+  .sum-section {
+    background: var(--bg2);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+  }
+  .sum-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+  .sum-line {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--text2);
+    padding: 2px 0;
+  }
+  .sum-line .hl { color: var(--teal); }
+
+  /* Output highlight */
+  .output-box {
+    background: linear-gradient(135deg, rgba(62,207,160,0.12), rgba(139,127,240,0.12));
+    border: 2px solid var(--teal);
+    border-radius: 12px;
+    padding: 16px 20px;
+    text-align: center;
+  }
+  .output-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--teal);
+    margin-bottom: 8px;
+  }
+  .output-vec {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 1px;
+  }
+
+  .stage-arrow {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--text2);
+    margin-bottom: 12px;
+  }
+
+  @media (max-width: 540px) {
+    .calc-row {
+      grid-template-columns: 44px 56px 16px 1fr 16px 1fr;
+      gap: 4px;
+    }
+    .weight-val, .vec, .result-vec { font-size: 0.7rem; padding: 3px 4px; }
+    .token-label { font-size: 0.75rem; }
+    .sum-line { font-size: 0.68rem; }
+    .output-vec { font-size: 1rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Attention重み × Value の加重和</h2>
+  <p class="subtitle">各トークンのValueベクトルにAttention重みを掛け、全トークン分を足し合わせることで出力ベクトルを得ます。「猫」のクエリに対する計算過程を示します。</p>
+
+  <div class="formula-box">
+    <span class="formula">Output = Σ (α_i × V_i) = α₁V₁ + α₂V₂ + ... + α₅V₅</span>
+  </div>
+
+  <!-- Stage 1: Weight × Value -->
+  <div class="stage">
+    <div class="stage-title">
+      <span class="num" style="background:var(--amber);">1</span>
+      各トークンの Attention重み × Valueベクトル
+    </div>
+
+    <!-- Header -->
+    <div class="calc-row calc-header">
+      <span>トークン</span>
+      <span style="text-align:center;">重み α</span>
+      <span></span>
+      <span style="text-align:center;">Value V (3次元)</span>
+      <span></span>
+      <span style="text-align:center;">α × V</span>
+    </div>
+
+    <div class="calc-row">
+      <span class="token-label">私</span>
+      <div>
+        <span class="weight-val">0.05</span>
+        <div class="weight-bar" style="width:5%;"></div>
+      </div>
+      <span class="op">×</span>
+      <span class="vec">[0.8, 0.2, 0.6]</span>
+      <span class="op">=</span>
+      <span class="result-vec">[0.04, 0.01, 0.03]</span>
+    </div>
+
+    <div class="calc-row">
+      <span class="token-label">は</span>
+      <div>
+        <span class="weight-val">0.10</span>
+        <div class="weight-bar" style="width:10%;"></div>
+      </div>
+      <span class="op">×</span>
+      <span class="vec">[0.1, 0.9, 0.3]</span>
+      <span class="op">=</span>
+      <span class="result-vec">[0.01, 0.09, 0.03]</span>
+    </div>
+
+    <div class="calc-row">
+      <span class="token-label" style="color:var(--purple); font-weight:700;">猫</span>
+      <div>
+        <span class="weight-val" style="color:#fff; background:var(--amber);">0.50</span>
+        <div class="weight-bar" style="width:50%;"></div>
+      </div>
+      <span class="op">×</span>
+      <span class="vec">[0.9, 0.7, 0.4]</span>
+      <span class="op">=</span>
+      <span class="result-vec" style="color:var(--teal); font-weight:700;">[0.45, 0.35, 0.20]</span>
+    </div>
+
+    <div class="calc-row">
+      <span class="token-label">が</span>
+      <div>
+        <span class="weight-val">0.30</span>
+        <div class="weight-bar" style="width:30%;"></div>
+      </div>
+      <span class="op">×</span>
+      <span class="vec">[0.3, 0.5, 0.8]</span>
+      <span class="op">=</span>
+      <span class="result-vec">[0.09, 0.15, 0.24]</span>
+    </div>
+
+    <div class="calc-row">
+      <span class="token-label">好き</span>
+      <div>
+        <span class="weight-val">0.05</span>
+        <div class="weight-bar" style="width:5%;"></div>
+      </div>
+      <span class="op">×</span>
+      <span class="vec">[0.6, 0.4, 0.7]</span>
+      <span class="op">=</span>
+      <span class="result-vec">[0.03, 0.02, 0.04]</span>
+    </div>
+  </div>
+
+  <div class="stage-arrow">▼ 全トークン分を合計</div>
+
+  <!-- Stage 2: Element-wise sum -->
+  <div class="sum-section">
+    <div class="stage-title">
+      <span class="num" style="background:var(--teal);">2</span>
+      要素ごとの加重和
+    </div>
+
+    <div class="sum-row">
+      <div class="sum-line">
+        次元1: 0.04 + 0.01 + <span class="hl">0.45</span> + 0.09 + 0.03 = <span class="hl" style="font-weight:700;">0.62</span>
+      </div>
+      <div class="sum-line">
+        次元2: 0.01 + 0.09 + <span class="hl">0.35</span> + 0.15 + 0.02 = <span class="hl" style="font-weight:700;">0.62</span>
+      </div>
+      <div class="sum-line">
+        次元3: 0.03 + 0.03 + <span class="hl">0.20</span> + 0.24 + 0.04 = <span class="hl" style="font-weight:700;">0.54</span>
+      </div>
+    </div>
+    <div style="font-size:0.78rem; color:var(--text2); margin-top:4px;">
+      ※ <span style="color:var(--teal);">緑色</span>の値は最大重み（猫=0.50）による寄与 — 出力に最も大きく反映
+    </div>
+  </div>
+
+  <div class="stage-arrow">▼</div>
+
+  <!-- Output -->
+  <div class="output-box">
+    <div class="output-label">出力ベクトル（「猫」の文脈を反映した表現）</div>
+    <div class="output-vec">[ 0.62, &nbsp; 0.62, &nbsp; 0.54 ]</div>
+    <div style="font-size:0.78rem; color:var(--text2); margin-top:8px;">
+      「猫」のValueに最も近い値 → Attentionが「猫」自身に最も注目している
+    </div>
+  </div>
+</div>
+</body>
+</html>

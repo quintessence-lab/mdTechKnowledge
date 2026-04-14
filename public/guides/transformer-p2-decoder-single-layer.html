@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Decoder 1層の内部フロー</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .subtitle {
+    font-size: 0.85rem; color: var(--text2);
+    margin-bottom: 16px; line-height: 1.6;
+  }
+  .diagram-wrap {
+    width: 100%;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+  svg text { font-family: 'Noto Sans JP', sans-serif; }
+  svg .mono { font-family: 'JetBrains Mono', monospace; }
+
+  @keyframes flowDot {
+    0%   { offset-distance: 0%; opacity: 0; }
+    4%   { opacity: 1; }
+    96%  { opacity: 1; }
+    100% { offset-distance: 100%; opacity: 0; }
+  }
+  .flow-dot {
+    width: 8px; height: 8px;
+    background: var(--teal);
+    border-radius: 50%;
+    position: absolute;
+    offset-rotate: 0deg;
+    animation: flowDot 4s linear infinite;
+    box-shadow: 0 0 6px var(--teal);
+  }
+  .flow-dot-enc {
+    width: 8px; height: 8px;
+    background: var(--purple);
+    border-radius: 50%;
+    position: absolute;
+    offset-rotate: 0deg;
+    box-shadow: 0 0 6px var(--purple);
+  }
+  @keyframes flowEnc {
+    0%   { offset-distance: 0%; opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { offset-distance: 100%; opacity: 0; }
+  }
+</style>
+</head>
+<body>
+<h2>Decoder 1層の内部フロー（3サブレイヤー）</h2>
+<p class="subtitle">Masked Self-Attention で未来のトークンを遮断し、Cross-Attention で Encoder の出力を参照します。各サブレイヤーに残差接続と Layer Norm が適用されます。</p>
+
+<div class="diagram-wrap" style="position:relative;">
+<svg id="dec-svg" viewBox="0 0 540 640" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+  <defs>
+    <marker id="ah" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+      <path d="M0,0 L7,2.5 L0,5 Z" fill="#9e9b91"/>
+    </marker>
+    <marker id="ah-t" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+      <path d="M0,0 L7,2.5 L0,5 Z" fill="#3ecfa0"/>
+    </marker>
+    <marker id="ah-p" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+      <path d="M0,0 L7,2.5 L0,5 Z" fill="#8b7ff0"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Input ===== -->
+  <rect x="195" y="590" width="150" height="34" rx="6" fill="#1e2028" stroke="#9e9b91" stroke-width="1.2"/>
+  <text x="270" y="612" text-anchor="middle" fill="#e8e6de" font-size="12" font-weight="500">入力</text>
+
+  <!-- Arrow: Input -> Masked MHA -->
+  <line x1="270" y1="590" x2="270" y2="534" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#ah)"/>
+
+  <!-- ===== Masked Multi-Head Self-Attention ===== -->
+  <rect x="145" y="494" width="250" height="40" rx="6" fill="#1e2028" stroke="#8b7ff0" stroke-width="1.5"/>
+  <text x="270" y="519" text-anchor="middle" fill="#8b7ff0" font-size="11.5" font-weight="500">Masked Multi-Head Self-Attention</text>
+
+  <!-- Mask annotation -->
+  <rect x="400" y="490" width="130" height="48" rx="6" fill="#1e2028" stroke="#f0b429" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="465" y="510" text-anchor="middle" fill="#f0b429" font-size="9.5" font-weight="500">未来のトークンを</text>
+  <text x="465" y="524" text-anchor="middle" fill="#f0b429" font-size="9.5" font-weight="500">遮断（マスク）</text>
+  <line x1="397" y1="514" x2="400" y2="514" stroke="#f0b429" stroke-width="1"/>
+
+  <!-- Skip connection 1 -->
+  <path d="M143,580 C90,580 90,448 143,448" fill="none" stroke="#3ecfa0" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="78" y="515" fill="#3ecfa0" font-size="9" text-anchor="middle">残差接続</text>
+
+  <!-- Arrow: Masked MHA -> Add & Norm 1 -->
+  <line x1="270" y1="494" x2="270" y2="464" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#ah)"/>
+
+  <!-- ===== Add & Norm 1 ===== -->
+  <rect x="185" y="428" width="170" height="36" rx="6" fill="#1e2028" stroke="#3ecfa0" stroke-width="1.5"/>
+  <text x="270" y="451" text-anchor="middle" fill="#3ecfa0" font-size="12" font-weight="500">Add &amp; Norm</text>
+
+  <!-- Arrow: Add&Norm 1 -> Cross-Attention -->
+  <line x1="270" y1="428" x2="270" y2="384" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#ah)"/>
+
+  <!-- ===== Multi-Head Cross-Attention ===== -->
+  <rect x="145" y="344" width="250" height="40" rx="6" fill="#1e2028" stroke="#8b7ff0" stroke-width="1.5"/>
+  <text x="270" y="369" text-anchor="middle" fill="#8b7ff0" font-size="11.5" font-weight="500">Multi-Head Cross-Attention</text>
+
+  <!-- Encoder output arrow -->
+  <rect x="10" y="340" width="90" height="48" rx="6" fill="#1e2028" stroke="#8b7ff0" stroke-width="1.2"/>
+  <text x="55" y="360" text-anchor="middle" fill="#8b7ff0" font-size="10" font-weight="600">Encoder</text>
+  <text x="55" y="375" text-anchor="middle" fill="#8b7ff0" font-size="10" font-weight="600">出力</text>
+  <line x1="100" y1="364" x2="143" y2="364" stroke="#8b7ff0" stroke-width="1.8" marker-end="url(#ah-p)"/>
+  <text x="122" y="356" text-anchor="middle" fill="#9e9b91" font-size="8">K, V</text>
+  <text x="270" y="338" text-anchor="middle" fill="#9e9b91" font-size="9">Q: Decoderから / K,V: Encoderから</text>
+
+  <!-- Skip connection 2 -->
+  <path d="M143,424 C90,424 90,300 143,300" fill="none" stroke="#3ecfa0" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="78" y="363" fill="#3ecfa0" font-size="9" text-anchor="middle">残差接続</text>
+
+  <!-- Arrow: Cross-Attn -> Add & Norm 2 -->
+  <line x1="270" y1="344" x2="270" y2="316" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#ah)"/>
+
+  <!-- ===== Add & Norm 2 ===== -->
+  <rect x="185" y="280" width="170" height="36" rx="6" fill="#1e2028" stroke="#3ecfa0" stroke-width="1.5"/>
+  <text x="270" y="303" text-anchor="middle" fill="#3ecfa0" font-size="12" font-weight="500">Add &amp; Norm</text>
+
+  <!-- Arrow: Add&Norm 2 -> FFN -->
+  <line x1="270" y1="280" x2="270" y2="240" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#ah)"/>
+
+  <!-- ===== Feed-Forward Network ===== -->
+  <rect x="155" y="200" width="230" height="40" rx="6" fill="#1e2028" stroke="#f0b429" stroke-width="1.5"/>
+  <text x="270" y="225" text-anchor="middle" fill="#f0b429" font-size="12" font-weight="500">Feed-Forward Network</text>
+  <text x="270" y="194" text-anchor="middle" fill="#9e9b91" font-size="9">各位置に独立に適用される2層MLP</text>
+
+  <!-- Skip connection 3 -->
+  <path d="M153,276 C90,276 90,154 153,154" fill="none" stroke="#3ecfa0" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="82" y="218" fill="#3ecfa0" font-size="9" text-anchor="middle">残差接続</text>
+
+  <!-- Arrow: FFN -> Add & Norm 3 -->
+  <line x1="270" y1="200" x2="270" y2="172" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#ah)"/>
+
+  <!-- ===== Add & Norm 3 ===== -->
+  <rect x="185" y="136" width="170" height="36" rx="6" fill="#1e2028" stroke="#3ecfa0" stroke-width="1.5"/>
+  <text x="270" y="159" text-anchor="middle" fill="#3ecfa0" font-size="12" font-weight="500">Add &amp; Norm</text>
+
+  <!-- Arrow: Add&Norm 3 -> Output -->
+  <line x1="270" y1="136" x2="270" y2="100" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#ah)"/>
+
+  <!-- ===== Output ===== -->
+  <rect x="195" y="66" width="150" height="34" rx="6" fill="#1e2028" stroke="#9e9b91" stroke-width="1.2"/>
+  <text x="270" y="88" text-anchor="middle" fill="#e8e6de" font-size="12" font-weight="500">出力</text>
+
+  <!-- Main flow path (invisible, for animation reference) -->
+  <path id="mainFlow" d="M270,624 L270,534 L270,494 L270,464 L270,428 L270,384 L270,344 L270,316 L270,280 L270,240 L270,200 L270,172 L270,136 L270,100 L270,66"
+        fill="none" stroke="none"/>
+</svg>
+
+<!-- Animated dots -->
+<div class="flow-dot" style="offset-path: path('M270,624 L270,534 L270,494 L270,464 L270,428 L270,384 L270,344 L270,316 L270,280 L270,240 L270,200 L270,172 L270,136 L270,100 L270,66'); position:absolute; top:0; left:0; animation-delay: 0s;"></div>
+<div class="flow-dot" style="offset-path: path('M270,624 L270,534 L270,494 L270,464 L270,428 L270,384 L270,344 L270,316 L270,280 L270,240 L270,200 L270,172 L270,136 L270,100 L270,66'); position:absolute; top:0; left:0; animation-delay: 1.33s;"></div>
+<div class="flow-dot" style="offset-path: path('M270,624 L270,534 L270,494 L270,464 L270,428 L270,384 L270,344 L270,316 L270,280 L270,240 L270,200 L270,172 L270,136 L270,100 L270,66'); position:absolute; top:0; left:0; animation-delay: 2.66s;"></div>
+</div>
+
+<script>
+function scaleDots() {
+  const svg = document.getElementById('dec-svg');
+  const wrap = svg.parentElement;
+  const rect = svg.getBoundingClientRect();
+  const scaleX = rect.width / 540;
+  const scaleY = rect.height / 640;
+  const points = [
+    [270,624],[270,534],[270,494],[270,464],[270,428],[270,384],
+    [270,344],[270,316],[270,280],[270,240],[270,200],[270,172],
+    [270,136],[270,100],[270,66]
+  ];
+  const scaledPath = 'M' + points.map(p => `${p[0]*scaleX},${p[1]*scaleY}`).join(' L');
+  wrap.querySelectorAll('.flow-dot').forEach(d => {
+    d.style.offsetPath = `path('${scaledPath}')`;
+  });
+}
+scaleDots();
+window.addEventListener('resize', scaleDots);
+</script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WMT 2014 英独翻訳 BLEUスコア比較</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+    --bar-gray: #3a3c44;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  .chart-container {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  h2 {
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+  .subtitle {
+    font-size: 0.82rem;
+    color: var(--text2);
+    margin-bottom: 24px;
+  }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .bar-label {
+    width: 160px;
+    min-width: 120px;
+    text-align: right;
+    padding-right: 14px;
+    font-size: 0.85rem;
+    color: var(--text2);
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+  }
+  .bar-label.highlight {
+    color: var(--purple);
+    font-weight: 700;
+  }
+  .bar-track {
+    flex: 1;
+    height: 32px;
+    background: var(--bg2);
+    border-radius: 4px;
+    position: relative;
+    overflow: visible;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--bar-gray);
+    position: relative;
+    transition: width 0.3s;
+  }
+  .bar-fill.highlight {
+    background: var(--purple);
+  }
+  .bar-value {
+    position: absolute;
+    right: -50px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+  }
+  .bar-fill.highlight .bar-value {
+    color: var(--purple);
+  }
+  .axis-line {
+    margin-left: 160px;
+    border-top: 1px solid var(--bg3);
+    margin-top: 8px;
+    padding-top: 6px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: var(--text2);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  @media (max-width: 520px) {
+    body { padding: 14px; }
+    .bar-label { width: 100px; min-width: 80px; font-size: 0.72rem; }
+    .bar-value { font-size: 0.72rem; right: -42px; }
+    .axis-line { margin-left: 100px; }
+  }
+</style>
+</head>
+<body>
+<div class="chart-container">
+  <h2>WMT 2014 英独翻訳 BLEUスコア比較</h2>
+  <p class="subtitle">English-to-German Translation — 高いほど良い</p>
+
+  <div id="chart"></div>
+  <div class="axis-line">
+    <span>0</span><span>10</span><span>20</span><span>30</span>
+  </div>
+</div>
+
+<script>
+const data = [
+  { name: 'ByteNet',            bleu: 23.75, hl: false },
+  { name: 'GNMT+RL',            bleu: 24.6,  hl: false },
+  { name: 'ConvS2S',            bleu: 25.16, hl: false },
+  { name: 'MoE',                bleu: 26.03, hl: false },
+  { name: 'Transformer (base)', bleu: 27.3,  hl: true  },
+  { name: 'Transformer (big)',  bleu: 28.4,  hl: true  },
+];
+const maxVal = 32;
+const chart = document.getElementById('chart');
+data.forEach(d => {
+  const pct = (d.bleu / maxVal * 100).toFixed(1);
+  const row = document.createElement('div');
+  row.className = 'bar-row';
+  row.innerHTML = `
+    <div class="bar-label ${d.hl ? 'highlight' : ''}">${d.name}</div>
+    <div class="bar-track">
+      <div class="bar-fill ${d.hl ? 'highlight' : ''}" style="width:${pct}%">
+        <span class="bar-value">${d.bleu}</span>
+      </div>
+    </div>`;
+  chart.appendChild(row);
+});
+</script>
+</body>
+</html>

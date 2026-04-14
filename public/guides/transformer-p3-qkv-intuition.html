@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Q/K/Vの検索エンジンアナロジー</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    line-height: 1.6;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { font-size: 0.85rem; color: var(--text2); margin-bottom: 20px; }
+
+  .columns {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    max-width: 780px;
+    margin: 0 auto 28px;
+  }
+  @media (max-width: 600px) {
+    .columns { grid-template-columns: 1fr; gap: 12px; }
+  }
+
+  .card {
+    background: var(--bg2);
+    border-radius: 12px;
+    padding: 20px 16px;
+    text-align: center;
+    border: 1px solid var(--bg3);
+  }
+  .card-icon {
+    width: 56px; height: 56px;
+    margin: 0 auto 12px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .card-icon svg { width: 28px; height: 28px; }
+  .card-icon.q { background: rgba(139,127,240,0.15); }
+  .card-icon.k { background: rgba(62,207,160,0.15); }
+  .card-icon.v { background: rgba(240,180,41,0.15); }
+
+  .card-label {
+    font-weight: 700; font-size: 1.05rem; margin-bottom: 4px;
+  }
+  .card-label.q { color: var(--purple); }
+  .card-label.k { color: var(--teal); }
+  .card-label.v { color: var(--amber); }
+
+  .card-role {
+    font-size: 0.82rem; color: var(--text2); margin-bottom: 8px;
+  }
+  .card-desc {
+    font-size: 0.78rem; color: var(--text);
+    background: var(--bg3); border-radius: 8px; padding: 8px 10px;
+  }
+
+  /* Example section */
+  .example-section {
+    background: var(--bg2);
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 780px;
+    margin: 0 auto;
+    border: 1px solid var(--bg3);
+  }
+  .example-title {
+    font-size: 0.9rem; font-weight: 700; margin-bottom: 14px;
+    color: var(--blue);
+  }
+  .sentence {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 16px; justify-content: center;
+  }
+  .token {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: var(--bg3);
+    color: var(--text);
+    border: 1px solid transparent;
+  }
+  .token.query-token {
+    border-color: var(--purple);
+    background: rgba(139,127,240,0.12);
+    color: var(--purple);
+    font-weight: 700;
+  }
+
+  .score-row {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    align-items: center; justify-content: center;
+    margin-bottom: 12px;
+  }
+  .score-item {
+    text-align: center;
+    font-size: 0.75rem;
+  }
+  .score-item .tok {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--teal);
+    font-size: 0.78rem;
+  }
+  .score-item .val {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-top: 2px;
+  }
+  .score-bar {
+    width: 50px; height: 6px;
+    background: var(--bg3);
+    border-radius: 3px;
+    margin: 4px auto 0;
+    overflow: hidden;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--teal);
+  }
+
+  .weighted-sum {
+    background: var(--bg3);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 0.8rem;
+    color: var(--text2);
+    text-align: center;
+    margin-top: 8px;
+  }
+  .weighted-sum .formula {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--amber);
+    font-size: 0.78rem;
+    margin-top: 4px;
+  }
+
+  .arrow-label {
+    text-align: center;
+    color: var(--text2);
+    font-size: 0.78rem;
+    margin: 6px 0;
+  }
+  .arrow-label svg { vertical-align: middle; }
+</style>
+</head>
+<body>
+
+<h2>Q / K / V の検索エンジンアナロジー</h2>
+<p class="subtitle">Self-Attentionの3要素を「検索エンジン」に例えて理解する</p>
+
+<div class="columns">
+  <!-- Query -->
+  <div class="card">
+    <div class="card-icon q">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#8b7ff0" stroke-width="2" stroke-linecap="round">
+        <circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/>
+      </svg>
+    </div>
+    <div class="card-label q">Query (Q)</div>
+    <div class="card-role">検索クエリ</div>
+    <div class="card-desc">「何を探しているか」<br>— 各トークンが他のトークンに問い合わせる内容</div>
+  </div>
+  <!-- Key -->
+  <div class="card">
+    <div class="card-icon k">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#3ecfa0" stroke-width="2" stroke-linecap="round">
+        <path d="M4 6h16M4 12h10M4 18h12"/><circle cx="20" cy="12" r="2"/>
+      </svg>
+    </div>
+    <div class="card-label k">Key (K)</div>
+    <div class="card-role">タグ / 見出し</div>
+    <div class="card-desc">「何を持っているか」<br>— 各トークンが公開する"検索用インデックス"</div>
+  </div>
+  <!-- Value -->
+  <div class="card">
+    <div class="card-icon v">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#f0b429" stroke-width="2" stroke-linecap="round">
+        <path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h6M8 16h4"/>
+      </svg>
+    </div>
+    <div class="card-label v">Value (V)</div>
+    <div class="card-role">コンテンツ</div>
+    <div class="card-desc">「実際に渡す情報」<br>— マッチしたとき返される中身のデータ</div>
+  </div>
+</div>
+
+<!-- Example -->
+<div class="example-section">
+  <div class="example-title">具体例: "cat" が Query を発行する場合</div>
+
+  <div class="sentence">
+    <span class="token">The</span>
+    <span class="token query-token">cat</span>
+    <span class="token">sat</span>
+    <span class="token">on</span>
+    <span class="token">the</span>
+    <span class="token">mat</span>
+  </div>
+
+  <div class="arrow-label">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#9e9b91" stroke-width="1.5"><path d="M8 3v10M4 9l4 4 4-4"/></svg>
+    <span style="color:var(--purple);">Q<sub>cat</sub></span> と各トークンの <span style="color:var(--teal);">K</span> の内積 → 類似度スコア
+  </div>
+
+  <div class="score-row">
+    <div class="score-item">
+      <div class="tok">The</div>
+      <div class="val" style="color:var(--text2);">0.05</div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:5%;"></div></div>
+    </div>
+    <div class="score-item">
+      <div class="tok" style="color:var(--purple);">cat</div>
+      <div class="val" style="color:var(--purple);">0.42</div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:42%;background:var(--purple);"></div></div>
+    </div>
+    <div class="score-item">
+      <div class="tok">sat</div>
+      <div class="val" style="color:var(--text2);">0.28</div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:28%;"></div></div>
+    </div>
+    <div class="score-item">
+      <div class="tok">on</div>
+      <div class="val" style="color:var(--text2);">0.03</div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:3%;"></div></div>
+    </div>
+    <div class="score-item">
+      <div class="tok">the</div>
+      <div class="val" style="color:var(--text2);">0.04</div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:4%;"></div></div>
+    </div>
+    <div class="score-item">
+      <div class="tok">mat</div>
+      <div class="val" style="color:var(--text2);">0.18</div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:18%;"></div></div>
+    </div>
+  </div>
+
+  <div class="arrow-label">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#9e9b91" stroke-width="1.5"><path d="M8 3v10M4 9l4 4 4-4"/></svg>
+    Softmax後のスコアで <span style="color:var(--amber);">V</span> を加重平均
+  </div>
+
+  <div class="weighted-sum">
+    出力 = 各トークンの <span style="color:var(--amber);">Value</span> をAttentionスコアで加重合計<br>
+    <div class="formula">
+      Output<sub>cat</sub> = 0.05·V<sub>The</sub> + 0.42·V<sub>cat</sub> + 0.28·V<sub>sat</sub> + 0.03·V<sub>on</sub> + 0.04·V<sub>the</sub> + 0.18·V<sub>mat</sub>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One-hot vs Label Smoothing 分布の比較</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .subtitle {
+    font-size: 0.85rem; color: var(--text2);
+    margin-bottom: 20px; line-height: 1.6;
+  }
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .chart-section {
+    background: var(--bg2);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .chart-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .chart-area {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 160px;
+    padding-bottom: 28px;
+    position: relative;
+    border-bottom: 1px solid var(--bg3);
+  }
+  .bar-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    height: 100%;
+    justify-content: flex-end;
+  }
+  .bar {
+    width: 70%;
+    border-radius: 4px 4px 0 0;
+    transition: height 0.3s ease;
+    min-height: 2px;
+  }
+  .bar-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text2);
+    position: absolute;
+    bottom: -22px;
+    text-align: center;
+  }
+  .bar-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text);
+    margin-bottom: 4px;
+    min-height: 14px;
+  }
+  .onehot-bar { background: var(--purple); }
+  .smooth-bar { background: var(--teal); }
+  .correct { background: var(--amber) !important; }
+
+  .slider-section {
+    background: var(--bg2);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .slider-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--bg3);
+    outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--teal);
+    cursor: pointer;
+  }
+  .slider-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--teal);
+    min-width: 40px;
+    text-align: right;
+  }
+
+  .note {
+    background: var(--bg2);
+    border-left: 3px solid var(--amber);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    font-size: 0.8rem;
+    color: var(--text2);
+    line-height: 1.7;
+  }
+  .note strong { color: var(--amber); }
+
+  @media (max-width: 500px) {
+    body { padding: 12px; }
+    .bar-value { font-size: 0.5rem; }
+    .bar-label { font-size: 0.55rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>One-hot vs Label Smoothing 分布の比較</h2>
+  <p class="subtitle">語彙サイズ V = 8、正解トークン = 位置 3</p>
+
+  <!-- One-hot chart -->
+  <div class="chart-section">
+    <div class="chart-title" style="color: var(--purple);">One-hot 分布（従来）</div>
+    <div class="chart-area" id="onehot-chart"></div>
+  </div>
+
+  <!-- Slider -->
+  <div class="slider-section">
+    <div class="slider-row">
+      <span class="slider-label">ε（スムージング率）:</span>
+      <input type="range" id="eps-slider" min="0" max="50" value="10" step="1">
+      <span class="slider-value" id="eps-display">0.10</span>
+    </div>
+  </div>
+
+  <!-- Label smoothed chart -->
+  <div class="chart-section">
+    <div class="chart-title" style="color: var(--teal);">Label Smoothing 適用後</div>
+    <div class="chart-area" id="smooth-chart"></div>
+  </div>
+
+  <!-- Note -->
+  <div class="note">
+    <strong>補足:</strong> Label Smoothingを適用すると<strong>perplexity は悪化</strong>するが、
+    モデルの過信を抑制し<strong>BLEU スコア（翻訳精度）は向上</strong>する。
+    Transformer論文では ε<sub>ls</sub> = 0.1 を採用。
+  </div>
+</div>
+
+<script>
+const V = 8;
+const CORRECT = 3;
+const MAX_H = 130;
+
+function createBars(containerId, values, cssClass, isCorrectHighlight) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  values.forEach((v, i) => {
+    const group = document.createElement('div');
+    group.className = 'bar-group';
+
+    const valLabel = document.createElement('div');
+    valLabel.className = 'bar-value';
+    valLabel.textContent = v.toFixed(4);
+
+    const bar = document.createElement('div');
+    bar.className = 'bar ' + cssClass;
+    if (isCorrectHighlight && i === CORRECT) bar.classList.add('correct');
+    bar.style.height = (v * MAX_H) + 'px';
+
+    const idx = document.createElement('div');
+    idx.className = 'bar-label';
+    idx.textContent = i === CORRECT ? `[${i}] ✓` : `[${i}]`;
+
+    group.appendChild(valLabel);
+    group.appendChild(bar);
+    group.appendChild(idx);
+    container.appendChild(group);
+  });
+}
+
+function computeSmoothed(eps) {
+  const other = eps / V;
+  const correct = 1.0 - eps + eps / V;
+  return Array.from({length: V}, (_, i) => i === CORRECT ? correct : other);
+}
+
+function update() {
+  const eps = parseInt(document.getElementById('eps-slider').value) / 100;
+  document.getElementById('eps-display').textContent = eps.toFixed(2);
+  const smoothed = computeSmoothed(eps);
+  createBars('smooth-chart', smoothed, 'smooth-bar', true);
+}
+
+// Initial render
+const onehot = Array.from({length: V}, (_, i) => i === CORRECT ? 1.0 : 0.0);
+createBars('onehot-chart', onehot, 'onehot-bar', true);
+update();
+
+document.getElementById('eps-slider').addEventListener('input', update);
+</script>
+</body>
+</html>

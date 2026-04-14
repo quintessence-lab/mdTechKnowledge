@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scaled Dot-Product Attention</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    line-height: 1.6;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { font-size: 0.85rem; color: var(--text2); margin-bottom: 20px; }
+
+  .formula-box {
+    background: var(--bg2);
+    border: 1px solid var(--bg3);
+    border-radius: 10px;
+    padding: 14px 20px;
+    text-align: center;
+    max-width: 560px;
+    margin: 0 auto 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--amber);
+  }
+
+  .diagram-wrap {
+    max-width: 340px;
+    margin: 0 auto;
+  }
+  svg { width: 100%; height: auto; }
+  svg text { font-family: 'Noto Sans JP', sans-serif; }
+  svg .mono { font-family: 'JetBrains Mono', monospace; }
+</style>
+</head>
+<body>
+
+<h2>Scaled Dot-Product Attention</h2>
+<p class="subtitle">論文 Figure 2（左）の計算フロー</p>
+
+<div class="formula-box">
+  Attention(Q,K,V) = softmax(QK<sup>T</sup> / √d<sub>k</sub>)V
+</div>
+
+<div class="diagram-wrap">
+<svg viewBox="0 0 340 620" xmlns="http://www.w3.org/2000/svg">
+  <!-- Input boxes: Q, K, V -->
+  <rect x="20" y="570" width="80" height="36" rx="6" fill="#1e2028" stroke="#8b7ff0" stroke-width="1.5"/>
+  <text x="60" y="593" text-anchor="middle" fill="#8b7ff0" font-size="14" font-weight="700" class="mono">Q</text>
+
+  <rect x="130" y="570" width="80" height="36" rx="6" fill="#1e2028" stroke="#3ecfa0" stroke-width="1.5"/>
+  <text x="170" y="593" text-anchor="middle" fill="#3ecfa0" font-size="14" font-weight="700" class="mono">K</text>
+
+  <rect x="240" y="570" width="80" height="36" rx="6" fill="#1e2028" stroke="#f0b429" stroke-width="1.5"/>
+  <text x="280" y="593" text-anchor="middle" fill="#f0b429" font-size="14" font-weight="700" class="mono">V</text>
+
+  <!-- Arrows from Q and K to MatMul -->
+  <line x1="60" y1="570" x2="60" y2="510" stroke="#8b7ff0" stroke-width="1.5" marker-end="url(#arrowPurple)"/>
+  <line x1="170" y1="570" x2="170" y2="510" stroke="#3ecfa0" stroke-width="1.5" marker-end="url(#arrowTeal)"/>
+  <!-- Bend lines into MatMul center -->
+  <line x1="60" y1="510" x2="115" y2="490" stroke="#8b7ff0" stroke-width="1.5" marker-end="url(#arrowPurple)"/>
+  <line x1="170" y1="510" x2="125" y2="490" stroke="#3ecfa0" stroke-width="1.5" marker-end="url(#arrowTeal)"/>
+
+  <!-- Step 1: MatMul (Q * K^T) -->
+  <rect x="70" y="456" width="100" height="36" rx="8" fill="#8b7ff0" fill-opacity="0.15" stroke="#8b7ff0" stroke-width="1.5"/>
+  <text x="120" y="479" text-anchor="middle" fill="#8b7ff0" font-size="13" font-weight="700" class="mono">MatMul</text>
+  <text x="120" y="449" text-anchor="middle" fill="#9e9b91" font-size="10">Q × K<tspan baseline-shift="super" font-size="8">T</tspan></text>
+
+  <!-- Arrow down -->
+  <line x1="120" y1="456" x2="120" y2="420" stroke="#e8e6de" stroke-width="1.5" marker-end="url(#arrowWhite)"/>
+
+  <!-- Step 2: Scale -->
+  <rect x="70" y="384" width="100" height="36" rx="8" fill="#4fa8e8" fill-opacity="0.15" stroke="#4fa8e8" stroke-width="1.5"/>
+  <text x="120" y="407" text-anchor="middle" fill="#4fa8e8" font-size="13" font-weight="700" class="mono">Scale</text>
+  <text x="120" y="377" text-anchor="middle" fill="#9e9b91" font-size="10">÷ √d<tspan baseline-shift="sub" font-size="8">k</tspan></text>
+
+  <!-- Arrow down -->
+  <line x1="120" y1="384" x2="120" y2="348" stroke="#e8e6de" stroke-width="1.5" marker-end="url(#arrowWhite)"/>
+
+  <!-- Step 3: Mask (optional) -->
+  <rect x="70" y="312" width="100" height="36" rx="8" fill="#1e2028" stroke="#9e9b91" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <text x="120" y="335" text-anchor="middle" fill="#9e9b91" font-size="13" font-weight="500">Mask</text>
+  <text x="120" y="305" text-anchor="middle" fill="#9e9b91" font-size="9" font-style="italic">（任意）</text>
+
+  <!-- Arrow down -->
+  <line x1="120" y1="312" x2="120" y2="276" stroke="#e8e6de" stroke-width="1.5" marker-end="url(#arrowWhite)"/>
+
+  <!-- Step 4: Softmax -->
+  <rect x="70" y="240" width="100" height="36" rx="8" fill="#3ecfa0" fill-opacity="0.15" stroke="#3ecfa0" stroke-width="1.5"/>
+  <text x="120" y="263" text-anchor="middle" fill="#3ecfa0" font-size="13" font-weight="700" class="mono">Softmax</text>
+
+  <!-- Arrow down from Softmax to final MatMul -->
+  <line x1="120" y1="240" x2="120" y2="200" stroke="#e8e6de" stroke-width="1.5"/>
+  <!-- Bend to final matmul -->
+  <line x1="120" y1="200" x2="155" y2="180" stroke="#e8e6de" stroke-width="1.5" marker-end="url(#arrowWhite)"/>
+
+  <!-- Arrow from V up to final MatMul -->
+  <line x1="280" y1="570" x2="280" y2="200" stroke="#f0b429" stroke-width="1.5"/>
+  <line x1="280" y1="200" x2="205" y2="180" stroke="#f0b429" stroke-width="1.5" marker-end="url(#arrowAmber)"/>
+
+  <!-- Step 5: MatMul with V -->
+  <rect x="110" y="144" width="140" height="36" rx="8" fill="#f0b429" fill-opacity="0.15" stroke="#f0b429" stroke-width="1.5"/>
+  <text x="180" y="167" text-anchor="middle" fill="#f0b429" font-size="13" font-weight="700" class="mono">MatMul</text>
+  <text x="180" y="137" text-anchor="middle" fill="#9e9b91" font-size="10">Attention重み × V</text>
+
+  <!-- Arrow to Output -->
+  <line x1="180" y1="144" x2="180" y2="100" stroke="#e8e6de" stroke-width="1.5" marker-end="url(#arrowWhite)"/>
+
+  <!-- Output -->
+  <rect x="130" y="64" width="100" height="36" rx="8" fill="#1e2028" stroke="#e8e6de" stroke-width="1.5"/>
+  <text x="180" y="87" text-anchor="middle" fill="#e8e6de" font-size="14" font-weight="700">Output</text>
+
+  <!-- Step labels on the right -->
+  <text x="186" y="479" fill="#9e9b91" font-size="9">❶ 内積計算</text>
+  <text x="186" y="407" fill="#9e9b91" font-size="9">❷ スケーリング</text>
+  <text x="186" y="335" fill="#9e9b91" font-size="9">❸ マスク（Decoder用）</text>
+  <text x="186" y="263" fill="#9e9b91" font-size="9">❹ 確率分布に変換</text>
+  <text x="262" y="167" fill="#9e9b91" font-size="9">❺ 加重平均</text>
+
+  <!-- Arrow markers -->
+  <defs>
+    <marker id="arrowWhite" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="none" stroke="#e8e6de" stroke-width="1"/>
+    </marker>
+    <marker id="arrowPurple" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="none" stroke="#8b7ff0" stroke-width="1"/>
+    </marker>
+    <marker id="arrowTeal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="none" stroke="#3ecfa0" stroke-width="1"/>
+    </marker>
+    <marker id="arrowAmber" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="none" stroke="#f0b429" stroke-width="1"/>
+    </marker>
+  </defs>
+</svg>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attention 重みヒートマップ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .subtitle {
+    font-size: 0.85rem; color: var(--text2);
+    margin-bottom: 24px; line-height: 1.6;
+  }
+  .heatmap-wrap {
+    background: var(--bg2);
+    border: 1px solid var(--bg3);
+    border-radius: 12px;
+    padding: 32px;
+    display: inline-block;
+    position: relative;
+  }
+  .heatmap-grid {
+    display: grid;
+    gap: 3px;
+    position: relative;
+  }
+  .hm-cell {
+    width: 64px; height: 52px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    cursor: default;
+    transition: transform 0.15s, box-shadow 0.15s;
+    position: relative;
+  }
+  .hm-cell:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 12px rgba(139,127,240,0.4);
+    z-index: 10;
+  }
+  .axis-label-src {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--teal);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 12px;
+    height: 52px;
+  }
+  .axis-label-tgt {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--amber);
+    text-align: center;
+    padding-bottom: 8px;
+  }
+  .tooltip {
+    position: fixed;
+    pointer-events: none;
+    background: rgba(22,24,32,0.95);
+    border: 1px solid var(--purple);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 0.82rem;
+    color: var(--text);
+    z-index: 100;
+    display: none;
+    white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  }
+  .tooltip .weight-val {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--purple);
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+  .axis-title {
+    font-size: 0.78rem;
+    color: var(--text2);
+    margin-bottom: 4px;
+  }
+  .legend-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .legend-bar {
+    width: 180px; height: 14px;
+    border-radius: 4px;
+    background: linear-gradient(to right,
+      rgba(139,127,240,0.05),
+      rgba(139,127,240,0.3),
+      rgba(62,207,160,0.6),
+      rgba(62,207,160,1)
+    );
+  }
+  .legend-labels {
+    display: flex;
+    justify-content: space-between;
+    width: 180px;
+    font-size: 0.7rem;
+    color: var(--text2);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  @media (max-width: 600px) {
+    .hm-cell { width: 48px; height: 40px; font-size: 0.65rem; }
+    .heatmap-wrap { padding: 16px; }
+    .axis-label-src { font-size: 0.75rem; padding-right: 8px; }
+    .axis-label-tgt { font-size: 0.75rem; }
+  }
+</style>
+</head>
+<body>
+<h2>Attention 重みヒートマップ（日英翻訳）</h2>
+<p class="subtitle">
+  各セルの色の濃さが Attention の重みを表します。ホバーで正確な値を確認できます。
+</p>
+
+<div class="heatmap-wrap">
+  <div class="axis-title" style="text-align:center; margin-left:80px;">ターゲット（英語）</div>
+  <div class="heatmap-grid" id="grid"></div>
+</div>
+
+<div class="legend-row">
+  <span style="font-size:0.78rem; color:var(--text2);">重み:</span>
+  <div>
+    <div class="legend-bar"></div>
+    <div class="legend-labels"><span>0.0</span><span>0.5</span><span>1.0</span></div>
+  </div>
+</div>
+
+<div class="tooltip" id="tooltip">
+  <div id="ttSrc"></div>
+  <div id="ttTgt"></div>
+  <div>重み: <span class="weight-val" id="ttVal"></span></div>
+</div>
+
+<script>
+const srcTokens = ['私', 'は', '猫', 'が', '好き', 'です'];
+const tgtTokens = ['I', 'like', 'cats', '<EOS>'];
+
+// Attention weight matrix (src rows x tgt cols)
+// Designed to be linguistically plausible
+const weights = [
+  [0.82, 0.05, 0.03, 0.02],  // 私 -> I
+  [0.06, 0.04, 0.02, 0.05],  // は (topic marker, diffuse)
+  [0.02, 0.08, 0.78, 0.03],  // 猫 -> cats
+  [0.01, 0.05, 0.06, 0.03],  // が (subject marker, diffuse)
+  [0.04, 0.72, 0.05, 0.08],  // 好き -> like
+  [0.03, 0.04, 0.02, 0.75],  // です -> <EOS>
+];
+
+const grid = document.getElementById('grid');
+const tooltip = document.getElementById('tooltip');
+const ttSrc = document.getElementById('ttSrc');
+const ttTgt = document.getElementById('ttTgt');
+const ttVal = document.getElementById('ttVal');
+
+const cols = tgtTokens.length + 1; // +1 for row labels
+grid.style.gridTemplateColumns = `80px repeat(${tgtTokens.length}, 1fr)`;
+
+// Header row: empty corner + target labels
+const corner = document.createElement('div');
+grid.appendChild(corner);
+
+tgtTokens.forEach(t => {
+  const el = document.createElement('div');
+  el.className = 'axis-label-tgt';
+  el.textContent = t;
+  grid.appendChild(el);
+});
+
+// Data rows
+srcTokens.forEach((src, si) => {
+  // Row label
+  const label = document.createElement('div');
+  label.className = 'axis-label-src';
+  label.textContent = src;
+  grid.appendChild(label);
+
+  tgtTokens.forEach((tgt, ti) => {
+    const w = weights[si][ti];
+    const cell = document.createElement('div');
+    cell.className = 'hm-cell';
+
+    // Color interpolation: low = dark purple, high = bright teal
+    const r = Math.round(139 + (62 - 139) * w);
+    const g = Math.round(127 + (207 - 127) * w);
+    const b = Math.round(240 + (160 - 240) * w);
+    const alpha = 0.08 + w * 0.88;
+    cell.style.background = `rgba(${r},${g},${b},${alpha})`;
+    cell.style.color = w > 0.4 ? '#fff' : 'rgba(232,230,222,0.5)';
+
+    cell.textContent = w.toFixed(2);
+
+    cell.addEventListener('mouseenter', (e) => {
+      tooltip.style.display = 'block';
+      ttSrc.textContent = `ソース: ${src}`;
+      ttTgt.textContent = `ターゲット: ${tgt}`;
+      ttVal.textContent = w.toFixed(4);
+    });
+    cell.addEventListener('mousemove', (e) => {
+      tooltip.style.left = (e.clientX + 16) + 'px';
+      tooltip.style.top = (e.clientY - 10) + 'px';
+    });
+    cell.addEventListener('mouseleave', () => {
+      tooltip.style.display = 'none';
+    });
+
+    grid.appendChild(cell);
+  });
+});
+
+// Axis title for source
+const srcTitle = document.createElement('div');
+srcTitle.className = 'axis-title';
+srcTitle.style.position = 'absolute';
+srcTitle.style.left = '-40px';
+srcTitle.style.top = '50%';
+srcTitle.style.transform = 'rotate(-90deg) translateX(-50%)';
+srcTitle.style.transformOrigin = '0 0';
+srcTitle.style.whiteSpace = 'nowrap';
+srcTitle.textContent = 'ソース（日本語）';
+document.querySelector('.heatmap-wrap').appendChild(srcTitle);
+</script>
+</body>
+</html>

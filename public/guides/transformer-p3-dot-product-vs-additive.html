@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dot-Product vs Additive Attention</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11; --bg2: #161820; --bg3: #1e2028;
+    --text: #e8e6de; --text2: #9e9b91; --text3: #6a6760;
+    --purple: #8b7ff0; --teal: #3ecfa0; --amber: #f0b429; --blue: #4fa8e8;
+    --border: rgba(255,255,255,0.08);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 24px; line-height: 1.6; }
+  .title { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; }
+  .columns { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  @media (max-width: 640px) { .columns { grid-template-columns: 1fr; } }
+  .col { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+  .col h2 { font-size: 0.95rem; margin-bottom: 4px; }
+  .col.additive h2 { color: var(--amber); }
+  .col.dotprod h2 { color: var(--purple); }
+  .col .origin { font-size: 0.78rem; color: var(--text3); margin-bottom: 14px; }
+  .formula-box { background: var(--bg3); border-radius: 6px; padding: 12px; margin-bottom: 14px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; text-align: center; }
+  .flow { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 14px; }
+  .flow-step { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 8px 16px; font-size: 0.82rem; width: 80%; text-align: center; }
+  .flow-arrow { color: var(--text3); font-size: 1.1rem; }
+  .col.additive .flow-step { border-left: 3px solid var(--amber); }
+  .col.dotprod .flow-step { border-left: 3px solid var(--purple); }
+
+  .compare-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  .compare-table th, .compare-table td { padding: 10px 12px; border: 1px solid var(--border); text-align: center; }
+  .compare-table th { background: var(--bg3); color: var(--text2); font-weight: 600; }
+  .compare-table td { background: var(--bg2); }
+  .compare-table td.good { color: var(--teal); }
+  .compare-table td.bad { color: #e05252; }
+  .compare-table td.neutral { color: var(--text2); }
+  .winner { background: var(--bg2); border: 1px solid rgba(139,127,240,0.3); border-radius: 8px; padding: 14px; margin-top: 16px; font-size: 0.85rem; }
+  .winner strong { color: var(--purple); }
+</style>
+</head>
+<body>
+<div class="title">Dot-Product Attention vs Additive Attention — 構造比較</div>
+
+<div class="columns">
+  <div class="col additive">
+    <h2>Additive Attention（Bahdanau型）</h2>
+    <div class="origin">Bahdanau et al., 2015</div>
+    <div class="formula-box">score(s, h) = v<sub>a</sub><sup>T</sup> · tanh(W<sub>a</sub>s + U<sub>a</sub>h)</div>
+    <div class="flow">
+      <div class="flow-step">s, h を線形変換<br><span style="color:var(--text3);font-size:0.78rem">W<sub>a</sub>s + U<sub>a</sub>h</span></div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">tanh 活性化関数</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">v<sub>a</sub><sup>T</sup> で線形変換 → スカラースコア</div>
+    </div>
+  </div>
+  <div class="col dotprod">
+    <h2>Dot-Product Attention（Transformer型）</h2>
+    <div class="origin">Vaswani et al., 2017</div>
+    <div class="formula-box">score(Q, K) = Q · K<sup>T</sup> / √d<sub>k</sub></div>
+    <div class="flow">
+      <div class="flow-step">Q · K<sup>T</sup> 行列積<br><span style="color:var(--text3);font-size:0.78rem">GPU最適化済みの演算</span></div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">√d<sub>k</sub> でスケーリング → スコア行列</div>
+    </div>
+  </div>
+</div>
+
+<table class="compare-table">
+  <thead>
+    <tr>
+      <th>比較観点</th>
+      <th style="color:var(--amber)">Additive</th>
+      <th style="color:var(--purple)">Dot-Product</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>追加パラメータ</td>
+      <td class="bad">必要（v<sub>a</sub>, W<sub>a</sub>, U<sub>a</sub>）</td>
+      <td class="good">不要</td>
+    </tr>
+    <tr>
+      <td>計算ステップ数</td>
+      <td class="bad">3ステップ（線形変換→tanh→線形変換）</td>
+      <td class="good">2ステップ（行列積→スケーリング）</td>
+    </tr>
+    <tr>
+      <td>GPU/TPU効率</td>
+      <td class="bad">中程度（tanh計算がボトルネック）</td>
+      <td class="good">高い（行列積はハードウェア最適化済み）</td>
+    </tr>
+    <tr>
+      <td>d<sub>k</sub> が小さい場合の精度</td>
+      <td class="good">良好</td>
+      <td class="good">同等</td>
+    </tr>
+    <tr>
+      <td>d<sub>k</sub> が大きい場合の精度</td>
+      <td class="good">良好（影響を受けにくい）</td>
+      <td class="neutral">スケーリング必須（なしだと勾配消失）</td>
+    </tr>
+    <tr>
+      <td>バッチ処理の効率</td>
+      <td class="bad">低い（ペアごとの計算）</td>
+      <td class="good">高い（一括行列積）</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="winner">
+  <strong>Transformerの選択理由:</strong> Dot-Product Attentionは追加パラメータ不要で、GPU/TPUに最適化された行列積演算を活用できるため、計算速度とメモリ効率の両面で大きな優位性があります。√d<sub>k</sub> によるスケーリングを行えば、精度面でもAdditive Attentionと同等の性能を発揮します。
+</div>
+</body>
+</html>

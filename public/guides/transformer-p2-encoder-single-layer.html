@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Encoder 1層の内部フロー</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .subtitle {
+    font-size: 0.85rem; color: var(--text2);
+    margin-bottom: 16px; line-height: 1.6;
+  }
+  .diagram-wrap {
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+  svg text { font-family: 'Noto Sans JP', sans-serif; }
+  svg .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* Animated dot */
+  @keyframes flowDot {
+    0%   { offset-distance: 0%; opacity: 0; }
+    5%   { opacity: 1; }
+    95%  { opacity: 1; }
+    100% { offset-distance: 100%; opacity: 0; }
+  }
+  .flow-dot {
+    width: 8px; height: 8px;
+    background: var(--teal);
+    border-radius: 50%;
+    position: absolute;
+    offset-rotate: 0deg;
+    animation: flowDot 3s linear infinite;
+    box-shadow: 0 0 6px var(--teal);
+  }
+</style>
+</head>
+<body>
+<h2>Encoder 1層の内部フロー</h2>
+<p class="subtitle">各サブレイヤーには残差接続（Skip Connection）と Layer Normalization が適用されます。緑のドットがデータフローを示します。</p>
+
+<div class="diagram-wrap" style="position:relative;">
+<svg id="enc-svg" viewBox="0 0 500 460" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+  <defs>
+    <marker id="ah" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+      <path d="M0,0 L7,2.5 L0,5 Z" fill="#9e9b91"/>
+    </marker>
+    <marker id="ah-t" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+      <path d="M0,0 L7,2.5 L0,5 Z" fill="#3ecfa0"/>
+    </marker>
+  </defs>
+
+  <!-- Input -->
+  <rect x="175" y="410" width="150" height="34" rx="6" fill="#1e2028" stroke="#9e9b91" stroke-width="1.2"/>
+  <text x="250" y="432" text-anchor="middle" fill="#e8e6de" font-size="12" font-weight="500">入力</text>
+
+  <!-- Arrow: Input -> MHA -->
+  <line x1="250" y1="410" x2="250" y2="354" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#ah)"/>
+
+  <!-- Multi-Head Self-Attention -->
+  <rect x="140" y="314" width="220" height="40" rx="6" fill="#1e2028" stroke="#8b7ff0" stroke-width="1.5"/>
+  <text x="250" y="339" text-anchor="middle" fill="#8b7ff0" font-size="12" font-weight="500">Multi-Head Self-Attention</text>
+  <text x="250" y="308" text-anchor="middle" fill="#9e9b91" font-size="9">Q, K, V はすべて同じ入力から生成</text>
+
+  <!-- Skip connection 1 (curved arrow on the left) -->
+  <path id="skip1" d="M138,395 C90,395 90,270 138,270" fill="none" stroke="#3ecfa0" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="72" y="335" fill="#3ecfa0" font-size="9" text-anchor="middle">残差接続</text>
+
+  <!-- Arrow: MHA -> Add & Norm 1 -->
+  <line x1="250" y1="314" x2="250" y2="286" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#ah)"/>
+
+  <!-- Add & Norm 1 -->
+  <rect x="165" y="250" width="170" height="36" rx="6" fill="#1e2028" stroke="#3ecfa0" stroke-width="1.5"/>
+  <text x="250" y="273" text-anchor="middle" fill="#3ecfa0" font-size="12" font-weight="500">Add &amp; Norm</text>
+  <text x="250" y="243" text-anchor="middle" fill="#9e9b91" font-size="9">LayerNorm(x + Sublayer(x))</text>
+
+  <!-- Arrow: Add&Norm 1 -> FFN -->
+  <line x1="250" y1="250" x2="250" y2="206" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#ah)"/>
+
+  <!-- Feed-Forward Network -->
+  <rect x="140" y="166" width="220" height="40" rx="6" fill="#1e2028" stroke="#f0b429" stroke-width="1.5"/>
+  <text x="250" y="191" text-anchor="middle" fill="#f0b429" font-size="12" font-weight="500">Feed-Forward Network</text>
+  <text x="250" y="160" text-anchor="middle" fill="#9e9b91" font-size="9">FFN(x) = ReLU(xW&#x2081;+b&#x2081;)W&#x2082;+b&#x2082;</text>
+
+  <!-- Skip connection 2 -->
+  <path id="skip2" d="M138,246 C90,246 90,120 138,120" fill="none" stroke="#3ecfa0" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="72" y="185" fill="#3ecfa0" font-size="9" text-anchor="middle">残差接続</text>
+
+  <!-- Arrow: FFN -> Add & Norm 2 -->
+  <line x1="250" y1="166" x2="250" y2="138" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#ah)"/>
+
+  <!-- Add & Norm 2 -->
+  <rect x="165" y="100" width="170" height="36" rx="6" fill="#1e2028" stroke="#3ecfa0" stroke-width="1.5"/>
+  <text x="250" y="123" text-anchor="middle" fill="#3ecfa0" font-size="12" font-weight="500">Add &amp; Norm</text>
+
+  <!-- Arrow: Add&Norm 2 -> Output -->
+  <line x1="250" y1="100" x2="250" y2="70" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#ah)"/>
+
+  <!-- Output -->
+  <rect x="175" y="34" width="150" height="34" rx="6" fill="#1e2028" stroke="#9e9b91" stroke-width="1.2"/>
+  <text x="250" y="56" text-anchor="middle" fill="#e8e6de" font-size="12" font-weight="500">出力</text>
+
+  <!-- Main flow path for animation (invisible) -->
+  <path id="mainFlow" d="M250,444 L250,354 L250,314 L250,286 L250,250 L250,206 L250,166 L250,138 L250,100 L250,68 L250,34"
+        fill="none" stroke="none"/>
+</svg>
+
+<!-- Animated dots using CSS offset-path -->
+<div class="flow-dot" style="offset-path: path('M250,444 L250,354 L250,314 L250,286 L250,250 L250,206 L250,166 L250,138 L250,100 L250,68 L250,34'); position:absolute; top:0; left:0; animation-delay: 0s;"></div>
+<div class="flow-dot" style="offset-path: path('M250,444 L250,354 L250,314 L250,286 L250,250 L250,206 L250,166 L250,138 L250,100 L250,68 L250,34'); position:absolute; top:0; left:0; animation-delay: 1s;"></div>
+<div class="flow-dot" style="offset-path: path('M250,444 L250,354 L250,314 L250,286 L250,250 L250,206 L250,166 L250,138 L250,100 L250,68 L250,34'); position:absolute; top:0; left:0; animation-delay: 2s;"></div>
+</div>
+
+<script>
+// Scale dots position relative to SVG's actual rendered size
+function scaleDots() {
+  const svg = document.getElementById('enc-svg');
+  const wrap = svg.parentElement;
+  const rect = svg.getBoundingClientRect();
+  const scaleX = rect.width / 500;
+  const scaleY = rect.height / 460;
+  const dots = wrap.querySelectorAll('.flow-dot');
+  // Update offset-path with scaled coordinates
+  const points = [
+    [250,444],[250,354],[250,314],[250,286],[250,250],[250,206],[250,166],[250,138],[250,100],[250,68],[250,34]
+  ];
+  const scaledPath = 'M' + points.map(p => `${p[0]*scaleX},${p[1]*scaleY}`).join(' L');
+  dots.forEach(d => {
+    d.style.offsetPath = `path('${scaledPath}')`;
+  });
+}
+scaleDots();
+window.addEventListener('resize', scaleDots);
+</script>
+</body>
+</html>

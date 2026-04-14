@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RNN逐次処理 vs Transformer並列処理</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .subtitle {
+    font-size: 0.85rem; color: var(--text2);
+    margin-bottom: 24px; line-height: 1.6;
+  }
+  .comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 700px) {
+    .comparison { grid-template-columns: 1fr; }
+  }
+  .panel {
+    background: var(--bg2);
+    border: 1px solid var(--bg3);
+    border-radius: 12px;
+    padding: 24px 20px;
+    text-align: center;
+  }
+  .panel-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .panel-sub {
+    font-size: 0.78rem;
+    color: var(--text2);
+    margin-bottom: 20px;
+  }
+  .tokens-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .token-box {
+    width: 52px; height: 44px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.3s, border-color 0.3s, box-shadow 0.3s, transform 0.2s;
+    position: relative;
+  }
+  .token-box.rnn {
+    background: rgba(240,180,41,0.06);
+    border: 1.5px solid rgba(240,180,41,0.15);
+    color: rgba(240,180,41,0.35);
+  }
+  .token-box.rnn.active {
+    background: rgba(240,180,41,0.25);
+    border-color: rgba(240,180,41,0.9);
+    color: #f0b429;
+    box-shadow: 0 0 16px rgba(240,180,41,0.3);
+    transform: scale(1.08);
+  }
+  .token-box.rnn.done {
+    background: rgba(240,180,41,0.12);
+    border-color: rgba(240,180,41,0.4);
+    color: rgba(240,180,41,0.65);
+  }
+  .token-box.tf {
+    background: rgba(62,207,160,0.06);
+    border: 1.5px solid rgba(62,207,160,0.15);
+    color: rgba(62,207,160,0.35);
+  }
+  .token-box.tf.active {
+    background: rgba(62,207,160,0.25);
+    border-color: rgba(62,207,160,0.9);
+    color: #3ecfa0;
+    box-shadow: 0 0 16px rgba(62,207,160,0.3);
+    transform: scale(1.08);
+  }
+  .token-box.tf.done {
+    background: rgba(62,207,160,0.12);
+    border-color: rgba(62,207,160,0.4);
+    color: rgba(62,207,160,0.65);
+  }
+  .step-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text2);
+    margin-top: 4px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .time-bar-wrap {
+    margin-top: 16px;
+    height: 8px;
+    background: var(--bg3);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+  .time-bar {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s;
+  }
+  .time-bar.rnn { background: var(--amber); }
+  .time-bar.tf { background: var(--teal); }
+  .time-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text2);
+    margin-top: 6px;
+  }
+  .bottom-compare {
+    margin-top: 20px;
+    background: var(--bg2);
+    border: 1px solid var(--bg3);
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    text-align: center;
+  }
+  @media (max-width: 700px) {
+    .bottom-compare { grid-template-columns: 1fr; }
+  }
+  .compare-item {
+    font-size: 0.85rem;
+    color: var(--text2);
+    line-height: 1.7;
+  }
+  .compare-item .big {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .compare-item .big.amber { color: var(--amber); }
+  .compare-item .big.teal { color: var(--teal); }
+</style>
+</head>
+<body>
+<h2>RNN の逐次処理 vs Transformer の並列処理</h2>
+<p class="subtitle">
+  RNN はトークンを1つずつ順番に処理するため、系列長に比例した時間がかかります。<br>
+  Transformer は Self-Attention により全トークンを同時に処理できます。
+</p>
+
+<div class="comparison">
+  <!-- RNN Panel -->
+  <div class="panel">
+    <div class="panel-title" style="color:var(--amber);">RNN（逐次処理）</div>
+    <div class="panel-sub">1トークンずつ順番に処理</div>
+    <div class="tokens-row" id="rnnTokens"></div>
+    <div class="step-label" id="rnnStep"></div>
+    <div class="time-bar-wrap">
+      <div class="time-bar rnn" id="rnnBar" style="width:0%"></div>
+    </div>
+    <div class="time-label" id="rnnTime"></div>
+  </div>
+
+  <!-- Transformer Panel -->
+  <div class="panel">
+    <div class="panel-title" style="color:var(--teal);">Transformer（並列処理）</div>
+    <div class="panel-sub">全トークンを一括処理</div>
+    <div class="tokens-row" id="tfTokens"></div>
+    <div class="step-label" id="tfStep"></div>
+    <div class="time-bar-wrap">
+      <div class="time-bar tf" id="tfBar" style="width:0%"></div>
+    </div>
+    <div class="time-label" id="tfTime"></div>
+  </div>
+</div>
+
+<div class="bottom-compare">
+  <div class="compare-item">
+    <span class="big amber">O(n)</span>
+    RNN: 系列長 n に比例<br>n個のトークン → n ステップ
+  </div>
+  <div class="compare-item">
+    <span class="big teal">O(1)</span>
+    Transformer: 系列長に依存しない<br>n個のトークン → 1 ステップ
+  </div>
+</div>
+
+<script>
+const tokens = ['私', 'は', '猫', 'が', '好き', 'です'];
+const n = tokens.length;
+
+const rnnContainer = document.getElementById('rnnTokens');
+const tfContainer = document.getElementById('tfTokens');
+const rnnStep = document.getElementById('rnnStep');
+const tfStep = document.getElementById('tfStep');
+const rnnBar = document.getElementById('rnnBar');
+const tfBar = document.getElementById('tfBar');
+const rnnTime = document.getElementById('rnnTime');
+const tfTime = document.getElementById('tfTime');
+
+// Create token boxes
+const rnnBoxes = [];
+const tfBoxes = [];
+
+tokens.forEach(t => {
+  const rBox = document.createElement('div');
+  rBox.className = 'token-box rnn';
+  rBox.textContent = t;
+  rnnContainer.appendChild(rBox);
+  rnnBoxes.push(rBox);
+
+  const tBox = document.createElement('div');
+  tBox.className = 'token-box tf';
+  tBox.textContent = t;
+  tfContainer.appendChild(tBox);
+  tfBoxes.push(tBox);
+});
+
+// Animation
+const STEP_DURATION = 450; // ms per RNN step
+const PAUSE_BEFORE = 600;  // pause at start
+const PAUSE_AFTER = 1200;  // pause after complete
+const totalRnnTime = n * STEP_DURATION;
+const totalCycle = PAUSE_BEFORE + totalRnnTime + PAUSE_AFTER;
+
+let startTime = null;
+
+function resetAll() {
+  rnnBoxes.forEach(b => { b.className = 'token-box rnn'; });
+  tfBoxes.forEach(b => { b.className = 'token-box tf'; });
+  rnnStep.textContent = '';
+  tfStep.textContent = '';
+  rnnBar.style.width = '0%';
+  tfBar.style.width = '0%';
+  rnnTime.textContent = '';
+  tfTime.textContent = '';
+}
+
+function animate(timestamp) {
+  if (!startTime) startTime = timestamp;
+  const elapsed = (timestamp - startTime) % totalCycle;
+
+  if (elapsed < PAUSE_BEFORE) {
+    // Initial state
+    resetAll();
+    rnnStep.textContent = '待機中...';
+    tfStep.textContent = '待機中...';
+  } else if (elapsed < PAUSE_BEFORE + totalRnnTime) {
+    const rnnElapsed = elapsed - PAUSE_BEFORE;
+    const currentStep = Math.floor(rnnElapsed / STEP_DURATION);
+    const rnnProgress = (currentStep + 1) / n * 100;
+
+    // RNN: sequential
+    rnnBoxes.forEach((b, i) => {
+      if (i < currentStep) {
+        b.className = 'token-box rnn done';
+      } else if (i === currentStep) {
+        b.className = 'token-box rnn active';
+      } else {
+        b.className = 'token-box rnn';
+      }
+    });
+    rnnStep.textContent = `ステップ ${currentStep + 1} / ${n}`;
+    rnnBar.style.width = rnnProgress + '%';
+    rnnTime.textContent = `経過: ${currentStep + 1} ステップ`;
+
+    // Transformer: all at once on first step
+    if (currentStep === 0) {
+      tfBoxes.forEach(b => { b.className = 'token-box tf active'; });
+      tfStep.textContent = 'ステップ 1 / 1（全トークン同時）';
+      tfBar.style.width = '100%';
+      tfTime.textContent = '完了: 1 ステップ';
+    } else {
+      tfBoxes.forEach(b => { b.className = 'token-box tf done'; });
+      tfStep.textContent = '完了';
+      tfBar.style.width = '100%';
+      tfTime.textContent = '完了: 1 ステップ';
+    }
+  } else {
+    // Done state
+    rnnBoxes.forEach(b => { b.className = 'token-box rnn done'; });
+    tfBoxes.forEach(b => { b.className = 'token-box tf done'; });
+    rnnStep.textContent = '完了';
+    tfStep.textContent = '完了';
+    rnnBar.style.width = '100%';
+    tfBar.style.width = '100%';
+    rnnTime.textContent = `合計: ${n} ステップ`;
+    tfTime.textContent = '合計: 1 ステップ';
+  }
+
+  requestAnimationFrame(animate);
+}
+
+requestAnimationFrame(animate);
+</script>
+</body>
+</html>

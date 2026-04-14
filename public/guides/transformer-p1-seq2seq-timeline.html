@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NLPモデル進化タイムライン (1997-2017)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+    --red: #f06b6b;
+    --pink: #e87fcf;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  h2 {
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text2);
+    margin-bottom: 32px;
+  }
+  .timeline-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 12px;
+  }
+  .timeline-svg {
+    display: block;
+    margin: 0 auto;
+  }
+  @media (max-width: 768px) {
+    body { padding: 16px 8px; }
+    h2 { font-size: 1.05rem; }
+  }
+</style>
+</head>
+<body>
+<h2>NLPモデル進化タイムライン</h2>
+<p class="subtitle">1997年〜2017年 — RNNからTransformerへの道のり</p>
+<div class="timeline-wrapper">
+<svg class="timeline-svg" viewBox="0 0 960 340" xmlns="http://www.w3.org/2000/svg" style="min-width:700px;max-width:960px;width:100%;height:auto;">
+  <defs>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#9e9b91" stop-opacity="0.3"/>
+      <stop offset="50%" stop-color="#9e9b91" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#8b7ff0" stop-opacity="1"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Main timeline line -->
+  <line x1="60" y1="180" x2="920" y2="180" stroke="url(#lineGrad)" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Year markers (small ticks) -->
+  <g fill="none" stroke="#9e9b91" stroke-opacity="0.2" stroke-width="1">
+    <line x1="100" y1="175" x2="100" y2="185"/>
+    <line x1="240" y1="175" x2="240" y2="185"/>
+    <line x1="380" y1="175" x2="380" y2="185"/>
+    <line x1="520" y1="175" x2="520" y2="185"/>
+    <line x1="660" y1="175" x2="660" y2="185"/>
+    <line x1="870" y1="175" x2="870" y2="185"/>
+  </g>
+
+  <!-- 1997 LSTM -->
+  <g>
+    <line x1="100" y1="130" x2="100" y2="175" stroke="#f0b429" stroke-width="1.5" stroke-dasharray="4,3" stroke-opacity="0.5"/>
+    <circle cx="100" cy="180" r="8" fill="#0e0f11" stroke="#f0b429" stroke-width="2.5"/>
+    <circle cx="100" cy="180" r="3.5" fill="#f0b429"/>
+    <rect x="42" y="68" width="116" height="60" rx="8" fill="#1e2028" stroke="#f0b429" stroke-width="1" stroke-opacity="0.4"/>
+    <text x="100" y="88" text-anchor="middle" fill="#f0b429" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="500">1997</text>
+    <text x="100" y="106" text-anchor="middle" fill="#e8e6de" font-family="'Noto Sans JP', sans-serif" font-size="12" font-weight="700">LSTM</text>
+    <text x="100" y="121" text-anchor="middle" fill="#9e9b91" font-family="'Noto Sans JP', sans-serif" font-size="9">Hochreiter &amp; Schmidhuber</text>
+    <text x="100" y="205" text-anchor="middle" fill="#9e9b91" font-family="'Noto Sans JP', sans-serif" font-size="9">長期記憶の実現</text>
+  </g>
+
+  <!-- 2014 Seq2Seq -->
+  <g>
+    <line x1="340" y1="130" x2="340" y2="175" stroke="#3ecfa0" stroke-width="1.5" stroke-dasharray="4,3" stroke-opacity="0.5"/>
+    <circle cx="340" cy="180" r="8" fill="#0e0f11" stroke="#3ecfa0" stroke-width="2.5"/>
+    <circle cx="340" cy="180" r="3.5" fill="#3ecfa0"/>
+    <rect x="272" y="68" width="136" height="60" rx="8" fill="#1e2028" stroke="#3ecfa0" stroke-width="1" stroke-opacity="0.4"/>
+    <text x="340" y="88" text-anchor="middle" fill="#3ecfa0" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="500">2014</text>
+    <text x="340" y="106" text-anchor="middle" fill="#e8e6de" font-family="'Noto Sans JP', sans-serif" font-size="12" font-weight="700">Seq2Seq</text>
+    <text x="340" y="121" text-anchor="middle" fill="#9e9b91" font-family="'Noto Sans JP', sans-serif" font-size="9">Sutskever et al.</text>
+    <text x="340" y="205" text-anchor="middle" fill="#9e9b91" font-family="'Noto Sans JP', sans-serif" font-size="9">Encoder-Decoder構造</text>
+  </g>
+
+  <!-- 2014 GRU -->
+  <g>
+    <line x1="440" y1="225" x2="440" y2="185" stroke="#4fa8e8" stroke-width="1.5" stroke-dasharray="4,3" stroke-opacity="0.5"/>
+    <circle cx="440" cy="180" r="8" fill="#0e0f11" stroke="#4fa8e8" stroke-width="2.5"/>
+    <circle cx="440" cy="180" r="3.5" fill="#4fa8e8"/>
+    <rect x="382" y="230" width="116" height="60" rx="8" fill="#1e2028" stroke="#4fa8e8" stroke-width="1" stroke-opacity="0.4"/>
+    <text x="440" y="250" text-anchor="middle" fill="#4fa8e8" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="500">2014</text>
+    <text x="440" y="268" text-anchor="middle" fill="#e8e6de" font-family="'Noto Sans JP', sans-serif" font-size="12" font-weight="700">GRU</text>
+    <text x="440" y="283" text-anchor="middle" fill="#9e9b91" font-family="'Noto Sans JP', sans-serif" font-size="9">Cho et al.</text>
+    <text x="440" y="218" text-anchor="middle" fill="#9e9b91" font-family="'Noto Sans JP', sans-serif" font-size="9">LSTMの軽量版</text>
+  </g>
+
+  <!-- 2015 Bahdanau Attention -->
+  <g>
+    <line x1="570" y1="130" x2="570" y2="175" stroke="#e87fcf" stroke-width="1.5" stroke-dasharray="4,3" stroke-opacity="0.5"/>
+    <circle cx="570" cy="180" r="8" fill="#0e0f11" stroke="#e87fcf" stroke-width="2.5"/>
+    <circle cx="570" cy="180" r="3.5" fill="#e87fcf"/>
+    <rect x="496" y="62" width="148" height="68" rx="8" fill="#1e2028" stroke="#e87fcf" stroke-width="1" stroke-opacity="0.4"/>
+    <text x="570" y="82" text-anchor="middle" fill="#e87fcf" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="500">2015</text>
+    <text x="570" y="100" text-anchor="middle" fill="#e8e6de" font-family="'Noto Sans JP', sans-serif" font-size="12" font-weight="700">Bahdanau Attention</text>
+    <text x="570" y="115" text-anchor="middle" fill="#9e9b91" font-family="'Noto Sans JP', sans-serif" font-size="9">加算型注意機構</text>
+    <text x="570" y="122" text-anchor="middle" fill="none" font-size="1">.</text>
+    <text x="570" y="205" text-anchor="middle" fill="#9e9b91" font-family="'Noto Sans JP', sans-serif" font-size="9">ボトルネック問題を緩和</text>
+  </g>
+
+  <!-- 2015 Luong Attention -->
+  <g>
+    <line x1="680" y1="225" x2="680" y2="185" stroke="#f06b6b" stroke-width="1.5" stroke-dasharray="4,3" stroke-opacity="0.5"/>
+    <circle cx="680" cy="180" r="8" fill="#0e0f11" stroke="#f06b6b" stroke-width="2.5"/>
+    <circle cx="680" cy="180" r="3.5" fill="#f06b6b"/>
+    <rect x="612" y="230" width="136" height="68" rx="8" fill="#1e2028" stroke="#f06b6b" stroke-width="1" stroke-opacity="0.4"/>
+    <text x="680" y="250" text-anchor="middle" fill="#f06b6b" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="500">2015</text>
+    <text x="680" y="268" text-anchor="middle" fill="#e8e6de" font-family="'Noto Sans JP', sans-serif" font-size="12" font-weight="700">Luong Attention</text>
+    <text x="680" y="283" text-anchor="middle" fill="#9e9b91" font-family="'Noto Sans JP', sans-serif" font-size="9">乗算型注意機構</text>
+    <text x="680" y="218" text-anchor="middle" fill="#9e9b91" font-family="'Noto Sans JP', sans-serif" font-size="9">より効率的な計算</text>
+  </g>
+
+  <!-- 2017 Transformer -->
+  <g filter="url(#glow)">
+    <line x1="870" y1="120" x2="870" y2="170" stroke="#8b7ff0" stroke-width="2" stroke-dasharray="4,3" stroke-opacity="0.7"/>
+    <circle cx="870" cy="180" r="11" fill="#0e0f11" stroke="#8b7ff0" stroke-width="3"/>
+    <circle cx="870" cy="180" r="5" fill="#8b7ff0"/>
+  </g>
+  <g>
+    <rect x="790" y="48" width="160" height="72" rx="10" fill="#1e2028" stroke="#8b7ff0" stroke-width="1.5" stroke-opacity="0.6"/>
+    <rect x="790" y="48" width="160" height="72" rx="10" fill="#8b7ff0" fill-opacity="0.06"/>
+    <text x="870" y="70" text-anchor="middle" fill="#8b7ff0" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="500">2017</text>
+    <text x="870" y="91" text-anchor="middle" fill="#e8e6de" font-family="'Noto Sans JP', sans-serif" font-size="14" font-weight="700">Transformer</text>
+    <text x="870" y="108" text-anchor="middle" fill="#9e9b91" font-family="'Noto Sans JP', sans-serif" font-size="9">Vaswani et al.</text>
+    <text x="870" y="205" text-anchor="middle" fill="#8b7ff0" font-family="'Noto Sans JP', sans-serif" font-size="10" font-weight="500">Attention Is All You Need</text>
+  </g>
+
+  <!-- Arrow at end -->
+  <polygon points="925,180 915,175 915,185" fill="#8b7ff0" opacity="0.6"/>
+</svg>
+</div>
+</body>
+</html>

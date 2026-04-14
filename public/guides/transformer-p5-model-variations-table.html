@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>モデルバリエーション実験結果（Table 3）</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  .container { max-width: 900px; margin: 0 auto; }
+  h2 { font-size: 1.1rem; margin-bottom: 6px; }
+  .subtitle { font-size: 0.82rem; color: var(--text2); margin-bottom: 20px; }
+
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid var(--bg3);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    min-width: 780px;
+  }
+  thead th {
+    background: var(--bg3);
+    color: var(--text2);
+    font-weight: 700;
+    padding: 10px 8px;
+    text-align: center;
+    border-bottom: 2px solid #2a2c36;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+  }
+  tbody td {
+    padding: 9px 8px;
+    text-align: center;
+    border-bottom: 1px solid #1a1c24;
+    white-space: nowrap;
+  }
+  tbody tr {
+    background: var(--bg2);
+    transition: background 0.15s;
+  }
+  tbody tr:hover {
+    background: #22243a;
+  }
+  tbody tr.base-row {
+    background: #1a1830;
+    border-left: 3px solid var(--purple);
+  }
+  tbody tr.base-row:hover {
+    background: #26244a;
+  }
+  tbody tr.base-row td {
+    color: var(--text);
+    font-weight: 700;
+  }
+  .group-label {
+    text-align: left !important;
+    padding-left: 12px !important;
+    color: var(--amber);
+    font-weight: 700;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.76rem;
+  }
+  .changed {
+    color: var(--teal);
+    font-weight: 700;
+  }
+  .bleu-col {
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+  .bleu-best { color: var(--purple); }
+  .bleu-worse { color: var(--amber); }
+
+  .legend {
+    margin-top: 14px;
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.75rem;
+    color: var(--text2);
+  }
+  .legend span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .legend .dot {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    display: inline-block;
+  }
+  @media (max-width: 520px) {
+    body { padding: 10px; }
+    table { font-size: 0.68rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>モデルバリエーション実験結果</h2>
+  <p class="subtitle">論文 Table 3 — 英独翻訳 newstest2013（dev）での評価</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>N</th>
+          <th>d<sub>model</sub></th>
+          <th>d<sub>ff</sub></th>
+          <th>h</th>
+          <th>d<sub>k</sub></th>
+          <th>d<sub>v</sub></th>
+          <th>P<sub>drop</sub></th>
+          <th>&epsilon;<sub>ls</sub></th>
+          <th>PPL</th>
+          <th>BLEU</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- base model -->
+        <tr class="base-row">
+          <td class="group-label">base</td>
+          <td>6</td><td>512</td><td>2048</td>
+          <td>8</td><td>64</td><td>64</td>
+          <td>0.1</td><td>0.1</td>
+          <td>4.92</td><td class="bleu-col bleu-best">25.8</td>
+        </tr>
+        <!-- (A) ヘッド数変更 -->
+        <tr>
+          <td class="group-label" rowspan="4">(A) ヘッド数</td>
+          <td>6</td><td>512</td><td>2048</td>
+          <td class="changed">1</td><td class="changed">512</td><td class="changed">512</td>
+          <td>0.1</td><td>0.1</td>
+          <td>5.29</td><td class="bleu-col bleu-worse">24.9</td>
+        </tr>
+        <tr>
+          <td>6</td><td>512</td><td>2048</td>
+          <td class="changed">4</td><td class="changed">128</td><td class="changed">128</td>
+          <td>0.1</td><td>0.1</td>
+          <td>5.00</td><td class="bleu-col">25.5</td>
+        </tr>
+        <tr>
+          <td>6</td><td>512</td><td>2048</td>
+          <td class="changed">16</td><td class="changed">32</td><td class="changed">32</td>
+          <td>0.1</td><td>0.1</td>
+          <td>4.91</td><td class="bleu-col bleu-best">25.8</td>
+        </tr>
+        <tr>
+          <td>6</td><td>512</td><td>2048</td>
+          <td class="changed">32</td><td class="changed">16</td><td class="changed">16</td>
+          <td>0.1</td><td>0.1</td>
+          <td>5.01</td><td class="bleu-col bleu-worse">25.0</td>
+        </tr>
+        <!-- (B) d_k変更 -->
+        <tr>
+          <td class="group-label" rowspan="2">(B) d<sub>k</sub>変更</td>
+          <td>6</td><td>512</td><td>2048</td>
+          <td>8</td><td class="changed">16</td><td>64</td>
+          <td>0.1</td><td>0.1</td>
+          <td>5.16</td><td class="bleu-col bleu-worse">25.1</td>
+        </tr>
+        <tr>
+          <td>6</td><td>512</td><td>2048</td>
+          <td>8</td><td class="changed">32</td><td>64</td>
+          <td>0.1</td><td>0.1</td>
+          <td>5.01</td><td class="bleu-col">25.4</td>
+        </tr>
+        <!-- (C) モデルサイズ -->
+        <tr>
+          <td class="group-label" rowspan="2">(C) サイズ</td>
+          <td class="changed">2</td><td>512</td><td>2048</td>
+          <td>8</td><td>64</td><td>64</td>
+          <td>0.1</td><td>0.1</td>
+          <td>6.11</td><td class="bleu-col bleu-worse">23.7</td>
+        </tr>
+        <tr>
+          <td class="changed">8</td><td>512</td><td>2048</td>
+          <td>8</td><td>64</td><td>64</td>
+          <td>0.1</td><td>0.1</td>
+          <td>4.88</td><td class="bleu-col bleu-best">25.5</td>
+        </tr>
+        <!-- (D) ドロップアウト -->
+        <tr>
+          <td class="group-label" rowspan="2">(D) Dropout</td>
+          <td>6</td><td>512</td><td>2048</td>
+          <td>8</td><td>64</td><td>64</td>
+          <td class="changed">0.0</td><td>0.1</td>
+          <td>5.77</td><td class="bleu-col bleu-worse">24.6</td>
+        </tr>
+        <tr>
+          <td>6</td><td>512</td><td>2048</td>
+          <td>8</td><td>64</td><td>64</td>
+          <td class="changed">0.2</td><td>0.1</td>
+          <td>4.95</td><td class="bleu-col">25.3</td>
+        </tr>
+        <!-- (E) 学習可能PE -->
+        <tr>
+          <td class="group-label">(E) 学習可能PE</td>
+          <td>6</td><td>512</td><td>2048</td>
+          <td>8</td><td>64</td><td>64</td>
+          <td>0.1</td><td>0.1</td>
+          <td>4.92</td><td class="bleu-col">25.7</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:var(--purple)"></span>baseモデル / 最高BLEU</span>
+    <span><span class="dot" style="background:var(--teal)"></span>変更パラメータ</span>
+    <span><span class="dot" style="background:var(--amber)"></span>性能低下</span>
+  </div>
+</div>
+</body>
+</html>

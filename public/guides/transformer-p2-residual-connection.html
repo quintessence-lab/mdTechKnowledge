@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>残差接続（Residual Connection）の仕組みと勾配ハイウェイ効果</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11; --bg2: #161820; --bg3: #1e2028;
+    --text: #e8e6de; --text2: #9e9b91;
+    --purple: #8b7ff0; --teal: #3ecfa0; --amber: #f0b429; --blue: #4fa8e8;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; padding: 24px; background: var(--bg); color: var(--text); font-family: 'Noto Sans JP', sans-serif; }
+  h1 { font-size: clamp(1rem, 2.5vw, 1.35rem); text-align: center; margin: 0 0 8px; color: var(--text); font-weight: 700; }
+  .formula { text-align: center; font-family: 'JetBrains Mono', monospace; font-size: clamp(.78rem, 1.8vw, .95rem); color: var(--amber); background: var(--bg2); border: 1px solid #2a2c36; border-radius: 8px; padding: 10px 16px; margin: 0 auto 18px; display: inline-block; }
+  .formula-wrap { text-align: center; margin-bottom: 18px; }
+  .container { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+  .panel { background: var(--bg2); border: 1px solid #2a2c36; border-radius: 12px; padding: 18px 14px 14px; flex: 1 1 300px; max-width: 420px; min-width: 260px; }
+  .panel-title { text-align: center; font-weight: 700; font-size: .95rem; margin-bottom: 12px; }
+  .panel-title.bad { color: #e06060; }
+  .panel-title.good { color: var(--teal); }
+  svg { display: block; margin: 0 auto; }
+  .note { font-size: .78rem; color: var(--text2); text-align: center; margin-top: 14px; line-height: 1.6; }
+</style>
+</head>
+<body>
+<h1>残差接続（Residual Connection）の仕組みと勾配ハイウェイ効果</h1>
+<div class="formula-wrap"><span class="formula">output = LayerNorm( x + Sublayer(x) )</span></div>
+
+<div class="container">
+  <!-- 左: 残差接続なし -->
+  <div class="panel">
+    <div class="panel-title bad">✕ 残差接続なし</div>
+    <svg viewBox="0 0 300 370" width="100%" xmlns="http://www.w3.org/2000/svg">
+      <!-- 入力 -->
+      <rect x="90" y="10" width="120" height="40" rx="8" fill="#2a2c36" stroke="#555" stroke-width="1.5"/>
+      <text x="150" y="35" text-anchor="middle" fill="#e8e6de" font-family="'Noto Sans JP',sans-serif" font-size="14" font-weight="500">入力 x</text>
+
+      <!-- 矢印 入力→サブレイヤー -->
+      <line x1="150" y1="50" x2="150" y2="90" stroke="#9e9b91" stroke-width="2" marker-end="url(#arrowGray)"/>
+
+      <!-- サブレイヤー -->
+      <rect x="60" y="90" width="180" height="50" rx="8" fill="#2d2040" stroke="#8b7ff0" stroke-width="1.5"/>
+      <text x="150" y="120" text-anchor="middle" fill="#c4b8ff" font-family="'Noto Sans JP',sans-serif" font-size="13" font-weight="500">サブレイヤー</text>
+
+      <!-- 矢印 サブレイヤー→出力 -->
+      <line x1="150" y1="140" x2="150" y2="180" stroke="#9e9b91" stroke-width="2" marker-end="url(#arrowGray)"/>
+
+      <!-- 出力 -->
+      <rect x="90" y="180" width="120" height="40" rx="8" fill="#2a2c36" stroke="#555" stroke-width="1.5"/>
+      <text x="150" y="205" text-anchor="middle" fill="#e8e6de" font-family="'Noto Sans JP',sans-serif" font-size="14" font-weight="500">出力</text>
+
+      <!-- 勾配の流れ（減衰） -->
+      <text x="150" y="250" text-anchor="middle" fill="#9e9b91" font-family="'Noto Sans JP',sans-serif" font-size="12" font-weight="500">▼ 勾配の流れ（逆方向）</text>
+
+      <!-- 勾配バー：段々薄くなる -->
+      <rect x="60" y="268" width="180" height="14" rx="4" fill="#e06060" opacity="0.9"/>
+      <text x="150" y="279" text-anchor="middle" fill="#fff" font-family="'Noto Sans JP',sans-serif" font-size="10">出力層付近: 強い</text>
+
+      <rect x="60" y="290" width="180" height="14" rx="4" fill="#e06060" opacity="0.5"/>
+      <text x="150" y="301" text-anchor="middle" fill="#fff" font-family="'Noto Sans JP',sans-serif" font-size="10">中間層: 減衰</text>
+
+      <rect x="60" y="312" width="180" height="14" rx="4" fill="#e06060" opacity="0.15"/>
+      <text x="150" y="323" text-anchor="middle" fill="#ffaaaa" font-family="'Noto Sans JP',sans-serif" font-size="10">入力層付近: 消失 ⚠</text>
+
+      <text x="150" y="355" text-anchor="middle" fill="#e06060" font-family="'Noto Sans JP',sans-serif" font-size="11" font-weight="700">勾配消失が発生しやすい</text>
+
+      <defs>
+        <marker id="arrowGray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9e9b91"/></marker>
+      </defs>
+    </svg>
+  </div>
+
+  <!-- 右: 残差接続あり -->
+  <div class="panel">
+    <div class="panel-title good">○ 残差接続あり</div>
+    <svg viewBox="0 0 300 370" width="100%" xmlns="http://www.w3.org/2000/svg">
+      <!-- 入力 -->
+      <rect x="90" y="10" width="120" height="40" rx="8" fill="#2a2c36" stroke="#555" stroke-width="1.5"/>
+      <text x="150" y="35" text-anchor="middle" fill="#e8e6de" font-family="'Noto Sans JP',sans-serif" font-size="14" font-weight="500">入力 x</text>
+
+      <!-- 矢印 入力→サブレイヤー（メインパス）-->
+      <line x1="150" y1="50" x2="150" y2="90" stroke="#9e9b91" stroke-width="2" marker-end="url(#arrowGray2)"/>
+
+      <!-- サブレイヤー -->
+      <rect x="75" y="90" width="150" height="50" rx="8" fill="#2d2040" stroke="#8b7ff0" stroke-width="1.5"/>
+      <text x="150" y="112" text-anchor="middle" fill="#c4b8ff" font-family="'Noto Sans JP',sans-serif" font-size="13" font-weight="500">サブレイヤー</text>
+      <text x="150" y="128" text-anchor="middle" fill="#9e9b91" font-family="'JetBrains Mono',monospace" font-size="10">Sublayer(x)</text>
+
+      <!-- スキップ接続（右側のバイパス）-->
+      <path d="M210,30 L260,30 L260,165 L195,165" fill="none" stroke="#3ecfa0" stroke-width="2.5" stroke-dasharray="6,3" marker-end="url(#arrowTeal)"/>
+      <text x="270" y="100" fill="#3ecfa0" font-family="'Noto Sans JP',sans-serif" font-size="11" font-weight="700" transform="rotate(90,270,100)">スキップ接続 (x)</text>
+
+      <!-- 矢印 サブレイヤー→加算 -->
+      <line x1="150" y1="140" x2="150" y2="155" stroke="#9e9b91" stroke-width="2" marker-end="url(#arrowGray2)"/>
+
+      <!-- 加算ノード -->
+      <circle cx="150" cy="168" r="16" fill="#1a3025" stroke="#3ecfa0" stroke-width="2"/>
+      <text x="150" y="173" text-anchor="middle" fill="#3ecfa0" font-family="'JetBrains Mono',monospace" font-size="16" font-weight="700">+</text>
+
+      <!-- 矢印 加算→LayerNorm -->
+      <line x1="150" y1="184" x2="150" y2="200" stroke="#9e9b91" stroke-width="2" marker-end="url(#arrowGray2)"/>
+
+      <!-- LayerNorm -->
+      <rect x="85" y="200" width="130" height="36" rx="8" fill="#2a2820" stroke="#f0b429" stroke-width="1.5"/>
+      <text x="150" y="222" text-anchor="middle" fill="#f0b429" font-family="'JetBrains Mono',monospace" font-size="12" font-weight="500">LayerNorm</text>
+
+      <!-- 矢印 LayerNorm→出力 -->
+      <line x1="150" y1="236" x2="150" y2="256" stroke="#9e9b91" stroke-width="2" marker-end="url(#arrowGray2)"/>
+
+      <!-- 出力 -->
+      <rect x="90" y="256" width="120" height="36" rx="8" fill="#2a2c36" stroke="#555" stroke-width="1.5"/>
+      <text x="150" y="279" text-anchor="middle" fill="#e8e6de" font-family="'Noto Sans JP',sans-serif" font-size="14" font-weight="500">出力</text>
+
+      <!-- 勾配の流れ -->
+      <text x="150" y="312" text-anchor="middle" fill="#9e9b91" font-family="'Noto Sans JP',sans-serif" font-size="12" font-weight="500">▼ 勾配の流れ（逆方向）</text>
+
+      <rect x="60" y="326" width="180" height="14" rx="4" fill="#3ecfa0" opacity="0.9"/>
+      <text x="150" y="337" text-anchor="middle" fill="#0e0f11" font-family="'Noto Sans JP',sans-serif" font-size="10" font-weight="500">全層で勾配が保たれる（ハイウェイ）</text>
+
+      <text x="150" y="362" text-anchor="middle" fill="#3ecfa0" font-family="'Noto Sans JP',sans-serif" font-size="11" font-weight="700">勾配が直接伝搬 → 深い層でも学習可能</text>
+
+      <defs>
+        <marker id="arrowGray2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9e9b91"/></marker>
+        <marker id="arrowTeal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3ecfa0"/></marker>
+      </defs>
+    </svg>
+  </div>
+</div>
+
+<p class="note">残差接続により、勾配がサブレイヤーをバイパスして直接伝搬する「ハイウェイ」が形成される。<br>これにより、深い層（6層×2 = 12サブレイヤー）でも安定した学習が可能になる。</p>
+</body>
+</html>

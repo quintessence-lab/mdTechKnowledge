@@ -134,3 +134,13 @@ blockquote {
   color: var(--color-text-muted);
   background-color: var(--color-bg-secondary);
 }
+
+.katex {
+  color: var(--color-text);
+}
+
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.5rem 0;
+}

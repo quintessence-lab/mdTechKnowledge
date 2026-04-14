@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WMT 2014 英仏翻訳 BLEUスコア比較</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+    --bar-gray: #3a3c44;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  .chart-container {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  h2 {
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+  .subtitle {
+    font-size: 0.82rem;
+    color: var(--text2);
+    margin-bottom: 24px;
+  }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .bar-label {
+    width: 180px;
+    min-width: 130px;
+    text-align: right;
+    padding-right: 14px;
+    font-size: 0.85rem;
+    color: var(--text2);
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+  }
+  .bar-label.highlight {
+    color: var(--purple);
+    font-weight: 700;
+  }
+  .bar-track {
+    flex: 1;
+    height: 32px;
+    background: var(--bg2);
+    border-radius: 4px;
+    position: relative;
+    overflow: visible;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--bar-gray);
+    position: relative;
+  }
+  .bar-fill.highlight {
+    background: var(--purple);
+  }
+  .bar-value {
+    position: absolute;
+    right: -54px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+  }
+  .bar-fill.highlight .bar-value {
+    color: var(--purple);
+  }
+  .sota-badge {
+    position: absolute;
+    right: -170px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--purple);
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  .axis-line {
+    margin-left: 180px;
+    border-top: 1px solid var(--bg3);
+    margin-top: 8px;
+    padding-top: 6px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: var(--text2);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  @media (max-width: 600px) {
+    body { padding: 14px; }
+    .bar-label { width: 110px; min-width: 90px; font-size: 0.72rem; }
+    .bar-value { font-size: 0.72rem; right: -46px; }
+    .sota-badge { right: -140px; font-size: 0.62rem; }
+    .axis-line { margin-left: 110px; }
+  }
+</style>
+</head>
+<body>
+<div class="chart-container">
+  <h2>WMT 2014 英仏翻訳 BLEUスコア比較</h2>
+  <p class="subtitle">English-to-French Translation — 高いほど良い</p>
+
+  <div id="chart"></div>
+  <div class="axis-line">
+    <span>0</span><span>14</span><span>28</span><span>42</span>
+  </div>
+</div>
+
+<script>
+const data = [
+  { name: 'Deep-Att+PosUnk', bleu: 39.2,  hl: false, sota: false },
+  { name: 'GNMT+RL',         bleu: 39.92, hl: false, sota: false },
+  { name: 'ConvS2S',         bleu: 40.46, hl: false, sota: false },
+  { name: 'MoE',             bleu: 40.56, hl: false, sota: false },
+  { name: 'Transformer (big)', bleu: 41.0, hl: true,  sota: true  },
+];
+const maxVal = 44;
+const chart = document.getElementById('chart');
+data.forEach(d => {
+  const pct = (d.bleu / maxVal * 100).toFixed(1);
+  const row = document.createElement('div');
+  row.className = 'bar-row';
+  let extra = '';
+  if (d.sota) extra = '<span class="sota-badge">単一モデル SOTA</span>';
+  row.innerHTML = `
+    <div class="bar-label ${d.hl ? 'highlight' : ''}">${d.name}</div>
+    <div class="bar-track">
+      <div class="bar-fill ${d.hl ? 'highlight' : ''}" style="width:${pct}%">
+        <span class="bar-value">${d.bleu}</span>
+        ${extra}
+      </div>
+    </div>`;
+  chart.appendChild(row);
+});
+</script>
+</body>
+</html>

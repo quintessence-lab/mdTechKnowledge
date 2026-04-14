@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>各ヘッドの学習パターン</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11; --bg2: #161820; --bg3: #1e2028;
+    --text: #e8e6de; --text2: #9e9b91; --text3: #6a6760;
+    --purple: #8b7ff0; --teal: #3ecfa0; --amber: #f0b429; --blue: #4fa8e8;
+    --border: rgba(255,255,255,0.08);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 24px; line-height: 1.6; }
+  .title { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { font-size: 0.82rem; color: var(--text2); margin-bottom: 18px; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .tab { padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg2); color: var(--text2); cursor: pointer; font-size: 0.85rem; font-family: inherit; transition: all .2s; }
+  .tab:hover { border-color: rgba(255,255,255,0.2); }
+  .tab.active { border-color: var(--purple); color: var(--purple); background: rgba(139,127,240,0.1); }
+  .sentence { display: flex; justify-content: center; gap: 4px; margin-bottom: 24px; flex-wrap: wrap; }
+  .token { padding: 6px 10px; border-radius: 6px; background: var(--bg2); border: 1px solid var(--border); font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; position: relative; white-space: nowrap; transition: all .3s; }
+  .token.source { border-color: var(--purple); background: rgba(139,127,240,0.15); }
+  .token.target { border-color: var(--teal); }
+  .desc-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+  .desc-card h3 { font-size: 0.95rem; margin-bottom: 6px; }
+  .desc-card p { font-size: 0.82rem; color: var(--text2); }
+  .arrows-area { position: relative; height: 60px; margin-bottom: 8px; }
+  svg.arrows { width: 100%; height: 60px; }
+  .legend { display: flex; gap: 16px; justify-content: center; margin-top: 12px; font-size: 0.78rem; color: var(--text3); }
+  .legend span { display: flex; align-items: center; gap: 4px; }
+  .legend .dot { width: 10px; height: 10px; border-radius: 50%; }
+</style>
+</head>
+<body>
+<div class="title">各ヘッドが異なるパターンを学習する</div>
+<div class="subtitle">例文: "The animal didn't cross the street because it was too tired" — タブを切り替えて各ヘッドの注目パターンを確認</div>
+
+<div class="tabs">
+  <button class="tab active" data-head="0">ヘッド1: 照応関係</button>
+  <button class="tab" data-head="1">ヘッド2: 近接位置</button>
+  <button class="tab" data-head="2">ヘッド3: 動詞-目的語</button>
+  <button class="tab" data-head="3">ヘッド4: 否定-動詞</button>
+</div>
+
+<div class="sentence" id="sentenceArea"></div>
+<svg class="arrows" id="arrowsSvg"></svg>
+
+<div class="desc-card" id="descCard">
+  <h3 id="descTitle"></h3>
+  <p id="descText"></p>
+</div>
+
+<div class="legend">
+  <span><span class="dot" style="background:var(--purple)"></span> 注目元（Query）</span>
+  <span><span class="dot" style="background:var(--teal)"></span> 注目先（Key/Value）— 線の太さ = 重み</span>
+</div>
+
+<script>
+const tokens = ["The","animal","didn't","cross","the","street","because","it","was","too","tired"];
+const heads = [
+  { title: "ヘッド1: 照応関係（代名詞の参照先）", text: "\"it\" が \"animal\" を強く参照しています。代名詞が文中の何を指すかを学習するヘッドです。この種の長距離依存関係の捕捉は、RNNでは困難でしたがSelf-Attentionでは直接結合できます。", source: 7, targets: [{i:1,w:0.72},{i:0,w:0.12},{i:7,w:0.08},{i:9,w:0.04},{i:10,w:0.04}] },
+  { title: "ヘッド2: 近接位置（局所的な文脈）", text: "\"cross\" が直前直後のトークンに均等に注目しています。局所的なn-gram的パターンを学習するヘッドで、品詞の並びや慣用表現の捕捉に寄与します。", source: 3, targets: [{i:2,w:0.30},{i:3,w:0.15},{i:4,w:0.28},{i:5,w:0.18},{i:1,w:0.09}] },
+  { title: "ヘッド3: 動詞-目的語関係", text: "\"cross\" が目的語 \"street\" を強く参照しています。動詞とその意味的な対象を結びつけるパターンを学習しており、意味役割の把握に役立ちます。", source: 3, targets: [{i:5,w:0.65},{i:4,w:0.15},{i:3,w:0.08},{i:1,w:0.07},{i:6,w:0.05}] },
+  { title: "ヘッド4: 否定-動詞関係", text: "\"didn't\" が \"cross\" を強く参照しています。否定語と修飾対象の動詞を結びつけるパターンで、文の意味解釈（肯定/否定）に重要な役割を果たします。", source: 2, targets: [{i:3,w:0.68},{i:2,w:0.12},{i:1,w:0.08},{i:5,w:0.07},{i:7,w:0.05}] }
+];
+let currentHead = 0;
+
+function render() {
+  const h = heads[currentHead];
+  const area = document.getElementById('sentenceArea');
+  area.innerHTML = '';
+  tokens.forEach((t, i) => {
+    const el = document.createElement('span');
+    el.className = 'token';
+    el.textContent = t;
+    if (i === h.source) el.classList.add('source');
+    if (h.targets.some(x => x.i === i && x.w > 0.1)) el.classList.add('target');
+    el.id = 'tok-' + i;
+    area.appendChild(el);
+  });
+
+  document.getElementById('descTitle').textContent = h.title;
+  document.getElementById('descText').textContent = h.text;
+
+  requestAnimationFrame(() => {
+    const svg = document.getElementById('arrowsSvg');
+    const svgRect = svg.getBoundingClientRect();
+    svg.innerHTML = '';
+    const sourceEl = document.getElementById('tok-' + h.source);
+    const sx = sourceEl.getBoundingClientRect().left + sourceEl.offsetWidth / 2 - svgRect.left;
+    h.targets.forEach(({i, w}) => {
+      if (w < 0.03) return;
+      const targetEl = document.getElementById('tok-' + i);
+      const tx = targetEl.getBoundingClientRect().left + targetEl.offsetWidth / 2 - svgRect.left;
+      const opacity = Math.max(0.2, w);
+      const stroke = Math.max(1, w * 6);
+      const cy = i === h.source ? 15 : 10 + (1 - w) * 40;
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', `M${sx},55 Q${(sx+tx)/2},${cy} ${tx},55`);
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke', i === h.source ? 'rgba(139,127,240,' + opacity + ')' : 'rgba(62,207,160,' + opacity + ')');
+      path.setAttribute('stroke-width', stroke);
+      path.setAttribute('stroke-linecap', 'round');
+      svg.appendChild(path);
+    });
+  });
+}
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentHead = parseInt(tab.dataset.head);
+    render();
+  });
+});
+render();
+window.addEventListener('resize', render);
+</script>
+</body>
+</html>

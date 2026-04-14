@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>位置情報なしの曖昧性</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    line-height: 1.6;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { font-size: 0.85rem; color: var(--text2); margin-bottom: 20px; }
+
+  .container { max-width: 680px; margin: 0 auto; }
+
+  .toggle-bar {
+    display: flex; gap: 12px; justify-content: center; margin-bottom: 24px;
+  }
+  .toggle-btn {
+    padding: 8px 20px;
+    border: 2px solid var(--bg3);
+    border-radius: 8px;
+    background: var(--bg2);
+    color: var(--text2);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .toggle-btn.active {
+    border-color: var(--purple);
+    color: var(--purple);
+    background: rgba(139,127,240,0.1);
+  }
+  .toggle-btn:hover { border-color: var(--purple); }
+
+  .sentence-pair {
+    display: flex; gap: 24px; justify-content: center; flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .sentence-box {
+    background: var(--bg2);
+    border: 1px solid var(--bg3);
+    border-radius: 10px;
+    padding: 16px 20px;
+    min-width: 260px;
+    flex: 1;
+    max-width: 320px;
+  }
+  .sentence-label {
+    font-size: 0.75rem;
+    color: var(--text2);
+    margin-bottom: 8px;
+  }
+  .tokens {
+    display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
+  }
+  .token {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    transition: all 0.4s;
+  }
+  .token-text {
+    background: var(--bg3);
+    border: 1px solid #2a2c36;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.4s;
+  }
+  .token-pos {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--teal);
+    opacity: 0;
+    transition: opacity 0.4s;
+    height: 16px;
+  }
+  .token-pos.visible { opacity: 1; }
+
+  .attention-output {
+    background: var(--bg2);
+    border: 1px solid var(--bg3);
+    border-radius: 10px;
+    padding: 16px 20px;
+    text-align: center;
+    margin-top: 12px;
+    min-height: 60px;
+    transition: all 0.4s;
+  }
+  .attention-label {
+    font-size: 0.75rem;
+    color: var(--text2);
+    margin-bottom: 6px;
+  }
+  .attention-vector {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    transition: all 0.4s;
+  }
+
+  .same-indicator {
+    text-align: center;
+    margin-top: 16px;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.4s;
+  }
+  .same-indicator.equal {
+    background: rgba(240,180,41,0.1);
+    border: 1px solid rgba(240,180,41,0.3);
+    color: var(--amber);
+  }
+  .same-indicator.different {
+    background: rgba(62,207,160,0.1);
+    border: 1px solid rgba(62,207,160,0.3);
+    color: var(--teal);
+  }
+
+  .arrow-between {
+    display: flex; align-items: center; justify-content: center;
+    margin: 8px 0;
+    color: var(--text2);
+    font-size: 1.2rem;
+  }
+
+  @media (max-width: 600px) {
+    .sentence-pair { flex-direction: column; align-items: center; }
+    .sentence-box { min-width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>位置情報なしの曖昧性</h2>
+  <p class="subtitle">同じトークン集合でも語順が違えば意味が変わる — 位置情報の重要性</p>
+
+  <div class="toggle-bar">
+    <button class="toggle-btn active" id="btn-off" onclick="togglePE(false)">位置情報 OFF</button>
+    <button class="toggle-btn" id="btn-on" onclick="togglePE(true)">位置情報 ON</button>
+  </div>
+
+  <div class="sentence-pair">
+    <div class="sentence-box">
+      <div class="sentence-label">文A</div>
+      <div class="tokens" id="tokens-a"></div>
+      <div class="attention-output">
+        <div class="attention-label">Attention出力</div>
+        <div class="attention-vector" id="attn-a"></div>
+      </div>
+    </div>
+    <div class="sentence-box">
+      <div class="sentence-label">文B</div>
+      <div class="tokens" id="tokens-b"></div>
+      <div class="attention-output">
+        <div class="attention-label">Attention出力</div>
+        <div class="attention-vector" id="attn-b"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="same-indicator equal" id="indicator">
+    ⚠ 同じトークン集合 → 同じAttention出力（語順の区別不可）
+  </div>
+</div>
+
+<script>
+const sentA = ['猫', 'が', '犬', 'を', '追う'];
+const sentB = ['犬', 'が', '猫', 'を', '追う'];
+
+const vectorNoPE = '[0.42, -0.18, 0.73, ...]';
+const vectorA_PE = '[0.42, <span style="color:var(--teal)">0.31</span>, 0.73, ...]';
+const vectorB_PE = '[0.42, <span style="color:var(--amber)">-0.55</span>, 0.73, ...]';
+
+let peOn = false;
+
+function buildTokens(container, tokens) {
+  container.innerHTML = '';
+  tokens.forEach((t, i) => {
+    const div = document.createElement('div');
+    div.className = 'token';
+    div.innerHTML = `
+      <div class="token-text">${t}</div>
+      <div class="token-pos" data-idx="${i}">pos=${i}</div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function togglePE(on) {
+  peOn = on;
+  document.getElementById('btn-off').classList.toggle('active', !on);
+  document.getElementById('btn-on').classList.toggle('active', on);
+
+  document.querySelectorAll('.token-pos').forEach(el => {
+    el.classList.toggle('visible', on);
+  });
+
+  const attnA = document.getElementById('attn-a');
+  const attnB = document.getElementById('attn-b');
+  const indicator = document.getElementById('indicator');
+
+  if (on) {
+    attnA.innerHTML = vectorA_PE;
+    attnA.style.background = 'rgba(62,207,160,0.1)';
+    attnB.innerHTML = vectorB_PE;
+    attnB.style.background = 'rgba(240,180,41,0.1)';
+    indicator.className = 'same-indicator different';
+    indicator.textContent = '✓ 位置情報により語順の違いがAttention出力に反映される';
+  } else {
+    attnA.innerHTML = vectorNoPE;
+    attnA.style.background = 'rgba(240,180,41,0.08)';
+    attnB.innerHTML = vectorNoPE;
+    attnB.style.background = 'rgba(240,180,41,0.08)';
+    indicator.className = 'same-indicator equal';
+    indicator.textContent = '⚠ 同じトークン集合 → 同じAttention出力（語順の区別不可）';
+  }
+}
+
+buildTokens(document.getElementById('tokens-a'), sentA);
+buildTokens(document.getElementById('tokens-b'), sentB);
+togglePE(false);
+</script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transformer内のドロップアウト適用箇所マップ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+    --red: #f05050;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .subtitle {
+    font-size: 0.85rem; color: var(--text2);
+    margin-bottom: 16px; line-height: 1.6;
+  }
+  .diagram-wrap {
+    width: 100%;
+    max-width: 780px;
+    margin: 0 auto;
+  }
+  svg text { font-family: 'Noto Sans JP', sans-serif; }
+  svg .mono { font-family: 'JetBrains Mono', monospace; }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 16px;
+    font-size: 0.8rem;
+    color: var(--text2);
+    max-width: 780px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend-dot {
+    width: 12px; height: 12px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 12px; }
+    h2 { font-size: 1rem; }
+    .subtitle { font-size: 0.78rem; }
+  }
+</style>
+</head>
+<body>
+<h2>Transformer 内のドロップアウト適用箇所</h2>
+<p class="subtitle">P<sub>drop</sub> = 0.1 が適用される3箇所を⚡マークで示す</p>
+
+<div class="diagram-wrap">
+<svg viewBox="0 0 780 620" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5"
+      markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#9e9b91"/>
+    </marker>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- ===== ENCODER (left) ===== -->
+  <text x="190" y="30" text-anchor="middle" fill="#e8e6de" font-size="15" font-weight="700">Encoder層</text>
+
+  <!-- Input Embedding + PE -->
+  <rect x="90" y="50" width="200" height="38" rx="6" fill="#161820" stroke="#4fa8e8" stroke-width="1.5"/>
+  <text x="190" y="74" text-anchor="middle" fill="#e8e6de" font-size="12">入力 Embedding + PE</text>
+
+  <!-- Dropout marker #3 - after Embedding+PE -->
+  <text x="300" y="62" fill="#f05050" font-size="18" filter="url(#glow)">⚡</text>
+  <text x="322" y="67" fill="#f05050" font-size="10" class="mono">Dropout ③</text>
+
+  <!-- arrow -->
+  <line x1="190" y1="88" x2="190" y2="118" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- Multi-Head Attention -->
+  <rect x="90" y="120" width="200" height="38" rx="6" fill="#161820" stroke="#8b7ff0" stroke-width="1.5"/>
+  <text x="190" y="144" text-anchor="middle" fill="#e8e6de" font-size="12">Multi-Head Attention</text>
+
+  <!-- Dropout marker #2 - Attention weights -->
+  <text x="300" y="132" fill="#f05050" font-size="18" filter="url(#glow)">⚡</text>
+  <text x="322" y="137" fill="#f05050" font-size="10" class="mono">Dropout ②</text>
+  <text x="322" y="150" fill="#f05050" font-size="9">(Attention重み)</text>
+
+  <!-- arrow -->
+  <line x1="190" y1="158" x2="190" y2="178" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- Dropout + Residual + LayerNorm -->
+  <rect x="90" y="180" width="200" height="38" rx="6" fill="#161820" stroke="#3ecfa0" stroke-width="1.5"/>
+  <text x="190" y="198" text-anchor="middle" fill="#e8e6de" font-size="11">Dropout → 残差接続 → LayerNorm</text>
+
+  <!-- Dropout marker #1 -->
+  <text x="300" y="192" fill="#f05050" font-size="18" filter="url(#glow)">⚡</text>
+  <text x="322" y="197" fill="#f05050" font-size="10" class="mono">Dropout ①</text>
+  <text x="322" y="210" fill="#f05050" font-size="9">(サブレイヤー出力)</text>
+
+  <!-- Residual connection line (encoder attention) -->
+  <path d="M90,140 L60,140 L60,199 L90,199" fill="none" stroke="#3ecfa0" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- arrow -->
+  <line x1="190" y1="218" x2="190" y2="248" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- FFN -->
+  <rect x="90" y="250" width="200" height="38" rx="6" fill="#161820" stroke="#f0b429" stroke-width="1.5"/>
+  <text x="190" y="274" text-anchor="middle" fill="#e8e6de" font-size="12">Feed Forward Network</text>
+
+  <!-- arrow -->
+  <line x1="190" y1="288" x2="190" y2="308" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- Dropout + Residual + LayerNorm -->
+  <rect x="90" y="310" width="200" height="38" rx="6" fill="#161820" stroke="#3ecfa0" stroke-width="1.5"/>
+  <text x="190" y="328" text-anchor="middle" fill="#e8e6de" font-size="11">Dropout → 残差接続 → LayerNorm</text>
+
+  <!-- Dropout marker #1 -->
+  <text x="300" y="322" fill="#f05050" font-size="18" filter="url(#glow)">⚡</text>
+  <text x="322" y="327" fill="#f05050" font-size="10" class="mono">Dropout ①</text>
+
+  <!-- Residual connection line (encoder FFN) -->
+  <path d="M90,269 L60,269 L60,329 L90,329" fill="none" stroke="#3ecfa0" stroke-width="1" stroke-dasharray="4,3"/>
+
+
+  <!-- ===== DECODER (right) ===== -->
+  <text x="590" y="30" text-anchor="middle" fill="#e8e6de" font-size="15" font-weight="700">Decoder層</text>
+
+  <!-- Output Embedding + PE -->
+  <rect x="490" y="50" width="200" height="38" rx="6" fill="#161820" stroke="#4fa8e8" stroke-width="1.5"/>
+  <text x="590" y="74" text-anchor="middle" fill="#e8e6de" font-size="12">出力 Embedding + PE</text>
+
+  <!-- Dropout marker #3 -->
+  <text x="700" y="62" fill="#f05050" font-size="18" filter="url(#glow)">⚡</text>
+  <text x="722" y="67" fill="#f05050" font-size="10" class="mono">③</text>
+
+  <!-- arrow -->
+  <line x1="590" y1="88" x2="590" y2="118" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- Masked Multi-Head Attention -->
+  <rect x="490" y="120" width="200" height="38" rx="6" fill="#161820" stroke="#8b7ff0" stroke-width="1.5"/>
+  <text x="590" y="144" text-anchor="middle" fill="#e8e6de" font-size="11">Masked Multi-Head Attention</text>
+
+  <!-- Dropout marker #2 -->
+  <text x="700" y="132" fill="#f05050" font-size="18" filter="url(#glow)">⚡</text>
+  <text x="722" y="137" fill="#f05050" font-size="10" class="mono">②</text>
+
+  <!-- arrow -->
+  <line x1="590" y1="158" x2="590" y2="178" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- Dropout + Residual + LN -->
+  <rect x="490" y="180" width="200" height="38" rx="6" fill="#161820" stroke="#3ecfa0" stroke-width="1.5"/>
+  <text x="590" y="198" text-anchor="middle" fill="#e8e6de" font-size="11">Dropout → 残差接続 → LayerNorm</text>
+  <text x="700" y="192" fill="#f05050" font-size="18" filter="url(#glow)">⚡</text>
+  <text x="722" y="197" fill="#f05050" font-size="10" class="mono">①</text>
+
+  <!-- Residual line -->
+  <path d="M490,140 L460,140 L460,199 L490,199" fill="none" stroke="#3ecfa0" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- arrow -->
+  <line x1="590" y1="218" x2="590" y2="248" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- Cross Attention -->
+  <rect x="490" y="250" width="200" height="38" rx="6" fill="#161820" stroke="#8b7ff0" stroke-width="1.5"/>
+  <text x="590" y="274" text-anchor="middle" fill="#e8e6de" font-size="11">Cross Multi-Head Attention</text>
+  <text x="700" y="262" fill="#f05050" font-size="18" filter="url(#glow)">⚡</text>
+  <text x="722" y="267" fill="#f05050" font-size="10" class="mono">②</text>
+
+  <!-- arrow from encoder to cross attention -->
+  <path d="M290,329 L400,329 L400,269 L490,269" fill="none" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#arrow)" stroke-dasharray="6,3"/>
+  <text x="400" y="290" text-anchor="middle" fill="#9e9b91" font-size="10">K, V</text>
+
+  <!-- arrow -->
+  <line x1="590" y1="288" x2="590" y2="308" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- Dropout + Residual + LN -->
+  <rect x="490" y="310" width="200" height="38" rx="6" fill="#161820" stroke="#3ecfa0" stroke-width="1.5"/>
+  <text x="590" y="328" text-anchor="middle" fill="#e8e6de" font-size="11">Dropout → 残差接続 → LayerNorm</text>
+  <text x="700" y="322" fill="#f05050" font-size="18" filter="url(#glow)">⚡</text>
+  <text x="722" y="327" fill="#f05050" font-size="10" class="mono">①</text>
+
+  <!-- Residual line -->
+  <path d="M490,269 L460,269 L460,329 L490,329" fill="none" stroke="#3ecfa0" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- arrow -->
+  <line x1="590" y1="348" x2="590" y2="378" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- FFN -->
+  <rect x="490" y="380" width="200" height="38" rx="6" fill="#161820" stroke="#f0b429" stroke-width="1.5"/>
+  <text x="590" y="404" text-anchor="middle" fill="#e8e6de" font-size="12">Feed Forward Network</text>
+
+  <!-- arrow -->
+  <line x1="590" y1="418" x2="590" y2="438" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- Dropout + Residual + LN -->
+  <rect x="490" y="440" width="200" height="38" rx="6" fill="#161820" stroke="#3ecfa0" stroke-width="1.5"/>
+  <text x="590" y="458" text-anchor="middle" fill="#e8e6de" font-size="11">Dropout → 残差接続 → LayerNorm</text>
+  <text x="700" y="452" fill="#f05050" font-size="18" filter="url(#glow)">⚡</text>
+  <text x="722" y="457" fill="#f05050" font-size="10" class="mono">①</text>
+
+  <!-- Residual line -->
+  <path d="M490,399 L460,399 L460,459 L490,459" fill="none" stroke="#3ecfa0" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- ===== Legend box ===== -->
+  <rect x="40" y="520" width="700" height="80" rx="8" fill="#161820" stroke="#1e2028" stroke-width="1"/>
+  <text x="60" y="546" fill="#f05050" font-size="14">⚡</text>
+  <text x="80" y="548" fill="#e8e6de" font-size="12" font-weight="700">ドロップアウト適用箇所（P<tspan class="mono" font-size="11">drop</tspan> = 0.1）</text>
+
+  <text x="80" y="570" fill="#f05050" font-size="11" font-weight="500">① サブレイヤー出力</text>
+  <text x="80" y="586" fill="#9e9b91" font-size="10">残差接続に加算される直前に適用</text>
+
+  <text x="310" y="570" fill="#f05050" font-size="11" font-weight="500">② Attention重み</text>
+  <text x="310" y="586" fill="#9e9b91" font-size="10">softmax後のAttention確率に適用</text>
+
+  <text x="540" y="570" fill="#f05050" font-size="11" font-weight="500">③ Embedding + PE</text>
+  <text x="540" y="586" fill="#9e9b91" font-size="10">埋め込みと位置符号の合算後に適用</text>
+</svg>
+</div>
+</body>
+</html>

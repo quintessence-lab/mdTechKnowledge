@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transformer以降のモデル系譜図</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .subtitle {
+    font-size: 0.85rem; color: var(--text2);
+    margin-bottom: 16px; line-height: 1.6;
+  }
+  .legend {
+    display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--text2);
+  }
+  .legend-dot {
+    width: 12px; height: 12px; border-radius: 50%;
+  }
+  .timeline {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .year-row {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .year-label {
+    width: 80px;
+    min-width: 80px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text2);
+    padding-top: 10px;
+    font-weight: 500;
+  }
+  .year-line {
+    position: absolute;
+    left: 78px;
+    top: 0;
+    bottom: -8px;
+    width: 2px;
+    background: #2a2c36;
+  }
+  .year-row:last-child .year-line { display: none; }
+  .nodes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 6px 0 6px 20px;
+    flex: 1;
+  }
+  .node {
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    position: relative;
+    white-space: nowrap;
+  }
+  .node:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+  .node.encoder {
+    background: rgba(62,207,160,0.12);
+    border-color: rgba(62,207,160,0.3);
+    color: var(--teal);
+  }
+  .node.decoder {
+    background: rgba(139,127,240,0.12);
+    border-color: rgba(139,127,240,0.3);
+    color: var(--purple);
+  }
+  .node.multimodal {
+    background: rgba(240,180,41,0.12);
+    border-color: rgba(240,180,41,0.3);
+    color: var(--amber);
+  }
+  .node.root {
+    background: rgba(79,168,232,0.15);
+    border-color: rgba(79,168,232,0.4);
+    color: var(--blue);
+    font-weight: 700;
+    font-size: 0.88rem;
+  }
+  .node.encdec {
+    background: rgba(79,168,232,0.12);
+    border-color: rgba(79,168,232,0.3);
+    color: var(--blue);
+  }
+  .tooltip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg3);
+    border: 1px solid #3a3c46;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.75rem;
+    color: var(--text);
+    line-height: 1.6;
+    width: 240px;
+    white-space: normal;
+    z-index: 10;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    pointer-events: none;
+  }
+  .tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #3a3c46;
+  }
+  .node.active .tooltip {
+    display: block;
+  }
+  .year-dot {
+    position: absolute;
+    left: 73px;
+    top: 12px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--bg3);
+    border: 2px solid #4a4c56;
+    z-index: 1;
+  }
+  @media (max-width: 600px) {
+    .year-label { width: 55px; min-width: 55px; font-size: 0.75rem; }
+    .year-line { left: 53px; }
+    .year-dot { left: 48px; }
+    .nodes { padding-left: 14px; }
+    .node { font-size: 0.7rem; padding: 5px 10px; }
+  }
+</style>
+</head>
+<body>
+<h2>Transformer以降のモデル系譜図（2017-2026）</h2>
+<p class="subtitle">ノードをクリックすると各モデルの概要が表示されます</p>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--teal)"></div>Encoder系</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div>Decoder系</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div>マルチモーダル / 応用</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>Encoder-Decoder</div>
+</div>
+
+<div class="timeline" id="timeline">
+
+  <div class="year-row">
+    <div class="year-label">2017</div>
+    <div class="year-line"></div>
+    <div class="year-dot"></div>
+    <div class="nodes">
+      <div class="node root" data-info="「Attention Is All You Need」で提案。RNNを排除し、Self-Attentionのみで系列変換を実現した革新的アーキテクチャ。">Transformer<span class="tooltip"></span></div>
+    </div>
+  </div>
+
+  <div class="year-row">
+    <div class="year-label">2018</div>
+    <div class="year-line"></div>
+    <div class="year-dot"></div>
+    <div class="nodes">
+      <div class="node encoder" data-info="Encoder-onlyモデル。マスク言語モデルと双方向Attentionにより文脈理解に優れる。NLPベンチマークを席巻した。">BERT<span class="tooltip"></span></div>
+      <div class="node decoder" data-info="OpenAIの最初のDecoder-onlyモデル。教師なし事前学習＋ファインチューニングのパラダイムを確立。117Mパラメータ。">GPT-1<span class="tooltip"></span></div>
+    </div>
+  </div>
+
+  <div class="year-row">
+    <div class="year-label">2019</div>
+    <div class="year-line"></div>
+    <div class="year-dot"></div>
+    <div class="nodes">
+      <div class="node decoder" data-info="GPT-1を大規模化（1.5Bパラメータ）。ゼロショットでの多様なタスク処理能力を示した。">GPT-2<span class="tooltip"></span></div>
+      <div class="node encoder" data-info="自己回帰的な手法で双方向文脈を学習。BERTの並び替え言語モデル版。">XLNet<span class="tooltip"></span></div>
+      <div class="node encoder" data-info="BERTの訓練手法を最適化。より多くのデータとより長い訓練で性能向上を実現。">RoBERTa<span class="tooltip"></span></div>
+      <div class="node encdec" data-info="Encoder-Decoderモデル。全てのNLPタスクをtext-to-text形式に統一した汎用フレームワーク。">T5<span class="tooltip"></span></div>
+    </div>
+  </div>
+
+  <div class="year-row">
+    <div class="year-label">2020</div>
+    <div class="year-line"></div>
+    <div class="year-dot"></div>
+    <div class="nodes">
+      <div class="node decoder" data-info="175Bパラメータの巨大言語モデル。few-shot学習でファインチューニングなしに多様なタスクを解決。スケーリング則を実証。">GPT-3<span class="tooltip"></span></div>
+      <div class="node multimodal" data-info="画像を16×16パッチに分割しトークンとして扱うことで、Transformerを画像認識に応用。CNNに匹敵する性能を達成。">Vision Transformer<span class="tooltip"></span></div>
+      <div class="node multimodal" data-info="タンパク質の3D構造予測にTransformerのAttention機構を活用。構造生物学に革命をもたらした。">AlphaFold2<span class="tooltip"></span></div>
+    </div>
+  </div>
+
+  <div class="year-row">
+    <div class="year-label">2021</div>
+    <div class="year-line"></div>
+    <div class="year-dot"></div>
+    <div class="nodes">
+      <div class="node multimodal" data-info="テキストから画像を生成するマルチモーダルモデル。GPTアーキテクチャを画像生成に拡張。">DALL-E<span class="tooltip"></span></div>
+      <div class="node decoder" data-info="GPT-3をコード生成に特化させたモデル。GitHub Copilotの基盤となり、AIコーディング支援の先駆け。">Codex<span class="tooltip"></span></div>
+    </div>
+  </div>
+
+  <div class="year-row">
+    <div class="year-label">2022</div>
+    <div class="year-line"></div>
+    <div class="year-dot"></div>
+    <div class="nodes">
+      <div class="node decoder" data-info="RLHFで対話に最適化されたGPT-3.5。AIチャットボットの社会的ブレイクスルーとなった。">ChatGPT<span class="tooltip"></span></div>
+      <div class="node multimodal" data-info="音声認識にTransformerを適用。多言語対応の高精度音声認識・翻訳モデル。">Whisper<span class="tooltip"></span></div>
+      <div class="node multimodal" data-info="テキストから高品質な画像を生成する拡散モデル。U-Net内でTransformerのAttentionを活用。">Stable Diffusion<span class="tooltip"></span></div>
+    </div>
+  </div>
+
+  <div class="year-row">
+    <div class="year-label">2023</div>
+    <div class="year-line"></div>
+    <div class="year-dot"></div>
+    <div class="nodes">
+      <div class="node decoder" data-info="マルチモーダル対応の大規模言語モデル。テキスト・画像入力に対応し、推論能力が大幅に向上。推定1.8Tパラメータ。">GPT-4<span class="tooltip"></span></div>
+      <div class="node decoder" data-info="Anthropicの対話型AI。Constitutional AIにより安全性と有用性を両立。長文理解に優れる。">Claude<span class="tooltip"></span></div>
+      <div class="node decoder" data-info="Metaが公開したオープンソースLLM。研究コミュニティのオープンソースLLM開発を加速させた。">LLaMA<span class="tooltip"></span></div>
+      <div class="node multimodal" data-info="Google DeepMindのマルチモーダルモデル。テキスト・画像・音声・動画を統合的に処理。">Gemini<span class="tooltip"></span></div>
+    </div>
+  </div>
+
+  <div class="year-row">
+    <div class="year-label">2024</div>
+    <div class="year-line"></div>
+    <div class="year-dot"></div>
+    <div class="nodes">
+      <div class="node decoder" data-info="Anthropicの第3世代モデル。マルチモーダル対応、100万トークンの長大コンテキストウィンドウ。">Claude 3<span class="tooltip"></span></div>
+      <div class="node multimodal" data-info="100万トークンのコンテキストウィンドウを実現。長大な文書・動画の理解能力が飛躍的に向上。">Gemini 1.5<span class="tooltip"></span></div>
+      <div class="node decoder" data-info="Metaのオープンソース第3世代LLM。8B/70B/405Bの3サイズで提供。性能と効率の両立。">Llama 3<span class="tooltip"></span></div>
+    </div>
+  </div>
+
+  <div class="year-row">
+    <div class="year-label">2025-26</div>
+    <div class="nodes" style="padding-left:20px;">
+      <div class="node decoder" data-info="Anthropicの第4世代モデル。高度な推論能力とツール使用能力を備えた最先端AI。">Claude 4<span class="tooltip"></span></div>
+      <div class="node decoder" data-info="OpenAIの次世代大規模言語モデル。さらなるスケーリングと推論能力の向上が期待される。">GPT-5<span class="tooltip"></span></div>
+      <div class="node multimodal" data-info="Googleの次世代マルチモーダルモデル。より高度な推論とマルチモーダル統合を実現。">Gemini 2<span class="tooltip"></span></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+document.querySelectorAll('.node').forEach(node => {
+  const info = node.getAttribute('data-info');
+  if (info) {
+    node.querySelector('.tooltip').textContent = info;
+  }
+  node.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const wasActive = node.classList.contains('active');
+    document.querySelectorAll('.node.active').forEach(n => n.classList.remove('active'));
+    if (!wasActive) node.classList.add('active');
+  });
+});
+document.addEventListener('click', () => {
+  document.querySelectorAll('.node.active').forEach(n => n.classList.remove('active'));
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transformer 主要ハイパーパラメータ一覧</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .subtitle {
+    font-size: 0.85rem; color: var(--text2);
+    margin-bottom: 20px; line-height: 1.6;
+  }
+  .table-wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+  thead th {
+    background: var(--bg3);
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.82rem;
+    border-bottom: 2px solid #2a2c36;
+    white-space: nowrap;
+  }
+  thead th:nth-child(3),
+  thead th:nth-child(4) {
+    text-align: center;
+  }
+  tbody td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #1e2028;
+    vertical-align: middle;
+  }
+  tbody tr:hover {
+    background: var(--bg2);
+  }
+  .param-name {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--purple);
+    font-weight: 500;
+    font-size: 0.82rem;
+    white-space: nowrap;
+  }
+  .param-desc {
+    color: var(--text2);
+    font-size: 0.78rem;
+  }
+  .val-base, .val-big {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+  }
+  .val-big {
+    color: var(--amber);
+  }
+  .val-base {
+    color: var(--teal);
+  }
+  .diff {
+    background: rgba(240, 180, 41, 0.08);
+  }
+  .section-header td {
+    background: var(--bg3);
+    font-weight: 700;
+    font-size: 0.78rem;
+    color: var(--text2);
+    padding: 8px 14px;
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 12px; }
+    table { font-size: 0.75rem; }
+    thead th, tbody td { padding: 8px 8px; }
+    h2 { font-size: 1rem; }
+  }
+</style>
+</head>
+<body>
+<h2>主要ハイパーパラメータ一覧</h2>
+<p class="subtitle">Base model と Big model の設定値を比較。異なる値はハイライト表示。</p>
+
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr>
+      <th>パラメータ</th>
+      <th>説明</th>
+      <th style="color: var(--teal);">Base</th>
+      <th style="color: var(--amber);">Big</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Model Architecture -->
+    <tr class="section-header"><td colspan="4">モデル構造</td></tr>
+    <tr>
+      <td class="param-name">d_model</td>
+      <td class="param-desc">モデル次元（埋め込み・出力次元）</td>
+      <td class="val-base">512</td>
+      <td class="val-big diff">1024</td>
+    </tr>
+    <tr>
+      <td class="param-name">d_ff</td>
+      <td class="param-desc">FFN中間層の次元</td>
+      <td class="val-base">2048</td>
+      <td class="val-big diff">4096</td>
+    </tr>
+    <tr>
+      <td class="param-name">h</td>
+      <td class="param-desc">Attention ヘッド数</td>
+      <td class="val-base">8</td>
+      <td class="val-big diff">16</td>
+    </tr>
+    <tr>
+      <td class="param-name">d_k = d_v</td>
+      <td class="param-desc">各ヘッドのキー・バリュー次元</td>
+      <td class="val-base">64</td>
+      <td class="val-big">64</td>
+    </tr>
+    <tr>
+      <td class="param-name">N</td>
+      <td class="param-desc">Encoder / Decoder の層数</td>
+      <td class="val-base">6</td>
+      <td class="val-big">6</td>
+    </tr>
+
+    <!-- Regularization -->
+    <tr class="section-header"><td colspan="4">正規化・正則化</td></tr>
+    <tr>
+      <td class="param-name">P_drop</td>
+      <td class="param-desc">ドロップアウト率</td>
+      <td class="val-base">0.1</td>
+      <td class="val-big diff">0.3</td>
+    </tr>
+    <tr>
+      <td class="param-name">ε_ls</td>
+      <td class="param-desc">ラベルスムージング値</td>
+      <td class="val-base">0.1</td>
+      <td class="val-big">0.1</td>
+    </tr>
+
+    <!-- Optimizer -->
+    <tr class="section-header"><td colspan="4">オプティマイザ（Adam）</td></tr>
+    <tr>
+      <td class="param-name">β1</td>
+      <td class="param-desc">一次モーメントの減衰率</td>
+      <td class="val-base">0.9</td>
+      <td class="val-big">0.9</td>
+    </tr>
+    <tr>
+      <td class="param-name">β2</td>
+      <td class="param-desc">二次モーメントの減衰率</td>
+      <td class="val-base">0.98</td>
+      <td class="val-big">0.98</td>
+    </tr>
+    <tr>
+      <td class="param-name">ε</td>
+      <td class="param-desc">数値安定性のための微小値</td>
+      <td class="val-base">10⁻⁹</td>
+      <td class="val-big">10⁻⁹</td>
+    </tr>
+
+    <!-- Learning Rate -->
+    <tr class="section-header"><td colspan="4">学習率スケジュール</td></tr>
+    <tr>
+      <td class="param-name">warmup_steps</td>
+      <td class="param-desc">線形ウォームアップのステップ数</td>
+      <td class="val-base">4,000</td>
+      <td class="val-big">4,000</td>
+    </tr>
+
+    <!-- Training -->
+    <tr class="section-header"><td colspan="4">学習設定</td></tr>
+    <tr>
+      <td class="param-name">batch</td>
+      <td class="param-desc">バッチあたりの近似トークン数</td>
+      <td class="val-base">~25,000</td>
+      <td class="val-big">~25,000</td>
+    </tr>
+    <tr>
+      <td class="param-name">steps</td>
+      <td class="param-desc">学習ステップ数</td>
+      <td class="val-base">100K</td>
+      <td class="val-big diff">300K</td>
+    </tr>
+    <tr>
+      <td class="param-name">GPUs</td>
+      <td class="param-desc">使用GPU数 (P100)</td>
+      <td class="val-base">8</td>
+      <td class="val-big">8</td>
+    </tr>
+    <tr>
+      <td class="param-name">学習時間</td>
+      <td class="param-desc">合計学習時間</td>
+      <td class="val-base">12時間</td>
+      <td class="val-big diff">3.5日</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</body>
+</html>

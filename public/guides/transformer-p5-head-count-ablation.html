@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ヘッド数によるBLEU変化</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  .container { max-width: 640px; margin: 0 auto; }
+  h2 { font-size: 1.1rem; margin-bottom: 6px; }
+  .subtitle { font-size: 0.82rem; color: var(--text2); margin-bottom: 20px; }
+
+  .chart-area {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    background: var(--bg2);
+    border-radius: 8px;
+    border: 1px solid var(--bg3);
+    overflow: visible;
+  }
+  svg { width: 100%; height: 100%; }
+
+  .annotation-box {
+    margin-top: 16px;
+    background: #1e1820;
+    border: 1px solid #362a48;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 0.8rem;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+  .annotation-box strong {
+    color: var(--amber);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>ヘッド数によるBLEU変化</h2>
+  <p class="subtitle">Attention Head数のアブレーション — d_model=512固定</p>
+
+  <div class="chart-area">
+    <svg viewBox="0 0 640 400" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#8b7ff0" stop-opacity="0.6"/>
+          <stop offset="50%" stop-color="#8b7ff0"/>
+          <stop offset="100%" stop-color="#f0b429"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Chart area: left=80, right=580, top=40, bottom=350 -->
+      <!-- Y axis: 24.5 to 26.5 => range 2.0 -->
+      <!-- X positions: 1->100, 4->220, 8->340, 16->460, 32->560 (log-ish spacing) -->
+
+      <!-- Grid lines -->
+      <line x1="80" y1="350" x2="580" y2="350" stroke="#1e2028" stroke-width="1"/>
+      <line x1="80" y1="272.5" x2="580" y2="272.5" stroke="#1e2028" stroke-width="1" stroke-dasharray="4,4"/>
+      <line x1="80" y1="195" x2="580" y2="195" stroke="#1e2028" stroke-width="1" stroke-dasharray="4,4"/>
+      <line x1="80" y1="117.5" x2="580" y2="117.5" stroke="#1e2028" stroke-width="1" stroke-dasharray="4,4"/>
+      <line x1="80" y1="40" x2="580" y2="40" stroke="#1e2028" stroke-width="1" stroke-dasharray="4,4"/>
+
+      <!-- Y axis labels -->
+      <text x="70" y="354" text-anchor="end" fill="#9e9b91" font-family="JetBrains Mono" font-size="12">24.5</text>
+      <text x="70" y="277" text-anchor="end" fill="#9e9b91" font-family="JetBrains Mono" font-size="12">25.0</text>
+      <text x="70" y="199" text-anchor="end" fill="#9e9b91" font-family="JetBrains Mono" font-size="12">25.5</text>
+      <text x="70" y="122" text-anchor="end" fill="#9e9b91" font-family="JetBrains Mono" font-size="12">26.0</text>
+      <text x="70" y="44" text-anchor="end" fill="#9e9b91" font-family="JetBrains Mono" font-size="12">26.5</text>
+
+      <!-- Y axis title -->
+      <text x="18" y="200" text-anchor="middle" fill="#9e9b91" font-family="Noto Sans JP" font-size="12" transform="rotate(-90,18,200)">BLEU</text>
+
+      <!-- X axis labels -->
+      <text x="120" y="375" text-anchor="middle" fill="#9e9b91" font-family="JetBrains Mono" font-size="12">1</text>
+      <text x="230" y="375" text-anchor="middle" fill="#9e9b91" font-family="JetBrains Mono" font-size="12">4</text>
+      <text x="340" y="375" text-anchor="middle" fill="#9e9b91" font-family="JetBrains Mono" font-size="12">8</text>
+      <text x="450" y="375" text-anchor="middle" fill="#9e9b91" font-family="JetBrains Mono" font-size="12">16</text>
+      <text x="550" y="375" text-anchor="middle" fill="#9e9b91" font-family="JetBrains Mono" font-size="12">32</text>
+
+      <!-- X axis title -->
+      <text x="340" y="396" text-anchor="middle" fill="#9e9b91" font-family="Noto Sans JP" font-size="12">ヘッド数 (h)</text>
+
+      <!-- Data points: y = 350 - (val - 24.5) / 2.0 * 310 -->
+      <!-- h=1:  24.9 => y = 350 - 0.4/2.0*310 = 350-62  = 288,  x=120 -->
+      <!-- h=4:  25.5 => y = 350 - 1.0/2.0*310 = 350-155 = 195,  x=230 -->
+      <!-- h=8:  25.8 => y = 350 - 1.3/2.0*310 = 350-201.5=148.5, x=340 -->
+      <!-- h=16: 25.8 => y = 148.5, x=450 -->
+      <!-- h=32: 25.0 => y = 350 - 0.5/2.0*310 = 350-77.5= 272.5, x=550 -->
+
+      <!-- Line -->
+      <polyline
+        points="120,288 230,195 340,148.5 450,148.5 550,272.5"
+        fill="none"
+        stroke="url(#lineGrad)"
+        stroke-width="3"
+        stroke-linejoin="round"
+      />
+
+      <!-- Points -->
+      <circle cx="120" cy="288" r="5" fill="#8b7ff0" opacity="0.7"/>
+      <circle cx="230" cy="195" r="5" fill="#8b7ff0" opacity="0.7"/>
+      <circle cx="450" cy="148.5" r="5" fill="#8b7ff0" opacity="0.7"/>
+      <circle cx="550" cy="272.5" r="6" fill="#f0b429" opacity="0.9"/>
+
+      <!-- h=8 sweet spot: big point -->
+      <circle cx="340" cy="148.5" r="10" fill="#8b7ff0" opacity="0.25"/>
+      <circle cx="340" cy="148.5" r="7" fill="#8b7ff0"/>
+
+      <!-- Value labels -->
+      <text x="120" y="278" text-anchor="middle" fill="#9e9b91" font-family="JetBrains Mono" font-size="11">24.9</text>
+      <text x="230" y="185" text-anchor="middle" fill="#9e9b91" font-family="JetBrains Mono" font-size="11">25.5</text>
+      <text x="340" y="132" text-anchor="middle" fill="#8b7ff0" font-family="JetBrains Mono" font-size="13" font-weight="700">25.8</text>
+      <text x="450" y="138" text-anchor="middle" fill="#9e9b91" font-family="JetBrains Mono" font-size="11">25.8</text>
+      <text x="550" y="262" text-anchor="middle" fill="#f0b429" font-family="JetBrains Mono" font-size="11" font-weight="700">25.0</text>
+
+      <!-- Sweet spot label -->
+      <rect x="286" y="100" width="110" height="22" rx="4" fill="#1a1830" stroke="#8b7ff0" stroke-width="1"/>
+      <text x="341" y="115" text-anchor="middle" fill="#8b7ff0" font-family="Noto Sans JP" font-size="11" font-weight="700">スイートスポット</text>
+
+      <!-- h=32 annotation arrow -->
+      <line x1="550" y1="285" x2="550" y2="308" stroke="#f0b429" stroke-width="1" stroke-dasharray="3,2"/>
+      <rect x="448" y="310" width="204" height="38" rx="4" fill="#1e1a10" stroke="#f0b429" stroke-width="1" opacity="0.9"/>
+      <text x="550" y="326" text-anchor="middle" fill="#f0b429" font-family="Noto Sans JP" font-size="10">d_k=16と小さすぎて</text>
+      <text x="550" y="342" text-anchor="middle" fill="#f0b429" font-family="Noto Sans JP" font-size="10">スコア計算の精度が低下</text>
+    </svg>
+  </div>
+
+  <div class="annotation-box">
+    <strong>h=8</strong> が最適なヘッド数。h=16でも同等だが、<strong>h=32</strong>では d_k が16まで小さくなり、dot-productの識別力が不足して性能が低下する。ヘッド数は多ければ良いわけではない。
+  </div>
+</div>
+</body>
+</html>

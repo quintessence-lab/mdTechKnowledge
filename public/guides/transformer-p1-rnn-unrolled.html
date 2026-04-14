@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RNNの時間方向展開と勾配の流れ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  h2 {
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text2);
+    margin-bottom: 28px;
+  }
+  .diagram-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 12px;
+  }
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--text2);
+  }
+  .legend-line {
+    width: 28px;
+    height: 2px;
+  }
+  .legend-line.solid { background: var(--teal); }
+  .legend-line.dashed {
+    background: repeating-linear-gradient(90deg, var(--amber) 0, var(--amber) 5px, transparent 5px, transparent 9px);
+    height: 2px;
+  }
+  @media (max-width: 768px) {
+    body { padding: 16px 8px; }
+    h2 { font-size: 1.05rem; }
+  }
+</style>
+</head>
+<body>
+<h2>RNNの時間方向展開（Unrolled RNN）</h2>
+<p class="subtitle">順伝播（実線）と逆伝播・勾配の流れ（点線）</p>
+<div class="diagram-wrapper">
+<svg viewBox="0 0 880 380" xmlns="http://www.w3.org/2000/svg" style="min-width:650px;max-width:880px;width:100%;height:auto;display:block;margin:0 auto;">
+  <defs>
+    <marker id="arrowTeal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3ecfa0"/>
+    </marker>
+    <marker id="arrowAmber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#f0b429"/>
+    </marker>
+    <marker id="arrowPurple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8b7ff0"/>
+    </marker>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4fa8e8"/>
+    </marker>
+  </defs>
+
+  <!-- Step positions: 100, 240, 380, 520, 660, 800 -->
+  <!-- Y positions: input=310, cell=200, output=90 -->
+
+  <!-- RNN Cells -->
+  <g id="cells">
+    <!-- Cell backgrounds -->
+    <rect x="62" y="170" width="76" height="60" rx="10" fill="#1e2028" stroke="#3ecfa0" stroke-width="1.5" stroke-opacity="0.6"/>
+    <rect x="202" y="170" width="76" height="60" rx="10" fill="#1e2028" stroke="#3ecfa0" stroke-width="1.5" stroke-opacity="0.6"/>
+    <rect x="342" y="170" width="76" height="60" rx="10" fill="#1e2028" stroke="#3ecfa0" stroke-width="1.5" stroke-opacity="0.6"/>
+    <rect x="482" y="170" width="76" height="60" rx="10" fill="#1e2028" stroke="#3ecfa0" stroke-width="1.5" stroke-opacity="0.6"/>
+    <rect x="622" y="170" width="76" height="60" rx="10" fill="#1e2028" stroke="#3ecfa0" stroke-width="1.5" stroke-opacity="0.6"/>
+    <rect x="762" y="170" width="76" height="60" rx="10" fill="#1e2028" stroke="#3ecfa0" stroke-width="1.5" stroke-opacity="0.6"/>
+
+    <!-- Cell labels -->
+    <text x="100" y="205" text-anchor="middle" fill="#3ecfa0" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="500">RNN</text>
+    <text x="240" y="205" text-anchor="middle" fill="#3ecfa0" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="500">RNN</text>
+    <text x="380" y="205" text-anchor="middle" fill="#3ecfa0" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="500">RNN</text>
+    <text x="520" y="205" text-anchor="middle" fill="#3ecfa0" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="500">RNN</text>
+    <text x="660" y="205" text-anchor="middle" fill="#3ecfa0" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="500">RNN</text>
+    <text x="800" y="205" text-anchor="middle" fill="#3ecfa0" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="500">RNN</text>
+  </g>
+
+  <!-- Input arrows (x_t -> cell) -->
+  <g>
+    <line x1="100" y1="295" x2="100" y2="235" stroke="#4fa8e8" stroke-width="1.8" marker-end="url(#arrowBlue)"/>
+    <line x1="240" y1="295" x2="240" y2="235" stroke="#4fa8e8" stroke-width="1.8" marker-end="url(#arrowBlue)"/>
+    <line x1="380" y1="295" x2="380" y2="235" stroke="#4fa8e8" stroke-width="1.8" marker-end="url(#arrowBlue)"/>
+    <line x1="520" y1="295" x2="520" y2="235" stroke="#4fa8e8" stroke-width="1.8" marker-end="url(#arrowBlue)"/>
+    <line x1="660" y1="295" x2="660" y2="235" stroke="#4fa8e8" stroke-width="1.8" marker-end="url(#arrowBlue)"/>
+    <line x1="800" y1="295" x2="800" y2="235" stroke="#4fa8e8" stroke-width="1.8" marker-end="url(#arrowBlue)"/>
+  </g>
+
+  <!-- Input labels -->
+  <g fill="#4fa8e8" font-family="'JetBrains Mono', monospace" font-size="14" font-weight="500" text-anchor="middle">
+    <text x="100" y="315">x&#x2081;</text>
+    <text x="240" y="315">x&#x2082;</text>
+    <text x="380" y="315">x&#x2083;</text>
+    <text x="520" y="315">x&#x2084;</text>
+    <text x="660" y="315">x&#x2085;</text>
+    <text x="800" y="315">x&#x2086;</text>
+  </g>
+  <text x="440" y="348" text-anchor="middle" fill="#9e9b91" font-family="'Noto Sans JP', sans-serif" font-size="11">入力系列</text>
+
+  <!-- Output arrows (cell -> y_t) -->
+  <g>
+    <line x1="100" y1="165" x2="100" y2="115" stroke="#8b7ff0" stroke-width="1.8" marker-end="url(#arrowPurple)"/>
+    <line x1="240" y1="165" x2="240" y2="115" stroke="#8b7ff0" stroke-width="1.8" marker-end="url(#arrowPurple)"/>
+    <line x1="380" y1="165" x2="380" y2="115" stroke="#8b7ff0" stroke-width="1.8" marker-end="url(#arrowPurple)"/>
+    <line x1="520" y1="165" x2="520" y2="115" stroke="#8b7ff0" stroke-width="1.8" marker-end="url(#arrowPurple)"/>
+    <line x1="660" y1="165" x2="660" y2="115" stroke="#8b7ff0" stroke-width="1.8" marker-end="url(#arrowPurple)"/>
+    <line x1="800" y1="165" x2="800" y2="115" stroke="#8b7ff0" stroke-width="1.8" marker-end="url(#arrowPurple)"/>
+  </g>
+
+  <!-- Output labels -->
+  <g fill="#8b7ff0" font-family="'JetBrains Mono', monospace" font-size="14" font-weight="500" text-anchor="middle">
+    <text x="100" y="100">y&#x2081;</text>
+    <text x="240" y="100">y&#x2082;</text>
+    <text x="380" y="100">y&#x2083;</text>
+    <text x="520" y="100">y&#x2084;</text>
+    <text x="660" y="100">y&#x2085;</text>
+    <text x="800" y="100">y&#x2086;</text>
+  </g>
+  <text x="440" y="80" text-anchor="middle" fill="#9e9b91" font-family="'Noto Sans JP', sans-serif" font-size="11">出力系列</text>
+
+  <!-- Hidden state arrows (h_{t-1} -> h_t) — forward -->
+  <g>
+    <!-- h0 arrow -->
+    <line x1="30" y1="200" x2="57" y2="200" stroke="#3ecfa0" stroke-width="2" marker-end="url(#arrowTeal)"/>
+    <text x="16" y="204" text-anchor="middle" fill="#3ecfa0" font-family="'JetBrains Mono', monospace" font-size="11">h&#x2080;</text>
+
+    <line x1="142" y1="200" x2="197" y2="200" stroke="#3ecfa0" stroke-width="2" marker-end="url(#arrowTeal)"/>
+    <line x1="282" y1="200" x2="337" y2="200" stroke="#3ecfa0" stroke-width="2" marker-end="url(#arrowTeal)"/>
+    <line x1="422" y1="200" x2="477" y2="200" stroke="#3ecfa0" stroke-width="2" marker-end="url(#arrowTeal)"/>
+    <line x1="562" y1="200" x2="617" y2="200" stroke="#3ecfa0" stroke-width="2" marker-end="url(#arrowTeal)"/>
+    <line x1="702" y1="200" x2="757" y2="200" stroke="#3ecfa0" stroke-width="2" marker-end="url(#arrowTeal)"/>
+    <line x1="842" y1="200" x2="870" y2="200" stroke="#3ecfa0" stroke-width="2" marker-end="url(#arrowTeal)"/>
+  </g>
+
+  <!-- Hidden state labels -->
+  <g fill="#3ecfa0" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="400" text-anchor="middle" opacity="0.8">
+    <text x="170" y="192">h&#x2081;</text>
+    <text x="310" y="192">h&#x2082;</text>
+    <text x="450" y="192">h&#x2083;</text>
+    <text x="590" y="192">h&#x2084;</text>
+    <text x="730" y="192">h&#x2085;</text>
+    <text x="860" y="192">h&#x2086;</text>
+  </g>
+
+  <!-- Backpropagation gradient flow (dashed, reversed) -->
+  <g>
+    <line x1="757" y1="210" x2="702" y2="210" stroke="#f0b429" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#arrowAmber)" opacity="0.7"/>
+    <line x1="617" y1="210" x2="562" y2="210" stroke="#f0b429" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#arrowAmber)" opacity="0.6"/>
+    <line x1="477" y1="210" x2="422" y2="210" stroke="#f0b429" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#arrowAmber)" opacity="0.5"/>
+    <line x1="337" y1="210" x2="282" y2="210" stroke="#f0b429" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#arrowAmber)" opacity="0.4"/>
+    <line x1="197" y1="210" x2="142" y2="210" stroke="#f0b429" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#arrowAmber)" opacity="0.3"/>
+  </g>
+
+  <!-- Gradient vanishing annotation -->
+  <text x="170" y="250" text-anchor="middle" fill="#f0b429" font-family="'Noto Sans JP', sans-serif" font-size="10" opacity="0.5">勾配消失</text>
+  <text x="170" y="263" text-anchor="middle" fill="#f0b429" font-family="'Noto Sans JP', sans-serif" font-size="9" opacity="0.4">（信号が減衰）</text>
+
+  <text x="730" y="250" text-anchor="middle" fill="#f0b429" font-family="'Noto Sans JP', sans-serif" font-size="10" opacity="0.8">勾配が大きい</text>
+
+  <!-- Arrow showing gradient diminishing -->
+  <line x1="680" y1="260" x2="220" y2="260" stroke="#f0b429" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrowAmber)" opacity="0.3"/>
+  <text x="450" y="275" text-anchor="middle" fill="#f0b429" font-family="'Noto Sans JP', sans-serif" font-size="9" opacity="0.5">時間ステップが長いほど勾配が消失・爆発</text>
+</svg>
+</div>
+<div class="legend">
+  <div class="legend-item"><div class="legend-line solid"></div>順伝播（隠れ状態）</div>
+  <div class="legend-item"><div class="legend-line dashed"></div>逆伝播（勾配の流れ）</div>
+</div>
+</body>
+</html>

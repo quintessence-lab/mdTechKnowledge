@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>勾配消失の可視化</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+  .subtitle {
+    font-size: 0.85rem;
+    color: var(--text2);
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .controls label {
+    font-size: 0.85rem;
+    color: var(--text2);
+    font-weight: 500;
+  }
+  .controls input[type="range"] {
+    width: 200px;
+    accent-color: var(--purple);
+    cursor: pointer;
+  }
+  .slider-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--purple);
+    min-width: 24px;
+  }
+  .diagram-container {
+    background: var(--bg2);
+    border: 1px solid var(--bg3);
+    border-radius: 12px;
+    padding: 24px 16px;
+    overflow-x: auto;
+  }
+  svg text {
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  .mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .legend {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--text2);
+  }
+  .legend-bar {
+    width: 80px;
+    height: 12px;
+    border-radius: 3px;
+  }
+</style>
+</head>
+<body>
+<h2>長系列での勾配消失問題</h2>
+<p class="subtitle">
+  逆伝播（BPTT）で勾配が時間ステップを遡るたびに指数的に減衰する様子。<br>
+  右端の損失関数から左端の入力に向かって勾配が伝わるほど、学習信号が消失します。
+</p>
+
+<div class="controls">
+  <label for="seqSlider">系列長:</label>
+  <input type="range" id="seqSlider" min="5" max="20" value="12">
+  <span class="slider-value" id="seqValue">12</span>
+</div>
+
+<div class="diagram-container">
+  <svg id="mainSvg" width="100%" height="260"></svg>
+</div>
+
+<div class="legend">
+  <div class="legend-item">
+    <div class="legend-bar" style="background: linear-gradient(to right, rgba(139,127,240,0.05), rgba(139,127,240,1));"></div>
+    <span>勾配の大きさ（左=消失 / 右=大）</span>
+  </div>
+  <div class="legend-item">
+    <svg width="24" height="12"><line x1="0" y1="6" x2="24" y2="6" stroke="#f0b429" stroke-width="2" stroke-dasharray="4,3"/></svg>
+    <span>逆伝播の方向</span>
+  </div>
+</div>
+
+<script>
+const slider = document.getElementById('seqSlider');
+const seqValue = document.getElementById('seqValue');
+const svg = document.getElementById('mainSvg');
+
+function render(n) {
+  seqValue.textContent = n;
+  const cellW = 48;
+  const cellH = 44;
+  const gap = 12;
+  const totalW = n * cellW + (n - 1) * gap + 140;
+  const padLeft = 20;
+  const padTop = 60;
+
+  svg.setAttribute('width', Math.max(totalW, 300));
+  svg.setAttribute('height', 260);
+  svg.innerHTML = '';
+
+  const ns = 'http://www.w3.org/2000/svg';
+
+  // Defs for arrow
+  const defs = document.createElementNS(ns, 'defs');
+  const marker = document.createElementNS(ns, 'marker');
+  marker.setAttribute('id', 'arrowAmber');
+  marker.setAttribute('markerWidth', '8');
+  marker.setAttribute('markerHeight', '6');
+  marker.setAttribute('refX', '8');
+  marker.setAttribute('refY', '3');
+  marker.setAttribute('orient', 'auto');
+  const poly = document.createElementNS(ns, 'polygon');
+  poly.setAttribute('points', '0 0, 8 3, 0 6');
+  poly.setAttribute('fill', '#f0b429');
+  marker.appendChild(poly);
+  defs.appendChild(marker);
+
+  const markerFwd = document.createElementNS(ns, 'marker');
+  markerFwd.setAttribute('id', 'arrowTeal');
+  markerFwd.setAttribute('markerWidth', '8');
+  markerFwd.setAttribute('markerHeight', '6');
+  markerFwd.setAttribute('refX', '8');
+  markerFwd.setAttribute('refY', '3');
+  markerFwd.setAttribute('orient', 'auto');
+  const polyFwd = document.createElementNS(ns, 'polygon');
+  polyFwd.setAttribute('points', '0 0, 8 3, 0 6');
+  polyFwd.setAttribute('fill', '#3ecfa0');
+  markerFwd.appendChild(polyFwd);
+  defs.appendChild(markerFwd);
+  svg.appendChild(defs);
+
+  // "Forward" label
+  const fwdLabel = document.createElementNS(ns, 'text');
+  fwdLabel.setAttribute('x', padLeft);
+  fwdLabel.setAttribute('y', padTop - 30);
+  fwdLabel.setAttribute('fill', '#3ecfa0');
+  fwdLabel.setAttribute('font-size', '12');
+  fwdLabel.setAttribute('font-weight', '500');
+  fwdLabel.textContent = '順伝播 →';
+  svg.appendChild(fwdLabel);
+
+  // Draw cells
+  for (let i = 0; i < n; i++) {
+    const x = padLeft + i * (cellW + gap);
+    const y = padTop;
+    const alpha = Math.pow(0.82, n - 1 - i);
+
+    // Cell rect
+    const rect = document.createElementNS(ns, 'rect');
+    rect.setAttribute('x', x);
+    rect.setAttribute('y', y);
+    rect.setAttribute('width', cellW);
+    rect.setAttribute('height', cellH);
+    rect.setAttribute('rx', '6');
+    rect.setAttribute('fill', `rgba(139,127,240,${0.08 + alpha * 0.6})`);
+    rect.setAttribute('stroke', `rgba(139,127,240,${0.2 + alpha * 0.8})`);
+    rect.setAttribute('stroke-width', '1.5');
+    svg.appendChild(rect);
+
+    // Cell label
+    const label = document.createElementNS(ns, 'text');
+    label.setAttribute('x', x + cellW / 2);
+    label.setAttribute('y', y + cellH / 2 + 1);
+    label.setAttribute('text-anchor', 'middle');
+    label.setAttribute('dominant-baseline', 'middle');
+    label.setAttribute('fill', 'var(--text)');
+    label.setAttribute('font-size', '11');
+    label.setAttribute('font-weight', '500');
+    label.textContent = `h${i + 1}`;
+    label.classList.add('mono');
+    svg.appendChild(label);
+
+    // Input label (x_t)
+    const inputLabel = document.createElementNS(ns, 'text');
+    inputLabel.setAttribute('x', x + cellW / 2);
+    inputLabel.setAttribute('y', y + cellH + 20);
+    inputLabel.setAttribute('text-anchor', 'middle');
+    inputLabel.setAttribute('fill', 'var(--text2)');
+    inputLabel.setAttribute('font-size', '10');
+    inputLabel.classList.add('mono');
+    inputLabel.textContent = `x${i + 1}`;
+    svg.appendChild(inputLabel);
+
+    // Forward arrow between cells
+    if (i < n - 1) {
+      const line = document.createElementNS(ns, 'line');
+      line.setAttribute('x1', x + cellW);
+      line.setAttribute('y1', y + cellH / 2);
+      line.setAttribute('x2', x + cellW + gap - 2);
+      line.setAttribute('y2', y + cellH / 2);
+      line.setAttribute('stroke', '#3ecfa0');
+      line.setAttribute('stroke-width', '1.5');
+      line.setAttribute('marker-end', 'url(#arrowTeal)');
+      svg.appendChild(line);
+    }
+
+    // Gradient bar below input
+    const barY = y + cellH + 34;
+    const barH = 8;
+    const barRect = document.createElementNS(ns, 'rect');
+    barRect.setAttribute('x', x);
+    barRect.setAttribute('y', barY);
+    barRect.setAttribute('width', cellW);
+    barRect.setAttribute('height', barH);
+    barRect.setAttribute('rx', '3');
+    barRect.setAttribute('fill', `rgba(139,127,240,${alpha})`);
+    svg.appendChild(barRect);
+
+    // Gradient value
+    const gVal = document.createElementNS(ns, 'text');
+    gVal.setAttribute('x', x + cellW / 2);
+    gVal.setAttribute('y', barY + barH + 14);
+    gVal.setAttribute('text-anchor', 'middle');
+    gVal.setAttribute('fill', `rgba(139,127,240,${0.4 + alpha * 0.6})`);
+    gVal.setAttribute('font-size', '9');
+    gVal.classList.add('mono');
+    gVal.textContent = alpha.toFixed(2);
+    svg.appendChild(gVal);
+  }
+
+  // Loss function box
+  const lossX = padLeft + n * (cellW + gap) + 10;
+  const lossY = padTop;
+  const lossRect = document.createElementNS(ns, 'rect');
+  lossRect.setAttribute('x', lossX);
+  lossRect.setAttribute('y', lossY);
+  lossRect.setAttribute('width', 70);
+  lossRect.setAttribute('height', cellH);
+  lossRect.setAttribute('rx', '6');
+  lossRect.setAttribute('fill', 'rgba(240,180,41,0.15)');
+  lossRect.setAttribute('stroke', 'rgba(240,180,41,0.6)');
+  lossRect.setAttribute('stroke-width', '1.5');
+  svg.appendChild(lossRect);
+
+  const lossLabel = document.createElementNS(ns, 'text');
+  lossLabel.setAttribute('x', lossX + 35);
+  lossLabel.setAttribute('y', lossY + cellH / 2 + 1);
+  lossLabel.setAttribute('text-anchor', 'middle');
+  lossLabel.setAttribute('dominant-baseline', 'middle');
+  lossLabel.setAttribute('fill', '#f0b429');
+  lossLabel.setAttribute('font-size', '12');
+  lossLabel.setAttribute('font-weight', '700');
+  lossLabel.textContent = '損失 L';
+  svg.appendChild(lossLabel);
+
+  // Arrow from last cell to loss
+  const lastCellX = padLeft + (n - 1) * (cellW + gap) + cellW;
+  const arrowLine = document.createElementNS(ns, 'line');
+  arrowLine.setAttribute('x1', lastCellX);
+  arrowLine.setAttribute('y1', padTop + cellH / 2);
+  arrowLine.setAttribute('x2', lossX - 2);
+  arrowLine.setAttribute('y2', padTop + cellH / 2);
+  arrowLine.setAttribute('stroke', '#3ecfa0');
+  arrowLine.setAttribute('stroke-width', '1.5');
+  arrowLine.setAttribute('marker-end', 'url(#arrowTeal)');
+  svg.appendChild(arrowLine);
+
+  // Backprop arrow (dashed, amber) below
+  const bpY = padTop - 14;
+  const bpLine = document.createElementNS(ns, 'line');
+  bpLine.setAttribute('x1', lossX + 35);
+  bpLine.setAttribute('y1', bpY);
+  bpLine.setAttribute('x2', padLeft + cellW / 2);
+  bpLine.setAttribute('y2', bpY);
+  bpLine.setAttribute('stroke', '#f0b429');
+  bpLine.setAttribute('stroke-width', '1.5');
+  bpLine.setAttribute('stroke-dasharray', '6,4');
+  svg.appendChild(bpLine);
+
+  // Backprop label
+  const bpLabel = document.createElementNS(ns, 'text');
+  bpLabel.setAttribute('x', lossX + 35);
+  bpLabel.setAttribute('y', bpY - 8);
+  bpLabel.setAttribute('text-anchor', 'end');
+  bpLabel.setAttribute('fill', '#f0b429');
+  bpLabel.setAttribute('font-size', '12');
+  bpLabel.setAttribute('font-weight', '500');
+  bpLabel.textContent = '← 逆伝播（勾配が減衰）';
+  svg.appendChild(bpLabel);
+
+  // Gradient magnitude label
+  const gmLabel = document.createElementNS(ns, 'text');
+  gmLabel.setAttribute('x', padLeft);
+  gmLabel.setAttribute('y', padTop + cellH + 34 + 8 + 26);
+  gmLabel.setAttribute('fill', 'var(--text2)');
+  gmLabel.setAttribute('font-size', '10');
+  gmLabel.textContent = '↑ 勾配の相対的な大きさ';
+  svg.appendChild(gmLabel);
+}
+
+slider.addEventListener('input', () => render(parseInt(slider.value)));
+render(12);
+</script>
+</body>
+</html>

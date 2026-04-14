@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習コスト比較</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  .container { max-width: 720px; margin: 0 auto; }
+  h2 { font-size: 1.1rem; margin-bottom: 6px; }
+  .subtitle { font-size: 0.82rem; color: var(--text2); margin-bottom: 28px; }
+
+  .cost-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .cost-card {
+    background: var(--bg2);
+    border-radius: 8px;
+    padding: 16px 20px;
+    border-left: 4px solid var(--bg3);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px 20px;
+    align-items: center;
+  }
+  .cost-card.highlight {
+    border-left-color: var(--purple);
+    background: #1a1830;
+  }
+  .cost-card.highlight2 {
+    border-left-color: var(--teal);
+    background: #121e1a;
+  }
+  .model-name {
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+  .cost-card.highlight .model-name { color: var(--purple); }
+  .cost-card.highlight2 .model-name { color: var(--teal); }
+  .model-detail {
+    font-size: 0.78rem;
+    color: var(--text2);
+    font-family: 'JetBrains Mono', monospace;
+    grid-column: 1 / -1;
+  }
+  .flops-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  /* Bar visual */
+  .bar-section {
+    margin-top: 32px;
+  }
+  .bar-section h3 {
+    font-size: 0.9rem;
+    margin-bottom: 14px;
+    color: var(--text2);
+  }
+  .flops-bar-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .flops-label {
+    width: 170px;
+    min-width: 120px;
+    text-align: right;
+    padding-right: 12px;
+    font-size: 0.78rem;
+    color: var(--text2);
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+  }
+  .flops-track {
+    flex: 1;
+    height: 24px;
+    background: var(--bg2);
+    border-radius: 4px;
+    position: relative;
+  }
+  .flops-fill {
+    height: 100%;
+    border-radius: 4px;
+    min-width: 2px;
+  }
+  .flops-val {
+    margin-left: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+    min-width: 80px;
+  }
+  .savings-note {
+    margin-top: 20px;
+    background: #1a1830;
+    border: 1px solid #2d2850;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 0.82rem;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .savings-note strong {
+    color: var(--purple);
+  }
+  @media (max-width: 520px) {
+    body { padding: 14px; }
+    .flops-label { width: 110px; min-width: 80px; font-size: 0.68rem; }
+    .flops-val { font-size: 0.68rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>学習コスト比較（FLOPs）</h2>
+  <p class="subtitle">Training Cost — GPU時間 x 台数で算出</p>
+
+  <div class="cost-grid">
+    <div class="cost-card">
+      <span class="model-name">GNMT+RL</span>
+      <span class="flops-badge">1.4 x 10<sup>20</sup></span>
+      <span class="model-detail">6日間 x 96 K80 GPUs</span>
+    </div>
+    <div class="cost-card">
+      <span class="model-name">ConvS2S</span>
+      <span class="flops-badge" style="color:var(--text2);">9.6 x 10<sup>18</sup></span>
+      <span class="model-detail">推定値（論文非公開）</span>
+    </div>
+    <div class="cost-card">
+      <span class="model-name">MoE</span>
+      <span class="flops-badge" style="color:var(--text2);">1.2 x 10<sup>20</sup></span>
+      <span class="model-detail">推定値（論文非公開）</span>
+    </div>
+    <div class="cost-card highlight2">
+      <span class="model-name">Transformer (base)</span>
+      <span class="flops-badge" style="color:var(--teal);">3.3 x 10<sup>18</sup></span>
+      <span class="model-detail">12時間 x 8 P100 GPUs</span>
+    </div>
+    <div class="cost-card highlight">
+      <span class="model-name">Transformer (big)</span>
+      <span class="flops-badge" style="color:var(--purple);">2.3 x 10<sup>19</sup></span>
+      <span class="model-detail">3.5日間 x 8 P100 GPUs</span>
+    </div>
+  </div>
+
+  <div class="bar-section">
+    <h3>FLOPs 対数スケール比較</h3>
+    <div id="bars"></div>
+  </div>
+
+  <div class="savings-note">
+    <strong>Transformer (base)</strong> は GNMT+RL と比較して<br>
+    FLOPsが約 <strong>1/42</strong>（約97.6%削減）でありながら、<br>
+    BLEUスコアは <strong>+2.7</strong> 上回る。
+  </div>
+</div>
+
+<script>
+const models = [
+  { name: 'GNMT+RL',            flops: 1.4e20, color: '#3a3c44', label: '1.4×10²⁰' },
+  { name: 'MoE (推定)',         flops: 1.2e20, color: '#3a3c44', label: '1.2×10²⁰' },
+  { name: 'Transformer (big)',  flops: 2.3e19, color: '#8b7ff0', label: '2.3×10¹⁹' },
+  { name: 'ConvS2S (推定)',     flops: 9.6e18, color: '#3a3c44', label: '9.6×10¹⁸' },
+  { name: 'Transformer (base)', flops: 3.3e18, color: '#3ecfa0', label: '3.3×10¹⁸' },
+];
+const maxLog = Math.log10(1.4e20);
+const minLog = Math.log10(1e18);
+const range = maxLog - minLog;
+const bars = document.getElementById('bars');
+models.forEach(m => {
+  const logVal = Math.log10(m.flops);
+  const pct = ((logVal - minLog) / range * 100).toFixed(1);
+  const row = document.createElement('div');
+  row.className = 'flops-bar-row';
+  row.innerHTML = `
+    <div class="flops-label">${m.name}</div>
+    <div class="flops-track">
+      <div class="flops-fill" style="width:${pct}%;background:${m.color};"></div>
+    </div>
+    <span class="flops-val" style="color:${m.color === '#3a3c44' ? '#9e9b91' : m.color}">${m.label}</span>`;
+  bars.appendChild(row);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transformer 学習パイプライン全体フロー</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .subtitle {
+    font-size: 0.85rem; color: var(--text2);
+    margin-bottom: 20px; line-height: 1.6;
+  }
+
+  .pipeline {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    max-width: 1100px;
+    margin: 0 auto;
+    align-items: stretch;
+  }
+  .step {
+    flex: 0 0 auto;
+    width: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .card {
+    background: var(--bg2);
+    border-radius: 10px;
+    padding: 14px 12px;
+    width: 140px;
+    text-align: center;
+    border-top: 3px solid;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .card .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text2);
+  }
+  .card .icon {
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+  .card .title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+  .card .detail {
+    font-size: 0.7rem;
+    color: var(--text2);
+    line-height: 1.5;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .arrow-col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    flex-shrink: 0;
+  }
+  .arrow-col svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  @media (max-width: 900px) {
+    .pipeline {
+      flex-direction: column;
+      align-items: center;
+    }
+    .step { width: 100%; max-width: 300px; }
+    .card { width: 100%; }
+    .arrow-col {
+      width: auto;
+      height: 28px;
+      transform: rotate(90deg);
+    }
+  }
+</style>
+</head>
+<body>
+<h2>データ準備から学習ループまでの全体フロー</h2>
+<p class="subtitle">Transformer論文（Attention Is All You Need）の学習パイプライン</p>
+
+<div class="pipeline">
+  <!-- Step 1 -->
+  <div class="step">
+    <div class="card" style="border-top-color: var(--blue);">
+      <div class="num">STEP 1</div>
+      <div class="icon">📄</div>
+      <div class="title" style="color: var(--blue);">生テキストデータ</div>
+      <div class="detail">WMT 2014<br>英独: 4.5M文対<br>英仏: 36M文対</div>
+    </div>
+  </div>
+
+  <div class="arrow-col">
+    <svg viewBox="0 0 20 20"><path d="M4,10 L14,10 M10,5 L15,10 L10,15" fill="none" stroke="#9e9b91" stroke-width="1.8"/></svg>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step">
+    <div class="card" style="border-top-color: var(--teal);">
+      <div class="num">STEP 2</div>
+      <div class="icon">🔤</div>
+      <div class="title" style="color: var(--teal);">BPEトークン化</div>
+      <div class="detail">Byte Pair<br>Encoding<br>語彙: 37,000</div>
+    </div>
+  </div>
+
+  <div class="arrow-col">
+    <svg viewBox="0 0 20 20"><path d="M4,10 L14,10 M10,5 L15,10 L10,15" fill="none" stroke="#9e9b91" stroke-width="1.8"/></svg>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <div class="card" style="border-top-color: var(--amber);">
+      <div class="num">STEP 3</div>
+      <div class="icon">📦</div>
+      <div class="title" style="color: var(--amber);">バッチ構成</div>
+      <div class="detail">近い系列長の<br>文ペアをグループ化<br>~25,000 tokens/batch</div>
+    </div>
+  </div>
+
+  <div class="arrow-col">
+    <svg viewBox="0 0 20 20"><path d="M4,10 L14,10 M10,5 L15,10 L10,15" fill="none" stroke="#9e9b91" stroke-width="1.8"/></svg>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <div class="card" style="border-top-color: var(--purple);">
+      <div class="num">STEP 4</div>
+      <div class="icon">🧠</div>
+      <div class="title" style="color: var(--purple);">Transformer<br>前方計算</div>
+      <div class="detail">Encoder 6層<br>+ Decoder 6層<br>d_model = 512</div>
+    </div>
+  </div>
+
+  <div class="arrow-col">
+    <svg viewBox="0 0 20 20"><path d="M4,10 L14,10 M10,5 L15,10 L10,15" fill="none" stroke="#9e9b91" stroke-width="1.8"/></svg>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step">
+    <div class="card" style="border-top-color: #f05050;">
+      <div class="num">STEP 5</div>
+      <div class="icon">📉</div>
+      <div class="title" style="color: #f05050;">Cross-Entropy損失</div>
+      <div class="detail">Label Smoothing<br>ε_ls = 0.1</div>
+    </div>
+  </div>
+
+  <div class="arrow-col">
+    <svg viewBox="0 0 20 20"><path d="M4,10 L14,10 M10,5 L15,10 L10,15" fill="none" stroke="#9e9b91" stroke-width="1.8"/></svg>
+  </div>
+
+  <!-- Step 6 -->
+  <div class="step">
+    <div class="card" style="border-top-color: var(--teal);">
+      <div class="num">STEP 6</div>
+      <div class="icon">⚙️</div>
+      <div class="title" style="color: var(--teal);">Adam<br>オプティマイザ</div>
+      <div class="detail">β1 = 0.9<br>β2 = 0.98<br>ε = 10⁻⁹</div>
+    </div>
+  </div>
+
+  <div class="arrow-col">
+    <svg viewBox="0 0 20 20"><path d="M4,10 L14,10 M10,5 L15,10 L10,15" fill="none" stroke="#9e9b91" stroke-width="1.8"/></svg>
+  </div>
+
+  <!-- Step 7 -->
+  <div class="step">
+    <div class="card" style="border-top-color: var(--amber);">
+      <div class="num">STEP 7</div>
+      <div class="icon">📈</div>
+      <div class="title" style="color: var(--amber);">学習率<br>スケジューリング</div>
+      <div class="detail">warmup: 4,000<br>ステップ<br>その後逆平方根で減衰</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

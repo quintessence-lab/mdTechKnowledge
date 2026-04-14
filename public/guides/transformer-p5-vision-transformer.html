@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vision Transformer — 画像パッチのトークン化</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .subtitle {
+    font-size: 0.85rem; color: var(--text2);
+    margin-bottom: 20px; line-height: 1.6;
+  }
+  .diagram-wrap {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  svg text {
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  svg .mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .key-message {
+    max-width: 800px;
+    margin: 18px auto 0;
+    text-align: center;
+    padding: 12px 20px;
+    background: rgba(139,127,240,0.08);
+    border: 1px solid rgba(139,127,240,0.25);
+    border-radius: 8px;
+    font-size: 0.88rem;
+    color: var(--purple);
+    font-weight: 500;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+<h2>Vision Transformer（ViT）— 画像パッチのトークン化</h2>
+<p class="subtitle">画像を固定サイズのパッチに分割し、各パッチをトークンとしてTransformer Encoderに入力する</p>
+
+<div class="diagram-wrap">
+  <svg viewBox="0 0 800 420" xmlns="http://www.w3.org/2000/svg">
+    <rect width="800" height="420" fill="var(--bg)" rx="8"/>
+
+    <!-- ========== STEP 1: Original Image ========== -->
+    <text x="90" y="28" fill="#e8e6de" font-size="12" font-weight="700" text-anchor="middle">元の画像</text>
+
+    <!-- Simplified image with color blocks -->
+    <g transform="translate(30, 38)">
+      <!-- Image background -->
+      <rect width="120" height="120" fill="#1a3a2a" rx="4" stroke="#3a5a4a" stroke-width="1"/>
+      <!-- Simple scene: sky + mountain + ground -->
+      <rect x="0" y="0" width="120" height="45" fill="#1a2a4a" rx="4"/>
+      <polygon points="20,80 60,30 100,80" fill="#2a4a3a"/>
+      <polygon points="50,80 85,45 120,80" fill="#1a3a2a"/>
+      <rect x="0" y="80" width="120" height="40" fill="#2a3a1a" rx="0"/>
+      <circle cx="100" cy="20" r="12" fill="#f0b429" opacity="0.7"/>
+      <rect width="120" height="120" fill="none" rx="4" stroke="#4a5a4a" stroke-width="1.5"/>
+    </g>
+
+    <text x="90" y="178" fill="#9e9b91" font-size="10" text-anchor="middle">224 × 224 px</text>
+
+    <!-- Arrow 1 -->
+    <g transform="translate(160, 88)">
+      <line x1="0" y1="0" x2="40" y2="0" stroke="#4a4c56" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+      <text x="20" y="-8" fill="#9e9b91" font-size="9" text-anchor="middle">分割</text>
+    </g>
+
+    <!-- ========== STEP 2: Patched Image ========== -->
+    <text x="280" y="28" fill="#e8e6de" font-size="12" font-weight="700" text-anchor="middle">パッチ分割</text>
+
+    <g transform="translate(210, 38)">
+      <rect width="140" height="140" fill="var(--bg2)" rx="4"/>
+      <!-- 4x4 grid to represent patches (simplified from 14x14) -->
+      <!-- Row colors vary to suggest image content -->
+      <rect x="2" y="2" width="33" height="33" fill="#1a2a4a" rx="2" stroke="#4a5a6a" stroke-width="0.8"/>
+      <rect x="37" y="2" width="33" height="33" fill="#1a2a4a" rx="2" stroke="#4a5a6a" stroke-width="0.8"/>
+      <rect x="72" y="2" width="33" height="33" fill="#1a2a4a" rx="2" stroke="#4a5a6a" stroke-width="0.8"/>
+      <rect x="107" y="2" width="31" height="33" fill="#2a3a5a" rx="2" stroke="#4a5a6a" stroke-width="0.8"/>
+
+      <rect x="2" y="37" width="33" height="33" fill="#1a3a2a" rx="2" stroke="#4a5a6a" stroke-width="0.8"/>
+      <rect x="37" y="37" width="33" height="33" fill="#2a4a3a" rx="2" stroke="#4a5a6a" stroke-width="0.8"/>
+      <rect x="72" y="37" width="33" height="33" fill="#2a4a3a" rx="2" stroke="#4a5a6a" stroke-width="0.8"/>
+      <rect x="107" y="37" width="31" height="33" fill="#1a3a2a" rx="2" stroke="#4a5a6a" stroke-width="0.8"/>
+
+      <rect x="2" y="72" width="33" height="33" fill="#2a3a1a" rx="2" stroke="#4a5a6a" stroke-width="0.8"/>
+      <rect x="37" y="72" width="33" height="33" fill="#2a3a1a" rx="2" stroke="#4a5a6a" stroke-width="0.8"/>
+      <rect x="72" y="72" width="33" height="33" fill="#2a3a2a" rx="2" stroke="#4a5a6a" stroke-width="0.8"/>
+      <rect x="107" y="72" width="31" height="33" fill="#2a3a1a" rx="2" stroke="#4a5a6a" stroke-width="0.8"/>
+
+      <rect x="2" y="107" width="33" height="31" fill="#2a3a1a" rx="2" stroke="#4a5a6a" stroke-width="0.8"/>
+      <rect x="37" y="107" width="33" height="31" fill="#2a3a1a" rx="2" stroke="#4a5a6a" stroke-width="0.8"/>
+      <rect x="72" y="107" width="33" height="31" fill="#2a3a1a" rx="2" stroke="#4a5a6a" stroke-width="0.8"/>
+      <rect x="107" y="107" width="31" height="31" fill="#2a3a1a" rx="2" stroke="#4a5a6a" stroke-width="0.8"/>
+
+      <!-- Patch labels -->
+      <text x="18" y="22" fill="#9e9b91" font-size="7" text-anchor="middle" class="mono">P1</text>
+      <text x="53" y="22" fill="#9e9b91" font-size="7" text-anchor="middle" class="mono">P2</text>
+      <text x="88" y="22" fill="#9e9b91" font-size="7" text-anchor="middle" class="mono">P3</text>
+      <text x="122" y="22" fill="#9e9b91" font-size="7" text-anchor="middle" class="mono">P4</text>
+      <text x="18" y="57" fill="#9e9b91" font-size="7" text-anchor="middle" class="mono">P5</text>
+      <text x="53" y="57" fill="#9e9b91" font-size="7" text-anchor="middle" class="mono">P6</text>
+      <text x="88" y="57" fill="#9e9b91" font-size="7" text-anchor="middle" class="mono">P7</text>
+      <text x="122" y="57" fill="#9e9b91" font-size="7" text-anchor="middle" class="mono">P8</text>
+      <text x="18" y="92" fill="#9e9b91" font-size="7" text-anchor="middle" class="mono">P9</text>
+      <text x="53" y="92" fill="#9e9b91" font-size="7" text-anchor="middle" class="mono">...</text>
+      <text x="122" y="127" fill="#9e9b91" font-size="7" text-anchor="middle" class="mono">PN</text>
+    </g>
+
+    <text x="280" y="198" fill="#9e9b91" font-size="10" text-anchor="middle">16 × 16 px / パッチ</text>
+    <text x="280" y="212" fill="#9e9b91" font-size="9" text-anchor="middle">(14 × 14 = 196パッチ)</text>
+
+    <!-- Arrow 2 -->
+    <g transform="translate(360, 88)">
+      <line x1="0" y1="0" x2="40" y2="0" stroke="#4a4c56" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+      <text x="20" y="-8" fill="#9e9b91" font-size="9" text-anchor="middle">線形射影</text>
+    </g>
+
+    <!-- ========== STEP 3: Token Sequence ========== -->
+    <text x="510" y="28" fill="#e8e6de" font-size="12" font-weight="700" text-anchor="middle">パッチ埋め込み + 位置埋め込み</text>
+
+    <g transform="translate(420, 42)">
+      <!-- [CLS] token -->
+      <rect x="0" y="0" width="60" height="26" fill="rgba(240,180,41,0.15)" rx="4" stroke="var(--amber)" stroke-width="1.2"/>
+      <text x="30" y="17" fill="var(--amber)" font-size="9" text-anchor="middle" font-weight="700" class="mono">[CLS]</text>
+      <text x="72" y="17" fill="#5a5c66" font-size="12">+</text>
+      <rect x="82" y="0" width="100" height="26" fill="rgba(240,180,41,0.08)" rx="4" stroke="rgba(240,180,41,0.3)" stroke-width="0.8"/>
+      <text x="132" y="17" fill="var(--amber)" font-size="8" text-anchor="middle" class="mono">pos_embed_0</text>
+
+      <!-- P1 token -->
+      <rect x="0" y="34" width="60" height="26" fill="rgba(62,207,160,0.12)" rx="4" stroke="rgba(62,207,160,0.4)" stroke-width="1"/>
+      <text x="30" y="51" fill="var(--teal)" font-size="9" text-anchor="middle" class="mono">P1 emb</text>
+      <text x="72" y="51" fill="#5a5c66" font-size="12">+</text>
+      <rect x="82" y="34" width="100" height="26" fill="rgba(139,127,240,0.08)" rx="4" stroke="rgba(139,127,240,0.3)" stroke-width="0.8"/>
+      <text x="132" y="51" fill="var(--purple)" font-size="8" text-anchor="middle" class="mono">pos_embed_1</text>
+
+      <!-- P2 token -->
+      <rect x="0" y="68" width="60" height="26" fill="rgba(62,207,160,0.12)" rx="4" stroke="rgba(62,207,160,0.4)" stroke-width="1"/>
+      <text x="30" y="85" fill="var(--teal)" font-size="9" text-anchor="middle" class="mono">P2 emb</text>
+      <text x="72" y="85" fill="#5a5c66" font-size="12">+</text>
+      <rect x="82" y="68" width="100" height="26" fill="rgba(139,127,240,0.08)" rx="4" stroke="rgba(139,127,240,0.3)" stroke-width="0.8"/>
+      <text x="132" y="85" fill="var(--purple)" font-size="8" text-anchor="middle" class="mono">pos_embed_2</text>
+
+      <!-- P3 token -->
+      <rect x="0" y="102" width="60" height="26" fill="rgba(62,207,160,0.12)" rx="4" stroke="rgba(62,207,160,0.4)" stroke-width="1"/>
+      <text x="30" y="119" fill="var(--teal)" font-size="9" text-anchor="middle" class="mono">P3 emb</text>
+      <text x="72" y="119" fill="#5a5c66" font-size="12">+</text>
+      <rect x="82" y="102" width="100" height="26" fill="rgba(139,127,240,0.08)" rx="4" stroke="rgba(139,127,240,0.3)" stroke-width="0.8"/>
+      <text x="132" y="119" fill="var(--purple)" font-size="8" text-anchor="middle" class="mono">pos_embed_3</text>
+
+      <!-- Dots -->
+      <text x="30" y="150" fill="#5a5c66" font-size="14" text-anchor="middle">...</text>
+
+      <!-- PN token -->
+      <rect x="0" y="158" width="60" height="26" fill="rgba(62,207,160,0.12)" rx="4" stroke="rgba(62,207,160,0.4)" stroke-width="1"/>
+      <text x="30" y="175" fill="var(--teal)" font-size="9" text-anchor="middle" class="mono">PN emb</text>
+      <text x="72" y="175" fill="#5a5c66" font-size="12">+</text>
+      <rect x="82" y="158" width="100" height="26" fill="rgba(139,127,240,0.08)" rx="4" stroke="rgba(139,127,240,0.3)" stroke-width="0.8"/>
+      <text x="132" y="175" fill="var(--purple)" font-size="8" text-anchor="middle" class="mono">pos_embed_N</text>
+    </g>
+
+    <!-- Labels -->
+    <text x="450" y="240" fill="var(--teal)" font-size="9">パッチ埋め込み</text>
+    <text x="545" y="240" fill="var(--purple)" font-size="9">位置埋め込み</text>
+
+    <!-- Arrow 3 -->
+    <g transform="translate(600, 130)">
+      <line x1="0" y1="0" x2="30" y2="0" stroke="#4a4c56" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+    </g>
+
+    <!-- ========== STEP 4: Transformer Encoder ========== -->
+    <g transform="translate(640, 42)">
+      <rect width="140" height="190" fill="rgba(79,168,232,0.08)" rx="8" stroke="var(--blue)" stroke-width="1.5"/>
+      <text x="70" y="24" fill="var(--blue)" font-size="11" text-anchor="middle" font-weight="700">Transformer</text>
+      <text x="70" y="40" fill="var(--blue)" font-size="11" text-anchor="middle" font-weight="700">Encoder</text>
+
+      <!-- Encoder layers -->
+      <rect x="15" y="55" width="110" height="28" fill="rgba(79,168,232,0.1)" rx="4" stroke="rgba(79,168,232,0.25)" stroke-width="0.8"/>
+      <text x="70" y="73" fill="var(--blue)" font-size="8.5" text-anchor="middle">Self-Attention</text>
+
+      <rect x="15" y="90" width="110" height="28" fill="rgba(79,168,232,0.1)" rx="4" stroke="rgba(79,168,232,0.25)" stroke-width="0.8"/>
+      <text x="70" y="108" fill="var(--blue)" font-size="8.5" text-anchor="middle">Feed Forward</text>
+
+      <text x="70" y="135" fill="#5a5c66" font-size="10" text-anchor="middle">× L層</text>
+
+      <!-- Output -->
+      <rect x="25" y="150" width="90" height="26" fill="rgba(240,180,41,0.12)" rx="4" stroke="rgba(240,180,41,0.3)" stroke-width="0.8"/>
+      <text x="70" y="167" fill="var(--amber)" font-size="8.5" text-anchor="middle" font-weight="500">[CLS] → 分類</text>
+    </g>
+
+    <!-- ========== Bottom: Process flow description ========== -->
+    <g transform="translate(0, 270)">
+      <rect x="30" y="0" width="740" height="130" fill="var(--bg2)" rx="8" stroke="#2a2c36" stroke-width="1"/>
+
+      <text x="400" y="25" fill="#e8e6de" font-size="11" text-anchor="middle" font-weight="700">処理フロー</text>
+
+      <!-- Step indicators -->
+      <circle cx="80" cy="55" r="14" fill="rgba(62,207,160,0.15)" stroke="var(--teal)" stroke-width="1.2"/>
+      <text x="80" y="59" fill="var(--teal)" font-size="11" text-anchor="middle" font-weight="700">1</text>
+      <text x="80" y="80" fill="#e8e6de" font-size="9" text-anchor="middle">画像入力</text>
+      <text x="80" y="93" fill="#9e9b91" font-size="8" text-anchor="middle">224×224</text>
+
+      <line x1="106" y1="55" x2="156" y2="55" stroke="#4a4c56" stroke-width="1" marker-end="url(#arrowGray)"/>
+
+      <circle cx="185" cy="55" r="14" fill="rgba(62,207,160,0.15)" stroke="var(--teal)" stroke-width="1.2"/>
+      <text x="185" y="59" fill="var(--teal)" font-size="11" text-anchor="middle" font-weight="700">2</text>
+      <text x="185" y="80" fill="#e8e6de" font-size="9" text-anchor="middle">パッチ分割</text>
+      <text x="185" y="93" fill="#9e9b91" font-size="8" text-anchor="middle">16×16 → 196枚</text>
+
+      <line x1="211" y1="55" x2="261" y2="55" stroke="#4a4c56" stroke-width="1" marker-end="url(#arrowGray)"/>
+
+      <circle cx="290" cy="55" r="14" fill="rgba(139,127,240,0.15)" stroke="var(--purple)" stroke-width="1.2"/>
+      <text x="290" y="59" fill="var(--purple)" font-size="11" text-anchor="middle" font-weight="700">3</text>
+      <text x="290" y="80" fill="#e8e6de" font-size="9" text-anchor="middle">線形射影</text>
+      <text x="290" y="93" fill="#9e9b91" font-size="8" text-anchor="middle">各パッチ→D次元</text>
+
+      <line x1="316" y1="55" x2="366" y2="55" stroke="#4a4c56" stroke-width="1" marker-end="url(#arrowGray)"/>
+
+      <circle cx="395" cy="55" r="14" fill="rgba(139,127,240,0.15)" stroke="var(--purple)" stroke-width="1.2"/>
+      <text x="395" y="59" fill="var(--purple)" font-size="11" text-anchor="middle" font-weight="700">4</text>
+      <text x="395" y="80" fill="#e8e6de" font-size="9" text-anchor="middle">[CLS]+位置埋め込み</text>
+      <text x="395" y="93" fill="#9e9b91" font-size="8" text-anchor="middle">トークン列を構成</text>
+
+      <line x1="430" y1="55" x2="480" y2="55" stroke="#4a4c56" stroke-width="1" marker-end="url(#arrowGray)"/>
+
+      <circle cx="510" cy="55" r="14" fill="rgba(79,168,232,0.15)" stroke="var(--blue)" stroke-width="1.2"/>
+      <text x="510" y="59" fill="var(--blue)" font-size="11" text-anchor="middle" font-weight="700">5</text>
+      <text x="510" y="80" fill="#e8e6de" font-size="9" text-anchor="middle">Encoder処理</text>
+      <text x="510" y="93" fill="#9e9b91" font-size="8" text-anchor="middle">Self-Attention×L</text>
+
+      <line x1="536" y1="55" x2="586" y2="55" stroke="#4a4c56" stroke-width="1" marker-end="url(#arrowGray)"/>
+
+      <circle cx="615" cy="55" r="14" fill="rgba(240,180,41,0.15)" stroke="var(--amber)" stroke-width="1.2"/>
+      <text x="615" y="59" fill="var(--amber)" font-size="11" text-anchor="middle" font-weight="700">6</text>
+      <text x="615" y="80" fill="#e8e6de" font-size="9" text-anchor="middle">[CLS]出力</text>
+      <text x="615" y="93" fill="#9e9b91" font-size="8" text-anchor="middle">分類ヘッドへ</text>
+
+      <line x1="641" y1="55" x2="691" y2="55" stroke="#4a4c56" stroke-width="1" marker-end="url(#arrowGray)"/>
+
+      <circle cx="720" cy="55" r="14" fill="rgba(240,180,41,0.15)" stroke="var(--amber)" stroke-width="1.2"/>
+      <text x="720" y="59" fill="var(--amber)" font-size="11" text-anchor="middle" font-weight="700">7</text>
+      <text x="720" y="80" fill="#e8e6de" font-size="9" text-anchor="middle">画像分類</text>
+      <text x="720" y="93" fill="#9e9b91" font-size="8" text-anchor="middle">猫/犬/...</text>
+
+      <text x="400" y="118" fill="#9e9b91" font-size="9" text-anchor="middle" font-style="italic">NLPと同じTransformerアーキテクチャを、画像のパッチ系列に適用</text>
+    </g>
+
+    <!-- Defs -->
+    <defs>
+      <marker id="arrowGray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#4a4c56"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+<div class="key-message">
+  画像もトークンの系列として扱える ― これがVision Transformerの核心的アイデア
+</div>
+
+</body>
+</html>

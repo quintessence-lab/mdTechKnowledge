@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LSTMの4ゲート構造</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  h2 {
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text2);
+    margin-bottom: 24px;
+  }
+  .diagram-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 12px;
+  }
+  .gate-info {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .gate-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    background: var(--bg3);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+    user-select: none;
+  }
+  .gate-badge:hover { transform: translateY(-1px); }
+  .gate-badge .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+  .gate-badge[data-gate="forget"] .dot { background: var(--amber); }
+  .gate-badge[data-gate="forget"] { border-color: rgba(240,180,41,0.3); }
+  .gate-badge[data-gate="input"] .dot { background: var(--teal); }
+  .gate-badge[data-gate="input"] { border-color: rgba(62,207,160,0.3); }
+  .gate-badge[data-gate="cell"] .dot { background: var(--blue); }
+  .gate-badge[data-gate="cell"] { border-color: rgba(79,168,232,0.3); }
+  .gate-badge[data-gate="output"] .dot { background: var(--purple); }
+  .gate-badge[data-gate="output"] { border-color: rgba(139,127,240,0.3); }
+
+  /* Popup */
+  .popup-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
+  }
+  .popup-overlay.active { display: flex; }
+  .popup {
+    background: var(--bg2);
+    border-radius: 12px;
+    padding: 28px 32px;
+    max-width: 420px;
+    width: 90%;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .popup h3 {
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+  }
+  .popup .formula {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    margin: 10px 0;
+    padding: 8px 12px;
+    background: var(--bg3);
+    border-radius: 6px;
+    display: inline-block;
+  }
+  .popup p {
+    font-size: 0.88rem;
+    color: var(--text2);
+    line-height: 1.65;
+    margin-top: 8px;
+  }
+  .popup .close-btn {
+    display: block;
+    margin: 16px auto 0;
+    padding: 6px 24px;
+    background: var(--bg3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    color: var(--text);
+    cursor: pointer;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.85rem;
+  }
+  .popup .close-btn:hover { background: rgba(255,255,255,0.08); }
+
+  .hint {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--text2);
+    margin-top: 8px;
+    opacity: 0.7;
+  }
+
+  @media (max-width: 768px) {
+    body { padding: 16px 8px; }
+    h2 { font-size: 1.05rem; }
+    .popup { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+<h2>LSTMセルの内部構造</h2>
+<p class="subtitle">4つのゲートによる情報フロー制御</p>
+<div class="diagram-wrapper">
+<svg viewBox="0 0 800 520" xmlns="http://www.w3.org/2000/svg" style="min-width:580px;max-width:800px;width:100%;height:auto;display:block;margin:0 auto;">
+  <defs>
+    <marker id="aG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#9e9b91"/>
+    </marker>
+    <marker id="aAmber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#f0b429"/>
+    </marker>
+    <marker id="aTeal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3ecfa0"/>
+    </marker>
+    <marker id="aBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4fa8e8"/>
+    </marker>
+    <marker id="aPurple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8b7ff0"/>
+    </marker>
+    <filter id="glowA"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="glowT"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+
+  <!-- ===== CELL STATE LINE (top highway) ===== -->
+  <line x1="50" y1="100" x2="750" y2="100" stroke="#e8e6de" stroke-width="3" stroke-opacity="0.3"/>
+  <text x="400" y="75" text-anchor="middle" fill="#e8e6de" font-family="'Noto Sans JP', sans-serif" font-size="12" font-weight="500" opacity="0.7">セル状態 C (Cell State) — 情報の「高速道路」</text>
+
+  <!-- C_{t-1} label -->
+  <text x="42" y="95" text-anchor="end" fill="#e8e6de" font-family="'JetBrains Mono', monospace" font-size="12" opacity="0.6">C&#x209C;&#x208B;&#x2081;</text>
+  <!-- C_t label -->
+  <text x="758" y="95" text-anchor="start" fill="#e8e6de" font-family="'JetBrains Mono', monospace" font-size="12" opacity="0.6">C&#x209C;</text>
+
+  <!-- h_{t-1} input (left) -->
+  <line x1="50" y1="330" x2="130" y2="330" stroke="#9e9b91" stroke-width="1.5" marker-end="url(#aG)" opacity="0.5"/>
+  <text x="42" y="325" text-anchor="end" fill="#9e9b91" font-family="'JetBrains Mono', monospace" font-size="12">h&#x209C;&#x208B;&#x2081;</text>
+
+  <!-- h_t output (right) -->
+  <line x1="710" y1="330" x2="758" y2="330" stroke="#9e9b91" stroke-width="1.5" marker-end="url(#aG)" opacity="0.5"/>
+  <text x="766" y="335" text-anchor="start" fill="#9e9b91" font-family="'JetBrains Mono', monospace" font-size="12">h&#x209C;</text>
+
+  <!-- x_t input (bottom) -->
+  <text x="400" y="505" text-anchor="middle" fill="#9e9b91" font-family="'JetBrains Mono', monospace" font-size="13">x&#x209C;</text>
+  <line x1="400" y1="490" x2="400" y2="460" stroke="#9e9b91" stroke-width="1.5" marker-end="url(#aG)" opacity="0.5"/>
+
+  <!-- Concat line from x_t and h_{t-1} -->
+  <rect x="120" y="420" width="560" height="36" rx="6" fill="#1e2028" stroke="#9e9b91" stroke-width="1" stroke-opacity="0.2"/>
+  <text x="400" y="443" text-anchor="middle" fill="#9e9b91" font-family="'Noto Sans JP', sans-serif" font-size="11" opacity="0.6">[h&#x209C;&#x208B;&#x2081;, x&#x209C;] 結合入力</text>
+
+  <!-- Lines from concat to each gate -->
+  <!-- Forget gate feed -->
+  <line x1="200" y1="420" x2="200" y2="340" stroke="#f0b429" stroke-width="1.2" stroke-opacity="0.4"/>
+  <!-- Input gate feed -->
+  <line x1="330" y1="420" x2="330" y2="340" stroke="#3ecfa0" stroke-width="1.2" stroke-opacity="0.4"/>
+  <!-- Cell candidate feed -->
+  <line x1="470" y1="420" x2="470" y2="340" stroke="#4fa8e8" stroke-width="1.2" stroke-opacity="0.4"/>
+  <!-- Output gate feed -->
+  <line x1="600" y1="420" x2="600" y2="340" stroke="#8b7ff0" stroke-width="1.2" stroke-opacity="0.4"/>
+
+  <!-- ===== FORGET GATE (amber) ===== -->
+  <g class="gate-click" data-gate="forget" style="cursor:pointer">
+    <rect x="158" y="280" width="84" height="56" rx="10" fill="#1e2028" stroke="#f0b429" stroke-width="2" stroke-opacity="0.7"/>
+    <rect x="158" y="280" width="84" height="56" rx="10" fill="#f0b429" fill-opacity="0.06"/>
+    <text x="200" y="303" text-anchor="middle" fill="#f0b429" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="500">&#x3c3;</text>
+    <text x="200" y="322" text-anchor="middle" fill="#f0b429" font-family="'Noto Sans JP', sans-serif" font-size="10" font-weight="500">忘却ゲート</text>
+    <text x="200" y="265" text-anchor="middle" fill="#f0b429" font-family="'JetBrains Mono', monospace" font-size="11" opacity="0.7">f&#x209C;</text>
+  </g>
+
+  <!-- Forget gate -> multiply with cell state -->
+  <line x1="200" y1="278" x2="200" y2="118" stroke="#f0b429" stroke-width="1.5" stroke-opacity="0.5" marker-end="url(#aAmber)"/>
+  <!-- Multiply symbol on cell state line -->
+  <circle cx="200" cy="100" r="14" fill="#0e0f11" stroke="#f0b429" stroke-width="1.5"/>
+  <text x="200" y="105" text-anchor="middle" fill="#f0b429" font-family="'JetBrains Mono', monospace" font-size="16">&times;</text>
+
+  <!-- ===== INPUT GATE (teal) ===== -->
+  <g class="gate-click" data-gate="input" style="cursor:pointer">
+    <rect x="288" y="280" width="84" height="56" rx="10" fill="#1e2028" stroke="#3ecfa0" stroke-width="2" stroke-opacity="0.7"/>
+    <rect x="288" y="280" width="84" height="56" rx="10" fill="#3ecfa0" fill-opacity="0.06"/>
+    <text x="330" y="303" text-anchor="middle" fill="#3ecfa0" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="500">&#x3c3;</text>
+    <text x="330" y="322" text-anchor="middle" fill="#3ecfa0" font-family="'Noto Sans JP', sans-serif" font-size="10" font-weight="500">入力ゲート</text>
+    <text x="330" y="265" text-anchor="middle" fill="#3ecfa0" font-family="'JetBrains Mono', monospace" font-size="11" opacity="0.7">i&#x209C;</text>
+  </g>
+
+  <!-- ===== CELL CANDIDATE (blue) ===== -->
+  <g class="gate-click" data-gate="cell" style="cursor:pointer">
+    <rect x="428" y="280" width="84" height="56" rx="10" fill="#1e2028" stroke="#4fa8e8" stroke-width="2" stroke-opacity="0.7"/>
+    <rect x="428" y="280" width="84" height="56" rx="10" fill="#4fa8e8" fill-opacity="0.06"/>
+    <text x="470" y="303" text-anchor="middle" fill="#4fa8e8" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="500">tanh</text>
+    <text x="470" y="322" text-anchor="middle" fill="#4fa8e8" font-family="'Noto Sans JP', sans-serif" font-size="10" font-weight="500">セル候補</text>
+    <text x="470" y="265" text-anchor="middle" fill="#4fa8e8" font-family="'JetBrains Mono', monospace" font-size="11" opacity="0.7">C&#x0303;&#x209C;</text>
+  </g>
+
+  <!-- Input gate x Cell candidate -> multiply -->
+  <!-- Line from input gate up to multiply point -->
+  <line x1="330" y1="278" x2="330" y2="200" stroke="#3ecfa0" stroke-width="1.2" stroke-opacity="0.5"/>
+  <line x1="330" y1="200" x2="390" y2="200" stroke="#3ecfa0" stroke-width="1.2" stroke-opacity="0.5"/>
+  <!-- Line from cell candidate up to multiply point -->
+  <line x1="470" y1="278" x2="470" y2="200" stroke="#4fa8e8" stroke-width="1.2" stroke-opacity="0.5"/>
+  <line x1="470" y1="200" x2="420" y2="200" stroke="#4fa8e8" stroke-width="1.2" stroke-opacity="0.5"/>
+  <!-- Multiply symbol for i_t * C_tilde -->
+  <circle cx="400" cy="200" r="14" fill="#0e0f11" stroke="#3ecfa0" stroke-width="1.5"/>
+  <text x="400" y="205" text-anchor="middle" fill="#3ecfa0" font-family="'JetBrains Mono', monospace" font-size="16">&times;</text>
+
+  <!-- Result of multiply goes up to add on cell state -->
+  <line x1="400" y1="186" x2="400" y2="118" stroke="#3ecfa0" stroke-width="1.5" stroke-opacity="0.5" marker-end="url(#aTeal)"/>
+  <!-- Add symbol on cell state line -->
+  <circle cx="400" cy="100" r="14" fill="#0e0f11" stroke="#3ecfa0" stroke-width="1.5"/>
+  <text x="400" y="106" text-anchor="middle" fill="#3ecfa0" font-family="'JetBrains Mono', monospace" font-size="18">+</text>
+
+  <!-- ===== OUTPUT GATE (purple) ===== -->
+  <g class="gate-click" data-gate="output" style="cursor:pointer">
+    <rect x="558" y="280" width="84" height="56" rx="10" fill="#1e2028" stroke="#8b7ff0" stroke-width="2" stroke-opacity="0.7"/>
+    <rect x="558" y="280" width="84" height="56" rx="10" fill="#8b7ff0" fill-opacity="0.06"/>
+    <text x="600" y="303" text-anchor="middle" fill="#8b7ff0" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="500">&#x3c3;</text>
+    <text x="600" y="322" text-anchor="middle" fill="#8b7ff0" font-family="'Noto Sans JP', sans-serif" font-size="10" font-weight="500">出力ゲート</text>
+    <text x="600" y="265" text-anchor="middle" fill="#8b7ff0" font-family="'JetBrains Mono', monospace" font-size="11" opacity="0.7">o&#x209C;</text>
+  </g>
+
+  <!-- tanh on cell state before output -->
+  <line x1="600" y1="100" x2="600" y2="155" stroke="#e8e6de" stroke-width="1.2" stroke-opacity="0.3"/>
+  <rect x="574" y="155" width="52" height="28" rx="6" fill="#1e2028" stroke="#9e9b91" stroke-width="1" stroke-opacity="0.4"/>
+  <text x="600" y="174" text-anchor="middle" fill="#9e9b91" font-family="'JetBrains Mono', monospace" font-size="10">tanh</text>
+
+  <!-- Output gate multiply with tanh(C_t) -->
+  <line x1="600" y1="183" x2="600" y2="220" stroke="#9e9b91" stroke-width="1.2" stroke-opacity="0.4"/>
+  <!-- Line from output gate up -->
+  <line x1="600" y1="278" x2="600" y2="250" stroke="#8b7ff0" stroke-width="1.2" stroke-opacity="0.5"/>
+  <!-- Multiply symbol -->
+  <circle cx="600" cy="235" r="14" fill="#0e0f11" stroke="#8b7ff0" stroke-width="1.5"/>
+  <text x="600" y="240" text-anchor="middle" fill="#8b7ff0" font-family="'JetBrains Mono', monospace" font-size="16">&times;</text>
+
+  <!-- Output to h_t -->
+  <line x1="614" y1="235" x2="680" y2="235" stroke="#8b7ff0" stroke-width="1.5" stroke-opacity="0.5"/>
+  <line x1="680" y1="235" x2="680" y2="330" stroke="#8b7ff0" stroke-width="1.5" stroke-opacity="0.5"/>
+  <line x1="680" y1="330" x2="706" y2="330" stroke="#8b7ff0" stroke-width="1.5" stroke-opacity="0.5" marker-end="url(#aPurple)"/>
+
+  <!-- Branch h_t upward for output y_t -->
+  <line x1="700" y1="330" x2="700" y2="60" stroke="#9e9b91" stroke-width="1" stroke-dasharray="4,3" stroke-opacity="0.3"/>
+  <text x="700" y="52" text-anchor="middle" fill="#9e9b91" font-family="'JetBrains Mono', monospace" font-size="11" opacity="0.5">y&#x209C;</text>
+
+  <!-- Flow annotations -->
+  <text x="140" y="100" text-anchor="middle" fill="#f0b429" font-family="'Noto Sans JP', sans-serif" font-size="9" opacity="0.5">忘れる</text>
+  <text x="400" y="135" text-anchor="middle" fill="#3ecfa0" font-family="'Noto Sans JP', sans-serif" font-size="9" opacity="0.5">追加する</text>
+
+</svg>
+</div>
+<div class="gate-info">
+  <div class="gate-badge" data-gate="forget" onclick="showPopup('forget')"><div class="dot"></div>忘却ゲート</div>
+  <div class="gate-badge" data-gate="input" onclick="showPopup('input')"><div class="dot"></div>入力ゲート</div>
+  <div class="gate-badge" data-gate="cell" onclick="showPopup('cell')"><div class="dot"></div>セル候補</div>
+  <div class="gate-badge" data-gate="output" onclick="showPopup('output')"><div class="dot"></div>出力ゲート</div>
+</div>
+<p class="hint">各ゲートをクリックすると詳細が表示されます</p>
+
+<!-- Popup overlay -->
+<div class="popup-overlay" id="popupOverlay" onclick="closePopup(event)">
+  <div class="popup" id="popupContent" onclick="event.stopPropagation()">
+    <h3 id="popupTitle"></h3>
+    <div class="formula" id="popupFormula"></div>
+    <p id="popupDesc"></p>
+    <button class="close-btn" onclick="closePopup()">閉じる</button>
+  </div>
+</div>
+
+<script>
+const gateData = {
+  forget: {
+    title: '忘却ゲート (Forget Gate)',
+    formula: 'f\u209C = \u03C3(W_f \u00B7 [h\u209C\u208B\u2081, x\u209C] + b_f)',
+    desc: 'セル状態からどの情報を捨てるかを決定します。シグモイド関数により0〜1の値を出力し、0に近いほど「忘れる」、1に近いほど「記憶を保持する」ことを意味します。例えば、文の主語が変わった場合に古い主語の情報を忘れるような働きをします。',
+    color: '#f0b429'
+  },
+  input: {
+    title: '入力ゲート (Input Gate)',
+    formula: 'i\u209C = \u03C3(W_i \u00B7 [h\u209C\u208B\u2081, x\u209C] + b_i)',
+    desc: 'セル状態にどの新しい情報を書き込むかを決定します。シグモイド関数で0〜1の値を出力し、セル候補(\u0108\u209C)と要素ごとに掛け合わされます。これにより、新しい情報のうちどの部分を記憶に追加するかを制御します。',
+    color: '#3ecfa0'
+  },
+  cell: {
+    title: 'セル候補 (Cell Candidate)',
+    formula: '\u0108\u209C = tanh(W_C \u00B7 [h\u209C\u208B\u2081, x\u209C] + b_C)',
+    desc: 'セル状態に追加される可能性のある新しい候補値を生成します。tanh関数により-1〜1の値を出力します。入力ゲートと組み合わせることで、実際にセル状態に追加される情報量が決まります。',
+    color: '#4fa8e8'
+  },
+  output: {
+    title: '出力ゲート (Output Gate)',
+    formula: 'o\u209C = \u03C3(W_o \u00B7 [h\u209C\u208B\u2081, x\u209C] + b_o)',
+    desc: 'セル状態のどの部分を出力として使うかを決定します。セル状態にtanhを適用した値と掛け合わせ、隠れ状態h\u209Cを生成します。これが次の時刻への入力と、現在の時刻の出力の両方に使われます。',
+    color: '#8b7ff0'
+  }
+};
+
+function showPopup(gate) {
+  const d = gateData[gate];
+  document.getElementById('popupTitle').textContent = d.title;
+  document.getElementById('popupTitle').style.color = d.color;
+  document.getElementById('popupFormula').textContent = d.formula;
+  document.getElementById('popupFormula').style.borderLeft = '3px solid ' + d.color;
+  document.getElementById('popupDesc').textContent = d.desc;
+  document.getElementById('popupOverlay').classList.add('active');
+}
+
+function closePopup(e) {
+  if (!e || e.target === document.getElementById('popupOverlay')) {
+    document.getElementById('popupOverlay').classList.remove('active');
+  }
+}
+
+// SVG gate click handlers
+document.querySelectorAll('.gate-click').forEach(el => {
+  el.addEventListener('click', () => showPopup(el.dataset.gate));
+});
+</script>
+</body>
+</html>

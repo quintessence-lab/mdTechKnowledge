@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Softmax → Attention重みの可視化</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .subtitle {
+    font-size: 0.85rem; color: var(--text2);
+    margin-bottom: 20px; line-height: 1.6;
+  }
+  .container {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  /* Query token label */
+  .query-label {
+    text-align: center;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+    color: var(--text2);
+  }
+  .query-label span {
+    color: var(--purple);
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+
+  /* Stage sections */
+  .stage {
+    background: var(--bg2);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+  }
+  .stage-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .stage-title .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  /* Token row */
+  .token-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .token-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 80px;
+    flex: 1;
+  }
+  .token-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text2);
+  }
+  .token-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text);
+    background: var(--bg3);
+    padding: 6px 10px;
+    border-radius: 6px;
+    min-width: 60px;
+    text-align: center;
+  }
+
+  /* Bar chart for softmax */
+  .bar-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 80px;
+    flex: 1;
+  }
+  .bar-container {
+    width: 60px;
+    height: 80px;
+    background: var(--bg3);
+    border-radius: 6px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .bar-fill {
+    width: 100%;
+    border-radius: 0 0 6px 6px;
+    transition: height 0.3s;
+  }
+  .bar-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--amber);
+    margin-top: 2px;
+  }
+
+  /* Arrow section */
+  .arrow-section {
+    padding: 16px 0 8px;
+  }
+  .arrow-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+  .arrow-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 80px;
+    flex: 1;
+  }
+  .arrow-line {
+    height: 40px;
+    border-radius: 2px;
+    background: var(--teal);
+    opacity: 0.85;
+  }
+  .arrow-tip {
+    width: 0; height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid var(--teal);
+    opacity: 0.85;
+  }
+  .arrow-target {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text);
+    margin-top: 4px;
+  }
+
+  /* Down arrows between stages */
+  .stage-arrow {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--text2);
+    margin-bottom: 12px;
+  }
+
+  /* Formula */
+  .formula {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text2);
+    margin-top: 4px;
+    margin-bottom: 8px;
+  }
+
+  @media (max-width: 480px) {
+    .token-cell, .bar-wrap, .arrow-item { min-width: 56px; }
+    .token-value { font-size: 0.75rem; padding: 4px 6px; min-width: 48px; }
+    .bar-container { width: 44px; height: 60px; }
+    .bar-value { font-size: 0.7rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Softmax適用後のAttention重みの可視化</h2>
+  <p class="subtitle">クエリ「猫」に対する各トークンへのAttentionスコアが、softmaxを通じて確率分布に変換され、重みの大きさとして矢印の太さに反映されます。</p>
+
+  <div class="query-label">クエリトークン: <span>「猫」</span></div>
+
+  <!-- Stage 1: Raw scores -->
+  <div class="stage">
+    <div class="stage-title">
+      <span class="num" style="background:var(--purple);">1</span>
+      生のAttentionスコア（Q·Kᵀ / √d_k）
+    </div>
+    <div class="token-row">
+      <div class="token-cell">
+        <span class="token-name">私</span>
+        <span class="token-value">1.2</span>
+      </div>
+      <div class="token-cell">
+        <span class="token-name">は</span>
+        <span class="token-value">0.5</span>
+      </div>
+      <div class="token-cell">
+        <span class="token-name">猫</span>
+        <span class="token-value">3.8</span>
+      </div>
+      <div class="token-cell">
+        <span class="token-name">が</span>
+        <span class="token-value">2.9</span>
+      </div>
+      <div class="token-cell">
+        <span class="token-name">好き</span>
+        <span class="token-value">2.1</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="stage-arrow">▼</div>
+
+  <div class="formula">softmax(z_i) = exp(z_i) / Σ exp(z_j)</div>
+
+  <div class="stage-arrow">▼</div>
+
+  <!-- Stage 2: Softmax probabilities -->
+  <div class="stage">
+    <div class="stage-title">
+      <span class="num" style="background:var(--amber);">2</span>
+      Softmax後の確率分布
+    </div>
+    <div class="token-row">
+      <div class="bar-wrap">
+        <span class="token-name">私</span>
+        <div class="bar-container">
+          <div class="bar-fill" style="height:10%; background:var(--amber);"></div>
+        </div>
+        <span class="bar-value">0.05</span>
+      </div>
+      <div class="bar-wrap">
+        <span class="token-name">は</span>
+        <div class="bar-container">
+          <div class="bar-fill" style="height:5%; background:var(--amber);"></div>
+        </div>
+        <span class="bar-value">0.02</span>
+      </div>
+      <div class="bar-wrap">
+        <span class="token-name">猫</span>
+        <div class="bar-container">
+          <div class="bar-fill" style="height:88%; background:var(--amber);"></div>
+        </div>
+        <span class="bar-value">0.58</span>
+      </div>
+      <div class="bar-wrap">
+        <span class="token-name">が</span>
+        <div class="bar-container">
+          <div class="bar-fill" style="height:46%; background:var(--amber);"></div>
+        </div>
+        <span class="bar-value">0.28</span>
+      </div>
+      <div class="bar-wrap">
+        <span class="token-name">好き</span>
+        <div class="bar-container">
+          <div class="bar-fill" style="height:16%; background:var(--amber);"></div>
+        </div>
+        <span class="bar-value">0.07</span>
+      </div>
+    </div>
+    <div class="formula" style="margin-top:12px;">合計 = 1.00</div>
+  </div>
+
+  <div class="stage-arrow">▼</div>
+
+  <!-- Stage 3: Weighted arrows -->
+  <div class="stage">
+    <div class="stage-title">
+      <span class="num" style="background:var(--teal);">3</span>
+      Attention重み（矢印の太さ = 重みの大きさ）
+    </div>
+    <div class="arrow-section">
+      <div style="text-align:center; margin-bottom:8px;">
+        <span style="background:var(--purple); color:#fff; padding:4px 14px; border-radius:20px; font-size:0.9rem; font-weight:700;">猫</span>
+      </div>
+      <div class="arrow-row">
+        <div class="arrow-item">
+          <div class="arrow-line" style="width:4px;"></div>
+          <div class="arrow-tip"></div>
+          <span class="arrow-target">私</span>
+          <span class="bar-value">0.05</span>
+        </div>
+        <div class="arrow-item">
+          <div class="arrow-line" style="width:2px;"></div>
+          <div class="arrow-tip"></div>
+          <span class="arrow-target">は</span>
+          <span class="bar-value">0.02</span>
+        </div>
+        <div class="arrow-item">
+          <div class="arrow-line" style="width:28px; background:var(--teal);"></div>
+          <div class="arrow-tip" style="border-left-width:14px; border-right-width:14px; border-top-width:10px;"></div>
+          <span class="arrow-target">猫</span>
+          <span class="bar-value">0.58</span>
+        </div>
+        <div class="arrow-item">
+          <div class="arrow-line" style="width:18px;"></div>
+          <div class="arrow-tip" style="border-left-width:10px; border-right-width:10px;"></div>
+          <span class="arrow-target">が</span>
+          <span class="bar-value">0.28</span>
+        </div>
+        <div class="arrow-item">
+          <div class="arrow-line" style="width:6px;"></div>
+          <div class="arrow-tip"></div>
+          <span class="arrow-target">好き</span>
+          <span class="bar-value">0.07</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

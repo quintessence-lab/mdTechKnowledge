@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Layer Norm vs Batch Norm の正規化方向</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .subtitle {
+    font-size: 0.85rem; color: var(--text2);
+    margin-bottom: 20px; line-height: 1.6;
+  }
+  .diagram-wrap {
+    width: 100%;
+    max-width: 820px;
+    margin: 0 auto;
+  }
+  svg text { font-family: 'Noto Sans JP', sans-serif; }
+  svg .mono { font-family: 'JetBrains Mono', monospace; }
+
+  .notes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    max-width: 820px;
+    margin: 20px auto 0;
+  }
+  .note-card {
+    background: var(--bg2);
+    border-radius: 10px;
+    padding: 16px;
+    border-top: 3px solid;
+  }
+  .note-card h3 {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+  }
+  .note-card ul {
+    list-style: none;
+    padding: 0;
+    font-size: 0.78rem;
+    color: var(--text2);
+    line-height: 1.8;
+  }
+  .note-card ul li::before {
+    content: '→ ';
+    color: var(--text2);
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 12px; }
+    .notes { grid-template-columns: 1fr; }
+    h2 { font-size: 1rem; }
+  }
+</style>
+</head>
+<body>
+<h2>Layer Norm と Batch Norm の正規化方向の違い</h2>
+<p class="subtitle">3次元テンソル（バッチ × 系列長 × 特徴次元）に対して、それぞれどの方向に正規化するかを可視化</p>
+
+<div class="diagram-wrap">
+<svg viewBox="0 0 820 420" xmlns="http://www.w3.org/2000/svg">
+  <!-- ===== Batch Norm (left) ===== -->
+  <text x="200" y="30" text-anchor="middle" fill="#8b7ff0" font-size="15" font-weight="700">Batch Normalization</text>
+  <text x="200" y="50" text-anchor="middle" fill="#9e9b91" font-size="11">バッチ方向に正規化</text>
+
+  <!-- 3D cube illusion - Batch Norm -->
+  <!-- Back face (offset for 3D effect) -->
+  <g transform="translate(60, 70)">
+    <!-- Draw grid of cells: 4 batch x 3 seq x 5 features -->
+    <!-- We show the tensor as a 3D block -->
+
+    <!-- Axis labels -->
+    <text x="-10" y="195" fill="#9e9b91" font-size="10" text-anchor="end" transform="rotate(-90, -10, 195)">バッチ (B=4)</text>
+    <text x="130" y="290" fill="#9e9b91" font-size="10" text-anchor="middle">特徴次元 (d)</text>
+    <text x="310" y="95" fill="#9e9b91" font-size="10" transform="rotate(-35, 310, 95)">系列長 (T)</text>
+
+    <!-- Front face - 4 rows (batch) x 5 cols (features) -->
+    <!-- Highlight column for BatchNorm = one feature across all batch -->
+    <!-- Column 2 highlighted -->
+    <g>
+      <!-- Row 0 -->
+      <rect x="0"   y="120" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+      <rect x="52"  y="120" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+      <rect x="104" y="120" width="46" height="36" fill="#8b7ff040" stroke="#8b7ff0" stroke-width="2" rx="2"/>
+      <rect x="156" y="120" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+      <rect x="208" y="120" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+
+      <!-- Row 1 -->
+      <rect x="0"   y="160" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+      <rect x="52"  y="160" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+      <rect x="104" y="160" width="46" height="36" fill="#8b7ff040" stroke="#8b7ff0" stroke-width="2" rx="2"/>
+      <rect x="156" y="160" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+      <rect x="208" y="160" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+
+      <!-- Row 2 -->
+      <rect x="0"   y="200" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+      <rect x="52"  y="200" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+      <rect x="104" y="200" width="46" height="36" fill="#8b7ff040" stroke="#8b7ff0" stroke-width="2" rx="2"/>
+      <rect x="156" y="200" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+      <rect x="208" y="200" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+
+      <!-- Row 3 -->
+      <rect x="0"   y="240" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+      <rect x="52"  y="240" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+      <rect x="104" y="240" width="46" height="36" fill="#8b7ff040" stroke="#8b7ff0" stroke-width="2" rx="2"/>
+      <rect x="156" y="240" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+      <rect x="208" y="240" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+    </g>
+
+    <!-- Vertical arrow showing normalization direction -->
+    <line x1="127" y1="112" x2="127" y2="282" stroke="#8b7ff0" stroke-width="2.5" marker-end="url(#arrPurple)"/>
+    <text x="135" y="105" fill="#8b7ff0" font-size="10" font-weight="500">正規化方向</text>
+
+    <!-- Depth lines for 3D effect -->
+    <line x1="254" y1="120" x2="280" y2="95" stroke="#2a2c36" stroke-width="0.8"/>
+    <line x1="254" y1="156" x2="280" y2="131" stroke="#2a2c36" stroke-width="0.8"/>
+    <rect x="280" y="95" width="30" height="36" fill="#1e2028" stroke="#2a2c36" rx="2" opacity="0.5"/>
+    <rect x="280" y="131" width="30" height="36" fill="#1e2028" stroke="#2a2c36" rx="2" opacity="0.3"/>
+  </g>
+
+  <!-- ===== Layer Norm (right) ===== -->
+  <text x="620" y="30" text-anchor="middle" fill="#3ecfa0" font-size="15" font-weight="700">Layer Normalization</text>
+  <text x="620" y="50" text-anchor="middle" fill="#9e9b91" font-size="11">特徴次元方向に正規化</text>
+
+  <g transform="translate(480, 70)">
+    <!-- Axis labels -->
+    <text x="-10" y="195" fill="#9e9b91" font-size="10" text-anchor="end" transform="rotate(-90, -10, 195)">バッチ (B=4)</text>
+    <text x="130" y="290" fill="#9e9b91" font-size="10" text-anchor="middle">特徴次元 (d)</text>
+    <text x="310" y="95" fill="#9e9b91" font-size="10" transform="rotate(-35, 310, 95)">系列長 (T)</text>
+
+    <!-- Front face - highlight row 1 for LayerNorm = all features in one sample -->
+    <g>
+      <!-- Row 0 -->
+      <rect x="0"   y="120" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+      <rect x="52"  y="120" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+      <rect x="104" y="120" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+      <rect x="156" y="120" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+      <rect x="208" y="120" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+
+      <!-- Row 1 - highlighted -->
+      <rect x="0"   y="160" width="46" height="36" fill="#3ecfa020" stroke="#3ecfa0" stroke-width="2" rx="2"/>
+      <rect x="52"  y="160" width="46" height="36" fill="#3ecfa020" stroke="#3ecfa0" stroke-width="2" rx="2"/>
+      <rect x="104" y="160" width="46" height="36" fill="#3ecfa020" stroke="#3ecfa0" stroke-width="2" rx="2"/>
+      <rect x="156" y="160" width="46" height="36" fill="#3ecfa020" stroke="#3ecfa0" stroke-width="2" rx="2"/>
+      <rect x="208" y="160" width="46" height="36" fill="#3ecfa020" stroke="#3ecfa0" stroke-width="2" rx="2"/>
+
+      <!-- Row 2 -->
+      <rect x="0"   y="200" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+      <rect x="52"  y="200" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+      <rect x="104" y="200" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+      <rect x="156" y="200" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+      <rect x="208" y="200" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+
+      <!-- Row 3 -->
+      <rect x="0"   y="240" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+      <rect x="52"  y="240" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+      <rect x="104" y="240" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+      <rect x="156" y="240" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+      <rect x="208" y="240" width="46" height="36" fill="#1e2028" stroke="#2a2c36" rx="2"/>
+    </g>
+
+    <!-- Horizontal arrow showing normalization direction -->
+    <line x1="-8" y1="178" x2="260" y2="178" stroke="#3ecfa0" stroke-width="2.5" marker-end="url(#arrTeal)"/>
+    <text x="110" y="172" fill="#3ecfa0" font-size="10" font-weight="500">正規化方向</text>
+
+    <!-- Depth lines for 3D -->
+    <line x1="254" y1="120" x2="280" y2="95" stroke="#2a2c36" stroke-width="0.8"/>
+    <line x1="254" y1="156" x2="280" y2="131" stroke="#2a2c36" stroke-width="0.8"/>
+    <rect x="280" y="95" width="30" height="36" fill="#1e2028" stroke="#2a2c36" rx="2" opacity="0.5"/>
+    <rect x="280" y="131" width="30" height="36" fill="#1e2028" stroke="#2a2c36" rx="2" opacity="0.3"/>
+  </g>
+
+  <!-- Arrow markers -->
+  <defs>
+    <marker id="arrPurple" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#8b7ff0"/>
+    </marker>
+    <marker id="arrTeal" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#3ecfa0"/>
+    </marker>
+  </defs>
+</svg>
+</div>
+
+<!-- Notes -->
+<div class="notes">
+  <div class="note-card" style="border-top-color: var(--purple);">
+    <h3 style="color: var(--purple);">Batch Normalization</h3>
+    <ul>
+      <li>ミニバッチ全体の統計量（平均・分散）で正規化</li>
+      <li>バッチサイズが小さいと統計量が不安定になる</li>
+      <li>推論時にはバッチ統計の移動平均を使う必要がある</li>
+      <li>可変長系列データには不向き</li>
+    </ul>
+  </div>
+  <div class="note-card" style="border-top-color: var(--teal);">
+    <h3 style="color: var(--teal);">Layer Normalization <span style="font-size:0.75rem; color:var(--amber);">← Transformerが採用</span></h3>
+    <ul>
+      <li>各サンプル内の特徴次元で独立に正規化</li>
+      <li>バッチサイズに依存しない（バッチ1でも動作）</li>
+      <li>推論時も学習時と同じ計算で済む</li>
+      <li>系列データ・可変長入力に適している</li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning Rate Schedule</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    line-height: 1.6;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { font-size: 0.85rem; color: var(--text2); margin-bottom: 16px; }
+
+  .container { max-width: 720px; margin: 0 auto; }
+
+  .formula-box {
+    background: var(--bg2);
+    border: 1px solid var(--bg3);
+    border-radius: 10px;
+    padding: 10px 16px;
+    text-align: center;
+    margin-bottom: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--amber);
+  }
+
+  canvas { display: block; margin: 0 auto; border-radius: 8px; }
+
+  .slider-row {
+    display: flex; align-items: center; justify-content: center;
+    gap: 12px; margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .slider-row label {
+    font-size: 0.82rem; color: var(--text2);
+  }
+  .slider-row input[type="range"] {
+    width: 200px;
+    accent-color: var(--purple);
+  }
+  .slider-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--purple);
+    min-width: 50px;
+  }
+
+  .legend {
+    display: flex; gap: 20px; justify-content: center; margin-top: 12px;
+    font-size: 0.78rem;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-line {
+    width: 20px; height: 3px; border-radius: 2px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Warmup + Inverse Sqrt Decay</h2>
+  <p class="subtitle">Transformer の学習率スケジュール</p>
+
+  <div class="formula-box">
+    lrate = d_model<sup>-0.5</sup> &middot; min(step<sup>-0.5</sup>, step &middot; warmup_steps<sup>-1.5</sup>)
+  </div>
+
+  <canvas id="chart" width="700" height="360"></canvas>
+
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-line" style="background:var(--teal)"></div>
+      <span style="color:var(--teal)">Warmup区間</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-line" style="background:var(--purple)"></div>
+      <span style="color:var(--purple)">Decay区間</span>
+    </div>
+  </div>
+
+  <div class="slider-row">
+    <label>warmup_steps:</label>
+    <input type="range" id="warmup-slider" min="1000" max="8000" step="500" value="4000">
+    <span class="slider-val" id="warmup-val">4000</span>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('chart');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+const D_MODEL = 512;
+
+const PAD = { left: 70, right: 20, top: 24, bottom: 40 };
+const plotW = W - PAD.left - PAD.right;
+const plotH = H - PAD.top - PAD.bottom;
+
+const MAX_STEP = 100000;
+
+function lrate(step, warmup) {
+  if (step === 0) return 0;
+  return Math.pow(D_MODEL, -0.5) * Math.min(Math.pow(step, -0.5), step * Math.pow(warmup, -1.5));
+}
+
+function xToCanvas(step) { return PAD.left + (step / MAX_STEP) * plotW; }
+
+let warmupSteps = 4000;
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+
+  // Compute max LR for y scale
+  const peakLR = lrate(warmupSteps, warmupSteps);
+  const yMax = peakLR * 1.15;
+
+  function yToCanvas(val) { return PAD.top + ((yMax - val) / yMax) * plotH; }
+
+  // Background
+  ctx.fillStyle = '#161820';
+  ctx.fillRect(PAD.left, PAD.top, plotW, plotH);
+
+  // Warmup region shading
+  const warmupX = xToCanvas(warmupSteps);
+  ctx.fillStyle = 'rgba(62,207,160,0.06)';
+  ctx.fillRect(PAD.left, PAD.top, warmupX - PAD.left, plotH);
+  ctx.fillStyle = 'rgba(139,127,240,0.06)';
+  ctx.fillRect(warmupX, PAD.top, PAD.left + plotW - warmupX, plotH);
+
+  // Warmup boundary line
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(warmupX, PAD.top);
+  ctx.lineTo(warmupX, PAD.top + plotH);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Grid lines
+  ctx.strokeStyle = '#1e2028';
+  ctx.lineWidth = 1;
+  const yTicks = 5;
+  for (let i = 0; i <= yTicks; i++) {
+    const val = (yMax / yTicks) * i;
+    const y = yToCanvas(val);
+    ctx.beginPath();
+    ctx.moveTo(PAD.left, y);
+    ctx.lineTo(PAD.left + plotW, y);
+    ctx.stroke();
+
+    ctx.fillStyle = '#9e9b91';
+    ctx.font = '10px JetBrains Mono';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(val.toExponential(1), PAD.left - 6, y);
+  }
+
+  // X axis ticks
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  for (let s = 0; s <= MAX_STEP; s += 20000) {
+    const x = xToCanvas(s);
+    ctx.beginPath();
+    ctx.moveTo(x, PAD.top);
+    ctx.lineTo(x, PAD.top + plotH);
+    ctx.strokeStyle = '#1e2028';
+    ctx.stroke();
+    ctx.fillStyle = '#9e9b91';
+    ctx.fillText((s / 1000) + 'k', x, PAD.top + plotH + 4);
+  }
+
+  // Axis titles
+  ctx.font = '11px Noto Sans JP';
+  ctx.fillStyle = '#9e9b91';
+  ctx.textAlign = 'center';
+  ctx.fillText('training step', PAD.left + plotW / 2, PAD.top + plotH + 24);
+
+  ctx.save();
+  ctx.translate(14, PAD.top + plotH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('learning rate', 0, 0);
+  ctx.restore();
+
+  // Draw curve
+  const resolution = 500;
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  let prevInWarmup = true;
+  for (let i = 0; i <= resolution; i++) {
+    const step = Math.max(1, (i / resolution) * MAX_STEP);
+    const lr = lrate(step, warmupSteps);
+    const x = xToCanvas(step);
+    const y = yToCanvas(lr);
+    const inWarmup = step <= warmupSteps;
+
+    if (i === 0) {
+      ctx.strokeStyle = inWarmup ? '#3ecfa0' : '#8b7ff0';
+      ctx.moveTo(x, y);
+    } else {
+      if (inWarmup !== prevInWarmup) {
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.strokeStyle = inWarmup ? '#3ecfa0' : '#8b7ff0';
+        ctx.moveTo(x, y);
+      }
+      ctx.lineTo(x, y);
+    }
+    prevInWarmup = inWarmup;
+  }
+  ctx.stroke();
+
+  // Peak label
+  const peakX = xToCanvas(warmupSteps);
+  const peakY = yToCanvas(peakLR);
+  ctx.fillStyle = '#f0b429';
+  ctx.beginPath();
+  ctx.arc(peakX, peakY, 4, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.font = '10px JetBrains Mono';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'bottom';
+  ctx.fillStyle = '#f0b429';
+  const labelText = `peak: ${peakLR.toExponential(2)} @ step=${warmupSteps}`;
+  ctx.fillText(labelText, peakX + 8, peakY - 4);
+}
+
+draw();
+
+const slider = document.getElementById('warmup-slider');
+const valDisplay = document.getElementById('warmup-val');
+slider.addEventListener('input', () => {
+  warmupSteps = parseInt(slider.value);
+  valDisplay.textContent = warmupSteps;
+  draw();
+});
+</script>
+</body>
+</html>

@@ -1,5 +1,7 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 export default defineConfig({
   site: 'https://quintessence-lab.github.io',
@@ -10,5 +12,7 @@ export default defineConfig({
     shikiConfig: {
       theme: 'github-dark',
     },
+    remarkPlugins: [remarkMath],
+    rehypePlugins: [rehypeKatex],
   },
 });

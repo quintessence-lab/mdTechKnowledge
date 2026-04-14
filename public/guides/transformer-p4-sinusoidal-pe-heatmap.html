@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PE行列ヒートマップ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    line-height: 1.6;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { font-size: 0.85rem; color: var(--text2); margin-bottom: 16px; }
+
+  .container { max-width: 780px; margin: 0 auto; }
+
+  .formula-box {
+    background: var(--bg2);
+    border: 1px solid var(--bg3);
+    border-radius: 10px;
+    padding: 10px 16px;
+    text-align: center;
+    margin-bottom: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--amber);
+  }
+
+  .heatmap-wrapper {
+    position: relative;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+  .axis-label-y {
+    position: absolute; left: -4px; top: 50%;
+    transform: rotate(-90deg) translateX(-50%);
+    transform-origin: left center;
+    font-size: 0.7rem; color: var(--text2);
+    white-space: nowrap;
+  }
+  .axis-label-x {
+    text-align: center;
+    font-size: 0.7rem; color: var(--text2);
+    margin-top: 4px;
+  }
+
+  canvas { display: block; margin: 0 auto; border-radius: 6px; cursor: crosshair; }
+
+  .tooltip {
+    position: fixed;
+    background: var(--bg2);
+    border: 1px solid var(--purple);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 10;
+    white-space: nowrap;
+  }
+  .tooltip.visible { opacity: 1; }
+
+  .legend {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; margin-top: 12px; font-size: 0.72rem; color: var(--text2);
+  }
+  .legend-bar {
+    width: 200px; height: 12px; border-radius: 3px;
+  }
+
+  .note {
+    margin-top: 12px;
+    font-size: 0.78rem;
+    color: var(--text2);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Positional Encoding ヒートマップ</h2>
+  <p class="subtitle">PE行列（pos × dim）の sin/cos 値を可視化</p>
+
+  <div class="formula-box">
+    PE(pos, 2i) = sin(pos / 10000^(2i/d_model))<br>
+    PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))
+  </div>
+
+  <div class="heatmap-wrapper">
+    <canvas id="heatmap" width="640" height="420"></canvas>
+  </div>
+  <div class="axis-label-x">次元 (dim) →　低次元＝低周波　｜　高次元＝高周波</div>
+
+  <div class="legend">
+    <span>-1</span>
+    <canvas id="legend-bar" width="200" height="12"></canvas>
+    <span>+1</span>
+  </div>
+
+  <div class="note">低次元（左）はゆっくり変化、高次元（右）は速く変化</div>
+
+  <div class="tooltip" id="tooltip"></div>
+</div>
+
+<script>
+const ROWS = 20, COLS = 32, D_MODEL = 512;
+const CELL_W = 18, CELL_H = 18;
+const PAD_LEFT = 44, PAD_TOP = 24;
+
+const canvas = document.getElementById('heatmap');
+const ctx = canvas.getContext('2d');
+const tooltip = document.getElementById('tooltip');
+
+canvas.width = PAD_LEFT + COLS * CELL_W + 10;
+canvas.height = PAD_TOP + ROWS * CELL_H + 10;
+
+// Compute PE values
+const peValues = [];
+for (let pos = 0; pos < ROWS; pos++) {
+  peValues[pos] = [];
+  for (let d = 0; d < COLS; d++) {
+    const i = Math.floor(d / 2);
+    const freq = pos / Math.pow(10000, (2 * i) / D_MODEL);
+    peValues[pos][d] = d % 2 === 0 ? Math.sin(freq) : Math.cos(freq);
+  }
+}
+
+function valToColor(v) {
+  // -1 = dark blue, 0 = near black, +1 = bright purple
+  if (v >= 0) {
+    const t = v;
+    return `rgb(${Math.round(30 + 109 * t)}, ${Math.round(16 + 111 * t)}, ${Math.round(24 + 216 * t)})`;
+  } else {
+    const t = -v;
+    return `rgb(${Math.round(14 + 50 * t)}, ${Math.round(16 + 120 * t)}, ${Math.round(24 + 180 * t)})`;
+  }
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Y axis labels
+  ctx.font = '10px JetBrains Mono';
+  ctx.fillStyle = '#9e9b91';
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'middle';
+  for (let pos = 0; pos < ROWS; pos += 2) {
+    ctx.fillText(pos.toString(), PAD_LEFT - 6, PAD_TOP + pos * CELL_H + CELL_H / 2);
+  }
+
+  // X axis labels
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  for (let d = 0; d < COLS; d += 4) {
+    ctx.fillText(d.toString(), PAD_LEFT + d * CELL_W + CELL_W / 2, PAD_TOP + ROWS * CELL_H + 2);
+  }
+
+  // pos label
+  ctx.save();
+  ctx.translate(12, PAD_TOP + (ROWS * CELL_H) / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = '11px Noto Sans JP';
+  ctx.fillStyle = '#9e9b91';
+  ctx.fillText('pos →', 0, 0);
+  ctx.restore();
+
+  // Cells
+  for (let pos = 0; pos < ROWS; pos++) {
+    for (let d = 0; d < COLS; d++) {
+      const x = PAD_LEFT + d * CELL_W;
+      const y = PAD_TOP + pos * CELL_H;
+      ctx.fillStyle = valToColor(peValues[pos][d]);
+      ctx.fillRect(x, y, CELL_W - 1, CELL_H - 1);
+    }
+  }
+}
+
+draw();
+
+// Legend bar
+const legCanvas = document.getElementById('legend-bar');
+const legCtx = legCanvas.getContext('2d');
+for (let x = 0; x < 200; x++) {
+  const v = (x / 199) * 2 - 1;
+  legCtx.fillStyle = valToColor(v);
+  legCtx.fillRect(x, 0, 1, 12);
+}
+
+// Tooltip
+canvas.addEventListener('mousemove', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = (e.clientX - rect.left) * (canvas.width / rect.width);
+  const my = (e.clientY - rect.top) * (canvas.height / rect.height);
+  const d = Math.floor((mx - PAD_LEFT) / CELL_W);
+  const pos = Math.floor((my - PAD_TOP) / CELL_H);
+
+  if (pos >= 0 && pos < ROWS && d >= 0 && d < COLS) {
+    const val = peValues[pos][d];
+    const fn = d % 2 === 0 ? 'sin' : 'cos';
+    tooltip.innerHTML = `pos=${pos}  dim=${d}<br>${fn}  値=${val.toFixed(4)}`;
+    tooltip.classList.add('visible');
+    tooltip.style.left = (e.clientX + 14) + 'px';
+    tooltip.style.top = (e.clientY - 10) + 'px';
+  } else {
+    tooltip.classList.remove('visible');
+  }
+});
+
+canvas.addEventListener('mouseleave', () => {
+  tooltip.classList.remove('visible');
+});
+</script>
+</body>
+</html>

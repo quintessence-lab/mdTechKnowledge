@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>推論時の自己回帰生成ステップ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11; --bg2: #161820; --bg3: #1e2028;
+    --text: #e8e6de; --text2: #9e9b91;
+    --purple: #8b7ff0; --teal: #3ecfa0; --amber: #f0b429; --blue: #4fa8e8;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; padding: 24px; background: var(--bg); color: var(--text); font-family: 'Noto Sans JP', sans-serif; }
+  h1 { font-size: clamp(1rem, 2.5vw, 1.35rem); text-align: center; margin: 0 0 6px; font-weight: 700; }
+  .subtitle { text-align: center; font-size: .85rem; color: var(--text2); margin-bottom: 16px; }
+
+  .task-box { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+  .lang-box { background: var(--bg2); border: 1px solid #2a2c36; border-radius: 8px; padding: 8px 16px; text-align: center; }
+  .lang-label { font-size: .72rem; color: var(--text2); margin-bottom: 2px; }
+  .lang-text { font-size: 1.05rem; font-weight: 700; }
+  .lang-text.src { color: var(--blue); }
+  .lang-text.tgt { color: var(--teal); }
+  .arrow-lr { color: var(--amber); font-size: 1.3rem; }
+
+  .step-display { background: var(--bg2); border: 1px solid #2a2c36; border-radius: 12px; padding: 20px; max-width: 700px; margin: 0 auto 16px; }
+  .step-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .step-label { font-size: 1rem; font-weight: 700; color: var(--purple); }
+  .step-counter { font-size: .85rem; color: var(--text2); font-family: 'JetBrains Mono', monospace; }
+
+  .token-row { display: flex; flex-direction: column; gap: 10px; }
+  .row-label { font-size: .78rem; color: var(--text2); font-weight: 500; min-width: 80px; }
+  .row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .token { display: inline-flex; align-items: center; justify-content: center; padding: 6px 14px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: .88rem; font-weight: 500; border: 1.5px solid transparent; transition: all 0.3s; }
+  .token.input { background: #1a2030; border-color: #4fa8e8; color: #4fa8e8; }
+  .token.prev { background: #1a2535; border-color: #3a7ab8; color: #7ab8e0; }
+  .token.special { background: #2a2820; border-color: #f0b429; color: #f0b429; font-size: .78rem; }
+  .token.generated { background: #1a3025; border-color: #3ecfa0; color: #3ecfa0; animation: popIn 0.35s ease; }
+  .token.eos { background: #2a2820; border-color: #f0b429; color: #f0b429; animation: popIn 0.35s ease; font-size: .78rem; }
+
+  @keyframes popIn {
+    0% { transform: scale(0.6); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .arrow-feed { display: flex; align-items: center; justify-content: center; margin: 6px 0; }
+  .arrow-feed svg { width: 24px; height: 24px; }
+
+  .controls { display: flex; gap: 12px; justify-content: center; margin-top: 16px; }
+  .btn { background: var(--bg3); border: 1.5px solid #3a3c46; color: var(--text); font-family: 'Noto Sans JP', sans-serif; font-size: .88rem; padding: 8px 22px; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+  .btn:hover:not(:disabled) { border-color: var(--purple); color: var(--purple); }
+  .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .autoregressive-note { display: flex; align-items: flex-start; gap: 8px; background: var(--bg3); border: 1px solid #2a2c36; border-radius: 8px; padding: 10px 14px; max-width: 700px; margin: 14px auto 0; }
+  .autoregressive-note .icon { color: var(--amber); font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+  .autoregressive-note .desc { font-size: .78rem; color: var(--text2); line-height: 1.6; }
+
+  .progress-bar { display: flex; gap: 4px; justify-content: center; margin-bottom: 14px; }
+  .progress-dot { width: 10px; height: 10px; border-radius: 50%; background: #2a2c36; transition: background 0.3s; }
+  .progress-dot.active { background: var(--purple); }
+  .progress-dot.done { background: var(--teal); }
+</style>
+</head>
+<body>
+<h1>推論時の自己回帰生成ステップ</h1>
+<div class="subtitle">翻訳タスク: 1トークンずつ順番に生成</div>
+
+<div class="task-box">
+  <div class="lang-box">
+    <div class="lang-label">入力（日本語）</div>
+    <div class="lang-text src">私は猫です</div>
+  </div>
+  <span class="arrow-lr">→</span>
+  <div class="lang-box">
+    <div class="lang-label">出力（英語）</div>
+    <div class="lang-text tgt" id="outputPreview">...</div>
+  </div>
+</div>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="step-display" id="stepDisplay">
+  <!-- JS renders here -->
+</div>
+
+<div class="controls">
+  <button class="btn" id="prevBtn" disabled>← 前のステップ</button>
+  <button class="btn" id="nextBtn">次のステップ →</button>
+</div>
+
+<div class="autoregressive-note">
+  <span class="icon">&#9432;</span>
+  <span class="desc"><strong>自己回帰（Autoregressive）</strong>: 各ステップで生成したトークンが、次のステップの入力に追加される。Decoderは常に「これまでに生成した全トークン」を入力として受け取り、次の1トークンを予測する。</span>
+</div>
+
+<script>
+const steps = [
+  {
+    label: 'ステップ 1',
+    input: [{ text: '<SOS>', type: 'special' }],
+    output: { text: 'I', type: 'generated' },
+    result: 'I'
+  },
+  {
+    label: 'ステップ 2',
+    input: [{ text: '<SOS>', type: 'special' }, { text: 'I', type: 'prev' }],
+    output: { text: 'am', type: 'generated' },
+    result: 'I am'
+  },
+  {
+    label: 'ステップ 3',
+    input: [{ text: '<SOS>', type: 'special' }, { text: 'I', type: 'prev' }, { text: 'am', type: 'prev' }],
+    output: { text: 'a', type: 'generated' },
+    result: 'I am a'
+  },
+  {
+    label: 'ステップ 4',
+    input: [{ text: '<SOS>', type: 'special' }, { text: 'I', type: 'prev' }, { text: 'am', type: 'prev' }, { text: 'a', type: 'prev' }],
+    output: { text: 'cat', type: 'generated' },
+    result: 'I am a cat'
+  },
+  {
+    label: 'ステップ 5',
+    input: [{ text: '<SOS>', type: 'special' }, { text: 'I', type: 'prev' }, { text: 'am', type: 'prev' }, { text: 'a', type: 'prev' }, { text: 'cat', type: 'prev' }],
+    output: { text: '<EOS>', type: 'eos' },
+    result: 'I am a cat <EOS>'
+  }
+];
+
+let current = -1;
+const display = document.getElementById('stepDisplay');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const outputPreview = document.getElementById('outputPreview');
+const progressBar = document.getElementById('progressBar');
+
+// Init progress dots
+steps.forEach(() => {
+  const dot = document.createElement('div');
+  dot.className = 'progress-dot';
+  progressBar.appendChild(dot);
+});
+
+function renderInitial() {
+  display.innerHTML = `
+    <div style="text-align:center;color:var(--text2);padding:20px 0;">
+      <div style="font-size:.95rem;margin-bottom:6px;">「次のステップ」ボタンを押して自己回帰生成を開始</div>
+      <div style="font-size:.8rem;">Decoderは &lt;SOS&gt; トークンから1つずつ単語を生成していきます</div>
+    </div>`;
+  outputPreview.textContent = '...';
+}
+
+function render(idx) {
+  const s = steps[idx];
+  const inputTokens = s.input.map(t => `<span class="token ${t.type}">${t.text}</span>`).join('');
+  const outputToken = `<span class="token ${s.output.type}">${s.output.text}</span>`;
+
+  display.innerHTML = `
+    <div class="step-header">
+      <span class="step-label">${s.label}</span>
+      <span class="step-counter">${idx + 1} / ${steps.length}</span>
+    </div>
+    <div class="token-row">
+      <div class="row-label">Decoder入力:</div>
+      <div class="row">${inputTokens}</div>
+      <div class="arrow-feed">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 5v14m0 0l-5-5m5 5l5-5" stroke="#f0b429" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span style="color:var(--amber);font-size:.78rem;margin-left:4px;">Transformer</span>
+      </div>
+      <div class="row-label">生成トークン:</div>
+      <div class="row">${outputToken}</div>
+    </div>`;
+
+  outputPreview.textContent = s.result;
+
+  // Update progress
+  const dots = progressBar.querySelectorAll('.progress-dot');
+  dots.forEach((d, i) => {
+    d.className = 'progress-dot';
+    if (i < idx) d.classList.add('done');
+    if (i === idx) d.classList.add('active');
+  });
+}
+
+function update() {
+  prevBtn.disabled = current < 0;
+  nextBtn.disabled = current >= steps.length - 1;
+  if (current < 0) {
+    renderInitial();
+  } else {
+    render(current);
+  }
+}
+
+nextBtn.addEventListener('click', () => {
+  if (current < steps.length - 1) { current++; update(); }
+});
+prevBtn.addEventListener('click', () => {
+  current--;
+  update();
+});
+
+update();
+</script>
+</body>
+</html>

@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bahdanau Attention の仕組み</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .subtitle {
+    font-size: 0.85rem; color: var(--text2);
+    margin-bottom: 20px; line-height: 1.6;
+  }
+  .diagram-container {
+    background: var(--bg2);
+    border: 1px solid var(--bg3);
+    border-radius: 12px;
+    padding: 24px 16px;
+    overflow-x: auto;
+    display: flex;
+    justify-content: center;
+  }
+  svg text { font-family: 'Noto Sans JP', sans-serif; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  .note {
+    margin-top: 16px;
+    font-size: 0.8rem;
+    color: var(--text2);
+    line-height: 1.7;
+  }
+  .note code {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--bg3);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    color: var(--purple);
+  }
+</style>
+</head>
+<body>
+<h2>Bahdanau Attention の仕組み</h2>
+<p class="subtitle">
+  Encoder の各隠れ状態に対してアライメントスコアを計算し、重み付き和でコンテキストベクトルを生成します。<br>
+  矢印の太さが Attention 重み（α）の大きさを表しています。
+</p>
+
+<div class="diagram-container">
+<svg id="mainSvg" viewBox="0 0 700 520" width="700" height="520">
+  <defs>
+    <marker id="arrowTeal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3ecfa0"/>
+    </marker>
+    <marker id="arrowPurple" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#8b7ff0"/>
+    </marker>
+    <marker id="arrowAmber" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#f0b429"/>
+    </marker>
+  </defs>
+
+  <!-- Title labels -->
+  <text x="30" y="30" fill="#3ecfa0" font-size="13" font-weight="700">Encoder（双方向RNN）</text>
+  <text x="520" y="30" fill="#f0b429" font-size="13" font-weight="700">Decoder</text>
+
+  <!-- Input tokens -->
+  <g id="inputTokens"></g>
+
+  <!-- Encoder hidden states -->
+  <g id="encoderStates"></g>
+
+  <!-- Forward/backward arrows -->
+  <g id="rnnArrows"></g>
+
+  <!-- Alignment scores -->
+  <g id="alignment"></g>
+
+  <!-- Context vector -->
+  <g id="context"></g>
+
+  <!-- Decoder -->
+  <g id="decoder"></g>
+</svg>
+</div>
+
+<p class="note">
+  <strong>数式:</strong>
+  <code>e_ij = a(s_{i-1}, h_j)</code> — アライメントモデル（加法的Attention）<br>
+  <code>α_ij = softmax(e_ij)</code> — Attention 重み<br>
+  <code>c_i = Σ α_ij · h_j</code> — コンテキストベクトル（重み付き和）
+</p>
+
+<script>
+const svg = document.getElementById('mainSvg');
+const ns = 'http://www.w3.org/2000/svg';
+
+const tokens = ['私', 'は', '学校', 'に', '行く'];
+const weights = [0.05, 0.08, 0.55, 0.12, 0.20];
+const n = tokens.length;
+const cellW = 50, cellH = 36, gap = 22;
+const startX = 60;
+const inputY = 440;
+const encoderY = 340;
+const alignY = 230;
+const contextY = 150;
+const decoderY = 60;
+
+// Input tokens
+tokens.forEach((tok, i) => {
+  const x = startX + i * (cellW + gap);
+  const rect = document.createElementNS(ns, 'rect');
+  rect.setAttribute('x', x); rect.setAttribute('y', inputY);
+  rect.setAttribute('width', cellW); rect.setAttribute('height', cellH);
+  rect.setAttribute('rx', '6');
+  rect.setAttribute('fill', 'rgba(78,168,232,0.12)');
+  rect.setAttribute('stroke', 'rgba(78,168,232,0.4)');
+  rect.setAttribute('stroke-width', '1');
+  svg.appendChild(rect);
+
+  const label = document.createElementNS(ns, 'text');
+  label.setAttribute('x', x + cellW / 2); label.setAttribute('y', inputY + cellH / 2 + 1);
+  label.setAttribute('text-anchor', 'middle'); label.setAttribute('dominant-baseline', 'middle');
+  label.setAttribute('fill', '#4fa8e8'); label.setAttribute('font-size', '14'); label.setAttribute('font-weight', '500');
+  label.textContent = tok;
+  svg.appendChild(label);
+
+  // Arrow from input to encoder
+  const line = document.createElementNS(ns, 'line');
+  line.setAttribute('x1', x + cellW / 2); line.setAttribute('y1', inputY);
+  line.setAttribute('x2', x + cellW / 2); line.setAttribute('y2', encoderY + cellH + 2);
+  line.setAttribute('stroke', 'rgba(78,168,232,0.3)'); line.setAttribute('stroke-width', '1');
+  svg.appendChild(line);
+});
+
+// Encoder states
+tokens.forEach((_, i) => {
+  const x = startX + i * (cellW + gap);
+  const alpha = weights[i];
+  const intensity = 0.15 + alpha * 0.85;
+
+  const rect = document.createElementNS(ns, 'rect');
+  rect.setAttribute('x', x); rect.setAttribute('y', encoderY);
+  rect.setAttribute('width', cellW); rect.setAttribute('height', cellH);
+  rect.setAttribute('rx', '6');
+  rect.setAttribute('fill', `rgba(62,207,160,${0.08 + alpha * 0.35})`);
+  rect.setAttribute('stroke', `rgba(62,207,160,${0.3 + alpha * 0.7})`);
+  rect.setAttribute('stroke-width', '1.5');
+  svg.appendChild(rect);
+
+  const label = document.createElementNS(ns, 'text');
+  label.setAttribute('x', x + cellW / 2); label.setAttribute('y', encoderY + cellH / 2 + 1);
+  label.setAttribute('text-anchor', 'middle'); label.setAttribute('dominant-baseline', 'middle');
+  label.setAttribute('fill', '#3ecfa0'); label.setAttribute('font-size', '12');
+  label.classList.add('mono');
+  label.textContent = `h${i + 1}`;
+  svg.appendChild(label);
+
+  // Forward arrow
+  if (i < n - 1) {
+    const ax = x + cellW;
+    const line = document.createElementNS(ns, 'line');
+    line.setAttribute('x1', ax + 2); line.setAttribute('y1', encoderY + cellH / 2 - 5);
+    line.setAttribute('x2', ax + gap - 4); line.setAttribute('y2', encoderY + cellH / 2 - 5);
+    line.setAttribute('stroke', 'rgba(62,207,160,0.4)'); line.setAttribute('stroke-width', '1');
+    line.setAttribute('marker-end', 'url(#arrowTeal)');
+    svg.appendChild(line);
+
+    // Backward arrow
+    const lineB = document.createElementNS(ns, 'line');
+    lineB.setAttribute('x1', ax + gap - 4); lineB.setAttribute('y1', encoderY + cellH / 2 + 5);
+    lineB.setAttribute('x2', ax + 2); lineB.setAttribute('y2', encoderY + cellH / 2 + 5);
+    lineB.setAttribute('stroke', 'rgba(62,207,160,0.25)'); lineB.setAttribute('stroke-width', '1');
+    svg.appendChild(lineB);
+  }
+});
+
+// Bidirectional labels
+const biL = document.createElementNS(ns, 'text');
+biL.setAttribute('x', startX - 10); biL.setAttribute('y', encoderY + cellH / 2 - 5);
+biL.setAttribute('text-anchor', 'end'); biL.setAttribute('fill', 'rgba(62,207,160,0.5)');
+biL.setAttribute('font-size', '10');
+biL.textContent = '→';
+svg.appendChild(biL);
+const biR = document.createElementNS(ns, 'text');
+biR.setAttribute('x', startX - 10); biR.setAttribute('y', encoderY + cellH / 2 + 9);
+biR.setAttribute('text-anchor', 'end'); biR.setAttribute('fill', 'rgba(62,207,160,0.35)');
+biR.setAttribute('font-size', '10');
+biR.textContent = '←';
+svg.appendChild(biR);
+
+// Alignment scores
+const alignBoxW = 52, alignBoxH = 48;
+const alignStartX = startX - 1;
+tokens.forEach((_, i) => {
+  const x = alignStartX + i * (cellW + gap);
+  const alpha = weights[i];
+
+  // Box
+  const rect = document.createElementNS(ns, 'rect');
+  rect.setAttribute('x', x); rect.setAttribute('y', alignY);
+  rect.setAttribute('width', alignBoxW); rect.setAttribute('height', alignBoxH);
+  rect.setAttribute('rx', '6');
+  rect.setAttribute('fill', `rgba(139,127,240,${0.08 + alpha * 0.5})`);
+  rect.setAttribute('stroke', `rgba(139,127,240,${0.2 + alpha * 0.8})`);
+  rect.setAttribute('stroke-width', '1');
+  svg.appendChild(rect);
+
+  // Alpha label
+  const label = document.createElementNS(ns, 'text');
+  label.setAttribute('x', x + alignBoxW / 2); label.setAttribute('y', alignY + 18);
+  label.setAttribute('text-anchor', 'middle'); label.setAttribute('fill', '#8b7ff0');
+  label.setAttribute('font-size', '11'); label.classList.add('mono');
+  label.textContent = `α${i + 1}`;
+  svg.appendChild(label);
+
+  const val = document.createElementNS(ns, 'text');
+  val.setAttribute('x', x + alignBoxW / 2); val.setAttribute('y', alignY + 36);
+  val.setAttribute('text-anchor', 'middle'); val.setAttribute('fill', `rgba(139,127,240,${0.5 + alpha})`);
+  val.setAttribute('font-size', '12'); val.setAttribute('font-weight', '700');
+  val.classList.add('mono');
+  val.textContent = alpha.toFixed(2);
+  svg.appendChild(val);
+
+  // Arrow from encoder to alignment
+  const line1 = document.createElementNS(ns, 'line');
+  line1.setAttribute('x1', startX + i * (cellW + gap) + cellW / 2);
+  line1.setAttribute('y1', encoderY);
+  line1.setAttribute('x2', x + alignBoxW / 2);
+  line1.setAttribute('y2', alignY + alignBoxH + 2);
+  line1.setAttribute('stroke', `rgba(139,127,240,${0.15 + alpha * 0.5})`);
+  line1.setAttribute('stroke-width', 1 + alpha * 3);
+  svg.appendChild(line1);
+
+  // Arrow from alignment to context
+  const contextX = 350;
+  const line2 = document.createElementNS(ns, 'line');
+  line2.setAttribute('x1', x + alignBoxW / 2);
+  line2.setAttribute('y1', alignY);
+  line2.setAttribute('x2', contextX);
+  line2.setAttribute('y2', contextY + 36 + 2);
+  line2.setAttribute('stroke', `rgba(139,127,240,${0.1 + alpha * 0.6})`);
+  line2.setAttribute('stroke-width', 1 + alpha * 4);
+  svg.appendChild(line2);
+});
+
+// "Alignment" label
+const alignLabel = document.createElementNS(ns, 'text');
+alignLabel.setAttribute('x', startX + n * (cellW + gap) + 10);
+alignLabel.setAttribute('y', alignY + alignBoxH / 2);
+alignLabel.setAttribute('fill', '#8b7ff0'); alignLabel.setAttribute('font-size', '11');
+alignLabel.setAttribute('font-weight', '500');
+alignLabel.textContent = '← Attention重み';
+svg.appendChild(alignLabel);
+
+// Context vector
+const ctxX = 310, ctxW = 80, ctxH = 36;
+const ctxRect = document.createElementNS(ns, 'rect');
+ctxRect.setAttribute('x', ctxX); ctxRect.setAttribute('y', contextY);
+ctxRect.setAttribute('width', ctxW); ctxRect.setAttribute('height', ctxH);
+ctxRect.setAttribute('rx', '8');
+ctxRect.setAttribute('fill', 'rgba(139,127,240,0.2)');
+ctxRect.setAttribute('stroke', 'rgba(139,127,240,0.7)');
+ctxRect.setAttribute('stroke-width', '2');
+svg.appendChild(ctxRect);
+
+const ctxLabel = document.createElementNS(ns, 'text');
+ctxLabel.setAttribute('x', ctxX + ctxW / 2); ctxLabel.setAttribute('y', contextY + ctxH / 2 + 1);
+ctxLabel.setAttribute('text-anchor', 'middle'); ctxLabel.setAttribute('dominant-baseline', 'middle');
+ctxLabel.setAttribute('fill', '#8b7ff0'); ctxLabel.setAttribute('font-size', '13');
+ctxLabel.setAttribute('font-weight', '700'); ctxLabel.classList.add('mono');
+ctxLabel.textContent = 'c_i';
+svg.appendChild(ctxLabel);
+
+const ctxNote = document.createElementNS(ns, 'text');
+ctxNote.setAttribute('x', ctxX + ctxW + 12); ctxNote.setAttribute('y', contextY + ctxH / 2 + 1);
+ctxNote.setAttribute('dominant-baseline', 'middle');
+ctxNote.setAttribute('fill', 'var(--text2)'); ctxNote.setAttribute('font-size', '11');
+ctxNote.textContent = 'コンテキストベクトル';
+svg.appendChild(ctxNote);
+
+// Decoder
+const decX = 310, decW = 80, decH = 40;
+const decRect = document.createElementNS(ns, 'rect');
+decRect.setAttribute('x', decX); decRect.setAttribute('y', decoderY);
+decRect.setAttribute('width', decW); decRect.setAttribute('height', decH);
+decRect.setAttribute('rx', '8');
+decRect.setAttribute('fill', 'rgba(240,180,41,0.15)');
+decRect.setAttribute('stroke', 'rgba(240,180,41,0.6)');
+decRect.setAttribute('stroke-width', '2');
+svg.appendChild(decRect);
+
+const decLabel = document.createElementNS(ns, 'text');
+decLabel.setAttribute('x', decX + decW / 2); decLabel.setAttribute('y', decoderY + decH / 2 + 1);
+decLabel.setAttribute('text-anchor', 'middle'); decLabel.setAttribute('dominant-baseline', 'middle');
+decLabel.setAttribute('fill', '#f0b429'); decLabel.setAttribute('font-size', '13');
+decLabel.setAttribute('font-weight', '700'); decLabel.classList.add('mono');
+decLabel.textContent = 's_i';
+svg.appendChild(decLabel);
+
+const decNote = document.createElementNS(ns, 'text');
+decNote.setAttribute('x', decX + decW + 12); decNote.setAttribute('y', decoderY + decH / 2 + 1);
+decNote.setAttribute('dominant-baseline', 'middle');
+decNote.setAttribute('fill', 'var(--text2)'); decNote.setAttribute('font-size', '11');
+decNote.textContent = 'Decoder 隠れ状態';
+svg.appendChild(decNote);
+
+// Arrow context -> decoder
+const cd = document.createElementNS(ns, 'line');
+cd.setAttribute('x1', ctxX + ctxW / 2); cd.setAttribute('y1', contextY);
+cd.setAttribute('x2', decX + decW / 2); cd.setAttribute('y2', decoderY + decH + 2);
+cd.setAttribute('stroke', '#8b7ff0'); cd.setAttribute('stroke-width', '2');
+cd.setAttribute('marker-end', 'url(#arrowPurple)');
+svg.appendChild(cd);
+
+// Output token
+const outX = decX + decW / 2, outY = decoderY - 30;
+const outLabel = document.createElementNS(ns, 'text');
+outLabel.setAttribute('x', outX); outLabel.setAttribute('y', outY);
+outLabel.setAttribute('text-anchor', 'middle');
+outLabel.setAttribute('fill', '#f0b429'); outLabel.setAttribute('font-size', '14');
+outLabel.setAttribute('font-weight', '700');
+outLabel.textContent = '出力: "学校"';
+svg.appendChild(outLabel);
+
+// Decoder prev state arrow (feedback)
+const prevDecLabel = document.createElementNS(ns, 'text');
+prevDecLabel.setAttribute('x', decX - 12); prevDecLabel.setAttribute('y', decoderY + decH / 2 + 1);
+prevDecLabel.setAttribute('text-anchor', 'end'); prevDecLabel.setAttribute('dominant-baseline', 'middle');
+prevDecLabel.setAttribute('fill', 'rgba(240,180,41,0.5)'); prevDecLabel.setAttribute('font-size', '10');
+prevDecLabel.classList.add('mono');
+prevDecLabel.textContent = 's_{i-1} →';
+svg.appendChild(prevDecLabel);
+
+// s_{i-1} also feeds into alignment
+const siPrevLine = document.createElementNS(ns, 'line');
+siPrevLine.setAttribute('x1', decX); siPrevLine.setAttribute('y1', decoderY + decH);
+siPrevLine.setAttribute('x2', alignStartX + 2 * (cellW + gap) + alignBoxW + 4);
+siPrevLine.setAttribute('y2', alignY + 4);
+siPrevLine.setAttribute('stroke', 'rgba(240,180,41,0.25)');
+siPrevLine.setAttribute('stroke-width', '1');
+siPrevLine.setAttribute('stroke-dasharray', '4,3');
+svg.appendChild(siPrevLine);
+
+const feedLabel = document.createElementNS(ns, 'text');
+feedLabel.setAttribute('x', decX - 30); feedLabel.setAttribute('y', alignY + 10);
+feedLabel.setAttribute('fill', 'rgba(240,180,41,0.5)'); feedLabel.setAttribute('font-size', '9');
+feedLabel.textContent = 's_{i-1} でスコア計算';
+svg.appendChild(feedLabel);
+</script>
+</body>
+</html>

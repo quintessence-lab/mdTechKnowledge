@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>モデルパラメータ数の推移</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .subtitle {
+    font-size: 0.85rem; color: var(--text2);
+    margin-bottom: 12px; line-height: 1.6;
+  }
+  .controls {
+    max-width: 720px;
+    margin: 0 auto 16px;
+    display: flex;
+    gap: 8px;
+  }
+  .toggle-btn {
+    padding: 6px 16px;
+    border: 1px solid #3a3c46;
+    border-radius: 6px;
+    background: var(--bg2);
+    color: var(--text2);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .toggle-btn:hover {
+    border-color: var(--purple);
+    color: var(--text);
+  }
+  .toggle-btn.active {
+    background: rgba(139,127,240,0.15);
+    border-color: var(--purple);
+    color: var(--purple);
+    font-weight: 500;
+  }
+  .chart-container {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    position: relative;
+  }
+  canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .note {
+    max-width: 720px;
+    margin: 12px auto 0;
+    font-size: 0.75rem;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+<h2>モデルパラメータ数の推移（2017-2024）</h2>
+<p class="subtitle">Transformerの登場以降、モデルサイズは指数関数的に増大し続けている</p>
+
+<div class="controls">
+  <button class="toggle-btn active" id="btnLog" onclick="setScale('log')">対数スケール</button>
+  <button class="toggle-btn" id="btnLinear" onclick="setScale('linear')">線形スケール</button>
+</div>
+
+<div class="chart-container">
+  <canvas id="chart" width="720" height="440"></canvas>
+</div>
+
+<div class="note">
+  ※ GPT-4, Gemini Ultraのパラメータ数は公式非公表のため推定値。対数スケールでは指数関数的成長が直線的に見える。
+</div>
+
+<script>
+const dataPoints = [
+  { year: 2017, name: 'Transformer\n(base)', params: 65e6, color: '#4fa8e8' },
+  { year: 2017.3, name: 'Transformer\n(big)', params: 213e6, color: '#4fa8e8' },
+  { year: 2018, name: 'BERT-base', params: 110e6, color: '#3ecfa0' },
+  { year: 2018.3, name: 'BERT-large', params: 340e6, color: '#3ecfa0' },
+  { year: 2019, name: 'GPT-2', params: 1.5e9, color: '#8b7ff0' },
+  { year: 2020, name: 'GPT-3', params: 175e9, color: '#8b7ff0' },
+  { year: 2022, name: 'PaLM', params: 540e9, color: '#f0b429' },
+  { year: 2023, name: 'GPT-4\n(推定)', params: 1.8e12, color: '#8b7ff0' },
+  { year: 2024, name: 'Gemini Ultra\n(推定)', params: 1e12, color: '#f0b429' },
+];
+
+let currentScale = 'log';
+const canvas = document.getElementById('chart');
+const ctx = canvas.getContext('2d');
+
+// High-DPI support
+function setupCanvas() {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  const w = Math.min(rect.width, 720);
+  const h = 440;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { w, h };
+}
+
+function formatParams(p) {
+  if (p >= 1e12) return (p / 1e12).toFixed(1) + 'T';
+  if (p >= 1e9) return (p / 1e9).toFixed(1) + 'B';
+  if (p >= 1e6) return (p / 1e6).toFixed(0) + 'M';
+  return p.toString();
+}
+
+function drawChart() {
+  const { w, h } = setupCanvas();
+  const pad = { top: 40, right: 30, bottom: 50, left: 72 };
+  const cw = w - pad.left - pad.right;
+  const ch = h - pad.top - pad.bottom;
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Background
+  ctx.fillStyle = '#0e0f11';
+  ctx.fillRect(0, 0, w, h);
+
+  const minYear = 2016.5;
+  const maxYear = 2024.8;
+
+  let minVal, maxVal;
+  if (currentScale === 'log') {
+    minVal = Math.log10(30e6);   // ~7.5
+    maxVal = Math.log10(3e12);   // ~12.5
+  } else {
+    minVal = 0;
+    maxVal = 2e12;
+  }
+
+  function xPos(year) {
+    return pad.left + ((year - minYear) / (maxYear - minYear)) * cw;
+  }
+  function yPos(params) {
+    let v;
+    if (currentScale === 'log') {
+      v = Math.log10(params);
+    } else {
+      v = params;
+    }
+    return pad.top + ch - ((v - minVal) / (maxVal - minVal)) * ch;
+  }
+
+  // Grid lines
+  ctx.strokeStyle = '#1e2028';
+  ctx.lineWidth = 0.8;
+
+  if (currentScale === 'log') {
+    const gridVals = [1e8, 1e9, 1e10, 1e11, 1e12];
+    const gridLabels = ['100M', '1B', '10B', '100B', '1T'];
+    gridVals.forEach((v, i) => {
+      const y = yPos(v);
+      ctx.beginPath();
+      ctx.moveTo(pad.left, y);
+      ctx.lineTo(w - pad.right, y);
+      ctx.stroke();
+
+      ctx.fillStyle = '#9e9b91';
+      ctx.font = '11px "JetBrains Mono", monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText(gridLabels[i], pad.left - 8, y + 4);
+    });
+  } else {
+    const gridVals = [0, 0.5e12, 1e12, 1.5e12, 2e12];
+    const gridLabels = ['0', '0.5T', '1.0T', '1.5T', '2.0T'];
+    gridVals.forEach((v, i) => {
+      const y = yPos(v);
+      ctx.beginPath();
+      ctx.moveTo(pad.left, y);
+      ctx.lineTo(w - pad.right, y);
+      ctx.stroke();
+
+      ctx.fillStyle = '#9e9b91';
+      ctx.font = '11px "JetBrains Mono", monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText(gridLabels[i], pad.left - 8, y + 4);
+    });
+  }
+
+  // Year grid
+  for (let yr = 2017; yr <= 2024; yr++) {
+    const x = xPos(yr);
+    ctx.beginPath();
+    ctx.strokeStyle = '#1e2028';
+    ctx.moveTo(x, pad.top);
+    ctx.lineTo(x, h - pad.bottom);
+    ctx.stroke();
+
+    ctx.fillStyle = '#9e9b91';
+    ctx.font = '11px "JetBrains Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(yr.toString(), x, h - pad.bottom + 18);
+  }
+
+  // Axis labels
+  ctx.fillStyle = '#e8e6de';
+  ctx.font = '12px "Noto Sans JP", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('年', w / 2, h - 5);
+
+  ctx.save();
+  ctx.translate(16, pad.top + ch / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('パラメータ数' + (currentScale === 'log' ? '（対数）' : '（線形）'), 0, 0);
+  ctx.restore();
+
+  // Connect line
+  const sorted = [...dataPoints].sort((a, b) => a.year - b.year);
+  ctx.beginPath();
+  ctx.strokeStyle = 'rgba(139,127,240,0.3)';
+  ctx.lineWidth = 1.5;
+  sorted.forEach((d, i) => {
+    const x = xPos(d.year);
+    const y = yPos(d.params);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  // Points and labels
+  sorted.forEach((d) => {
+    const x = xPos(d.year);
+    const y = yPos(d.params);
+
+    // Glow
+    ctx.beginPath();
+    ctx.arc(x, y, 8, 0, Math.PI * 2);
+    ctx.fillStyle = d.color + '22';
+    ctx.fill();
+
+    // Point
+    ctx.beginPath();
+    ctx.arc(x, y, 4.5, 0, Math.PI * 2);
+    ctx.fillStyle = d.color;
+    ctx.fill();
+
+    // Border
+    ctx.beginPath();
+    ctx.arc(x, y, 4.5, 0, Math.PI * 2);
+    ctx.strokeStyle = d.color;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Label
+    const lines = d.name.split('\n');
+    ctx.font = '10px "Noto Sans JP", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = d.color;
+
+    // Position labels to avoid overlap
+    let labelY = y - 14;
+    let labelX = x;
+
+    // Adjust for specific overlapping points
+    if (d.name.includes('Transformer') && d.name.includes('big')) {
+      labelX = x + 30;
+      labelY = y + 6;
+    }
+    if (d.name.includes('BERT-large')) {
+      labelX = x + 28;
+      labelY = y + 6;
+    }
+    if (d.name.includes('Gemini')) {
+      labelY = y + 18;
+    }
+
+    lines.forEach((line, li) => {
+      ctx.fillText(line, labelX, labelY + li * 13);
+    });
+
+    // Params value
+    ctx.font = '9px "JetBrains Mono", monospace';
+    ctx.fillStyle = '#9e9b91';
+    ctx.fillText(formatParams(d.params), labelX, labelY + lines.length * 13);
+  });
+
+  // Title indicator for scale
+  ctx.fillStyle = currentScale === 'log' ? 'rgba(139,127,240,0.6)' : 'rgba(62,207,160,0.6)';
+  ctx.font = '10px "Noto Sans JP", sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText(currentScale === 'log' ? '対数スケール表示中' : '線形スケール表示中', w - pad.right, pad.top - 10);
+}
+
+function setScale(scale) {
+  currentScale = scale;
+  document.getElementById('btnLog').classList.toggle('active', scale === 'log');
+  document.getElementById('btnLinear').classList.toggle('active', scale === 'linear');
+  drawChart();
+}
+
+window.addEventListener('resize', drawChart);
+drawChart();
+</script>
+</body>
+</html>

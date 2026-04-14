@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Position-wise Feed-Forward Networkの構造</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11; --bg2: #161820; --bg3: #1e2028;
+    --text: #e8e6de; --text2: #9e9b91;
+    --purple: #8b7ff0; --teal: #3ecfa0; --amber: #f0b429; --blue: #4fa8e8;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; padding: 24px; background: var(--bg); color: var(--text); font-family: 'Noto Sans JP', sans-serif; }
+  h1 { font-size: clamp(1rem, 2.5vw, 1.35rem); text-align: center; margin: 0 0 6px; font-weight: 700; }
+  .formula { text-align: center; font-family: 'JetBrains Mono', monospace; font-size: clamp(.75rem, 1.8vw, .92rem); color: var(--amber); background: var(--bg2); border: 1px solid #2a2c36; border-radius: 8px; padding: 10px 16px; margin: 0 auto 18px; display: inline-block; }
+  .formula-wrap { text-align: center; margin-bottom: 18px; }
+  .sections { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+  .section { background: var(--bg2); border: 1px solid #2a2c36; border-radius: 12px; padding: 16px 12px 12px; }
+  .section.main { flex: 1 1 380px; max-width: 480px; min-width: 280px; }
+  .section.pw { flex: 1 1 280px; max-width: 380px; min-width: 240px; }
+  .section-title { text-align: center; font-size: .9rem; font-weight: 700; margin-bottom: 10px; color: var(--blue); }
+  svg { display: block; margin: 0 auto; width: 100%; height: auto; }
+  .note { font-size: .78rem; color: var(--text2); text-align: center; margin-top: 14px; line-height: 1.6; }
+</style>
+</head>
+<body>
+<h1>Position-wise Feed-Forward Networkの構造</h1>
+<div class="formula-wrap"><span class="formula">FFN(x) = max(0, xW₁ + b₁)W₂ + b₂</span></div>
+
+<div class="sections">
+  <!-- メイン: FFN構造 -->
+  <div class="section main">
+    <div class="section-title">FFNの内部構造</div>
+    <svg viewBox="0 0 400 340" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="aG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#9e9b91"/></marker>
+        <marker id="aA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#f0b429"/></marker>
+      </defs>
+
+      <!-- 入力層 -->
+      <rect x="100" y="15" width="200" height="44" rx="8" fill="#1a2030" stroke="#4fa8e8" stroke-width="2"/>
+      <text x="200" y="35" text-anchor="middle" fill="#4fa8e8" font-family="'Noto Sans JP',sans-serif" font-size="13" font-weight="700">入力</text>
+      <text x="200" y="51" text-anchor="middle" fill="#4fa8e8" font-family="'JetBrains Mono',monospace" font-size="11">d_model = 512</text>
+
+      <!-- 矢印: 入力→W1 -->
+      <line x1="200" y1="59" x2="200" y2="82" stroke="#9e9b91" stroke-width="1.8" marker-end="url(#aG)"/>
+
+      <!-- W1 線形変換 -->
+      <rect x="110" y="82" width="180" height="32" rx="6" fill="#2a2c36" stroke="#9e9b91" stroke-width="1.2"/>
+      <text x="200" y="103" text-anchor="middle" fill="#e8e6de" font-family="'JetBrains Mono',monospace" font-size="11">xW₁ + b₁</text>
+      <!-- W1サイズ -->
+      <text x="305" y="103" fill="#9e9b91" font-family="'JetBrains Mono',monospace" font-size="9">512×2048</text>
+
+      <!-- 矢印: W1→ReLU -->
+      <line x1="200" y1="114" x2="200" y2="136" stroke="#9e9b91" stroke-width="1.8" marker-end="url(#aG)"/>
+
+      <!-- ReLU（強調） -->
+      <rect x="120" y="136" width="160" height="38" rx="8" fill="#3a2010" stroke="#f0b429" stroke-width="2.5"/>
+      <text x="200" y="160" text-anchor="middle" fill="#f0b429" font-family="'JetBrains Mono',monospace" font-size="14" font-weight="700">ReLU</text>
+      <text x="200" y="170" text-anchor="middle" fill="#f0b429" font-family="'JetBrains Mono',monospace" font-size="9">max(0, x)</text>
+
+      <!-- 矢印: ReLU→隠れ層 -->
+      <line x1="200" y1="174" x2="200" y2="196" stroke="#f0b429" stroke-width="1.8" marker-end="url(#aA)"/>
+
+      <!-- 隠れ層 -->
+      <rect x="60" y="196" width="280" height="44" rx="8" fill="#201a30" stroke="#8b7ff0" stroke-width="2"/>
+      <text x="200" y="216" text-anchor="middle" fill="#c4b8ff" font-family="'Noto Sans JP',sans-serif" font-size="13" font-weight="700">隠れ層</text>
+      <text x="200" y="232" text-anchor="middle" fill="#c4b8ff" font-family="'JetBrains Mono',monospace" font-size="11">d_ff = 2048</text>
+      <!-- 4倍を注記 -->
+      <text x="355" y="222" fill="#8b7ff0" font-family="'Noto Sans JP',sans-serif" font-size="10" font-weight="500">4倍!</text>
+
+      <!-- 矢印: 隠れ層→W2 -->
+      <line x1="200" y1="240" x2="200" y2="262" stroke="#9e9b91" stroke-width="1.8" marker-end="url(#aG)"/>
+
+      <!-- W2 線形変換 -->
+      <rect x="110" y="262" width="180" height="32" rx="6" fill="#2a2c36" stroke="#9e9b91" stroke-width="1.2"/>
+      <text x="200" y="283" text-anchor="middle" fill="#e8e6de" font-family="'JetBrains Mono',monospace" font-size="11">…W₂ + b₂</text>
+      <text x="305" y="283" fill="#9e9b91" font-family="'JetBrains Mono',monospace" font-size="9">2048×512</text>
+
+      <!-- 矢印: W2→出力 -->
+      <line x1="200" y1="294" x2="200" y2="308" stroke="#9e9b91" stroke-width="1.8" marker-end="url(#aG)"/>
+
+      <!-- 出力層 -->
+      <rect x="100" y="308" width="200" height="28" rx="6" fill="#1a3025" stroke="#3ecfa0" stroke-width="2"/>
+      <text x="200" y="327" text-anchor="middle" fill="#3ecfa0" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="500">出力  d_model = 512</text>
+    </svg>
+  </div>
+
+  <!-- Position-wise: 並列適用 -->
+  <div class="section pw">
+    <div class="section-title">「Position-wise」= 各位置に独立適用</div>
+    <svg viewBox="0 0 320 340" xmlns="http://www.w3.org/2000/svg">
+      <!-- 位置ラベル -->
+      <text x="45" y="26" text-anchor="middle" fill="#9e9b91" font-family="'Noto Sans JP',sans-serif" font-size="11">位置1</text>
+      <text x="120" y="26" text-anchor="middle" fill="#9e9b91" font-family="'Noto Sans JP',sans-serif" font-size="11">位置2</text>
+      <text x="195" y="26" text-anchor="middle" fill="#9e9b91" font-family="'Noto Sans JP',sans-serif" font-size="11">位置3</text>
+      <text x="270" y="26" text-anchor="middle" fill="#9e9b91" font-family="'Noto Sans JP',sans-serif" font-size="11">位置4</text>
+
+      <!-- 入力トークン -->
+      <rect x="15" y="34" width="60" height="28" rx="5" fill="#1a2030" stroke="#4fa8e8" stroke-width="1.2"/>
+      <text x="45" y="53" text-anchor="middle" fill="#4fa8e8" font-family="'Noto Sans JP',sans-serif" font-size="10">私</text>
+
+      <rect x="90" y="34" width="60" height="28" rx="5" fill="#1a2030" stroke="#4fa8e8" stroke-width="1.2"/>
+      <text x="120" y="53" text-anchor="middle" fill="#4fa8e8" font-family="'Noto Sans JP',sans-serif" font-size="10">は</text>
+
+      <rect x="165" y="34" width="60" height="28" rx="5" fill="#1a2030" stroke="#4fa8e8" stroke-width="1.2"/>
+      <text x="195" y="53" text-anchor="middle" fill="#4fa8e8" font-family="'Noto Sans JP',sans-serif" font-size="10">猫</text>
+
+      <rect x="240" y="34" width="60" height="28" rx="5" fill="#1a2030" stroke="#4fa8e8" stroke-width="1.2"/>
+      <text x="270" y="53" text-anchor="middle" fill="#4fa8e8" font-family="'Noto Sans JP',sans-serif" font-size="10">です</text>
+
+      <!-- 矢印 -->
+      <line x1="45" y1="62" x2="45" y2="86" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#aG)"/>
+      <line x1="120" y1="62" x2="120" y2="86" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#aG)"/>
+      <line x1="195" y1="62" x2="195" y2="86" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#aG)"/>
+      <line x1="270" y1="62" x2="270" y2="86" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#aG)"/>
+
+      <!-- FFNブロック（同じ色・同じデザインで並列）-->
+      <rect x="10" y="86" width="70" height="110" rx="8" fill="#201a30" stroke="#8b7ff0" stroke-width="1.8"/>
+      <text x="45" y="110" text-anchor="middle" fill="#c4b8ff" font-family="'Noto Sans JP',sans-serif" font-size="9" font-weight="500">FFN</text>
+      <text x="45" y="126" text-anchor="middle" fill="#f0b429" font-family="'JetBrains Mono',monospace" font-size="8">512</text>
+      <text x="45" y="140" text-anchor="middle" fill="#f0b429" font-family="'Noto Sans JP',sans-serif" font-size="7">↓ReLU</text>
+      <text x="45" y="154" text-anchor="middle" fill="#8b7ff0" font-family="'JetBrains Mono',monospace" font-size="8">2048</text>
+      <text x="45" y="168" text-anchor="middle" fill="#f0b429" font-family="'Noto Sans JP',sans-serif" font-size="7">↓</text>
+      <text x="45" y="182" text-anchor="middle" fill="#3ecfa0" font-family="'JetBrains Mono',monospace" font-size="8">512</text>
+
+      <rect x="85" y="86" width="70" height="110" rx="8" fill="#201a30" stroke="#8b7ff0" stroke-width="1.8"/>
+      <text x="120" y="110" text-anchor="middle" fill="#c4b8ff" font-family="'Noto Sans JP',sans-serif" font-size="9" font-weight="500">FFN</text>
+      <text x="120" y="126" text-anchor="middle" fill="#f0b429" font-family="'JetBrains Mono',monospace" font-size="8">512</text>
+      <text x="120" y="140" text-anchor="middle" fill="#f0b429" font-family="'Noto Sans JP',sans-serif" font-size="7">↓ReLU</text>
+      <text x="120" y="154" text-anchor="middle" fill="#8b7ff0" font-family="'JetBrains Mono',monospace" font-size="8">2048</text>
+      <text x="120" y="168" text-anchor="middle" fill="#f0b429" font-family="'Noto Sans JP',sans-serif" font-size="7">↓</text>
+      <text x="120" y="182" text-anchor="middle" fill="#3ecfa0" font-family="'JetBrains Mono',monospace" font-size="8">512</text>
+
+      <rect x="160" y="86" width="70" height="110" rx="8" fill="#201a30" stroke="#8b7ff0" stroke-width="1.8"/>
+      <text x="195" y="110" text-anchor="middle" fill="#c4b8ff" font-family="'Noto Sans JP',sans-serif" font-size="9" font-weight="500">FFN</text>
+      <text x="195" y="126" text-anchor="middle" fill="#f0b429" font-family="'JetBrains Mono',monospace" font-size="8">512</text>
+      <text x="195" y="140" text-anchor="middle" fill="#f0b429" font-family="'Noto Sans JP',sans-serif" font-size="7">↓ReLU</text>
+      <text x="195" y="154" text-anchor="middle" fill="#8b7ff0" font-family="'JetBrains Mono',monospace" font-size="8">2048</text>
+      <text x="195" y="168" text-anchor="middle" fill="#f0b429" font-family="'Noto Sans JP',sans-serif" font-size="7">↓</text>
+      <text x="195" y="182" text-anchor="middle" fill="#3ecfa0" font-family="'JetBrains Mono',monospace" font-size="8">512</text>
+
+      <rect x="235" y="86" width="70" height="110" rx="8" fill="#201a30" stroke="#8b7ff0" stroke-width="1.8"/>
+      <text x="270" y="110" text-anchor="middle" fill="#c4b8ff" font-family="'Noto Sans JP',sans-serif" font-size="9" font-weight="500">FFN</text>
+      <text x="270" y="126" text-anchor="middle" fill="#f0b429" font-family="'JetBrains Mono',monospace" font-size="8">512</text>
+      <text x="270" y="140" text-anchor="middle" fill="#f0b429" font-family="'Noto Sans JP',sans-serif" font-size="7">↓ReLU</text>
+      <text x="270" y="154" text-anchor="middle" fill="#8b7ff0" font-family="'JetBrains Mono',monospace" font-size="8">2048</text>
+      <text x="270" y="168" text-anchor="middle" fill="#f0b429" font-family="'Noto Sans JP',sans-serif" font-size="7">↓</text>
+      <text x="270" y="182" text-anchor="middle" fill="#3ecfa0" font-family="'JetBrains Mono',monospace" font-size="8">512</text>
+
+      <!-- 共有を示す点線枠 -->
+      <rect x="5" y="80" width="305" height="122" rx="12" fill="none" stroke="#f0b429" stroke-width="1.2" stroke-dasharray="6,3"/>
+      <text x="160" y="218" text-anchor="middle" fill="#f0b429" font-family="'Noto Sans JP',sans-serif" font-size="10" font-weight="500">同じ重みパラメータ W₁, b₁, W₂, b₂ を共有</text>
+
+      <!-- 矢印: FFN→出力 -->
+      <line x1="45" y1="196" x2="45" y2="236" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#aG)"/>
+      <line x1="120" y1="196" x2="120" y2="236" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#aG)"/>
+      <line x1="195" y1="196" x2="195" y2="236" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#aG)"/>
+      <line x1="270" y1="196" x2="270" y2="236" stroke="#9e9b91" stroke-width="1.2" marker-end="url(#aG)"/>
+
+      <!-- 出力トークン -->
+      <rect x="15" y="236" width="60" height="28" rx="5" fill="#1a3025" stroke="#3ecfa0" stroke-width="1.2"/>
+      <text x="45" y="255" text-anchor="middle" fill="#3ecfa0" font-family="'Noto Sans JP',sans-serif" font-size="10">出力₁</text>
+      <rect x="90" y="236" width="60" height="28" rx="5" fill="#1a3025" stroke="#3ecfa0" stroke-width="1.2"/>
+      <text x="120" y="255" text-anchor="middle" fill="#3ecfa0" font-family="'Noto Sans JP',sans-serif" font-size="10">出力₂</text>
+      <rect x="165" y="236" width="60" height="28" rx="5" fill="#1a3025" stroke="#3ecfa0" stroke-width="1.2"/>
+      <text x="195" y="255" text-anchor="middle" fill="#3ecfa0" font-family="'Noto Sans JP',sans-serif" font-size="10">出力₃</text>
+      <rect x="240" y="236" width="60" height="28" rx="5" fill="#1a3025" stroke="#3ecfa0" stroke-width="1.2"/>
+      <text x="270" y="255" text-anchor="middle" fill="#3ecfa0" font-family="'Noto Sans JP',sans-serif" font-size="10">出力₄</text>
+
+      <!-- ポイント注釈 -->
+      <text x="160" y="290" text-anchor="middle" fill="#9e9b91" font-family="'Noto Sans JP',sans-serif" font-size="10">各位置は独立に処理される</text>
+      <text x="160" y="306" text-anchor="middle" fill="#9e9b91" font-family="'Noto Sans JP',sans-serif" font-size="10">（位置間の情報交換はAttentionが担当）</text>
+    </svg>
+  </div>
+</div>
+
+<p class="note">FFNは各位置に独立して適用される「Position-wise」な変換。隠れ層で次元を4倍に拡張し、非線形変換（ReLU）を加えることで、モデルの表現力を高める。</p>
+</body>
+</html>

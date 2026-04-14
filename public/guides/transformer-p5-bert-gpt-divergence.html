@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Encoder-only vs Decoder-only の分岐</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .subtitle {
+    font-size: 0.85rem; color: var(--text2);
+    margin-bottom: 20px; line-height: 1.6;
+  }
+  .diagram {
+    width: 100%;
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  /* Root node */
+  .root-box {
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .root-box .box {
+    display: inline-block;
+    background: rgba(79,168,232,0.12);
+    border: 2px solid var(--blue);
+    border-radius: 10px;
+    padding: 12px 28px;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--blue);
+  }
+  .root-box .box-sub {
+    font-size: 0.75rem;
+    color: var(--text2);
+    font-weight: 400;
+    margin-top: 4px;
+  }
+
+  /* Connector lines */
+  .connectors {
+    display: flex;
+    justify-content: center;
+    height: 40px;
+    position: relative;
+  }
+  .connectors svg {
+    width: 100%;
+    max-width: 780px;
+    height: 40px;
+  }
+
+  /* Three branches */
+  .branches {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+  .branch {
+    border-radius: 10px;
+    padding: 16px;
+    position: relative;
+  }
+  .branch-encoder {
+    background: rgba(62,207,160,0.06);
+    border: 1px solid rgba(62,207,160,0.25);
+  }
+  .branch-decoder {
+    background: rgba(139,127,240,0.06);
+    border: 1px solid rgba(139,127,240,0.25);
+  }
+  .branch-encdec {
+    background: rgba(79,168,232,0.06);
+    border: 1px solid rgba(79,168,232,0.25);
+  }
+  .branch-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+  }
+  .branch-encoder .branch-title { color: var(--teal); }
+  .branch-decoder .branch-title { color: var(--purple); }
+  .branch-encdec .branch-title { color: var(--blue); }
+  .branch-type {
+    font-size: 0.72rem;
+    color: var(--text2);
+    margin-bottom: 12px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .models {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .model-tag {
+    font-size: 0.72rem;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+  .branch-encoder .model-tag {
+    background: rgba(62,207,160,0.15);
+    color: var(--teal);
+  }
+  .branch-decoder .model-tag {
+    background: rgba(139,127,240,0.15);
+    color: var(--purple);
+  }
+  .branch-encdec .model-tag {
+    background: rgba(79,168,232,0.15);
+    color: var(--blue);
+  }
+
+  .features {
+    margin-bottom: 14px;
+  }
+  .feature-item {
+    font-size: 0.75rem;
+    color: var(--text2);
+    line-height: 1.8;
+    padding-left: 14px;
+    position: relative;
+  }
+  .feature-item::before {
+    content: '•';
+    position: absolute;
+    left: 2px;
+  }
+
+  .example-box {
+    background: var(--bg2);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 0.7rem;
+    line-height: 1.7;
+  }
+  .example-label {
+    color: var(--text2);
+    font-weight: 500;
+    margin-bottom: 4px;
+    font-size: 0.68rem;
+  }
+  .example-io {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text);
+  }
+  .example-io .arrow { color: var(--text2); margin: 0 4px; }
+
+  @media (max-width: 700px) {
+    .branches {
+      grid-template-columns: 1fr;
+    }
+    .connectors { display: none; }
+  }
+</style>
+</head>
+<body>
+<h2>Encoder-only vs Decoder-only の分岐</h2>
+<p class="subtitle">Transformerから派生した3つのアーキテクチャ系統と、それぞれの特化領域</p>
+
+<div class="diagram">
+
+  <div class="root-box">
+    <div class="box">
+      Transformer（Encoder + Decoder）
+      <div class="box-sub">2017 — Attention Is All You Need</div>
+    </div>
+  </div>
+
+  <div class="connectors">
+    <svg viewBox="0 0 780 40" preserveAspectRatio="xMidYMid meet">
+      <line x1="390" y1="0" x2="390" y2="12" stroke="#4a4c56" stroke-width="2"/>
+      <line x1="130" y1="12" x2="650" y2="12" stroke="#4a4c56" stroke-width="2"/>
+      <line x1="130" y1="12" x2="130" y2="40" stroke="var(--teal)" stroke-width="2"/>
+      <line x1="390" y1="12" x2="390" y2="40" stroke="var(--blue)" stroke-width="2"/>
+      <line x1="650" y1="12" x2="650" y2="40" stroke="var(--purple)" stroke-width="2"/>
+    </svg>
+  </div>
+
+  <div class="branches">
+
+    <!-- Encoder-only -->
+    <div class="branch branch-encoder">
+      <div class="branch-title">Encoder-only</div>
+      <div class="branch-type">双方向 Attention</div>
+      <div class="models">
+        <span class="model-tag">BERT</span>
+        <span class="model-tag">RoBERTa</span>
+        <span class="model-tag">ELECTRA</span>
+      </div>
+      <div class="features">
+        <div class="feature-item">双方向Self-Attentionで全トークンを同時に参照</div>
+        <div class="feature-item">マスク言語モデル（MLM）で事前学習</div>
+        <div class="feature-item">文理解・分類・固有表現認識に強い</div>
+      </div>
+      <div class="example-box">
+        <div class="example-label">代表的な入出力例</div>
+        <div class="example-io">
+          入力: "この映画は[MASK]だった"<br>
+          <span class="arrow">→</span> 出力: "最高" (穴埋め)<br><br>
+          入力: "商品に満足しています"<br>
+          <span class="arrow">→</span> 出力: ポジティブ (感情分類)
+        </div>
+      </div>
+    </div>
+
+    <!-- Encoder-Decoder -->
+    <div class="branch branch-encdec">
+      <div class="branch-title">Encoder-Decoder</div>
+      <div class="branch-type">Cross Attention</div>
+      <div class="models">
+        <span class="model-tag">T5</span>
+        <span class="model-tag">BART</span>
+      </div>
+      <div class="features">
+        <div class="feature-item">入力をEncoderで理解し、Decoderで生成</div>
+        <div class="feature-item">元のTransformerの構造を最も忠実に継承</div>
+        <div class="feature-item">翻訳・要約・質問応答に適する</div>
+      </div>
+      <div class="example-box">
+        <div class="example-label">代表的な入出力例</div>
+        <div class="example-io">
+          入力: "translate: 猫が好きです"<br>
+          <span class="arrow">→</span> 出力: "I like cats" (翻訳)<br><br>
+          入力: "summarize: [長文記事]"<br>
+          <span class="arrow">→</span> 出力: 要約文 (要約)
+        </div>
+      </div>
+    </div>
+
+    <!-- Decoder-only -->
+    <div class="branch branch-decoder">
+      <div class="branch-title">Decoder-only</div>
+      <div class="branch-type">因果的 (Causal) Attention</div>
+      <div class="models">
+        <span class="model-tag">GPT</span>
+        <span class="model-tag">GPT-2</span>
+        <span class="model-tag">GPT-3/4</span>
+        <span class="model-tag">Claude</span>
+      </div>
+      <div class="features">
+        <div class="feature-item">因果的Attentionで左→右に逐次生成</div>
+        <div class="feature-item">自己回帰（次のトークンを予測）で事前学習</div>
+        <div class="feature-item">テキスト生成・対話・推論に強い</div>
+      </div>
+      <div class="example-box">
+        <div class="example-label">代表的な入出力例</div>
+        <div class="example-io">
+          入力: "Transformerとは"<br>
+          <span class="arrow">→</span> 出力: "…Self-Attentionを用いた…" (生成)<br><br>
+          入力: "Pythonでソートを実装して"<br>
+          <span class="arrow">→</span> 出力: コード (コード生成)
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

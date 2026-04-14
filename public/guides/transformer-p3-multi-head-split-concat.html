@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi-Head Attention: 分割・並列計算・結合</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .subtitle {
+    font-size: 0.85rem; color: var(--text2);
+    margin-bottom: 16px; line-height: 1.6;
+  }
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* Formula */
+  .formula-box {
+    background: var(--bg2);
+    border-radius: 10px;
+    padding: 12px 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--purple);
+    line-height: 1.8;
+  }
+
+  /* SVG diagram */
+  .diagram-wrap {
+    width: 100%;
+    overflow-x: auto;
+  }
+  svg text {
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  svg .mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Head colors */
+  .h1c { fill: #e06060; }
+  .h2c { fill: #e0a040; }
+  .h3c { fill: #c0d040; }
+  .h4c { fill: #50c878; }
+  .h5c { fill: #40b0d0; }
+  .h6c { fill: #5080e0; }
+  .h7c { fill: #9070e0; }
+  .h8c { fill: #d060c0; }
+
+  .h1s { stroke: #e06060; }
+  .h2s { stroke: #e0a040; }
+  .h3s { stroke: #c0d040; }
+  .h4s { stroke: #50c878; }
+  .h5s { stroke: #40b0d0; }
+  .h6s { stroke: #5080e0; }
+  .h7s { stroke: #9070e0; }
+  .h8s { stroke: #d060c0; }
+
+  /* Dot animation */
+  @keyframes flowDown {
+    0%   { opacity: 0; }
+    5%   { opacity: 1; }
+    95%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  @media (max-width: 540px) {
+    .formula-box { font-size: 0.7rem; padding: 10px 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Multi-Head Attention: 分割・並列計算・結合</h2>
+  <p class="subtitle">入力を8つのヘッドに分割し、各ヘッドが独立にScaled Dot-Product Attentionを計算。結果を結合して線形変換を適用します。</p>
+
+  <div class="formula-box">
+    MultiHead(Q, K, V) = Concat(head₁, ..., head₈) W<sup>O</sup><br>
+    where head_i = Attention(QW<sub>i</sub><sup>Q</sup>, KW<sub>i</sub><sup>K</sup>, VW<sub>i</sub><sup>V</sup>)
+  </div>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 760 580" width="100%" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrowTeal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#3ecfa0"/>
+        </marker>
+        <!-- Head color markers -->
+        <marker id="ah1" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0 0,6 2.5,0 5" fill="#e06060"/></marker>
+        <marker id="ah2" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0 0,6 2.5,0 5" fill="#e0a040"/></marker>
+        <marker id="ah3" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0 0,6 2.5,0 5" fill="#c0d040"/></marker>
+        <marker id="ah4" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0 0,6 2.5,0 5" fill="#50c878"/></marker>
+        <marker id="ah5" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0 0,6 2.5,0 5" fill="#40b0d0"/></marker>
+        <marker id="ah6" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0 0,6 2.5,0 5" fill="#5080e0"/></marker>
+        <marker id="ah7" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0 0,6 2.5,0 5" fill="#9070e0"/></marker>
+        <marker id="ah8" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0 0,6 2.5,0 5" fill="#d060c0"/></marker>
+      </defs>
+
+      <!-- Input box -->
+      <rect x="280" y="10" width="200" height="44" rx="8" fill="#161820" stroke="#8b7ff0" stroke-width="2"/>
+      <text x="380" y="37" text-anchor="middle" fill="#e8e6de" font-size="14" font-weight="700">入力</text>
+      <text x="380" y="37" text-anchor="middle" fill="#e8e6de" font-size="14" font-weight="700" dy="-12">入力</text>
+      <text x="380" y="37" text-anchor="middle" fill="#9e9b91" font-size="11" class="mono" dy="4">512次元</text>
+
+      <!-- Overwrite: clean input box text -->
+      <rect x="281" y="11" width="198" height="42" rx="7" fill="#161820"/>
+      <text x="380" y="30" text-anchor="middle" fill="#e8e6de" font-size="14" font-weight="700">入力</text>
+      <text x="380" y="46" text-anchor="middle" fill="#9e9b91" font-size="11" class="mono">512次元</text>
+
+      <!-- Split arrows from input to heads -->
+      <g stroke="#9e9b91" stroke-width="1.5" fill="none">
+        <line x1="310" y1="54" x2="70" y2="130"/>
+        <line x1="330" y1="54" x2="165" y2="130"/>
+        <line x1="345" y1="54" x2="260" y2="130"/>
+        <line x1="365" y1="54" x2="350" y2="130"/>
+        <line x1="395" y1="54" x2="415" y2="130"/>
+        <line x1="415" y1="54" x2="500" y2="130"/>
+        <line x1="430" y1="54" x2="595" y2="130"/>
+        <line x1="450" y1="54" x2="690" y2="130"/>
+      </g>
+
+      <!-- "分割" label -->
+      <text x="380" y="85" text-anchor="middle" fill="#9e9b91" font-size="11">線形変換 + 分割</text>
+
+      <!-- 8 Heads -->
+      <g id="heads">
+        <!-- Head 1 -->
+        <rect x="30" y="130" width="80" height="80" rx="8" fill="#161820" stroke="#e06060" stroke-width="2"/>
+        <text x="70" y="155" text-anchor="middle" fill="#e06060" font-size="11" font-weight="700">Head 1</text>
+        <text x="70" y="172" text-anchor="middle" fill="#9e9b91" font-size="9" class="mono">64次元</text>
+        <text x="70" y="198" text-anchor="middle" fill="#9e9b91" font-size="8">Attention</text>
+
+        <!-- Head 2 -->
+        <rect x="125" y="130" width="80" height="80" rx="8" fill="#161820" stroke="#e0a040" stroke-width="2"/>
+        <text x="165" y="155" text-anchor="middle" fill="#e0a040" font-size="11" font-weight="700">Head 2</text>
+        <text x="165" y="172" text-anchor="middle" fill="#9e9b91" font-size="9" class="mono">64次元</text>
+        <text x="165" y="198" text-anchor="middle" fill="#9e9b91" font-size="8">Attention</text>
+
+        <!-- Head 3 -->
+        <rect x="220" y="130" width="80" height="80" rx="8" fill="#161820" stroke="#c0d040" stroke-width="2"/>
+        <text x="260" y="155" text-anchor="middle" fill="#c0d040" font-size="11" font-weight="700">Head 3</text>
+        <text x="260" y="172" text-anchor="middle" fill="#9e9b91" font-size="9" class="mono">64次元</text>
+        <text x="260" y="198" text-anchor="middle" fill="#9e9b91" font-size="8">Attention</text>
+
+        <!-- Head 4 -->
+        <rect x="315" y="130" width="80" height="80" rx="8" fill="#161820" stroke="#50c878" stroke-width="2"/>
+        <text x="355" y="155" text-anchor="middle" fill="#50c878" font-size="11" font-weight="700">Head 4</text>
+        <text x="355" y="172" text-anchor="middle" fill="#9e9b91" font-size="9" class="mono">64次元</text>
+        <text x="355" y="198" text-anchor="middle" fill="#9e9b91" font-size="8">Attention</text>
+
+        <!-- Head 5 -->
+        <rect x="410" y="130" width="80" height="80" rx="8" fill="#161820" stroke="#40b0d0" stroke-width="2"/>
+        <text x="450" y="155" text-anchor="middle" fill="#40b0d0" font-size="11" font-weight="700">Head 5</text>
+        <text x="450" y="172" text-anchor="middle" fill="#9e9b91" font-size="9" class="mono">64次元</text>
+        <text x="450" y="198" text-anchor="middle" fill="#9e9b91" font-size="8">Attention</text>
+
+        <!-- Head 6 -->
+        <rect x="505" y="130" width="80" height="80" rx="8" fill="#161820" stroke="#5080e0" stroke-width="2"/>
+        <text x="545" y="155" text-anchor="middle" fill="#5080e0" font-size="11" font-weight="700">Head 6</text>
+        <text x="545" y="172" text-anchor="middle" fill="#9e9b91" font-size="9" class="mono">64次元</text>
+        <text x="545" y="198" text-anchor="middle" fill="#9e9b91" font-size="8">Attention</text>
+
+        <!-- Head 7 -->
+        <rect x="600" y="130" width="80" height="80" rx="8" fill="#161820" stroke="#9070e0" stroke-width="2"/>
+        <text x="640" y="155" text-anchor="middle" fill="#9070e0" font-size="11" font-weight="700">Head 7</text>
+        <text x="640" y="172" text-anchor="middle" fill="#9e9b91" font-size="9" class="mono">64次元</text>
+        <text x="640" y="198" text-anchor="middle" fill="#9e9b91" font-size="8">Attention</text>
+
+        <!-- Head 8 -->
+        <rect x="695" y="130" width="80" height="80" rx="8" fill="#161820" stroke="#d060c0" stroke-width="2"/>
+        <text x="735" y="155" text-anchor="middle" fill="#d060c0" font-size="11" font-weight="700">Head 8</text>
+        <text x="735" y="172" text-anchor="middle" fill="#9e9b91" font-size="9" class="mono">64次元</text>
+        <text x="735" y="198" text-anchor="middle" fill="#9e9b91" font-size="8">Attention</text>
+      </g>
+
+      <!-- Head output arrows to Concat -->
+      <g stroke="#9e9b91" stroke-width="1.5" fill="none">
+        <line x1="70" y1="210" x2="310" y2="290"/>
+        <line x1="165" y1="210" x2="330" y2="290"/>
+        <line x1="260" y1="210" x2="345" y2="290"/>
+        <line x1="355" y1="210" x2="365" y2="290"/>
+        <line x1="450" y1="210" x2="395" y2="290"/>
+        <line x1="545" y1="210" x2="415" y2="290"/>
+        <line x1="640" y1="210" x2="430" y2="290"/>
+        <line x1="735" y1="210" x2="450" y2="290"/>
+      </g>
+
+      <!-- "出力結合" label -->
+      <text x="380" y="265" text-anchor="middle" fill="#9e9b91" font-size="11">各ヘッド出力を結合</text>
+
+      <!-- Concat box -->
+      <rect x="260" y="290" width="240" height="44" rx="8" fill="#161820" stroke="#3ecfa0" stroke-width="2"/>
+      <text x="380" y="310" text-anchor="middle" fill="#3ecfa0" font-size="13" font-weight="700">Concat</text>
+      <text x="380" y="326" text-anchor="middle" fill="#9e9b91" font-size="10" class="mono">64×8 = 512次元</text>
+
+      <!-- Arrow to W^O -->
+      <line x1="380" y1="334" x2="380" y2="370" stroke="#3ecfa0" stroke-width="2" marker-end="url(#arrowTeal)"/>
+
+      <!-- W^O box -->
+      <rect x="280" y="370" width="200" height="44" rx="8" fill="#161820" stroke="#8b7ff0" stroke-width="2"/>
+      <text x="380" y="390" text-anchor="middle" fill="#8b7ff0" font-size="13" font-weight="700">線形変換 W<tspan baseline-shift="super" font-size="9">O</tspan></text>
+      <text x="380" y="406" text-anchor="middle" fill="#9e9b91" font-size="10" class="mono">512×512</text>
+
+      <!-- Arrow to output -->
+      <line x1="380" y1="414" x2="380" y2="450" stroke="#3ecfa0" stroke-width="2" marker-end="url(#arrowTeal)"/>
+
+      <!-- Output box -->
+      <rect x="280" y="450" width="200" height="44" rx="8" fill="#161820" stroke="#3ecfa0" stroke-width="2.5"/>
+      <text x="380" y="470" text-anchor="middle" fill="#e8e6de" font-size="14" font-weight="700">出力</text>
+      <text x="380" y="486" text-anchor="middle" fill="#9e9b91" font-size="11" class="mono">512次元</text>
+
+      <!-- Dimension annotation on right side -->
+      <text x="520" y="100" fill="#9e9b91" font-size="9" class="mono">d_model = 512</text>
+      <text x="520" y="115" fill="#9e9b91" font-size="9" class="mono">h = 8, d_k = 64</text>
+
+      <!-- Animated dots flowing through the system -->
+      <!-- Phase 1: Input to heads (0-1s) -->
+      <g>
+        <circle r="4" fill="#e06060" opacity="0">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M380,54 L70,130 L70,210 L310,290 L380,310 L380,390 L380,470" keyTimes="0;0.15;0.35;0.55;0.65;0.80;1" keyPoints="0;0.15;0.35;0.55;0.65;0.80;1" calcMode="linear"/>
+          <animate attributeName="opacity" dur="4s" repeatCount="indefinite" values="0;1;1;1;1;1;0" keyTimes="0;0.05;0.15;0.55;0.80;0.95;1"/>
+        </circle>
+        <circle r="4" fill="#e0a040" opacity="0">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M380,54 L165,130 L165,210 L330,290 L380,310 L380,390 L380,470" keyTimes="0;0.15;0.35;0.55;0.65;0.80;1" keyPoints="0;0.15;0.35;0.55;0.65;0.80;1" calcMode="linear"/>
+          <animate attributeName="opacity" dur="4s" repeatCount="indefinite" values="0;1;1;1;1;1;0" keyTimes="0;0.07;0.17;0.55;0.80;0.95;1"/>
+        </circle>
+        <circle r="4" fill="#c0d040" opacity="0">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M380,54 L260,130 L260,210 L345,290 L380,310 L380,390 L380,470" keyTimes="0;0.15;0.35;0.55;0.65;0.80;1" keyPoints="0;0.15;0.35;0.55;0.65;0.80;1" calcMode="linear"/>
+          <animate attributeName="opacity" dur="4s" repeatCount="indefinite" values="0;1;1;1;1;1;0" keyTimes="0;0.09;0.19;0.55;0.80;0.95;1"/>
+        </circle>
+        <circle r="4" fill="#50c878" opacity="0">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M380,54 L355,130 L355,210 L365,290 L380,310 L380,390 L380,470" keyTimes="0;0.15;0.35;0.55;0.65;0.80;1" keyPoints="0;0.15;0.35;0.55;0.65;0.80;1" calcMode="linear"/>
+          <animate attributeName="opacity" dur="4s" repeatCount="indefinite" values="0;1;1;1;1;1;0" keyTimes="0;0.11;0.21;0.55;0.80;0.95;1"/>
+        </circle>
+        <circle r="4" fill="#40b0d0" opacity="0">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M380,54 L450,130 L450,210 L395,290 L380,310 L380,390 L380,470" keyTimes="0;0.15;0.35;0.55;0.65;0.80;1" keyPoints="0;0.15;0.35;0.55;0.65;0.80;1" calcMode="linear"/>
+          <animate attributeName="opacity" dur="4s" repeatCount="indefinite" values="0;1;1;1;1;1;0" keyTimes="0;0.11;0.21;0.55;0.80;0.95;1"/>
+        </circle>
+        <circle r="4" fill="#5080e0" opacity="0">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M380,54 L545,130 L545,210 L415,290 L380,310 L380,390 L380,470" keyTimes="0;0.15;0.35;0.55;0.65;0.80;1" keyPoints="0;0.15;0.35;0.55;0.65;0.80;1" calcMode="linear"/>
+          <animate attributeName="opacity" dur="4s" repeatCount="indefinite" values="0;1;1;1;1;1;0" keyTimes="0;0.09;0.19;0.55;0.80;0.95;1"/>
+        </circle>
+        <circle r="4" fill="#9070e0" opacity="0">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M380,54 L640,130 L640,210 L430,290 L380,310 L380,390 L380,470" keyTimes="0;0.15;0.35;0.55;0.65;0.80;1" keyPoints="0;0.15;0.35;0.55;0.65;0.80;1" calcMode="linear"/>
+          <animate attributeName="opacity" dur="4s" repeatCount="indefinite" values="0;1;1;1;1;1;0" keyTimes="0;0.07;0.17;0.55;0.80;0.95;1"/>
+        </circle>
+        <circle r="4" fill="#d060c0" opacity="0">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M380,54 L735,130 L735,210 L450,290 L380,310 L380,390 L380,470" keyTimes="0;0.15;0.35;0.55;0.65;0.80;1" keyPoints="0;0.15;0.35;0.55;0.65;0.80;1" calcMode="linear"/>
+          <animate attributeName="opacity" dur="4s" repeatCount="indefinite" values="0;1;1;1;1;1;0" keyTimes="0;0.05;0.15;0.55;0.80;0.95;1"/>
+        </circle>
+      </g>
+
+      <!-- Dimension annotations -->
+      <text x="380" y="560" text-anchor="middle" fill="#9e9b91" font-size="10">
+        8ヘッド × 64次元 = 512次元（モデル次元を保持）
+      </text>
+    </svg>
+  </div>
+</div>
+</body>
+</html>

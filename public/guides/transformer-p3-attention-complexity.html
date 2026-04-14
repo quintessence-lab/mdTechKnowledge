@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>計算量比較</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11; --bg2: #161820; --bg3: #1e2028;
+    --text: #e8e6de; --text2: #9e9b91; --text3: #6a6760;
+    --purple: #8b7ff0; --teal: #3ecfa0; --amber: #f0b429; --blue: #4fa8e8;
+    --border: rgba(255,255,255,0.08);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 24px; line-height: 1.6; }
+  .title { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+  .subtitle { font-size: 0.82rem; color: var(--text2); margin-bottom: 20px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  th, td { padding: 12px 14px; text-align: center; border: 1px solid var(--border); }
+  th { background: var(--bg3); font-weight: 700; font-size: 0.82rem; color: var(--text2); }
+  td { background: var(--bg2); }
+  .row-sa td { border-left: 3px solid var(--purple); }
+  .row-rnn td { border-left: 3px solid var(--amber); }
+  .row-cnn td { border-left: 3px solid var(--blue); }
+  .row-sar td { border-left: 3px solid var(--teal); }
+  td.best { color: var(--teal); font-weight: 700; }
+  td.worst { color: #e05252; }
+  .formula { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; }
+  .note { margin-top: 16px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-size: 0.82rem; color: var(--text2); }
+  .note strong { color: var(--text); }
+  .highlight-box { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.78rem; font-weight: 500; }
+  .highlight-box.good { background: rgba(62,207,160,0.12); color: var(--teal); }
+  .highlight-box.bad { background: rgba(224,82,82,0.12); color: #e05252; }
+  .name-cell { text-align: left !important; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="title">Self-Attention vs RNN vs CNN — 計算量比較（論文 Table 1）</div>
+<div class="subtitle">n = 系列長, d = 表現次元, k = カーネルサイズ, r = 制限窓サイズ</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>層タイプ</th>
+      <th>層あたりの計算量</th>
+      <th>逐次操作数</th>
+      <th>最大パス長</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="row-sa">
+      <td class="name-cell">Self-Attention</td>
+      <td class="formula">O(n² · d)</td>
+      <td class="formula best">O(1)</td>
+      <td class="formula best">O(1)</td>
+    </tr>
+    <tr class="row-rnn">
+      <td class="name-cell">Recurrent (RNN)</td>
+      <td class="formula">O(n · d²)</td>
+      <td class="formula worst">O(n)</td>
+      <td class="formula worst">O(n)</td>
+    </tr>
+    <tr class="row-cnn">
+      <td class="name-cell">Convolutional (CNN)</td>
+      <td class="formula">O(k · n · d²)</td>
+      <td class="formula best">O(1)</td>
+      <td class="formula">O(log<sub>k</sub>(n))</td>
+    </tr>
+    <tr class="row-sar">
+      <td class="name-cell">Self-Attention (restricted)</td>
+      <td class="formula">O(r · n · d)</td>
+      <td class="formula best">O(1)</td>
+      <td class="formula">O(n/r)</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="note">
+  <strong>読み方のポイント:</strong><br>
+  • <span class="highlight-box good">逐次操作数 O(1)</span> = 全位置を並列処理可能 → GPU/TPUの性能をフル活用<br>
+  • <span class="highlight-box good">最大パス長 O(1)</span> = 任意の2トークンが直接接続 → 長距離依存の学習が容易<br>
+  • <span class="highlight-box bad">O(n)</span> = 系列長に比例 → 長い系列ほど不利<br><br>
+  <strong>トレードオフ:</strong> Self-Attentionの計算量 O(n²·d) は系列長の二乗に比例するため、<strong>n &lt; d</strong> の一般的なケース（文の長さ &lt; 512）では有利ですが、<strong>n ≫ d</strong> の超長系列ではRNNの O(n·d²) の方が効率的です。この問題は後のSparse Attention、FlashAttention等で改善されています。
+</div>
+</body>
+</html>

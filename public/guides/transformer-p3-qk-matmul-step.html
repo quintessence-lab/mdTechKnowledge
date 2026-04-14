@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Q×K^T 行列積の可視化</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    line-height: 1.6;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { font-size: 0.85rem; color: var(--text2); margin-bottom: 20px; }
+
+  .matrices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-start;
+    justify-content: center;
+    max-width: 860px;
+    margin: 0 auto 20px;
+  }
+
+  .matrix-block { text-align: center; }
+  .matrix-label {
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .matrix-label.q-label { color: var(--purple); }
+  .matrix-label.kt-label { color: var(--teal); }
+  .matrix-label.score-label { color: var(--amber); }
+
+  .matrix-dim {
+    font-size: 0.7rem; color: var(--text2); margin-bottom: 8px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  table.matrix {
+    border-collapse: collapse;
+    margin: 0 auto;
+  }
+  table.matrix td {
+    width: 52px; height: 34px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--text);
+    background: var(--bg2);
+    border: 1px solid var(--bg3);
+    transition: background 0.15s, color 0.15s;
+  }
+  table.matrix td.row-header {
+    background: none; border: none;
+    color: var(--text2); font-size: 0.65rem;
+    width: 28px;
+  }
+  table.matrix td.col-header {
+    background: none; border: none;
+    color: var(--text2); font-size: 0.65rem;
+    height: 22px;
+  }
+
+  /* Highlight states */
+  td.hl-row { background: rgba(139,127,240,0.2) !important; color: var(--purple) !important; }
+  td.hl-col { background: rgba(62,207,160,0.2) !important; color: var(--teal) !important; }
+  td.hl-cell { background: rgba(240,180,41,0.25) !important; color: var(--amber) !important; font-weight: 700; }
+
+  .operator {
+    font-size: 1.4rem;
+    color: var(--text2);
+    align-self: center;
+    padding: 0 4px;
+    margin-top: 30px;
+  }
+
+  .score-cell {
+    cursor: pointer;
+  }
+
+  .detail-box {
+    background: var(--bg2);
+    border: 1px solid var(--bg3);
+    border-radius: 10px;
+    padding: 14px 20px;
+    max-width: 620px;
+    margin: 0 auto;
+    text-align: center;
+    min-height: 60px;
+  }
+  .detail-box .hint {
+    color: var(--text2); font-size: 0.82rem;
+  }
+  .detail-box .calc {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--text);
+    line-height: 1.8;
+  }
+  .detail-box .calc .val-q { color: var(--purple); }
+  .detail-box .calc .val-k { color: var(--teal); }
+  .detail-box .calc .val-result { color: var(--amber); font-weight: 700; }
+
+  @media (max-width: 700px) {
+    .matrices { flex-direction: column; align-items: center; }
+    .operator { margin-top: 0; }
+    table.matrix td { width: 44px; height: 30px; font-size: 0.7rem; }
+  }
+</style>
+</head>
+<body>
+
+<h2>Q × K<sup style="font-size:0.7em;">T</sup> 行列積の要素レベル可視化</h2>
+<p class="subtitle">スコア行列の各要素にホバーすると、対応するQの行とK<sup>T</sup>の列がハイライトされます</p>
+
+<div class="matrices">
+  <!-- Q matrix (4x3) -->
+  <div class="matrix-block">
+    <div class="matrix-label q-label">Q</div>
+    <div class="matrix-dim">(4 × 3)</div>
+    <table class="matrix" id="matQ">
+      <tr><td class="col-header"></td><td class="col-header">d₁</td><td class="col-header">d₂</td><td class="col-header">d₃</td></tr>
+      <tr><td class="row-header">t₁</td><td>1.2</td><td>0.5</td><td>-0.3</td></tr>
+      <tr><td class="row-header">t₂</td><td>-0.4</td><td>1.1</td><td>0.8</td></tr>
+      <tr><td class="row-header">t₃</td><td>0.7</td><td>-0.2</td><td>1.5</td></tr>
+      <tr><td class="row-header">t₄</td><td>0.3</td><td>0.9</td><td>-0.6</td></tr>
+    </table>
+  </div>
+
+  <div class="operator">×</div>
+
+  <!-- K^T matrix (3x4) -->
+  <div class="matrix-block">
+    <div class="matrix-label kt-label">K<sup>T</sup></div>
+    <div class="matrix-dim">(3 × 4)</div>
+    <table class="matrix" id="matKT">
+      <tr><td class="col-header"></td><td class="col-header">t₁</td><td class="col-header">t₂</td><td class="col-header">t₃</td><td class="col-header">t₄</td></tr>
+      <tr><td class="row-header">d₁</td><td>0.8</td><td>-0.5</td><td>1.0</td><td>0.2</td></tr>
+      <tr><td class="row-header">d₂</td><td>1.1</td><td>0.7</td><td>-0.3</td><td>1.4</td></tr>
+      <tr><td class="row-header">d₃</td><td>0.2</td><td>0.9</td><td>0.6</td><td>-0.8</td></tr>
+    </table>
+  </div>
+
+  <div class="operator">=</div>
+
+  <!-- Score matrix (4x4) -->
+  <div class="matrix-block">
+    <div class="matrix-label score-label">Score</div>
+    <div class="matrix-dim">(4 × 4)</div>
+    <table class="matrix" id="matScore">
+      <tr><td class="col-header"></td><td class="col-header">t₁</td><td class="col-header">t₂</td><td class="col-header">t₃</td><td class="col-header">t₄</td></tr>
+      <!-- filled by JS -->
+    </table>
+  </div>
+</div>
+
+<div class="detail-box" id="detailBox">
+  <div class="hint">スコア行列の要素にホバーしてください</div>
+</div>
+
+<script>
+// Data
+const Q = [
+  [1.2, 0.5, -0.3],
+  [-0.4, 1.1, 0.8],
+  [0.7, -0.2, 1.5],
+  [0.3, 0.9, -0.6]
+];
+const KT = [
+  [0.8, -0.5, 1.0, 0.2],
+  [1.1, 0.7, -0.3, 1.4],
+  [0.2, 0.9, 0.6, -0.8]
+];
+
+const n = 4, dk = 3;
+
+// Compute score matrix
+const Score = [];
+for (let i = 0; i < n; i++) {
+  Score[i] = [];
+  for (let j = 0; j < n; j++) {
+    let s = 0;
+    for (let k = 0; k < dk; k++) s += Q[i][k] * KT[k][j];
+    Score[i][j] = Math.round(s * 100) / 100;
+  }
+}
+
+// Build score table rows
+const scoreTable = document.getElementById('matScore');
+for (let i = 0; i < n; i++) {
+  const tr = document.createElement('tr');
+  const th = document.createElement('td');
+  th.className = 'row-header';
+  th.textContent = 't\u2081t\u2082t\u2083t\u2084'[i] ? `t${'\u2081\u2082\u2083\u2084'[i]}` : `t${i+1}`;
+  // Use proper subscript chars
+  th.textContent = ['t₁','t₂','t₃','t₄'][i];
+  tr.appendChild(th);
+  for (let j = 0; j < n; j++) {
+    const td = document.createElement('td');
+    td.className = 'score-cell';
+    td.textContent = Score[i][j].toFixed(2);
+    td.dataset.row = i;
+    td.dataset.col = j;
+    tr.appendChild(td);
+  }
+  scoreTable.appendChild(tr);
+}
+
+// Interaction
+const qTable = document.getElementById('matQ');
+const ktTable = document.getElementById('matKT');
+const detailBox = document.getElementById('detailBox');
+
+function clearHighlights() {
+  document.querySelectorAll('td.hl-row, td.hl-col, td.hl-cell').forEach(td => {
+    td.classList.remove('hl-row', 'hl-col', 'hl-cell');
+  });
+}
+
+function highlight(r, c) {
+  clearHighlights();
+  // Highlight Q row r (skip header row, skip row-header col)
+  const qRows = qTable.querySelectorAll('tr');
+  const qRow = qRows[r + 1]; // +1 for header row
+  if (qRow) {
+    qRow.querySelectorAll('td:not(.row-header)').forEach(td => td.classList.add('hl-row'));
+  }
+  // Highlight KT col c
+  const ktRows = ktTable.querySelectorAll('tr');
+  for (let k = 1; k <= dk; k++) {
+    const cells = ktRows[k].querySelectorAll('td:not(.row-header)');
+    if (cells[c]) cells[c].classList.add('hl-col');
+  }
+  // Highlight score cell
+  const sRows = scoreTable.querySelectorAll('tr');
+  const sCells = sRows[r + 1].querySelectorAll('td:not(.row-header)');  // +1 for header
+  if (sCells[c]) sCells[c].classList.add('hl-cell');
+
+  // Detail
+  const qVals = Q[r];
+  const kVals = KT.map(row => row[c]);
+  const products = qVals.map((v, i) => v * kVals[i]);
+  const sum = Score[r][c];
+
+  detailBox.innerHTML = `<div class="calc">
+    <span class="val-q">Q[t${'\u2081\u2082\u2083\u2084'[r]}]</span> \u00B7 <span class="val-k">K[t${'\u2081\u2082\u2083\u2084'[c]}]</span><br>
+    = <span class="val-q">${qVals.map(v=>v.toFixed(1)).join(', ')}</span> \u00B7 <span class="val-k">${kVals.map(v=>v.toFixed(1)).join(', ')}</span><br>
+    = ${qVals.map((v,i) => `<span class="val-q">${v.toFixed(1)}</span>\u00D7<span class="val-k">${kVals[i].toFixed(1)}</span>`).join(' + ')}<br>
+    = ${products.map(p => p.toFixed(2)).join(' + ')} = <span class="val-result">${sum.toFixed(2)}</span>
+  </div>`;
+}
+
+scoreTable.addEventListener('mouseover', e => {
+  const td = e.target.closest('td.score-cell');
+  if (!td) return;
+  highlight(+td.dataset.row, +td.dataset.col);
+});
+
+scoreTable.addEventListener('mouseleave', () => {
+  clearHighlights();
+  detailBox.innerHTML = '<div class="hint">スコア行列の要素にホバーしてください</div>';
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>スケーリングの効果</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1e2028;
+    --text: #e8e6de;
+    --text2: #9e9b91;
+    --purple: #8b7ff0;
+    --teal: #3ecfa0;
+    --amber: #f0b429;
+    --blue: #4fa8e8;
+    --red: #f06060;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    line-height: 1.6;
+  }
+  h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { font-size: 0.85rem; color: var(--text2); margin-bottom: 20px; }
+
+  .slider-section {
+    max-width: 620px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .slider-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--blue);
+    white-space: nowrap;
+  }
+  .slider-label .val {
+    font-weight: 700;
+    min-width: 40px;
+    display: inline-block;
+  }
+  input[type="range"] {
+    flex: 1;
+    min-width: 160px;
+    accent-color: var(--blue);
+    height: 6px;
+  }
+  .sqrt-display {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--text2);
+  }
+  .sqrt-display .num { color: var(--amber); font-weight: 700; }
+
+  .charts {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    max-width: 620px;
+    margin: 0 auto;
+  }
+
+  .chart-panel {
+    background: var(--bg2);
+    border: 1px solid var(--bg3);
+    border-radius: 12px;
+    padding: 16px 20px;
+  }
+  .chart-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .chart-title.bad { color: var(--red); }
+  .chart-title.good { color: var(--teal); }
+  .chart-note {
+    font-size: 0.75rem;
+    color: var(--text2);
+    margin-bottom: 12px;
+  }
+
+  .bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 120px;
+    padding-bottom: 22px;
+    position: relative;
+  }
+  .bar-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    justify-content: flex-end;
+  }
+  .bar {
+    width: 100%;
+    max-width: 60px;
+    border-radius: 4px 4px 0 0;
+    transition: height 0.25s ease;
+    min-height: 2px;
+  }
+  .bar.bad { background: var(--red); }
+  .bar.good { background: var(--teal); }
+  .bar-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text2);
+    margin-bottom: 3px;
+    transition: opacity 0.2s;
+  }
+  .bar-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text2);
+    margin-top: 4px;
+    position: absolute;
+    bottom: 0;
+  }
+
+  .scores-display {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text2);
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .scores-display .raw { color: var(--purple); }
+  .scores-display .scaled { color: var(--amber); }
+
+  .gradient-note {
+    font-size: 0.78rem;
+    color: var(--text2);
+    text-align: center;
+    margin-top: 8px;
+    padding: 8px;
+    border-radius: 6px;
+    background: var(--bg3);
+  }
+  .gradient-note.warn { border-left: 3px solid var(--red); }
+  .gradient-note.ok { border-left: 3px solid var(--teal); }
+
+  @media (max-width: 500px) {
+    .bar-chart { height: 90px; gap: 4px; }
+    .bar-val { font-size: 0.6rem; }
+  }
+</style>
+</head>
+<body>
+
+<h2>スケーリングの有無による Softmax 分布の変化</h2>
+<p class="subtitle">d<sub>k</sub> が大きくなると内積の値が大きくなり、スケーリングなしでは勾配消失が起きる</p>
+
+<div class="slider-section">
+  <span class="slider-label">d<sub>k</sub> = <span class="val" id="dkVal">64</span></span>
+  <input type="range" id="dkSlider" min="1" max="512" value="64">
+  <span class="sqrt-display">&radic;d<sub>k</sub> = <span class="num" id="sqrtVal">8.00</span></span>
+</div>
+
+<div class="charts">
+  <!-- Unscaled -->
+  <div class="chart-panel">
+    <div class="chart-title bad">スケーリングなし: softmax(raw scores)</div>
+    <div class="chart-note">d<sub>k</sub> が大きいほどスコア差が拡大 → 分布が極端に尖る</div>
+    <div class="scores-display" id="rawScoresDisplay"></div>
+    <div class="bar-chart" id="chartUnscaled"></div>
+    <div class="gradient-note warn" id="noteUnscaled"></div>
+  </div>
+
+  <!-- Scaled -->
+  <div class="chart-panel">
+    <div class="chart-title good">スケーリングあり: softmax(scores / &radic;d<sub>k</sub>)</div>
+    <div class="chart-note">&radic;d<sub>k</sub> で割ることで適度な分布を維持 → 健全な勾配</div>
+    <div class="scores-display" id="scaledScoresDisplay"></div>
+    <div class="bar-chart" id="chartScaled"></div>
+    <div class="gradient-note ok" id="noteScaled"></div>
+  </div>
+</div>
+
+<script>
+const baseScores = [2.0, 1.0, 0.5, -0.5, -1.0];
+const labels = ['t₁', 't₂', 't₃', 't₄', 't₅'];
+
+function softmax(arr) {
+  const max = Math.max(...arr);
+  const exps = arr.map(x => Math.exp(x - max));
+  const sum = exps.reduce((a, b) => a + b, 0);
+  return exps.map(e => e / sum);
+}
+
+function maxProb(probs) { return Math.max(...probs); }
+function entropy(probs) {
+  return -probs.reduce((s, p) => s + (p > 1e-10 ? p * Math.log2(p) : 0), 0);
+}
+
+function buildBars(containerId, count) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  for (let i = 0; i < count; i++) {
+    const group = document.createElement('div');
+    group.className = 'bar-group';
+
+    const valEl = document.createElement('div');
+    valEl.className = 'bar-val';
+    valEl.id = `${containerId}-val-${i}`;
+
+    const bar = document.createElement('div');
+    bar.className = `bar ${containerId === 'chartUnscaled' ? 'bad' : 'good'}`;
+    bar.id = `${containerId}-bar-${i}`;
+
+    const label = document.createElement('div');
+    label.className = 'bar-label';
+    label.textContent = labels[i];
+    label.style.position = 'relative';
+
+    group.appendChild(valEl);
+    group.appendChild(bar);
+    group.appendChild(label);
+    container.appendChild(group);
+  }
+}
+
+buildBars('chartUnscaled', 5);
+buildBars('chartScaled', 5);
+
+function update() {
+  const dk = +document.getElementById('dkSlider').value;
+  const sqrtDk = Math.sqrt(dk);
+
+  document.getElementById('dkVal').textContent = dk;
+  document.getElementById('sqrtVal').textContent = sqrtDk.toFixed(2);
+
+  // Simulate: raw scores scale with sqrt(dk) in expectation
+  // We multiply base scores by sqrt(dk) to simulate the effect
+  const factor = sqrtDk;
+  const rawScores = baseScores.map(s => s * factor);
+  const scaledScores = rawScores.map(s => s / sqrtDk); // = baseScores
+
+  const probsUnscaled = softmax(rawScores);
+  const probsScaled = softmax(scaledScores);
+
+  // Display scores
+  document.getElementById('rawScoresDisplay').innerHTML =
+    'スコア: ' + rawScores.map(s => `<span class="raw">${s.toFixed(1)}</span>`).join(', ');
+  document.getElementById('scaledScoresDisplay').innerHTML =
+    'スコア / √d<sub>k</sub>: ' + scaledScores.map(s => `<span class="scaled">${s.toFixed(2)}</span>`).join(', ');
+
+  // Update bars
+  for (let i = 0; i < 5; i++) {
+    const pU = probsUnscaled[i];
+    const pS = probsScaled[i];
+
+    const barU = document.getElementById(`chartUnscaled-bar-${i}`);
+    const valU = document.getElementById(`chartUnscaled-val-${i}`);
+    barU.style.height = `${Math.max(pU * 100, 1)}%`;
+    valU.textContent = pU < 0.001 ? '<.001' : pU.toFixed(3);
+
+    const barS = document.getElementById(`chartScaled-bar-${i}`);
+    const valS = document.getElementById(`chartScaled-val-${i}`);
+    barS.style.height = `${Math.max(pS * 100, 1)}%`;
+    valS.textContent = pS.toFixed(3);
+  }
+
+  // Notes
+  const maxU = maxProb(probsUnscaled);
+  const entU = entropy(probsUnscaled);
+  const entS = entropy(probsScaled);
+
+  const noteU = document.getElementById('noteUnscaled');
+  if (maxU > 0.99) {
+    noteU.textContent = `最大確率: ${(maxU*100).toFixed(1)}% — ほぼone-hot → 勾配消失の危険`;
+  } else if (maxU > 0.8) {
+    noteU.textContent = `最大確率: ${(maxU*100).toFixed(1)}% — 分布が偏り始めている`;
+  } else {
+    noteU.textContent = `最大確率: ${(maxU*100).toFixed(1)}% — まだ滑らか`;
+  }
+
+  const noteS = document.getElementById('noteScaled');
+  noteS.textContent = `エントロピー: ${entS.toFixed(2)} bit — d_kに依存せず安定した分布を維持`;
+}
+
+document.getElementById('dkSlider').addEventListener('input', update);
+update();
+</script>
+
+</body>
+</html>
