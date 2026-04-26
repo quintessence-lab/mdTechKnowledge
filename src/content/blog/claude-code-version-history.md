@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-04-16
+updatedDate: 2026-04-26
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code v2.0.59〜v2.1.109 のバージョン履歴。Vertex AIセットアップ・Bedrock Mantle対応・スキル統合・Worktree隔離・Agent Teams・1Mコンテキストなど主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.119 のバージョン履歴。Opus 4.7 xhigh・/usage統合・/tui コマンド・/ultrareview・ネイティブバイナリ化・PowerShell ツールなど主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-04-16
-**現在の最新バージョン**: 2.1.109
+**最終更新**: 2026-04-26
+**現在の最新バージョン**: 2.1.119
 
 ---
 
@@ -17,6 +17,16 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.119** | `/config` 設定永続化（project/local/policy 優先順）、`--from-pr` で GitLab/Bitbucket/GitHub Enterprise 対応、`prUrlTemplate` 設定、`PostToolUse` フックに `duration_ms` 追加 |
+| **2.1.118** | `/cost` と `/stats` を `/usage` に統合、Vim ビジュアルモード（`v`/`V`）、カスタムテーマ、Hooks から MCP ツール呼び出し（`type: "mcp_tool"`）、`DISABLE_UPDATES` 環境変数 |
+| **2.1.117** | フォークサブエージェント（`CLAUDE_CODE_FORK_SUBAGENT=1`）、`--agent` で `mcpServers` ロード、Native macOS/Linux ビルドで Glob/Grep を bfs/ugrep に置換、Pro/Max の Opus/Sonnet 4.6 デフォルト effort を high に |
+| **2.1.116** | `/resume` 大幅高速化（40MB+ で最大 67%）、MCP stdio サーバー起動高速化、`/usage` タブで即時表示、`/terminal-setup` でスクロール感度設定 |
+| **2.1.115** | エージェントチームメイトのツール要求時のクラッシュ修正 |
+| **2.1.114** | エージェントチームメイトのツール要求時のクラッシュ修正 |
+| **2.1.113** | CLI がプラットフォーム別ネイティブバイナリを起動、`sandbox.network.deniedDomains` 追加、`/ultrareview` 高速化、Bash 連鎖 `cd <current-directory> && git` で承認不要に |
+| **2.1.112** | "claude-opus-4-7 temporarily unavailable" auto モードエラー修正 |
+| **2.1.111** | Claude Opus 4.7 xhigh 提供開始、`/effort` 対話型スライダー、`/ultrareview` コマンド、`/less-permission-prompts` スキル、PowerShell ツール拡大、auto モードに `--enable-auto-mode` 不要化 |
+| **2.1.110** | `/tui` コマンド・`/focus` コマンド追加、push 通知ツール、`autoScrollEnabled` 設定、`Ctrl+G` 外部エディタにレスポンス含める設定、テレメトリ無効環境でも session recap 有効化 |
 | **2.1.109** | 拡張思考インジケータ改善（回転プログレスヒント追加） |
 | **2.1.108** | セッション再開 recap 機能、1時間プロンプトキャッシュ TTL オプトイン、`/model` 切替警告、`/resume` ピッカー改善、メモリフットプリント削減 |
 | **2.1.105** | EnterWorktree `path` パラメータ、PreCompact フック、プラグインバックグラウンドモニタ、`/proactive` エイリアス、`/doctor` 改善、WebFetch 改善 |
@@ -46,7 +56,133 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.109（最新）
+### 2.1.119（最新）
+- **`/config` 設定の永続化** — `~/.claude/settings.json` に保存、project/local/policy の優先順で上書き
+- **`prUrlTemplate` 設定** — カスタム コードレビュー URL を定義可能
+- **`CLAUDE_CODE_HIDE_CWD` 環境変数** — 起動ロゴでの作業ディレクトリ表示を抑制
+- **`--from-pr` 拡張** — GitLab マージリクエスト・Bitbucket プルリクエスト・GitHub Enterprise PR の URL を受付
+- **`--print` モードのフロントマター尊重** — エージェントの `tools:` / `disallowedTools:` を反映
+- **`--agent <name>` の `permissionMode`** — 組み込みエージェントの定義を尊重
+- **PowerShell ツールの自動承認対応** — permission モードで auto-approve 可能に
+- **`PostToolUse` / `PostToolUseFailure` フックに `duration_ms` 追加** — ツール実行時間を取得可能
+- **サブエージェント / SDK MCP サーバーの並列再構成** — 接続を並列化
+- **プラグイン依存解決の改善** — 別プラグインのバージョン制約で固定された場合、最も高い満たすタグへ自動更新
+- **OpenTelemetry 拡張** — `tool_result` / `tool_decision` イベントに `tool_use_id` を含める
+- **ステータスライン拡張** — stdin JSON に `effort.level` と `thinking.enabled` を追加
+- **セキュリティ強化** — `blockedMarketplaces` の `hostPattern` / `pathPattern` 適用を修正
+- **バグ修正多数** — CRLF 貼り付けで余分な空行が挿入される問題、kitty キーボードプロトコルで複数行貼り付けが改行を失う問題、Bash ツールが拒否されると Glob/Grep ツールも消える問題、フルスクリーンで上スクロールが下に戻る問題、MCP HTTP の非 JSON 応答での OAuth エラー、Rewind オーバーレイで画像添付が "(no prompt)" 表示、auto モードが plan モードを上書きする問題、`PostToolUse` 非同期フックが空トランスクリプトエントリを生成する問題、Vertex AI でツール検索デフォルト無効化（`ENABLE_TOOL_SEARCH` でオプトイン）、`@`-file タブ補完がプロンプト全体を置き換える問題、macOS Terminal.app 起動時のゴミ文字 `p` 表示、MCP ヘッダーの `${ENV_VAR}` プレースホルダー未置換、MCP OAuth トークン交換時のクライアントシークレット未送信、`/skills` Enter キーがダイアログを閉じてしまう問題、`/agents` 詳細ビューで利用不可ツールが "Unrecognized" と誤表示される問題、Windows でプラグイン MCP サーバーが起動しない問題、`/export` の実セッションモデル表示、verbose 出力設定の永続化、`/usage` プログレスバーのラベル重なり、プラグイン MCP の `${user_config.*}` 任意フィールド参照、`/plan` 既存プラン未反映、`/reload-plugins` / `/doctor` の無効プラグインへのエラー報告、`isolation: "worktree"` のサブエージェントが古い worktree を再利用する問題等を修正
+
+### 2.1.118
+- **Vim ビジュアルモード追加** — `v` でビジュアル、`V` でビジュアルラインモード
+- **`/cost` と `/stats` を `/usage` に統合**
+- **カスタムテーマ** — `/theme` から作成・切替、または `~/.claude/themes/` で JSON 編集
+- **Hooks から MCP ツール呼び出し** — `type: "mcp_tool"` で MCP ツールを直接実行
+- **`DISABLE_UPDATES` 環境変数** — 全ての更新パスをブロック
+- **WSL 設定継承** — `wslInheritsWindowsSettings` で Windows 側のマネージド設定を WSL に継承
+- **auto モード `"$defaults"`** — allow / deny / environment にデフォルトを含める指定
+- **「Don't ask again」オプション** — auto モード opt-in プロンプトに追加
+- **`claude plugin tag`** — リリース git タグ作成（バージョン検証付き）
+- **`--continue`/`--resume` の `/add-dir` 対応** — 追加ディレクトリ含むセッションを検索
+- **`/color` で claude.ai 同期** — Remote Control 接続時にアクセントカラーを同期
+- **`/model` ピッカーの環境変数尊重** — `ANTHROPIC_DEFAULT_*_MODEL_NAME` / `_DESCRIPTION` を反映
+- **バグ修正多数** — `/mcp` メニューで `headersHelper` サーバーの OAuth アクション非表示、MCP OAuth トークンの `expires_in` 欠落による毎時再認証、MCP step-up authorization のサイレント更新、MCP OAuth リフレッシュ競合、macOS キーチェーン同時更新の競合、事前失効トークンでのリフレッシュ失敗、Linux/Windows での `~/.claude/.credentials.json` 破損クラッシュ、`CLAUDE_CODE_OAUTH_TOKEN` 環境変数下で `/login` が効かない問題、エージェントタイプフックが非 Stop イベントで失敗する問題、`prompt` フックがエージェントフック検証サブエージェント呼び出しで再発火する問題、`/fork` がフォークごとに親をディスク書き込み、Alt キーコンボでキー入力フリーズ、Remote Control がローカル `model` 設定を上書き、Remote Control セッションが一時的 JWT 更新でアーカイブ等を修正
+
+### 2.1.117
+- **フォークサブエージェント外部ビルド有効化** — `CLAUDE_CODE_FORK_SUBAGENT=1` で利用可能
+- **エージェントフロントマター `mcpServers` ロード** — `--agent` 経由のメインスレッドセッションで適用
+- **`/model` 選択の永続化** — プロジェクトピンに関わらず再起動後も維持
+- **`/resume` の大規模セッション要約提案** — 古い大規模セッションの再読み込み前に要約を提示
+- **起動高速化** — ローカル / claude.ai MCP サーバー接続を並列化
+- **`plugin install` の依存自動補完** — 既存プラグインへの不足依存をインストール
+- **マーケットプレイス追加時の依存自動解決** — `claude plugin marketplace add` で実施
+- **`cleanupPeriodDays` の対象拡張** — `tasks/` / `shell-snapshots/` / `backups/` も保持期間スイープ対象に
+- **OpenTelemetry 拡張** — `user_prompt` に `command_name` / `command_source` 追加
+- **Native macOS/Linux ビルド** — Bash 経由で `Glob` / `Grep` を `bfs` / `ugrep` に置き換え
+- **Windows 起動高速化** — `where.exe` ルックアップをキャッシュ
+- **Pro/Max の Opus/Sonnet 4.6 デフォルト effort を `high` に**
+- **バグ修正多数** — Plain-CLI OAuth セッションがトークン期限切れで死ぬ問題（reactive refresh に変更）、`WebFetch` の大規模 HTML ページでのハング、プロキシの HTTP 204 でのクラッシュ、`CLAUDE_CODE_OAUTH_TOKEN` 期限切れ時の `/login` が効かない問題、`Ctrl+_` プロンプト undo の無反応、Bun 下のリモート API リクエストで `NO_PROXY` 無視、低速接続でのエスケープ / リターン誤作動、SDK `reload_plugins` の直列接続、Bedrock application-inference-profile での thinking 無効時 400 エラー、MCP `elicitation/create` の print/SDK モード自動キャンセル、サブエージェント別モデルでのファイルマルウェア警告、バックグラウンドタスクでの idle 再描画ループ、Opus 4.7 `/context` 膨張・早期 autocompact（1M コンテキスト）等を修正
+
+### 2.1.116
+- **`/resume` 大幅高速化** — 大規模セッション（40MB+）で最大 67% 高速化
+- **MCP 起動高速化** — stdio サーバーで `resources/templates/list` を遅延化
+- **フルスクリーンスクロール改善** — `/terminal-setup` でスクロール感度を設定可能
+- **思考スピナーのインライン進捗表示** — "still thinking" / "almost done" を表示
+- **`/config` 検索のオプション値マッチ** — 例: "vim" で Editor mode を発見
+- **`/doctor` を応答中に開ける**
+- **`/reload-plugins` とバックグラウンド自動更新で不足依存を自動インストール**
+- **Bash ツールの GitHub API レート制限ヒント** — `gh` がレート制限に達するとヒントを表示
+- **`/usage` タブの即時 5 時間 / 週次表示**
+- **エージェントフロントマター `hooks:`** — `--agent` 実行時にフック発火
+- **セキュリティ強化** — サンドボックス auto-allow が dangerous-path チェックをバイパスする問題を修正
+- **配布元変更** — `https://downloads.claude.ai/claude-code-releases` に
+- **バグ修正多数** — Devanagari/Indic スクリプトの列整列の崩れ、Kitty プロトコル端末での `Ctrl+-` undo 不発火、`Cmd+Left/Right` の行境界ジャンプ、`Ctrl+Z` のラッパープロセス（npx, bun run）経由ハング、インラインモードでのスクロールバック重複、低背端末での検索モーダルオーバーフロー、VS Code 統合ターミナルの空白セル、API 400 cache control TTL 順序エラー、`/branch` の 50MB 超トランスクリプト拒否、`/resume` の大ファイル空表示、`/plugin` Installed タブの重複表示、worktree 進入後の `/update` と `/tui` 等を修正
+
+### 2.1.115
+- **クラッシュ修正** — エージェントチームメイトのツール要求時の権限ダイアログクラッシュを修正
+
+### 2.1.114
+- **クラッシュ修正** — エージェントチームメイトのツールアクセス要求時の権限ダイアログクラッシュを修正
+
+### 2.1.113
+- **CLI ネイティブバイナリ起動** — プラットフォーム別ネイティブ Claude Code バイナリを optional dependency として配布
+- **`sandbox.network.deniedDomains` 追加** — 特定ドメインをブロック可能
+- **フルスクリーン拡張** — `Shift+↑/↓` で選択を端を超えて拡張する際スクロール
+- **マルチライン入力改善** — `Ctrl+A` / `Ctrl+E` で論理行の先頭 / 末尾へ移動
+- **Windows `Ctrl+Backspace`** — 前の単語を削除
+- **長 URL のクリック可能化** — 折り返し時も OSC 8 ハイパーリンク維持
+- **`/loop` 制御** — Esc で待機中の wakeup をキャンセル、"Claude resuming /loop wakeup" 表示
+- **`/extra-usage` の Remote Control 対応**
+- **Remote Control クライアントの `@`-file 自動補完取得**
+- **`/ultrareview` 高速化** — 並列チェック・diffstat・アニメーション
+- **サブエージェントストール検知** — 10 分超のストールで明確なエラーを返す
+- **Bash 複数行コメント表示** — 1 行目に複数行コメントがある場合トランスクリプトに全文表示
+- **連鎖コマンドの承認不要化** — `cd <current-directory> && git ...` で再プロンプトしない
+- **セキュリティ強化** — macOS の `/private/{etc,var,tmp,home}` を危険指定、`env` / `sudo` / `watch` / `ionice` / `setsid` ラッパー検知、`Bash(find:*)` の `-exec` / `-delete` 自動承認停止
+- **バグ修正多数** — MCP タイムアウト処理で別呼び出しがタイムアウトを解除する問題、`Cmd-backspace` / `Ctrl+U` の削除方向、インラインコードのパイプによるマークダウンテーブル崩れ、サブエージェント表示中に入力したメッセージの非表示・誤帰属、`dangerouslyDisableSandbox` の権限プロンプトバイパス、`/effort auto` 確認メッセージ、絵文字の "copied N chars" 過剰カウント、Windows での `/insights` `EBUSY` クラッシュ、`CLAUDE_CODE_EXTRA_BODY` effort 400 エラー、`NO_COLOR` でのプロンプトカーソル消失、`ToolSearch` ランキング、再開長コンテキストの compacting 失敗、`plugin install` バージョン競合報告、SDK 画像処理クラッシュ、Remote Control サブエージェントトランスクリプトストリーミング、Opus 4.7 `thinking.type.enabled` 400 エラー等を修正
+
+### 2.1.112
+- **クリティカル修正** — auto モードでの "claude-opus-4-7 temporarily unavailable" エラーを修正
+
+### 2.1.111
+- **Claude Opus 4.7 xhigh 提供開始** — `/effort` から利用可能
+- **Opus 4.7 で auto モード提供** — Max サブスクライバー向け
+- **`xhigh` effort レベル追加** — `high` と `max` の間に位置
+- **`/effort` 対話型スライダー** — 矢印キーで選択
+- **「Auto (match terminal)」テーマオプション** — 端末のモードに合わせる
+- **`/less-permission-prompts` スキル** — トランスクリプトをスキャンして許可リスト提案
+- **`/ultrareview` コマンド** — 並列マルチエージェントによるコードレビュー
+- **auto モードの利用要件緩和** — `--enable-auto-mode` 不要に
+- **PowerShell ツール展開** — Windows でロールアウト（`CLAUDE_CODE_USE_POWERSHELL_TOOL` で制御）、Linux/macOS では `=1` で有効化
+- **読み取り専用 Bash 改善** — グロブ・安全な `cd && ...` で承認プロンプトを表示しない
+- **タイポ補正** — 最も近いサブコマンドを提案（例: `udpate` → `update`）
+- **プランファイル名にプロンプト由来の文字列** — 例: `fix-auth-race-snug-otter.md`
+- **`/setup-vertex` / `/setup-bedrock` 改善** — パス表示・モデルシード
+- **`/skills` トークン数ソート** — `t` キーで切替
+- **入力バッファ操作** — `Ctrl+U` でクリア、`Ctrl+Y` で復元
+- **`Ctrl+L`** — 全画面再描画＋プロンプトクリア
+- **トランスクリプトフッター** — `[`（dump）と `v`（editor）ショートカット表示
+- **headless `--output-format stream-json`** — `plugin_errors` を含める
+- **`OTEL_LOG_RAW_API_BODIES` 環境変数追加** — デバッグ用
+- **v2.1.110 の非ストリーミングフォールバックリトライ上限を取り消し**
+- **バグ修正多数** — iTerm2 + tmux のターミナルティアリング、`@` 補完のプロジェクト全再スキャン、編集後の LSP 診断遅延表示、`/context` 余分な空行、`/clear` でのセッション名喪失、プラグインエラーハンドリング改善、Claude が存在しない `commit` スキルを呼ぶ問題、誤った "GitHub API rate limit" ヒント、`CLAUDE_ENV_FILE` がコメント行で終わる問題、Windows での `CLAUDE_ENV_FILE` 適用とパスケース正規化等を修正
+
+### 2.1.110
+- **`/tui` コマンドと `tui` 設定** — `/tui fullscreen` で同セッションのまま flicker-free レンダリングへ切替
+- **プッシュ通知ツール** — Remote Control + 「Push when Claude decides」設定有効時、Claude がモバイル通知を送信可能
+- **`Ctrl+O` の動作変更** — normal と verbose トランスクリプト切替のみに、focus ビューは新コマンド `/focus` で切替
+- **`autoScrollEnabled` 設定追加** — フルスクリーンモードで会話の自動スクロールを無効化可能
+- **`Ctrl+G` 外部エディタにレスポンス含める設定** — `/config` から有効化
+- **`/plugin` Installed タブ改善** — 注意要・お気に入りが上位、無効項目は折りたたみ、`f` でお気に入り
+- **`/doctor` のスコープ警告** — 同じ MCP サーバーが複数スコープで異なるエンドポイントの場合警告
+- **`--resume` / `--continue` のスケジュールタスク復活** — 期限切れでなければ復元
+- **Remote Control 拡張** — `/context` / `/exit` / `/reload-plugins` がモバイル / web から動作
+- **Write ツールの IDE 編集通知** — IDE diff で承認前にユーザーが編集した場合モデルに通知
+- **Bash ツールタイムアウト適正化** — ドキュメント記載の最大値を強制
+- **SDK / headless の分散トレース連携** — `TRACEPARENT` / `TRACESTATE` を環境から読み取り
+- **session recap のテレメトリ無効環境対応** — Bedrock / Vertex / Foundry / `DISABLE_TELEMETRY` 環境でも有効化、`/config` または `CLAUDE_CODE_ENABLE_AWAY_SUMMARY=0` でオプトアウト
+- **バグ修正多数** — SSE/HTTP 接続中断時の MCP ツール呼び出しハング、API 到達不能時の非ストリーミングフォールバックリトライによる数分ハング、focus モードでの session recap 等のシステム表示欠落、選択中・ツール実行中のフルスクリーン CPU 過負荷、マーケットプレイスエントリが依存を省略した場合の `plugin install` の依存無視、`disable-model-invocation: true` スキルが `/<skill>` mid-message で失敗する問題、`--resume` で実行中・異常終了セッションの最初のプロンプトが `/rename` 名の代わりに表示される問題、マルチツール呼び出しターン中のキューメッセージ二重表示、サブエージェントトランスクリプトを含むセッションディレクトリ全削除、CLI 再起動後（`/tui`、provider セットアップウィザード等）のキー入力ドロップ、macOS Terminal.app 等同期出力非対応端末での起動時表示崩れ、信頼できないファイル名による「Open in editor」のコマンドインジェクション対策、`PermissionRequest` フックの `updatedInput` が `permissions.deny` 規則に再評価されない問題（`setMode:'bypassPermissions'` 更新が `disableBypassPermissionsMode` を尊重）、`PreToolUse` フック `additionalContext` のドロップ、stdio MCP サーバーのゴミ非 JSON 行による切断（v2.1.105 リグレッション）、`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` / `CLAUDE_CODE_DISABLE_TERMINAL_TITLE` 設定時の余分な Haiku リクエスト、パイプ（非 TTY）Ink 出力の単一広い行による過大メモリ確保、フルスクリーンモーダルでの `/skills` メニュースクロール、Remote Control セッション期限切れ時のジェネリックエラー、claude.ai からの Remote Control セッション名前変更がローカル CLI に反映されない問題等を修正
+
+### 2.1.109（旧最新）
 - **拡張思考インジケータ改善** — 長い操作中に回転するプログレスヒントを表示し、思考中の状態がより分かりやすくなった
 
 ### 2.1.108
