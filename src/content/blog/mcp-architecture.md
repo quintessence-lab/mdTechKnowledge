@@ -1,6 +1,6 @@
 ---
 title: "MCP (Model Context Protocol) アーキテクチャ詳細"
-date: 2026-04-04
+date: 2026-04-26
 category: "Claude技術解説"
 tags: ["MCP", "Claude Code", "JSON-RPC", "GitHub", "OAuth", "プロトコル"]
 excerpt: "MCPの概要・全体アーキテクチャ・接続ライフサイクル・トランスポート方式・プロトコル詳細・OAuth認証・GitHub MCP実践例・プロセスモデルを網羅的に解説"
@@ -962,6 +962,50 @@ claude --teammate-mode in-process
 
 ---
 
+## 2026年4月以降の動向（エコシステム）
+
+MCPは2024年11月の公開以降、急速に普及している。2026年4月時点での主な動向は以下の通り。
+
+### メンテナーチーム拡充（2026-04-08）
+
+公式ブログでメンテナー体制の強化が発表された。新たに以下の2名が参加:
+
+| 氏名 | 主な背景 |
+|---|---|
+| **Clare Liguori** | 分散システム運用の経験を持つエンジニア。MCP仕様・SDKの保守を担当 |
+| **Den Delimarsky** | 開発者プラットフォーム経験者。ツール・実装サポートを担当 |
+
+メンテナーチームの拡充により、SEP（Specification Enhancement Proposals）レビュー・SDKリリース・コミュニティサポートの体制が強化される。
+
+参考: [MCP Maintainer Update (2026-04-08)](https://blog.modelcontextprotocol.io/posts/2026-04-08-maintainer-update/)
+
+### エコシステム規模
+
+| 指標 | 数値 | 備考 |
+|---|---|---|
+| **公開MCPサーバー数** | **10,000以上** | GitHubおよび公式レジストリ上で公開されているサーバーの累計 |
+| **月間SDKダウンロード数** | **約9,700万件** | Python・TypeScript SDK合計（npm + PyPI） |
+| **SEP提案数** | **増加傾向** | 認証・トランスポート・新メッセージ型などの仕様拡張案が継続的に提出されている |
+
+### SEP（Specification Enhancement Proposals）
+
+SEPはMCP仕様への変更を議論・追跡するための公式提案プロセス。最近は以下のテーマで活発な議論が行われている:
+
+- **認証・認可の強化**: OAuth 2.1準拠、PKCE必須化、動的クライアント登録の標準化
+- **トランスポート拡張**: WebSocket、gRPC等の追加トランスポート提案
+- **新メッセージ型**: 進捗通知の拡張、構造化エラー応答、長時間実行ツール対応
+- **セキュリティ**: ツール定義の検証、権限スコープ、監査ログ
+
+### 普及の背景
+
+- **クライアント側採用拡大**: Claude Code・Cursor・VS Code・Zed・Continue等、主要なAI開発ツールが標準対応
+- **エンタープライズ採用**: GitHub・Sentry・Linear・Notion等、SaaS各社が公式MCPサーバーを提供
+- **オープンソース貢献**: モデル提供事業者だけでなく、サードパーティ開発者によるサーバー実装が活発化
+
+参考: [Model Context Protocol Roadmap 2026 (The New Stack)](https://thenewstack.io/model-context-protocol-roadmap-2026/)
+
+---
+
 ## まとめ
 
 - **MCPとは**: AIクライアントと外部ツールを繋ぐ標準プロトコル（AIのUSB規格）
@@ -970,3 +1014,4 @@ claude --teammate-mode in-process
 - プロトコルはJSON-RPC 2.0ベースで、初期化→バージョンネゴシエーション→オペレーション→シャットダウンのライフサイクル
 - リモートサーバーはOAuth認証が必要で、初回アクセス時にブラウザで認可フローを実行
 - **ツール選択の判断はLLM（クラウド）** が行い、**実際のAPI呼び出しはMCPサーバー**が行う
+- **2026年4月時点でエコシステムは大幅拡大**: 公開MCPサーバー10,000以上、月間SDKダウンロード約9,700万件、メンテナー体制も拡充中
