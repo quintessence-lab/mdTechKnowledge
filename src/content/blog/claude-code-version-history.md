@@ -4,12 +4,12 @@ date: 2026-04-01
 updatedDate: 2026-04-29
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code v2.0.59〜v2.1.121 のバージョン履歴。alwaysLoad MCP・claude plugin prune・/ultrareview 非対話型・Opus 4.7 xhigh・/usage統合・ネイティブバイナリ化・PowerShell ツールなど主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.123 のバージョン履歴。ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL→/resume・alwaysLoad MCP・/ultrareview 非対話型・Opus 4.7 xhigh・/usage統合・ネイティブバイナリ化など主要マイルストーンを解説。"
 draft: false
 ---
 
 **最終更新**: 2026-04-29
-**現在の最新バージョン**: 2.1.121
+**現在の最新バージョン**: 2.1.123
 
 ---
 
@@ -17,6 +17,8 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.123** | `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1` 設定時の OAuth 認証 401 ループを修正 |
+| **2.1.122** | `ANTHROPIC_BEDROCK_SERVICE_TIER` 環境変数（`default` / `flex` / `priority`）、PR URL を `/resume` に貼り付けで該当セッション検索（GitHub・GitLab・Bitbucket・GitHub Enterprise 対応）、`/mcp` で同一URLのclaude.aiコネクター併記、OpenTelemetryの `api_request`/`api_error` 数値属性化、`/branch` フォーク `tool_use ids without tool_result` 修正、Vertex AI/Bedrock の `output_config` エラー修正 |
 | **2.1.121** | `alwaysLoad` MCP サーバー設定オプション、`claude plugin prune` コマンド、`/skills` タイプフィルター検索、`PostToolUse` フックが全ツールに対応、フルスクリーンスクロール修正、MCP サーバー起動時のトランジエントエラー自動リトライ（最大3回） |
 | **2.1.120** | `/ultrareview` の非対話型スクリプト実行モード追加（`claude ultrareview path/to/changes` 形式、`--json` オプション） |
 | **2.1.119** | `/config` 設定永続化（project/local/policy 優先順）、`--from-pr` で GitLab/Bitbucket/GitHub Enterprise 対応、`prUrlTemplate` 設定、`PostToolUse` フックに `duration_ms` 追加 |
@@ -58,7 +60,18 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.121（最新）
+### 2.1.123（最新）
+- **OAuth 認証 401 ループの修正** — `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1` を設定した状態で OAuth 認証が 401 エラーを繰り返してログインできない問題を修正
+
+### 2.1.122
+- **`ANTHROPIC_BEDROCK_SERVICE_TIER` 環境変数追加** — Amazon Bedrock 経由利用時に `default` / `flex` / `priority` のサービス階層を選択可能に
+- **PR URL を `/resume` に貼り付けで該当セッション検索** — GitHub・GitHub Enterprise・GitLab・Bitbucket の PR URL に対応し、関連セッションの再開が容易に
+- **`/mcp` 表示の改善** — 手動追加した MCP サーバーと同 URL の claude.ai コネクターも併記表示するよう修正
+- **OpenTelemetry の数値属性化** — `api_request` / `api_error` の数値属性を文字列ではなく数値型で出力するよう修正
+- **`/branch` フォーク失敗の修正** — `tool_use ids were found without tool_result blocks` で失敗していた問題を修正
+- **Vertex AI / Bedrock `invalid_request_error: output_config` 修正** — マルチクラウド利用時のエラーを解消
+
+### 2.1.121
 - **`alwaysLoad` MCP サーバー設定オプション** — MCP サーバー設定で `alwaysLoad` を指定すると、起動時に常時ロードされる
 - **`claude plugin prune` コマンド追加** — 不要・未使用のプラグインを一括削除可能に
 - **`/skills` タイプフィルター検索** — スキルをタイプ（種別）でフィルターして検索可能に
