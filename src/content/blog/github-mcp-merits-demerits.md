@@ -1,9 +1,10 @@
 ---
 title: "GitHub MCP サーバ導入のメリットとデメリット"
 date: 2026-04-14
+updatedDate: 2026-04-29
 category: "Claude技術解説"
 tags: ["MCP", "GitHub", "セキュリティ", "アーキテクチャ"]
-excerpt: "GitHub MCP Serverの導入メリット（構造的探索・ノイズレス取得・Issue/PR統合）とデメリット（PAT認証リスク・コンテキスト消費）をWebフェッチ方式と比較検証。"
+excerpt: "GitHub MCP Serverの導入メリット（構造的探索・ノイズレス取得・Issue/PR統合）とデメリット（PAT認証リスク・コンテキスト消費・MCPプロトコル自体の重大脆弱性）をWebフェッチ方式と比較検証。"
 draft: false
 ---
 
@@ -220,6 +221,23 @@ mdTechKnowledge はカテゴリページが整理されており、Web フェッ
 ### 6. Claude Code 前提の機能が多い
 
 GitHub MCP Server のツール群（Issue 作成、PR 作成、Actions 監視など）は Claude Code での利用を主に想定している。claude.ai の Web チャットからはこれらの操作系ツールの恩恵が限定的になる場合がある。
+
+### 7. 【追記 2026-04-29】MCPプロトコル自体の重大脆弱性
+
+2026年4月16日、イスラエルのセキュリティ企業 OX Security が、MCP（Model Context Protocol）に設計レベルの重大な欠陥が存在し、推定で **約20万台のAIサーバー** がリモートコード実行（RCE）の危険に晒されていると公表しました。GitHub MCP Server もこのプロトコル仕様の上に構築されているため、本問題と無縁ではありません。
+
+要点は次の通りです。
+
+- **STDIOトランスポート設計の構造的問題**: ローカル接続では MCP サーバーをサブプロセスとして起動する仕様であり、起動コマンド文字列が信頼できない経路（マーケットプレイス・ファイル内容・LLM出力など）から組み立てられた場合、登録に失敗してもOSコマンドは既に実行済みになるという挙動があります。
+- **PAT認証リスクの再強調**: 上記「1. PAT のセキュリティリスク」と組み合わさることで、悪意あるMCPサーバーに PAT が渡れば、自リポジトリの改変や情報窃取に直結します。
+- **Anthropicの判断**: 同社はこれを「expected behavior（仕様通りの挙動）」と回答し、プロトコル仕様自体の修正は行わない方針を示しています。つまり **対策はアプリ・ユーザー側で実施する必要** があります。
+
+詳細な攻撃経路の類型・影響範囲・サプライチェーン議論・具体的な防御策（サンドボックス・引数固定・マーケットプレイス検証など）は、別記事 [MCP重大脆弱性レポート — 20万超サーバー影響、AnthropicがExpected Behaviorと判断した経緯](/mdTechKnowledge/blog/mcp-vulnerability-report/) にまとめています。
+
+参考報道：
+
+- The Register（2026-04-16）: [MCP 'design flaw' puts 200k servers at risk](https://www.theregister.com/2026/04/16/anthropic_mcp_design_flaw/)
+- Hackaday（2026-04-24）: [How Anthropic's Model Context Protocol Allows For Easy Remote Execution](https://hackaday.com/2026/04/24/how-anthropics-model-context-protocol-allows-for-easy-remote-execution/)
 
 ---
 
