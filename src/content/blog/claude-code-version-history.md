@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-04-26
+updatedDate: 2026-04-29
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code v2.0.59〜v2.1.119 のバージョン履歴。Opus 4.7 xhigh・/usage統合・/tui コマンド・/ultrareview・ネイティブバイナリ化・PowerShell ツールなど主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.121 のバージョン履歴。alwaysLoad MCP・claude plugin prune・/ultrareview 非対話型・Opus 4.7 xhigh・/usage統合・ネイティブバイナリ化・PowerShell ツールなど主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-04-26
-**現在の最新バージョン**: 2.1.119
+**最終更新**: 2026-04-29
+**現在の最新バージョン**: 2.1.121
 
 ---
 
@@ -17,6 +17,8 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.121** | `alwaysLoad` MCP サーバー設定オプション、`claude plugin prune` コマンド、`/skills` タイプフィルター検索、`PostToolUse` フックが全ツールに対応、フルスクリーンスクロール修正、MCP サーバー起動時のトランジエントエラー自動リトライ（最大3回） |
+| **2.1.120** | `/ultrareview` の非対話型スクリプト実行モード追加（`claude ultrareview path/to/changes` 形式、`--json` オプション） |
 | **2.1.119** | `/config` 設定永続化（project/local/policy 優先順）、`--from-pr` で GitLab/Bitbucket/GitHub Enterprise 対応、`prUrlTemplate` 設定、`PostToolUse` フックに `duration_ms` 追加 |
 | **2.1.118** | `/cost` と `/stats` を `/usage` に統合、Vim ビジュアルモード（`v`/`V`）、カスタムテーマ、Hooks から MCP ツール呼び出し（`type: "mcp_tool"`）、`DISABLE_UPDATES` 環境変数 |
 | **2.1.117** | フォークサブエージェント（`CLAUDE_CODE_FORK_SUBAGENT=1`）、`--agent` で `mcpServers` ロード、Native macOS/Linux ビルドで Glob/Grep を bfs/ugrep に置換、Pro/Max の Opus/Sonnet 4.6 デフォルト effort を high に |
@@ -56,7 +58,19 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.119（最新）
+### 2.1.121（最新）
+- **`alwaysLoad` MCP サーバー設定オプション** — MCP サーバー設定で `alwaysLoad` を指定すると、起動時に常時ロードされる
+- **`claude plugin prune` コマンド追加** — 不要・未使用のプラグインを一括削除可能に
+- **`/skills` タイプフィルター検索** — スキルをタイプ（種別）でフィルターして検索可能に
+- **`PostToolUse` フックが全ツールに対応** — これまで一部ツールのみだった `PostToolUse` フックがすべてのツールで発火するように拡張
+- **MCP サーバー起動時のトランジエントエラー自動リトライ** — 起動時の一時的なエラーに対し最大 3 回まで自動でリトライ
+- **フルスクリーンスクロール修正** — フルスクリーンモードでのスクロール挙動の不具合を修正
+
+### 2.1.120
+- **`/ultrareview` 非対話型スクリプト実行モード追加** — `claude ultrareview path/to/changes` の形式で CLI から直接コードレビューを実行可能に
+- **`--json` オプション追加** — `/ultrareview` の結果を JSON 形式で出力できるようになり、CI/CD パイプラインや外部ツールとの連携が容易に
+
+### 2.1.119
 - **`/config` 設定の永続化** — `~/.claude/settings.json` に保存、project/local/policy の優先順で上書き
 - **`prUrlTemplate` 設定** — カスタム コードレビュー URL を定義可能
 - **`CLAUDE_CODE_HIDE_CWD` 環境変数** — 起動ロゴでの作業ディレクトリ表示を抑制
@@ -116,6 +130,17 @@ draft: false
 - **セキュリティ強化** — サンドボックス auto-allow が dangerous-path チェックをバイパスする問題を修正
 - **配布元変更** — `https://downloads.claude.ai/claude-code-releases` に
 - **バグ修正多数** — Devanagari/Indic スクリプトの列整列の崩れ、Kitty プロトコル端末での `Ctrl+-` undo 不発火、`Cmd+Left/Right` の行境界ジャンプ、`Ctrl+Z` のラッパープロセス（npx, bun run）経由ハング、インラインモードでのスクロールバック重複、低背端末での検索モーダルオーバーフロー、VS Code 統合ターミナルの空白セル、API 400 cache control TTL 順序エラー、`/branch` の 50MB 超トランスクリプト拒否、`/resume` の大ファイル空表示、`/plugin` Installed タブの重複表示、worktree 進入後の `/update` と `/tui` 等を修正
+
+#### 4月23日 Anthropic 公式ポストモーテム
+4月20日前後にユーザーから報告されていた Claude の応答品質低下について、4月23日に Anthropic 公式エンジニアリングブログでポストモーテムが公開されました。原因として以下の3つのバグが特定されたと報告されています。
+
+1. **デフォルト推論努力（reasoning effort）が high → medium に意図せず変更** — 内部設定変更により、本来 high であるべき推論努力レベルが medium にダウングレードされていた
+2. **キャッシュクリアバグ** — プロンプトキャッシュのクリア処理に不具合があり、想定外の挙動を引き起こしていた
+3. **詳細度プロンプト変更** — 応答の詳細度（verbosity）に関するプロンプト変更が、出力品質に影響を与えていた
+
+Anthropic は影響を受けた全利用者に対し、利用制限（rate limit）リセットを実施しました。
+
+参考リンク: [https://www.anthropic.com/engineering/april-23-postmortem](https://www.anthropic.com/engineering/april-23-postmortem)
 
 ### 2.1.115
 - **クラッシュ修正** — エージェントチームメイトのツール要求時の権限ダイアログクラッシュを修正
