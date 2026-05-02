@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-04-29
+updatedDate: 2026-05-02
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code v2.0.59〜v2.1.123 のバージョン履歴。ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL→/resume・alwaysLoad MCP・/ultrareview 非対話型・Opus 4.7 xhigh・/usage統合・ネイティブバイナリ化など主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.126 のバージョン履歴。/model ピッカーのゲートウェイ対応・claude project purge・PowerShell 7検出・ANTHROPIC_BEDROCK_SERVICE_TIER・alwaysLoad MCP・/ultrareview 非対話型・Opus 4.7 xhigh・/usage統合・ネイティブバイナリ化など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-04-29
-**現在の最新バージョン**: 2.1.123
+**最終更新**: 2026-05-02
+**現在の最新バージョン**: 2.1.126
 
 ---
 
@@ -17,6 +17,7 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.126** | `/model` ピッカーが `ANTHROPIC_BASE_URL` のゲートウェイ `/v1/models` エンドポイントからモデルを一覧表示、`claude project purge [path]` コマンド追加（`--dry-run`/`-y`/`-i`/`--all` 対応）、`--dangerously-skip-permissions` の対象パス拡張（`.claude/`・`.git/`・`.vscode/`・シェル設定ファイル等のバイパス）、WSL2/SSH/コンテナ環境で `claude auth login` の OAuth コードをターミナル貼付可能に、PowerShell 7（Microsoft Store/MSI/.NETグローバルツール版）プライマリシェル検出、2000px超の画像ペースト時の自動ダウンスケール修正、マネージド設定 `allowManagedDomainsOnly` / `allowManagedReadPathsOnly` が無視される問題を修正（v2.1.124・v2.1.125 はスキップ番号） |
 | **2.1.123** | `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1` 設定時の OAuth 認証 401 ループを修正 |
 | **2.1.122** | `ANTHROPIC_BEDROCK_SERVICE_TIER` 環境変数（`default` / `flex` / `priority`）、PR URL を `/resume` に貼り付けで該当セッション検索（GitHub・GitLab・Bitbucket・GitHub Enterprise 対応）、`/mcp` で同一URLのclaude.aiコネクター併記、OpenTelemetryの `api_request`/`api_error` 数値属性化、`/branch` フォーク `tool_use ids without tool_result` 修正、Vertex AI/Bedrock の `output_config` エラー修正 |
 | **2.1.121** | `alwaysLoad` MCP サーバー設定オプション、`claude plugin prune` コマンド、`/skills` タイプフィルター検索、`PostToolUse` フックが全ツールに対応、フルスクリーンスクロール修正、MCP サーバー起動時のトランジエントエラー自動リトライ（最大3回） |
@@ -60,7 +61,17 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.123（最新）
+### 2.1.126（最新）
+- **`/model` ピッカーのゲートウェイ対応** — `ANTHROPIC_BASE_URL` で指定したゲートウェイの `/v1/models` エンドポイントからモデル一覧を取得して表示
+- **`claude project purge [path]` コマンド追加** — トランスクリプト・タスク・ファイル履歴・設定エントリを一括削除。`--dry-run`（実行せず確認）、`-y`（確認なし）、`-i`（対話）、`--all`（全プロジェクト）に対応
+- **`--dangerously-skip-permissions` の対象パス拡張** — `.claude/`・`.git/`・`.vscode/`・シェル設定ファイル等の保護パスへの書き込みプロンプトもバイパスされるよう拡張
+- **OAuth コードのターミナル貼付対応** — WSL2 / SSH / コンテナ環境で `claude auth login` の OAuth コードをターミナルに直接貼り付け可能に
+- **PowerShell 7 プライマリ検出** — Microsoft Store / MSI / .NET グローバルツール版の PowerShell 7 をプライマリシェルとして検出・利用
+- **画像ペースト自動ダウンスケール修正** — 2000px 超の画像ペースト時に自動でダウンスケールする処理の不具合を修正
+- **セキュリティ修正** — マネージド設定の `allowManagedDomainsOnly` / `allowManagedReadPathsOnly` が無視されていた問題を修正
+- ※ v2.1.124・v2.1.125 はスキップ番号（内部ビルド）
+
+### 2.1.123
 - **OAuth 認証 401 ループの修正** — `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1` を設定した状態で OAuth 認証が 401 エラーを繰り返してログインできない問題を修正
 
 ### 2.1.122

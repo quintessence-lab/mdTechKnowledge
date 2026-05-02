@@ -1,10 +1,10 @@
 ---
 title: "MCP (Model Context Protocol) アーキテクチャ詳細"
 date: 2026-04-26
-updatedDate: 2026-04-26
+updatedDate: 2026-05-02
 category: "Claude技術解説"
 tags: ["MCP", "Claude Code", "JSON-RPC", "GitHub", "OAuth", "プロトコル"]
-excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026-04メンテナー体制刷新、AAIFガバナンス移管後の動向、約20万サーバーに影響した重大脆弱性事案の参照リンクまでを網羅"
+excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness）、MCP Apps（SEP-1865）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、約20万サーバーに影響した重大脆弱性事案の参照リンクまでを網羅"
 draft: false
 ---
 
@@ -70,6 +70,38 @@ USBデバイス（マウス等）    =    MCPサーバー（GitHub, Gmail等）
 |---|---|
 | **リモート（claude.ai Gmail等）** | **自動管理** — Anthropic側でホストされており、ユーザー操作不要 |
 | **ローカル（stdio）** | **手動更新** — `npx some-server@1.2.3` のバージョン指定で管理 |
+
+### 2026年の動向（2026-05時点）
+
+#### 2026 MCP Roadmap — 4本柱
+
+2026年初頭に公式ブログで公開された MCP のロードマップは、以下4テーマを中心に進行中:
+
+| テーマ | 内容 |
+|---|---|
+| **Transport Scalability** | Streamable HTTP のスケール課題への対応。ステートフルセッションがロードバランサと競合し水平スケールが困難な現状を緩和する設計（ステートレス HTTP の検討含む） |
+| **Agent Communication** | エージェント間通信プリミティブの標準化（Tasks primitive の発展形） |
+| **Governance Maturation** | AAIF（AI Alliance Foundation）配下での意思決定フローの整備、SEP（Specification Enhancement Proposal）プロセスの定着 |
+| **Enterprise Readiness** | エンタープライズ認証 SSO 対応、レジストリ自動登録、Server Cards による検出性向上 |
+
+参考: [2026 MCP Roadmap](https://blog.modelcontextprotocol.io/posts/2026-mcp-roadmap/) / [The New Stack 解説](https://thenewstack.io/model-context-protocol-roadmap-2026/)
+
+#### MCP Apps（SEP-1865）— 対話型UIのプロトコル仕様化
+
+2026年初頭に **SEP-1865** として正式仕様化。AIホストアプリ（Claude Desktop / Claude Code 等）から **MCPサーバー側が対話型UIを配信** する仕組み。旧称 mcp-ui を発展させ、ホスト側でレンダリング可能なフォーム・カード・確認ダイアログをサーバー側で定義できる。
+
+#### MCP Dev Summit North America（2026年4月）
+
+- 開催地: ニューヨーク
+- 参加者: 約1,200名
+- 主要テーマ: ロードマップ討議、エンタープライズ事例、新仕様（MCP Apps / Tasks primitive）のデモ
+- 業界普及の節目となり、AAIF の運営体制移管後初の大規模イベント
+
+#### Server Cards によるレジストリ自動登録
+
+サーバー定義に同梱する `server.card.json`（仮称、SEP 準拠の自己記述メタ）を解析することで、MCP レジストリへの自動登録・検証・更新を行う仕組みが検討されている。エンタープライズ環境での MCP サーバーガバナンスの中核機能として位置づけられる。
+
+参考: [MCP公式ブログ](https://blog.modelcontextprotocol.io/) / [4月メンテナー更新](https://blog.modelcontextprotocol.io/posts/2026-04-08-maintainer-update/)
 
 ---
 
