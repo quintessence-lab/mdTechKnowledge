@@ -2,7 +2,7 @@
 title: "Claude for Excel / PowerPoint アドイン解説 — 会話コンテキスト共有とMicrosoft Copilotとの違い"
 date: 2026-04-29
 updatedDate: 2026-04-29
-category: "その他技術"
+category: "Claude技術解説"
 tags: ["Claude", "Microsoft Excel", "Microsoft PowerPoint", "アドイン", "Copilot", "比較"]
 excerpt: "Claude for Excel/PowerPointアドインが会話コンテキストを両アプリで共有可能に。Excelで分析した結果を直接PowerPointスライドに展開できる仕組み、インストール方法、Microsoft Copilotとの使い分けを整理。"
 draft: false
