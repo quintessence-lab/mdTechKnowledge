@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude vs Gemini 完全比較 2026年5月</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07070d;
+  --surface: #0f0f18;
+  --surface2: #161625;
+  --border: #1e1e30;
+  --border2: #2a2a42;
+  --text: #d8d8e8;
+  --text-dim: #8888a8;
+  --accent-purple: #a78bfa;
+  --accent-blue: #60a5fa;
+  --accent-green: #4ade80;
+  --accent-orange: #fb923c;
+  --accent-red: #f87171;
+  --accent-pink: #f472b6;
+  --gradient-hero: linear-gradient(135deg, #ff6b4a 0%, #a78bfa 40%, #60a5fa 100%);
+  --gradient-claude: linear-gradient(135deg, #ff6b4a 0%, #fb923c 100%);
+  --gradient-gemini: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 14px;
+}
+.page { max-width: 1080px; margin: 0 auto; padding: 24px 16px 60px; }
+
+.hero {
+  text-align: center;
+  padding: 40px 20px 30px;
+}
+.hero h1 {
+  font-size: 28px;
+  font-weight: 800;
+  background: var(--gradient-hero);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 12px;
+}
+.hero .sub { color: var(--text-dim); font-size: 13px; }
+
+.section { margin: 36px 0 24px; }
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border2);
+}
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+  background: var(--surface2);
+  color: var(--accent-purple);
+}
+.badge.claude { background: rgba(255, 107, 74, 0.15); color: #ff8a6a; }
+.badge.gemini { background: rgba(96, 165, 250, 0.15); color: var(--accent-blue); }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+th {
+  background: var(--surface2);
+  color: var(--accent-purple);
+  font-weight: 600;
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border2);
+  white-space: nowrap;
+}
+td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(167, 139, 250, 0.04); }
+td.highlight { color: var(--accent-green); font-weight: 600; }
+td.bad { color: var(--accent-red); }
+td.good { color: var(--accent-green); }
+td strong { color: #fff; }
+
+.cards-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.cards-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+}
+.card h3 {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--accent-blue);
+}
+.card.claude h3 { color: #ff8a6a; }
+.card.gemini h3 { color: var(--accent-blue); }
+.card .desc { font-size: 12px; color: var(--text-dim); }
+.card .url {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--accent-green);
+  font-family: monospace;
+}
+
+.callout {
+  background: rgba(167, 139, 250, 0.08);
+  border-left: 3px solid var(--accent-purple);
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-size: 12.5px;
+  color: var(--text-dim);
+  margin: 10px 0;
+}
+.callout strong { color: var(--text); }
+
+.compare-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 16px 0;
+}
+.compare-box {
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+.compare-box.claude {
+  background: rgba(255, 107, 74, 0.08);
+  border: 1px solid rgba(255, 107, 74, 0.3);
+}
+.compare-box.gemini {
+  background: rgba(96, 165, 250, 0.08);
+  border: 1px solid rgba(96, 165, 250, 0.3);
+}
+.compare-box h4 {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.compare-box.claude h4 { color: #ff8a6a; }
+.compare-box.gemini h4 { color: var(--accent-blue); }
+
+.price-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(74, 222, 128, 0.15);
+  color: var(--accent-green);
+  border-radius: 4px;
+}
+.price-tag.high {
+  background: rgba(251, 146, 60, 0.15);
+  color: var(--accent-orange);
+}
+
+@media (max-width: 720px) {
+  .cards-3, .cards-2 { grid-template-columns: 1fr; }
+  .compare-row { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 22px; }
+  table { font-size: 12px; }
+  th, td { padding: 8px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <h1>Claude vs Gemini 完全比較</h1>
+    <div class="sub">有料プラン × NotebookLM × Gemini CLI × 画像生成API（2026年5月）</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="badge">前提</span> Gemini / NotebookLM / Gemini CLI の違い</div>
+    <div class="cards-3">
+      <div class="card gemini">
+        <h3>Gemini（チャット）</h3>
+        <div class="desc">Webブラウザ・モバイルアプリで使う対話型AI。質問・調べもの・画像/動画生成・コード生成。</div>
+        <div class="url">gemini.google.com</div>
+      </div>
+      <div class="card gemini">
+        <h3>NotebookLM</h3>
+        <div class="desc">「自分が用意した資料」だけをソースに回答するAIノート。要約・FAQ・音声解説生成が特徴。</div>
+        <div class="url">notebooklm.google.com</div>
+      </div>
+      <div class="card gemini">
+        <h3>Gemini CLI</h3>
+        <div class="desc">ターミナル上でGeminiモデルを動かす公式コマンドラインツール（Claude Code相当）。</div>
+        <div class="url">npm install -g @google/gemini-cli</div>
+      </div>
+    </div>
+    <div class="callout">
+      <strong>3つの関係性:</strong> 同じ Google AI Pro/Ultra 契約で <strong>3つすべてが使える</strong>。料金も含めて利用枠が共通で割り当てられている形（CLIには別途のレート上限あり）。
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="badge gemini">1</span> Gemini 有料プラン</div>
+    <table>
+      <tr><th>項目</th><th>無料</th><th>Google AI Pro</th><th>Google AI Ultra</th></tr>
+      <tr><td>月額</td><td>$0</td><td><strong>$19.99</strong></td><td><strong>$249.99</strong></td></tr>
+      <tr><td>主モデル</td><td>2.5 Flash 中心</td><td>Gemini 3.1 Pro + Deep Research</td><td>3.1 Pro 最高上限 + Deep Think + Gemini Agent</td></tr>
+      <tr><td>コンテキスト</td><td>〜128K</td><td>1M</td><td>1M</td></tr>
+      <tr><td>NotebookLM</td><td>50 sources/note</td><td><strong>300 sources/note</strong></td><td><strong>600 sources/note</strong></td></tr>
+      <tr><td>Gemini CLI 利用枠</td><td>Flash系のみ無料枠</td><td>Pro系モデルもCLIから利用可</td><td>最高上限でCLI利用</td></tr>
+      <tr><td>Gemini CLI APIトークン制限</td><td><strong>60req/分・1,000req/日</strong>（Flash系）</td><td>Pro系: 60req/分・1,000req/日、Flash系: 上限緩和</td><td>Pro系も Ultra固有の高頻度上限</td></tr>
+      <tr><td>画像生成 (Imagen 4 / Nano Banana)</td><td class="bad">限定的</td><td class="good">標準枠</td><td class="good">高頻度枠</td></tr>
+      <tr><td>動画生成 (Veo 3.1)</td><td class="bad">不可</td><td>Veo 3.1 Lite</td><td><strong>フル + Project Genie</strong></td></tr>
+      <tr><td>ストレージ</td><td>15GB</td><td><strong>5TB</strong></td><td><strong>30TB</strong></td></tr>
+    </table>
+    <div class="callout">
+      旧 Gemini Advanced / Google One AI Premium は <strong>Google AI Pro に統合済み</strong>。「Pro契約」と言ったら通常これ。<br>
+      2026年3月以降、<strong>Gemini Pro系モデルは有料プラン専用</strong>（無料はFlashのみ）。
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="badge claude">2</span> Claude 有料プラン</div>
+    <table>
+      <tr><th>項目</th><th>Free</th><th>Pro</th><th>Max 5x</th><th>Max 20x</th></tr>
+      <tr><td>月額</td><td>$0</td><td><strong>$20</strong></td><td>$100</td><td><strong>$200</strong></td></tr>
+      <tr><td>利用モデル</td><td>Sonnet 4.6中心</td><td>Opus 4.7 / Sonnet 4.6 / Haiku 4.5</td><td>同左（高頻度）</td><td>同左（最高頻度）</td></tr>
+      <tr><td>メッセージ目安</td><td>制限大</td><td>約45 / 5h</td><td>約225 / 5h</td><td>約900 / 5h</td></tr>
+      <tr><td>Claude Code</td><td class="bad">不可</td><td class="good">可</td><td class="good">可</td><td class="good">可</td></tr>
+      <tr><td>Claude Cowork</td><td class="bad">不可</td><td class="good">可</td><td class="good">可</td><td class="good">可</td></tr>
+      <tr><td>画像/動画生成</td><td class="bad">不可</td><td class="bad">不可</td><td class="bad">不可</td><td class="bad">不可</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="badge">3</span> Claude × Gemini 横断比較</div>
+    <table>
+      <tr><th>観点</th><th>Claude Pro ($20)</th><th>Google AI Pro ($19.99)</th></tr>
+      <tr><td>文章・コード</td><td class="good"><strong>強い</strong>（Opus 4.7）</td><td>並</td></tr>
+      <tr><td>画像生成</td><td class="bad">不可</td><td class="good"><strong>可（Imagen 4 / Nano Banana）</strong></td></tr>
+      <tr><td>動画生成</td><td class="bad">不可</td><td>Veo 3.1 Lite</td></tr>
+      <tr><td>マルチモーダル入力（音声/動画）</td><td>限定</td><td class="good">フル対応</td></tr>
+      <tr><td>CLI ツール</td><td class="good"><strong>Claude Code（強力）</strong></td><td>Gemini CLI</td></tr>
+      <tr><td>ストレージ</td><td>–</td><td>5TB</td></tr>
+      <tr><td>NotebookLM</td><td>–</td><td>300 sources/note</td></tr>
+    </table>
+    <div class="compare-row">
+      <div class="compare-box claude">
+        <h4>Claude = 単機能特化</h4>
+        文章 + コード、画像/動画は持たない。Claude Code / Cowork で開発者を囲い込む。
+      </div>
+      <div class="compare-box gemini">
+        <h4>Gemini = スイート型</h4>
+        生成系（画像・動画）+ ストレージ + 検索系を1サブスクに同梱。
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="badge gemini">4</span> 画像生成の詳細（Geminiの強み）</div>
+    <div class="callout">
+      Claudeには画像生成機能が <strong>存在しません</strong>（2026年5月時点）。Gemini側は Webアプリ・Whisk・Flow・APIの4ルートで画像生成可能。
+    </div>
+    <h4 style="margin: 14px 0 8px; color: var(--accent-blue);">4-1. Webアプリ経由（サブスク内）</h4>
+    <table>
+      <tr><th>プラン</th><th>Imagen 4 / Nano Banana 利用</th></tr>
+      <tr><td>AI Pro</td><td class="good">標準枠（数十〜数百枚/日級）</td></tr>
+      <tr><td>AI Ultra</td><td class="good">最高頻度枠</td></tr>
+    </table>
+    <h4 style="margin: 14px 0 8px; color: var(--accent-blue);">4-2. API経由の単価（1枚あたり）</h4>
+    <table>
+      <tr><th>モデル</th><th>用途</th><th>単価</th></tr>
+      <tr><td>Imagen 4 Fast</td><td>軽量バッチ</td><td><span class="price-tag">$0.02 / 画像</span></td></tr>
+      <tr><td>Imagen 4 Standard</td><td>標準品質</td><td><span class="price-tag">$0.04 / 画像</span></td></tr>
+      <tr><td>Imagen 4 Ultra</td><td>プロダクション</td><td><span class="price-tag high">$0.06 / 画像</span></td></tr>
+      <tr><td>Gemini 2.5 Flash Image (Nano Banana)</td><td>対話的編集</td><td><span class="price-tag">$0.039 / 画像</span></td></tr>
+    </table>
+    <div class="callout">
+      画像が必要なら <strong>Claude Code から MCP / Bash 経由で Gemini API を呼ぶ</strong> 構成が現実解。
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="badge">5</span> API利用が必要な機能と必要なプラン</div>
+    <table>
+      <tr><th>やりたいこと</th><th>Webサブスクで可能?</th><th>API契約必要?</th></tr>
+      <tr><td>Webで都度画像生成（手動）</td><td class="good">AI Pro で可</td><td>不要</td></tr>
+      <tr><td>Claude Codeから自動で画像生成</td><td>–</td><td class="bad"><strong>Gemini API必要</strong></td></tr>
+      <tr><td>バッチで100枚画像生成</td><td>現実的でない</td><td class="bad"><strong>Gemini API必要</strong></td></tr>
+      <tr><td>自社アプリにGemini組込</td><td class="bad">不可</td><td class="bad"><strong>Gemini API必要</strong></td></tr>
+      <tr><td>Veo動画をプログラム生成</td><td class="bad">不可</td><td class="bad"><strong>Vertex AI Veo API必要</strong></td></tr>
+    </table>
+  </div>
+
+  <div style="margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--border2); font-size: 11px; color: var(--text-dim); text-align: center;">
+    本記事は2026年5月時点の情報。価格・機能は予告なく変更される可能性があります。
+  </div>
+
+</div>
+</body>
+</html>
