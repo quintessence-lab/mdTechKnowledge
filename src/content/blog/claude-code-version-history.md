@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-05-02
+updatedDate: 2026-05-05
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code v2.0.59〜v2.1.126 のバージョン履歴。/model ピッカーのゲートウェイ対応・claude project purge・PowerShell 7検出・ANTHROPIC_BEDROCK_SERVICE_TIER・alwaysLoad MCP・/ultrareview 非対話型・Opus 4.7 xhigh・/usage統合・ネイティブバイナリ化など主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.128 のバージョン履歴。/color ランダムセッションカラー・/mcp ツール数表示・--plugin-dir .zip対応・--channels API key認証対応・OTEL_* 継承無効化・MCP workspace予約名・/model ピッカーゲートウェイ対応・claude project purge など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-05-02
-**現在の最新バージョン**: 2.1.126
+**最終更新**: 2026-05-05
+**現在の最新バージョン**: 2.1.128
 
 ---
 
@@ -17,6 +17,7 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.128** | `/color` 引数なしでランダムセッションカラー、`/mcp` で接続済サーバーのツール数表示・0ツールで接続したサーバーをフラグ表示、`--plugin-dir` が `.zip` プラグインアーカイブ受付、`--channels` がコンソール（API key）認証で利用可能（マネージド設定 `channelsEnabled: true` 必要）、`/model` ピッカーで Opus 4.7 重複エントリ統合（"Opus" 表示）、サブプロセス（Bash/フック/MCP/LSP）が `OTEL_*` 環境変数を継承しないよう変更、MCP `workspace` 予約サーバー名化、MCP 再接続時のツール名一覧フラッディング解消（サーバープレフィックスで要約）、SDK ホストの Bash 許可プロンプトに localSettings 永続化サジェスト、`EnterWorktree` が local HEAD からブランチ作成（origin/<default> ではなく未push commit を保持）、auto モード分類器エラー時のヒント追加（リトライ/`/compact`/`--debug`）、多数のバグ修正（フォーカスモード暗転・OSC 9通知・Remote Control・>10MB stdin・MCP 画像取りこぼし・vim NORMAL モード Space・OSC 9;4 進捗ちらつき 等）、headless `--output-format stream-json` の `init.plugin_errors` に `--plugin-dir` 失敗を含める（v2.1.127 はスキップ番号） |
 | **2.1.126** | `/model` ピッカーが `ANTHROPIC_BASE_URL` のゲートウェイ `/v1/models` エンドポイントからモデルを一覧表示、`claude project purge [path]` コマンド追加（`--dry-run`/`-y`/`-i`/`--all` 対応）、`--dangerously-skip-permissions` の対象パス拡張（`.claude/`・`.git/`・`.vscode/`・シェル設定ファイル等のバイパス）、WSL2/SSH/コンテナ環境で `claude auth login` の OAuth コードをターミナル貼付可能に、PowerShell 7（Microsoft Store/MSI/.NETグローバルツール版）プライマリシェル検出、2000px超の画像ペースト時の自動ダウンスケール修正、マネージド設定 `allowManagedDomainsOnly` / `allowManagedReadPathsOnly` が無視される問題を修正（v2.1.124・v2.1.125 はスキップ番号） |
 | **2.1.123** | `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1` 設定時の OAuth 認証 401 ループを修正 |
 | **2.1.122** | `ANTHROPIC_BEDROCK_SERVICE_TIER` 環境変数（`default` / `flex` / `priority`）、PR URL を `/resume` に貼り付けで該当セッション検索（GitHub・GitLab・Bitbucket・GitHub Enterprise 対応）、`/mcp` で同一URLのclaude.aiコネクター併記、OpenTelemetryの `api_request`/`api_error` 数値属性化、`/branch` フォーク `tool_use ids without tool_result` 修正、Vertex AI/Bedrock の `output_config` エラー修正 |
@@ -61,7 +62,45 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.126（最新）
+### 2.1.128（最新）
+- **`/color` ランダムセッションカラー** — 引数なしで `/color` を実行するとランダムにセッションカラーが選ばれる
+- **`/mcp` ツール数表示** — 接続済みサーバーごとのツール数を表示。**0 ツールで接続したサーバーをフラグ警告**
+- **`--plugin-dir` の `.zip` 対応** — ディレクトリだけでなく `.zip` プラグインアーカイブも受け付ける
+- **`--channels` がコンソール（API key）認証で利用可能** — マネージド設定で `channelsEnabled: true` を有効化する必要あり
+- **`/model` ピッカー改善** — Opus 4.7 の重複エントリを統合し、現在の Opus を「Opus 4.7」ではなく「Opus」と表示
+- **サブプロセスへの `OTEL_*` 環境変数継承を停止** — Bash / フック / MCP / LSP のサブプロセスが CLI 自身の OTLP エンドポイントを引き継がなくなる
+- **MCP `workspace` を予約サーバー名に** — 既存の同名サーバーは警告付きでスキップ
+- **MCP 再接続時のツール名フラッディング解消** — 再アナウンスはサーバープレフィックスで要約表示
+- **SDK ホストに `localSettings` 永続化サジェスト** — Bash 許可プロンプトで「Always allow」が `.claude/settings.local.json` に書き込まれる
+- **`EnterWorktree` が local HEAD ベース** — 仕様通り local HEAD から新規ブランチを作成（旧: `origin/<default>`）。**未 push commit が消える事故を解消**
+- **auto モード分類器エラーにヒント追加** — リトライ・`/compact`・`--debug` 実行を案内
+- **その他バグ修正多数**:
+  - フォーカスモードで前の応答が一瞬暗転する事象修正
+  - `/exit` 時に Kitty 等で OSC 9 を通知扱いし「4;0;」が表示される事象修正
+  - Remote Control のレート制限時の空メッセージを修正
+  - `claude -p` への 10MB 超 stdin パイプでクラッシュループ修正
+  - フルスクリーンで折り返し行のリンクが非クリッカブルになる事象修正
+  - `/plugin` Components パネルで `--plugin-dir` 経由プラグインが「Marketplace not found」表示される事象修正
+  - MCP ツール結果が structured content と content blocks 同時返却時に画像を落とす事象修正
+  - リスト内コードブロックのコピペで先頭空白が混入する事象修正
+  - `/config` のタブナビゲーションでフォーカスが消える事象修正
+  - OSC 8 非対応端末でリンクラベルが消える → `label (url)` 形式に
+  - 1Mコンテキストモデルで autocompact ウィンドウより小さい時に「Prompt is too long」誤判定修正
+  - 並列シェルツールで読み取り専用コマンド失敗時の兄弟キャンセル修正
+  - effort 非対応モデルでバナーに「with X effort」が表示される事象修正
+  - `/fast` を 3P プロバイダで実行時に無関係スキルへのファジーマッチを修正
+  - Bedrock デフォルトモデルが `global.*` に解決されてしまう事象修正
+  - vim NORMAL モードの `Space` がカーソル右移動するよう修正（標準 vi 挙動）
+  - 進捗インジケータ（OSC 9;4）がツール呼び出し間で点滅消失する事象修正
+  - resume 時の `/rename` 失敗・stale な「remote-control is active」表示・stale `installed_plugins.json` の PATH 汚染を修正
+  - MCP stdio サーバーで `CLAUDE_CODE_SHELL_PREFIX` 設定時の引数破損修正
+  - サブエージェント要約のキャッシュミス修正（`cache_creation` 約3倍削減）
+  - `/plugin update` が npm 由来プラグインの新版を検出しない事象修正
+  - サブエージェント要約の連続実行抑止（idle時のトークンコストを抑制）
+- **headless `--output-format stream-json`**: `init.plugin_errors` が `--plugin-dir` 読み込み失敗も含むように
+- ※ v2.1.127 はスキップ番号
+
+### 2.1.126
 - **`/model` ピッカーのゲートウェイ対応** — `ANTHROPIC_BASE_URL` で指定したゲートウェイの `/v1/models` エンドポイントからモデル一覧を取得して表示
 - **`claude project purge [path]` コマンド追加** — トランスクリプト・タスク・ファイル履歴・設定エントリを一括削除。`--dry-run`（実行せず確認）、`-y`（確認なし）、`-i`（対話）、`--all`（全プロジェクト）に対応
 - **`--dangerously-skip-permissions` の対象パス拡張** — `.claude/`・`.git/`・`.vscode/`・シェル設定ファイル等の保護パスへの書き込みプロンプトもバイパスされるよう拡張
