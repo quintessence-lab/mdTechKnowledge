@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-05-05
+updatedDate: 2026-05-06
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code v2.0.59〜v2.1.128 のバージョン履歴。/color ランダムセッションカラー・/mcp ツール数表示・--plugin-dir .zip対応・--channels API key認証対応・OTEL_* 継承無効化・MCP workspace予約名・/model ピッカーゲートウェイ対応・claude project purge など主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.129 のバージョン履歴。--plugin-url URL取得・CLAUDE_CODE_FORCE_SYNC_OUTPUT・パッケージマネージャ自動更新・ゲートウェイモデル探索オプトイン化・Ctrl+R 全プロジェクト検索復帰・skillOverrides 動作修正・1時間キャッシュTTL修正・OAuth refresh race修正など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-05-05
-**現在の最新バージョン**: 2.1.128
+**最終更新**: 2026-05-06
+**現在の最新バージョン**: 2.1.129
 
 ---
 
@@ -17,6 +17,7 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.129** | `--plugin-url <url>` で `.zip` プラグインを URL から取得（セッション限定）、`CLAUDE_CODE_FORCE_SYNC_OUTPUT=1` で同期出力強制有効化（Emacs `eat` 等）、`CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE` で Homebrew/WinGet インストール時にバックグラウンド自動更新＋再起動プロンプト、プラグインマニフェスト `themes`/`monitors` を `experimental` 配下に移行（旧トップレベルは警告）、ゲートウェイ `/v1/models` モデル探索を `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1` でオプトイン化（v2.1.126〜v2.1.128 は自動だった）、`Ctrl+R` 履歴ピッカーがデフォルトで全プロジェクト検索に復帰（v2.1.124 以前の挙動、`Ctrl+S` で現セッション/プロジェクト絞込）、サードパーティ展開（Bedrock/Vertex/Foundry/`ANTHROPIC_BASE_URL`）でスピナーヒントが Anthropic 一次サーフェスを指さなくなる、`skillOverrides` 設定が機能（`off`/`user-invocable-only`/`name-only`）、`claude_code.pull_request.count` OTel メトリクスが MCP ツール経由 PR/MR もカウント、ポリシー拒否エラーに API Request ID を含める、未認識 400 ステータスで生 JSON が表示される問題修正、`/clear` 後にターミナルタブタイトルがリセットされない問題修正、`/rename` セッションタイトルチップがダイアログ表示時に消える問題修正、サブエージェント実行中にエージェントパネルが隠れる問題修正（v2.1.122 リグレッション）、Ctrl+G 外部エディタで会話履歴が空白化する問題修正、`/context` のレンダ済み ASCII グリッドが会話に流出する問題修正（約 1.6k トークン節約）、`/agents` ライブラリ矢印キー操作のスクロール改善、`/branch` 成功メッセージに `/resume` 用セッション ID 追加、絵文字入り太字ヘッダーの末尾欠け修正、エンタープライズ/チームの `user:inference` スコープ欠落 OAuth クレデンシャルでサーバー管理設定ポリシーが適用されない問題修正、wake-from-sleep 後の OAuth refresh race による全セッションログアウト問題修正、1 時間プロンプトキャッシュ TTL が無音で 5 分にダウングレードされる問題修正、`/clear`/compact 後の `/effort`/`/model` 切替時のキャッシュミス警告誤表示修正、`Bash(mkdir *)` `Bash(touch *)` 等の許可ルールが in-project パスで効かない問題修正、`deniedMcpServers` の `*://` スキームワイルドカードが大文字小文字混在ホスト名にマッチしない問題修正、voice mode の `--debug` で WebSocket 警告がエラーログ化される問題修正、[VSCode] `/clear` が会話コンテキスト・表示中トランスクリプトをクリアしない問題修正 |
 | **2.1.128** | `/color` 引数なしでランダムセッションカラー、`/mcp` で接続済サーバーのツール数表示・0ツールで接続したサーバーをフラグ表示、`--plugin-dir` が `.zip` プラグインアーカイブ受付、`--channels` がコンソール（API key）認証で利用可能（マネージド設定 `channelsEnabled: true` 必要）、`/model` ピッカーで Opus 4.7 重複エントリ統合（"Opus" 表示）、サブプロセス（Bash/フック/MCP/LSP）が `OTEL_*` 環境変数を継承しないよう変更、MCP `workspace` 予約サーバー名化、MCP 再接続時のツール名一覧フラッディング解消（サーバープレフィックスで要約）、SDK ホストの Bash 許可プロンプトに localSettings 永続化サジェスト、`EnterWorktree` が local HEAD からブランチ作成（origin/<default> ではなく未push commit を保持）、auto モード分類器エラー時のヒント追加（リトライ/`/compact`/`--debug`）、多数のバグ修正（フォーカスモード暗転・OSC 9通知・Remote Control・>10MB stdin・MCP 画像取りこぼし・vim NORMAL モード Space・OSC 9;4 進捗ちらつき 等）、headless `--output-format stream-json` の `init.plugin_errors` に `--plugin-dir` 失敗を含める（v2.1.127 はスキップ番号） |
 | **2.1.126** | `/model` ピッカーが `ANTHROPIC_BASE_URL` のゲートウェイ `/v1/models` エンドポイントからモデルを一覧表示、`claude project purge [path]` コマンド追加（`--dry-run`/`-y`/`-i`/`--all` 対応）、`--dangerously-skip-permissions` の対象パス拡張（`.claude/`・`.git/`・`.vscode/`・シェル設定ファイル等のバイパス）、WSL2/SSH/コンテナ環境で `claude auth login` の OAuth コードをターミナル貼付可能に、PowerShell 7（Microsoft Store/MSI/.NETグローバルツール版）プライマリシェル検出、2000px超の画像ペースト時の自動ダウンスケール修正、マネージド設定 `allowManagedDomainsOnly` / `allowManagedReadPathsOnly` が無視される問題を修正（v2.1.124・v2.1.125 はスキップ番号） |
 | **2.1.123** | `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1` 設定時の OAuth 認証 401 ループを修正 |
@@ -62,7 +63,37 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.128（最新）
+### 2.1.129（最新）
+- **`--plugin-url <url>`** — `.zip` プラグインアーカイブを URL から取得して現在のセッションのみで使用
+- **`CLAUDE_CODE_FORCE_SYNC_OUTPUT=1`** — 同期出力の自動検出を取りこぼすターミナル（Emacs `eat` など）で強制有効化
+- **`CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE`** — Homebrew / WinGet インストール時に Claude Code がバックグラウンドで `upgrade` コマンドを実行し、再起動を促す
+- **プラグインマニフェスト整理** — `themes` と `monitors` は `"experimental": { ... }` 配下で宣言する形に。トップレベル宣言は引き続き動くが `claude plugin validate` で警告
+- **ゲートウェイモデル探索のオプトイン化** — `/model` ピッカーの `/v1/models` 探索は `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1` で明示有効化（v2.1.126〜v2.1.128 は自動だった）
+- **`Ctrl+R` 履歴ピッカーが全プロジェクト検索に復帰** — v2.1.124 以前の挙動。現プロジェクト/セッションに絞り込みたいときは `Ctrl+S`
+- **サードパーティ展開でのスピナーヒント抑制** — Bedrock / Vertex / Foundry / `ANTHROPIC_BASE_URL` ゲートウェイ利用時、Anthropic 一次サーフェスを指すヒントを表示しない
+- **`skillOverrides` 設定が動作** — `off` でモデル/`/` から非表示、`user-invocable-only` でモデルからのみ非表示、`name-only` で description を折りたたみ
+- **`claude_code.pull_request.count` OTel メトリクスの拡張** — シェルコマンド経由だけでなく MCP ツール経由 PR/MR もカウント
+- **ポリシー拒否メッセージに API Request ID** — サポートデバッグが容易に
+- **バグ修正多数**:
+  - 未認識 400 ステータスエラーで根本メッセージではなく生 JSON が表示される事象
+  - `/clear` でターミナルタブタイトルがリセットされない事象
+  - `/rename` のセッションタイトルチップが許可/その他ダイアログ表示中に消える事象
+  - サブエージェント実行中にエージェントパネルが隠れる事象（v2.1.122 リグレッション）
+  - Ctrl+G 外部エディタへのハンドオフでプロンプト上の会話履歴が空白化する事象
+  - `/context` がレンダ済み ASCII ビジュアライゼーショングリッドを会話にダンプする事象（呼び出しごとに約 1.6k トークン浪費）
+  - `/agents` ライブラリで矢印キーナビゲーション時、リストがビューポート超過時にハイライト中エージェントが見えなくなる事象
+  - `/branch` 成功メッセージに新ブランチの `/resume` 用セッション ID が含まれない事象
+  - キーキャップ/ZWJ/肌の色絵文字を含む太字ヘッダーがフルスクリーンモードで末尾文字を失う事象
+  - `user:inference` スコープを欠く OAuth クレデンシャルを保存したエンタープライズ/チームでサーバー管理設定ポリシーが適用されない事象
+  - wake-from-sleep 後の OAuth refresh race により全実行中セッションがログアウトする事象
+  - 1 時間プロンプトキャッシュ TTL が無音で 5 分にダウングレードされる事象
+  - `/clear` / compact 後に `/effort` / `/model` を変更するとキャッシュミス警告が誤表示される事象
+  - `Bash(mkdir *)` / `Bash(touch *)` 等の許可ルールが in-project パスで尊重されない事象
+  - `deniedMcpServers` の `*://` スキームワイルドカードが大文字小文字混在ホスト名にマッチしない事象
+  - voice mode の `--debug` 中に無害な WebSocket 警告がエラーログとして記録される事象
+  - [VSCode] `/clear` が会話コンテキストと表示中トランスクリプトをクリアしない事象
+
+### 2.1.128
 - **`/color` ランダムセッションカラー** — 引数なしで `/color` を実行するとランダムにセッションカラーが選ばれる
 - **`/mcp` ツール数表示** — 接続済みサーバーごとのツール数を表示。**0 ツールで接続したサーバーをフラグ警告**
 - **`--plugin-dir` の `.zip` 対応** — ディレクトリだけでなく `.zip` プラグインアーカイブも受け付ける
