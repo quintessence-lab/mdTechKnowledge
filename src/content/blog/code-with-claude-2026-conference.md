@@ -1,7 +1,6 @@
 ---
 title: "Code with Claude 2026 開発者カンファレンス まとめ — Remote Agents・Code Review・Routines・Dreaming"
 date: 2026-05-09
-updatedDate: 2026-05-09
 category: "Claude技術解説"
 tags: ["Claude Code", "Code with Claude", "Anthropic", "Remote Agents", "Code Review", "Multi-agent orchestration", "Dreaming", "Routines", "カンファレンス"]
 excerpt: "2026年5月6日（PT、JST 5/7）にサンフランシスコで開催された Anthropic 公式開発者カンファレンス Code with Claude 2026 のまとめ。Remote Agents・Code Review・Routines・Dreaming・Multi-agent orchestration・Outcomes など主要発表と Shopify／Mercado Libre の事例、レート制限倍増、SpaceX Colossus 1 連携を整理。London 5/19・Tokyo 6/10 ツアー予定。"
