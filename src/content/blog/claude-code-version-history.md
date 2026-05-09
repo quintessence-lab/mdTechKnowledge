@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-05-06
+updatedDate: 2026-05-09
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code v2.0.59〜v2.1.129 のバージョン履歴。--plugin-url URL取得・CLAUDE_CODE_FORCE_SYNC_OUTPUT・パッケージマネージャ自動更新・ゲートウェイモデル探索オプトイン化・Ctrl+R 全プロジェクト検索復帰・skillOverrides 動作修正・1時間キャッシュTTL修正・OAuth refresh race修正など主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.137 のバージョン履歴。worktree.baseRef設定・Mantle認証修正・CLAUDE_CODE_SESSION_ID 環境変数・代替スクリーン無効化・hard_deny auto mode・MCP OAuth 同時 refresh 修正・1時間キャッシュTTL修正など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-05-06
-**現在の最新バージョン**: 2.1.129
+**最終更新**: 2026-05-09
+**現在の最新バージョン**: 2.1.137
 
 ---
 
@@ -17,6 +17,11 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.137** | [VSCode] Windows で extension がアクティベーション失敗する問題修正（v2.1.131 と同種の追加修正） |
+| **2.1.136** | `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL` で OTel 経由で品質サーベイ回答を集めるエンタープライズ向けセッション品質サーベイ再有効化、`settings.autoMode.hard_deny` で auto モード分類器の無条件ブロックルール（ユーザー意図や allow 例外に関わらず拒否）、`.mcp.json`/プラグイン/claude.ai コネクター由来の MCP サーバーが VS Code/JetBrains/Agent SDK の `/clear` 後に静かに消える問題修正、並行 credential 書き込みで rotate 直後の OAuth トークンが上書きされ再ログイン強制される稀な login loop 修正、複数 MCP サーバー同時 refresh で OAuth refresh トークンが失われ毎日再認証が必要だった問題修正、ツール呼び出し後の redacted thinking ブロックで extended thinking が API 400 を出す問題修正、プロジェクトパスにアンダースコアを含む `--resume`/`--continue` がセッションを見つけられない問題修正、`Edit(...)` 許可ルールがあっても plan モードがファイル書き込みをブロックしない問題修正、WSL2 で xclip/wl-paste が画像読めない場合に PowerShell フォールバックで Windows クリップボードからの画像ペーストが動作、キャッシュクリーンアップが実行中セッションで使用中のバージョンを削除する問題修正、スラッシュコマンドダイアログのフッターヒント・スペーシング・矢印キースタイル統一、bash 出力と markdown コードブロックでの色位置ずれ修正、`@` ファイルピッカーがセッション中に作成したファイル/100エントリ超ディレクトリで見つからない問題修正、`/usage` 週次リセットが時刻を表示していたのを暦日付表示に修正、CJK 端末でのウェルカムバナー overflow 修正、`/insights` クラッシュ修正、`AskUserQuestion` の multi-select 配列回答が破棄される問題修正、その他 30件超のバグ修正・UI 改善（v2.1.134・v2.1.135 はスキップ番号） |
+| **2.1.133** | **`worktree.baseRef` 設定（`fresh` \| `head`）** で `--worktree`/`EnterWorktree`/agent-isolation worktree のベース branch を制御。**注: デフォルトは `fresh` に戻り、`EnterWorktree` のベースは `origin/<default>` に再変更**（v2.1.128 以降は local HEAD だった）。未 push commit を保持したい場合は `worktree.baseRef: "head"` を設定。`sandbox.bwrapPath`/`sandbox.socatPath` マネージド設定（Linux/WSL の bubblewrap/socat バイナリパス指定）、`parentSettingsBehavior` 管理者キー（`'first-wins'`/`'merge'`、SDK `managedSettings` をポリシーマージに参加させる）、フックが effort.level JSON フィールドと `$CLAUDE_EFFORT` 環境変数を受け取れるように・Bash ツールでも参照可、focus モード挙動改善、メモリ圧迫時の warm-spare バックグラウンドワーカー解放によるメモリ使用量改善、refresh トークンレースでの並列セッション全 401 dead-end 修正、`Edit`/`Write` のドライブルート（`C:\`）/POSIX `/` 許可ルールが不正にマッチして毎回プロンプトする問題修正、history/session-log ファイルロック compromise 時の未ハンドル `ECOMPROMISED` rejection 修正、conversation compaction 中の Esc 押下でスプリアス "Error compacting conversation" 通知が出る問題修正、MCP OAuth フロー全体（discovery/dynamic client registration/token exchange/refresh）が `HTTP(S)_PROXY`/`NO_PROXY`/mTLS を尊重するよう修正、`--add-dir`/SDK `additionalDirectories` で渡したマップトネットワークドライブで Read/Write/Edit が拒否される問題修正、claude.ai からの Remote Control stop/interrupt がローカル Esc と同等にキャンセルしない問題修正、`/effort` が他の同時セッションの effort を意図せず変更する問題修正、サブエージェントが project/user/plugin スキルを Skill ツール経由で発見できない問題修正、`claude --help` に `--remote-control` フラグを表示、[VSCode] `claudeCode.claudeProcessWrapper` の "Unsupported platform" 修正 |
+| **2.1.132** | `CLAUDE_CODE_SESSION_ID` 環境変数を Bash ツールサブプロセスに追加（hooks の `session_id` と一致）、`CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1` でフルスクリーン代替スクリーンレンダラを無効化（端末ネイティブのスクロールバックに会話を残す）、Ctrl+V 画像ペースト中の "Pasting…" フッターヒント、外部 SIGINT（IDE stop ボタン/`kill -INT`）でグレースフルシャットダウン実行（端末モード復元と `--resume` ヒント表示）、ネイティブビルドでの terminal close/SSH disconnect 中の uncaught exception 修正、tool error truncation で絵文字が壊れた `--resume` の `no low surrogate in string` 失敗修正・既破損セッションは load 時にサニタイズ、plan-mode セッション再開時の `--permission-mode` 無視と `ExitPlanMode` 後の plan-mode 再適用失敗修正、laptop sleep/wake/Ctrl+Z/`fg` 後のフルスクリーン空白画面修正、Indic conjunct/ZWJ 絵文字が行ラップしたときのカーソル mid-grapheme 着地修正、vim オペレータが NFD 分解アクセント文字を破損する問題修正、`/` で始まるテキストペーストが silently swallow される問題修正、bracketed paste と focus event/mouse-tracking が干渉してエスケープシーケンスがプロンプトに混入する問題修正、Cursor/VS Code 1.92-1.104 の上流 xterm.js bug によるマウスホイール過速修正、JetBrains 2025.2 端末のスクロールホイールハンドリング修正、`/usage` Ctrl+S が Linux/X11 でクリップボードコピー時にハングする問題修正、`/terminal-setup` の Windows Terminal 矛盾エラー修正、`/effort` ピッカーが `CLAUDE_CODE_EFFORT_LEVEL` を反映しない問題修正、`/status` のデフォルトモデル誤表示修正、スラッシュコマンド autocomplete が ~3-5 件で頭打ちだったのを端末高に応じてスケール、statusline `context_window` トークン数が累積セッション合計を表示していたのを現在のコンテキスト使用量に修正、Alt+T (思考トグル) が iTerm2/Terminal.app デフォルトで効かない問題修正、`claude agents` 経由でバックグラウンドセッションを再開した後の Windows でのキーボード入力 dead 修正、stdio MCP サーバーが非プロトコルデータを stdout に書くと 10GB+ RSS の無限メモリリーク修正、`tools/list` 失敗の MCP サーバーが silently 0 ツールになる問題を 1 回リトライ＋"connected · tools fetch failed" 表示に変更、Bedrock/Vertex で `ENABLE_PROMPT_CACHING_1H` 設定時の 400 エラー修正 |
+| **2.1.131** | VS Code extension が Windows でアクティベーション失敗する問題修正（バンドル SDK のハードコードビルドパス、`createRequire` polyfill bug）、Mantle エンドポイント認証が `x-api-key` ヘッダー欠落で失敗する問題修正 |
 | **2.1.129** | `--plugin-url <url>` で `.zip` プラグインを URL から取得（セッション限定）、`CLAUDE_CODE_FORCE_SYNC_OUTPUT=1` で同期出力強制有効化（Emacs `eat` 等）、`CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE` で Homebrew/WinGet インストール時にバックグラウンド自動更新＋再起動プロンプト、プラグインマニフェスト `themes`/`monitors` を `experimental` 配下に移行（旧トップレベルは警告）、ゲートウェイ `/v1/models` モデル探索を `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1` でオプトイン化（v2.1.126〜v2.1.128 は自動だった）、`Ctrl+R` 履歴ピッカーがデフォルトで全プロジェクト検索に復帰（v2.1.124 以前の挙動、`Ctrl+S` で現セッション/プロジェクト絞込）、サードパーティ展開（Bedrock/Vertex/Foundry/`ANTHROPIC_BASE_URL`）でスピナーヒントが Anthropic 一次サーフェスを指さなくなる、`skillOverrides` 設定が機能（`off`/`user-invocable-only`/`name-only`）、`claude_code.pull_request.count` OTel メトリクスが MCP ツール経由 PR/MR もカウント、ポリシー拒否エラーに API Request ID を含める、未認識 400 ステータスで生 JSON が表示される問題修正、`/clear` 後にターミナルタブタイトルがリセットされない問題修正、`/rename` セッションタイトルチップがダイアログ表示時に消える問題修正、サブエージェント実行中にエージェントパネルが隠れる問題修正（v2.1.122 リグレッション）、Ctrl+G 外部エディタで会話履歴が空白化する問題修正、`/context` のレンダ済み ASCII グリッドが会話に流出する問題修正（約 1.6k トークン節約）、`/agents` ライブラリ矢印キー操作のスクロール改善、`/branch` 成功メッセージに `/resume` 用セッション ID 追加、絵文字入り太字ヘッダーの末尾欠け修正、エンタープライズ/チームの `user:inference` スコープ欠落 OAuth クレデンシャルでサーバー管理設定ポリシーが適用されない問題修正、wake-from-sleep 後の OAuth refresh race による全セッションログアウト問題修正、1 時間プロンプトキャッシュ TTL が無音で 5 分にダウングレードされる問題修正、`/clear`/compact 後の `/effort`/`/model` 切替時のキャッシュミス警告誤表示修正、`Bash(mkdir *)` `Bash(touch *)` 等の許可ルールが in-project パスで効かない問題修正、`deniedMcpServers` の `*://` スキームワイルドカードが大文字小文字混在ホスト名にマッチしない問題修正、voice mode の `--debug` で WebSocket 警告がエラーログ化される問題修正、[VSCode] `/clear` が会話コンテキスト・表示中トランスクリプトをクリアしない問題修正 |
 | **2.1.128** | `/color` 引数なしでランダムセッションカラー、`/mcp` で接続済サーバーのツール数表示・0ツールで接続したサーバーをフラグ表示、`--plugin-dir` が `.zip` プラグインアーカイブ受付、`--channels` がコンソール（API key）認証で利用可能（マネージド設定 `channelsEnabled: true` 必要）、`/model` ピッカーで Opus 4.7 重複エントリ統合（"Opus" 表示）、サブプロセス（Bash/フック/MCP/LSP）が `OTEL_*` 環境変数を継承しないよう変更、MCP `workspace` 予約サーバー名化、MCP 再接続時のツール名一覧フラッディング解消（サーバープレフィックスで要約）、SDK ホストの Bash 許可プロンプトに localSettings 永続化サジェスト、`EnterWorktree` が local HEAD からブランチ作成（origin/<default> ではなく未push commit を保持）、auto モード分類器エラー時のヒント追加（リトライ/`/compact`/`--debug`）、多数のバグ修正（フォーカスモード暗転・OSC 9通知・Remote Control・>10MB stdin・MCP 画像取りこぼし・vim NORMAL モード Space・OSC 9;4 進捗ちらつき 等）、headless `--output-format stream-json` の `init.plugin_errors` に `--plugin-dir` 失敗を含める（v2.1.127 はスキップ番号） |
 | **2.1.126** | `/model` ピッカーが `ANTHROPIC_BASE_URL` のゲートウェイ `/v1/models` エンドポイントからモデルを一覧表示、`claude project purge [path]` コマンド追加（`--dry-run`/`-y`/`-i`/`--all` 対応）、`--dangerously-skip-permissions` の対象パス拡張（`.claude/`・`.git/`・`.vscode/`・シェル設定ファイル等のバイパス）、WSL2/SSH/コンテナ環境で `claude auth login` の OAuth コードをターミナル貼付可能に、PowerShell 7（Microsoft Store/MSI/.NETグローバルツール版）プライマリシェル検出、2000px超の画像ペースト時の自動ダウンスケール修正、マネージド設定 `allowManagedDomainsOnly` / `allowManagedReadPathsOnly` が無視される問題を修正（v2.1.124・v2.1.125 はスキップ番号） |
@@ -63,7 +68,98 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.129（最新）
+### 2.1.137（最新）
+- **VS Code extension の Windows アクティベーション失敗を修正** — v2.1.131 と同種の追加修正
+
+### 2.1.136
+- **`CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL`** — OpenTelemetry 経由で品質サーベイ回答を収集するエンタープライズ向けに、セッション品質サーベイを再有効化
+- **`settings.autoMode.hard_deny`** — auto モード分類器のうち、ユーザー意図や allow 例外に関わらず無条件にブロックするルール
+- **`/clear` 後の MCP サーバー喪失修正** — `.mcp.json` / プラグイン / claude.ai コネクター由来の MCP サーバーが、VS Code extension・JetBrains plugin・Agent SDK の `/clear` で静かに消える問題
+- **OAuth login loop 修正** — 並行 credential 書き込みで rotate 直後の OAuth トークンが上書きされ、再ログイン強制される稀な問題
+- **MCP OAuth refresh トークン喪失修正** — 複数 MCP サーバー同時 refresh で refresh トークンが失われ、毎日再認証が必要だった問題
+- **extended thinking の API 400 修正** — ツール呼び出し後の redacted thinking ブロック発行で 400 を返す問題
+- **`--resume` / `--continue` のアンダースコアパス問題修正** — プロジェクトパスにアンダースコアを含むセッションが見つからない問題
+- **plan モードの Edit 許可ルール尊重修正** — `Edit(...)` の allow ルールがあっても plan モードがファイル書き込みをブロックしない問題
+- **WSL2 画像ペースト** — xclip/wl-paste で画像読めないとき PowerShell フォールバックで Windows クリップボードから読み込み
+- **キャッシュクリーンアップ競合修正** — 実行中セッションで使用中のバージョンを削除する問題
+- **スラッシュコマンドダイアログ UI 統一** — フッターヒント・スペーシング・矢印キースタイル統一、ローディング中のダイアログフレーム即時表示
+- **bash / markdown コードブロックの色位置ずれ修正**
+- **ReasonML diff の "undefined" アーティファクト修正**
+- **worktree 削除後の終了ダイアログ修正** — 誤ったディレクトリで未コミット警告を出す問題
+- **`@` ファイルピッカー改善** — セッション中に作成したファイル / 100 エントリ超ディレクトリ / git 管理外ディレクトリでのマッチ
+- **fullscreen のツール失敗 click-to-expand 修正** — 出力が truncate されたときのクリック展開
+- **Backspace / Ctrl+Backspace 入れ替わり修正** — Ctrl+G で外部エディタを開いた後、persistent extended-key モードの端末で
+- **`/usage` 週次リセット表示修正** — 時刻ではなく暦日付表示に
+- **CJK 端末ウェルカムバナー overflow 修正**
+- **`/insights` クラッシュ修正** — tool calls の input フィールド malformed 時
+- **レンダラクラッシュ修正** — ツールの折りたたみ可否がセッション中に変化したとき
+- **`plugin.json` の `skills` エントリ修正** — デフォルト `skills/` ディレクトリを隠す問題、ファイルパス指定でエラー表示
+- **IDE shell-integration ロックファイル** — `CLAUDE_CONFIG_DIR` を尊重するよう修正
+- **コピー時の trailing whitespace 削除**
+- **プラグインの uninstall/enable/disable** — slug を case-insensitive にマッチ
+- **tool error truncation のサロゲートペア負カウント修正**
+- **`CLAUDE_ENV_FILE` SessionStart hooks の env 変数** — `/resume`/`/clear` 後の stale 化修正
+- **`/branch` のマルチライン session title** — ペーストされた複数行名のサニタイズ
+- **`AskUserQuestion`** — multi-select 配列回答が破棄される問題
+- **`/clear <name>` のセッションラベル付与修正**
+- **`CronList` 表示** — qualifiers と scheduled prompt の欠落修正
+- **マーケットプレイス削除キー** — `r`（retry と衝突）から `d` に変更
+- ※ v2.1.134・v2.1.135 はスキップ番号
+
+### 2.1.133
+- **`worktree.baseRef` 設定（`fresh` | `head`）** — `--worktree`、`EnterWorktree`、agent-isolation worktree の **ベース branch を制御**。**注: デフォルトは `fresh`（origin/<default> ベース）に戻り、v2.1.128 以降の `EnterWorktree` 仕様（local HEAD ベース）から再変更**。未 push commit を保持したい場合は `worktree.baseRef: "head"` を明示
+- **`sandbox.bwrapPath` / `sandbox.socatPath`** — Linux/WSL のマネージド設定で bubblewrap / socat バイナリパスを指定可能
+- **`parentSettingsBehavior`** — 管理者 tier の admin キー（`'first-wins'` / `'merge'`）。SDK `managedSettings` をポリシーマージに opt-in
+- **フックが effort レベルを取得可能** — `effort.level` JSON フィールド + `$CLAUDE_EFFORT` 環境変数。Bash ツールコマンド内でも `$CLAUDE_EFFORT` を読める
+- **focus モード挙動改善**
+- **メモリ使用量改善** — メモリ圧迫時に warm-spare バックグラウンドワーカーを解放
+- **並列セッション 401 dead-end 修正** — refresh トークンレースで shared credentials が wipe される問題
+- **`Edit` / `Write` ドライブルート許可ルール修正** — `C:\` / POSIX `/` がスコープのルールが不正にマッチして毎回プロンプトを出す問題
+- **`ECOMPROMISED` unhandled rejection 修正** — history / session-log ファイルロックが clock skew や slow disk で compromise されたとき
+- **conversation compaction 中の Esc 押下** — スプリアス "Error compacting conversation" 通知修正
+- **MCP OAuth フロー全体のプロキシ尊重** — discovery / dynamic client registration / token exchange / token refresh のすべてで `HTTP(S)_PROXY` / `NO_PROXY` / mTLS が機能
+- **マップトネットワークドライブ修正** — `--add-dir` / SDK `additionalDirectories` 渡しで Read/Write/Edit が拒否される問題
+- **claude.ai からの Remote Control stop/interrupt 修正** — ローカル Esc と同等にキャンセルしない問題（stuck tool/prompt 中断後にキューメッセージが進まない）
+- **`/effort` の sessions 跨ぎ波及修正** — 1 セッションでの変更が他の同時セッションの effort を変える問題
+- **サブエージェントのスキル発見修正** — project / user / plugin スキルを Skill ツール経由で発見できない問題
+- **`claude --help`** — `--remote-control` を `--remote-control-session-name-prefix` と並列に表示
+- **[VSCode]** `claudeCode.claudeProcessWrapper` の "Unsupported platform" 修正（Claude バイナリ非同梱ビルド時）
+
+### 2.1.132
+- **`CLAUDE_CODE_SESSION_ID` 環境変数** — Bash ツールサブプロセスに追加（hooks の `session_id` と一致）
+- **`CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1`** — フルスクリーン代替スクリーンレンダラを無効化し、端末ネイティブのスクロールバックに会話を残す
+- **`Ctrl+V` 画像ペースト中の "Pasting…" フッターヒント**
+- **外部 SIGINT のグレースフルシャットダウン** — IDE stop ボタン / `kill -INT` で端末モード復元と `--resume` ヒント表示
+- **ネイティブビルドの terminal close / SSH disconnect 修正** — uncaught exception
+- **`--resume` の絵文字 `no low surrogate in string` 修正** — tool error truncation 起因。既破損セッションは load 時にサニタイズ
+- **plan-mode セッション再開修正** — `-p --continue`/`--resume` 時の `--permission-mode` 無視と、`ExitPlanMode` 後の plan-mode 再適用失敗
+- **laptop sleep/wake / Ctrl+Z / `fg` 後のフルスクリーン空白画面修正**
+- **Indic conjunct / ZWJ 絵文字のカーソル修正** — 行ラップ時の Ctrl+E/A/K/U/矢印キーで mid-grapheme 着地
+- **vim オペレータの NFD 文字破損修正** — 分解アクセント文字
+- **`/` 始まりテキストペースト修正** — silently swallow / unknown-command reply
+- **bracketed paste 修正** — focus event / mouse-tracking との干渉でエスケープシーケンスがプロンプトに混入
+- **マウスホイール過速修正** — Cursor / VS Code 1.92-1.104 の上流 xterm.js bug
+- **JetBrains IDE 2025.2 端末のスクロールホイール修正** — spurious arrow keys / wrong-direction / runaway acceleration
+- **`/usage` Ctrl+S** — Linux/X11 でのクリップボードコピーハング修正
+- **`/terminal-setup`** — Windows Terminal で Shift+Enter ネイティブ対応の矛盾エラー修正
+- **`/effort` ピッカー** — `CLAUDE_CODE_EFFORT_LEVEL` 環境変数オーバーライドを反映
+- **`/status`** — デフォルトモデル誤表示修正
+- **スラッシュコマンド autocomplete** — ~3-5 件頭打ちを端末高に応じてスケール
+- **statusline `context_window`** — 累積セッション合計から現在のコンテキスト使用量に修正
+- **Alt+T 思考トグル修正** — iTerm2 / Terminal.app デフォルト（Option as Meta 無効）でも動作
+- **Windows のキーボード入力 dead 修正** — `claude agents` 経由でバックグラウンドセッション再開後
+- **stdio MCP サーバー不正出力での無限メモリリーク修正** — 非プロトコルデータを stdout に書くと 10GB+ RSS
+- **MCP `tools/list` 失敗時** — silently 0 ツールから 1 回リトライ + "connected · tools fetch failed" 表示
+- **claude.ai MCP コネクター表示修正** — 未認可サーバーが "failed" ではなく "needs auth" 表示。headless `-p` モードの非 transient 4xx リトライ抑止
+- **スラッシュコマンドダイアログ・`/login`/`/upgrade`/`/extra-usage` のスペーシング統一**
+- **`/tui fullscreen` 起動バナー** — メモリ使用量低減・マウスサポート・auto-copy on select の説明追加
+- **Bedrock / Vertex 400 エラー修正** — `ENABLE_PROMPT_CACHING_1H` 設定時
+
+### 2.1.131
+- **VS Code extension の Windows アクティベーション失敗修正** — バンドル SDK のハードコードビルドパス（`createRequire` polyfill bug）
+- **Mantle エンドポイント認証修正** — `x-api-key` ヘッダー欠落
+
+### 2.1.129（旧最新）
 - **`--plugin-url <url>`** — `.zip` プラグインアーカイブを URL から取得して現在のセッションのみで使用
 - **`CLAUDE_CODE_FORCE_SYNC_OUTPUT=1`** — 同期出力の自動検出を取りこぼすターミナル（Emacs `eat` など）で強制有効化
 - **`CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE`** — Homebrew / WinGet インストール時に Claude Code がバックグラウンドで `upgrade` コマンドを実行し、再起動を促す
