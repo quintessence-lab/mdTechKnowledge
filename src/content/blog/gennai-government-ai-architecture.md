@@ -1,7 +1,6 @@
 ---
 title: "源内アーキテクチャ詳解 — 源内Web × 源内AIアプリの2層構成"
 date: 2026-05-09
-updatedDate: 2026-05-09
 category: "その他技術"
 tags: ["源内", "ガバメントAI", "デジタル庁", "OSS", "アーキテクチャ", "AWS CDK", "ExApp", "SAML", "マルチクラウド"]
 excerpt: "源内（GenAI）の2リポジトリ構成（源内Web × 源内AIアプリ）を技術視点で詳解。AWS CDK で展開する TypeScript/React のインターフェース層と、AWS/Azure/Google Cloud に対応した Python ベースのマイクロサービス層、両者をつなぐ ExApp プロトコル、SAML/Cognito 認証、データフロー、GenU からの主要変更点をシリーズ第2回として整理。"

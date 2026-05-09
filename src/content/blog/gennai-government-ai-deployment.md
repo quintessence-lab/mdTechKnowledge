@@ -1,7 +1,6 @@
 ---
 title: "源内をデプロイする — AWS CDK でのセットアップから運用まで"
 date: 2026-05-09
-updatedDate: 2026-05-09
 category: "その他技術"
 tags: ["源内", "ガバメントAI", "デジタル庁", "OSS", "AWS CDK", "デプロイ", "SAML", "CICD", "運用"]
 excerpt: "源内（GenAI）を自組織で立ち上げる手順をシリーズ第3回として解説。事前準備（Node.js/AWS CLI/CDK/jq）、パラメータファイル作成、`cdk deploy` 実行、SAML 認証連携、カスタムドメイン、CI/CD（GitHub Actions）、ログ・モニタリング、システム管理者・チーム登録、AIアプリ追加（ExApp）、想定構築工数とランニングコスト、既知の制限事項までを網羅。"

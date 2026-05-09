@@ -1,7 +1,6 @@
 ---
 title: "源内ユースケース集 — どの業務に向くか／公開済みAIアプリ事例"
 date: 2026-05-09
-updatedDate: 2026-05-09
 category: "その他技術"
 tags: ["源内", "ガバメントAI", "デジタル庁", "OSS", "ユースケース", "RAG", "Bedrock", "Vertex AI", "vLLM", "自治体"]
 excerpt: "源内（GenAI）が向く業務／向かない業務を整理し、公開済み3つの行政実務用 AIアプリ（AWS Query Expansion RAG、Azure vLLM/PLaMo、Google Cloud 法制度RAG lawsy-custom-bq）を技術スタック付きで解説。議事録要約・文書校正・法令検索など行政業務マッピング、自治体の規模別導入難易度、民間内製AI基盤としての参考価値、競合プロダクト（GenU/Copilot Studio/Dify）との比較をシリーズ最終回として整理。"
