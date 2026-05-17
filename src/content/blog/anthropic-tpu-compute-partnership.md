@@ -1,7 +1,7 @@
 ---
 title: "Anthropic コンピュートインフラ & TPUパートナーシップ — Google・BroadcomとのマルチギガワットTPU契約（2027年稼働）"
 date: 2026-04-29
-updatedDate: 2026-05-08
+updatedDate: 2026-05-17
 category: "一般リサーチ"
 tags: ["Anthropic", "Google", "Broadcom", "TPU", "AIインフラ", "コンピュート", "パートナーシップ", "SpaceX", "xAI", "Colossus", "GPU", "Akamai"]
 excerpt: "2026年4月6日発表のGoogle・BroadcomとのマルチギガワットTPU契約（2027年稼働）に加え、2026年5月のSpaceX xAI Colossus 1データセンター全容量契約（300MW超・GPU22万台超）、Akamai Technologies $1.8B・7年間クラウドコンピュート契約を収録。Anthropicのマルチクラウド・マルチベンダーインフラ戦略を整理。"
@@ -243,6 +243,63 @@ SpaceX Colossus 1が「特定データセンターのGPUへの即時アクセス
 ### Akamai 株価への影響
 
 契約発表後、Akamai株価は**+27%**の急騰を記録した。同社はクラウドビジネスの成長加速が課題とされており、Anthropicという大口顧客の獲得は株式市場に強いシグナルを与えた。
+
+---
+
+## 第9章補遺: Google Cloud $200B（約30兆円）コンピュート契約（2026-05-06 PT 報道）
+
+### 契約の概要
+
+2026年5月6日（PT）、The Information が Anthropic と Google Cloud との間で **5年・$200B（2,000億ドル、約30兆円）**規模のコンピュート契約が成立したと報じた。第2章で扱った2026年4月6日の Google・Broadcom 3.5GW TPU 契約をさらに上回る規模で、TPU を中心とした **5GW 級のキャパシティ**を 2027 年から消費する内容。
+
+| 項目 | 内容 |
+|---|---|
+| 報道日 | 2026年5月6日（PT）／5月7日（JST） |
+| 一次報道 | The Information（Sri Muppidi / Erin Woo / Amir Efrati） |
+| 契約期間 | 5年 |
+| 契約規模 | **$200B（約30兆円）** |
+| 容量 | **TPU 5GW 級**（Google 製カスタムシリコン中心） |
+| 稼働開始 | **2027年** |
+| 比較対象 | Anthropic の年間収益ランレート（当時 $30B）の **6.7倍**規模 |
+
+### 4月6日 3.5GW契約・4月24日 $40B投資との関係
+
+| 発表日 | 内容 | 性質 |
+|---|---|---|
+| 2026年4月6日 | Google・Broadcom 3.5GW TPU 契約 | コンピュート供給合意 |
+| 2026年4月24日 | Google 最大 $40B 投資（5GW TPU 含む） | 資本＋コンピュート |
+| **2026年5月6日（報道）** | **Google Cloud $200B コンピュート契約** | **長期消費コミット（最大級）** |
+
+4月の 3.5GW 容量契約と $40B 投資ラウンドを統合・拡張する形で、**「5年・$200B・TPU 5GW」**という長期消費コミットがまとめられたと解釈できる。$200B という金額は Amazon との10年・$100B超 AWS 支出コミット（第5章）を**金額面で逆転**するもので、Anthropic にとって過去最大級のコンピュートコミットメントとなる。
+
+### 収益規模との比較
+
+報道時点での Anthropic の年間収益ランレートは約 **$30B**（同社公表）。**$200B/5年 = 年 $40B**の支出計画は、現在の年間収益を上回るペースとなる。これは Anthropic が「収益成長」と「コンピュートコスト」のどちらが先行するかを賭ける構造になっており、Fortune が同時期に報じた「単一四半期で 80 倍成長」の見通しが、本契約を経済的に支える前提となる。
+
+### マルチクラウド5軸構造の更新
+
+第5章の5軸構造に本契約を反映した最新像は次の通り:
+
+```
+┌─────────────────────────────────────────────────────┐
+│  Anthropic Claude スケーリング基盤（2026〜2031）      │
+├─────────────────────────────────────────────────────┤
+│  ① AWS          : Trainium 5GW（10年・$100B+）       │
+│  ② GCP          : TPU 5GW                            │
+│                   ├ 4月6日 3.5GW 契約                │
+│                   └ 5月6日 $200B / 5年 長期コミット │
+│  ③ NVIDIA       : GPU（CoreWeave等経由）             │
+│  ④ SpaceX/xAI   : Colossus 1 300MW・22万GPU         │
+│  ⑤ Akamai       : クラウドコンピュート $1.8B・7年   │
+└─────────────────────────────────────────────────────┘
+```
+
+AWS（$100B超 / 10年）と GCP（$200B / 5年）の **年率支出ベースで GCP が AWS を上回る**形となり、コンピュート供給の「主たる軸」が TPU 側に傾いた可能性を示唆する。一方で AWS Trainium は引き続き戦略的に維持されるため、二大ハイパースケーラーの**両建てを最大規模で並走**させる路線が確定した。
+
+### 参考
+
+- [The Information: Anthropic commits to spending $200 billion on Google's cloud and chips（2026/5/6）](https://www.theinformation.com/articles/anthropic-commits-spending-200-billion-googles-cloud-chips)
+- [CNBC video: Anthropic commits to spending $200 billion on Google's cloud and chips, according to The Information（2026/5/5）](https://www.cnbc.com/video/2026/05/05/anthropic-commits-to-spending-200-billion-on-googles-cloud-and-chips-according-to-the-information.html)
 
 ---
 
