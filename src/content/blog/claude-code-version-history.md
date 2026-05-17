@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-05-09
+updatedDate: 2026-05-17
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code v2.0.59〜v2.1.137 のバージョン履歴。worktree.baseRef設定・Mantle認証修正・CLAUDE_CODE_SESSION_ID 環境変数・代替スクリーン無効化・hard_deny auto mode・MCP OAuth 同時 refresh 修正・1時間キャッシュTTL修正など主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.140 系のバージョン履歴。Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-05-09
-**現在の最新バージョン**: 2.1.137
+**最終更新**: 2026-05-17
+**現在の最新バージョン**: 2.1.140 系
 
 ---
 
@@ -17,6 +17,9 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.140 系** | **Plugin Marketplace 関連変更**（マーケットプレース連携・配布フローの整備）、**`/plugin` コマンド整備**（インストール／削除／一覧／詳細表示）、**`/skills` リアルタイムフィルタ**（タイプしながら絞り込み）、その他 CLI 全般で 13 件の変更 |
+| **2.1.139** | **Agent View (Research Preview)** — `claude agents` コマンドまたはセッション内左矢印キー（←）で起動。実行中／入力待ち／完了セッションを一覧表示し、複数バックグラウンドエージェントを横断管理可能（Pro/Max/Team/Enterprise/API 全プラン対応、標準レート制限適用）。**`/goal` コマンド** — 完了条件（goal）を設定すると Claude が自動的にタスクを継続実行 |
+| **2.1.138** | `ANTHROPIC_BEDROCK_SERVICE_TIER` 環境変数追加（`default` / `flex` / `priority`）、`/resume` に **PR URL を貼り付けて該当セッションを検索**（GitHub・GitHub Enterprise・GitLab・Bitbucket 対応）、**Remote Control 有効時の「Push when Claude decides」プッシュ通知オプション**（Claude が判断したタイミングで通知）、**`/tui` コマンド追加**（ちらつきなしのフルスクリーン描画）、Bedrock / Vertex / Foundry での 429 エラー修正、MCP **重複コネクタヒント**（同一 URL の claude.ai コネクタ／ローカル定義の重複検知） |
 | **2.1.137** | [VSCode] Windows で extension がアクティベーション失敗する問題修正（v2.1.131 と同種の追加修正） |
 | **2.1.136** | `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL` で OTel 経由で品質サーベイ回答を集めるエンタープライズ向けセッション品質サーベイ再有効化、`settings.autoMode.hard_deny` で auto モード分類器の無条件ブロックルール（ユーザー意図や allow 例外に関わらず拒否）、`.mcp.json`/プラグイン/claude.ai コネクター由来の MCP サーバーが VS Code/JetBrains/Agent SDK の `/clear` 後に静かに消える問題修正、並行 credential 書き込みで rotate 直後の OAuth トークンが上書きされ再ログイン強制される稀な login loop 修正、複数 MCP サーバー同時 refresh で OAuth refresh トークンが失われ毎日再認証が必要だった問題修正、ツール呼び出し後の redacted thinking ブロックで extended thinking が API 400 を出す問題修正、プロジェクトパスにアンダースコアを含む `--resume`/`--continue` がセッションを見つけられない問題修正、`Edit(...)` 許可ルールがあっても plan モードがファイル書き込みをブロックしない問題修正、WSL2 で xclip/wl-paste が画像読めない場合に PowerShell フォールバックで Windows クリップボードからの画像ペーストが動作、キャッシュクリーンアップが実行中セッションで使用中のバージョンを削除する問題修正、スラッシュコマンドダイアログのフッターヒント・スペーシング・矢印キースタイル統一、bash 出力と markdown コードブロックでの色位置ずれ修正、`@` ファイルピッカーがセッション中に作成したファイル/100エントリ超ディレクトリで見つからない問題修正、`/usage` 週次リセットが時刻を表示していたのを暦日付表示に修正、CJK 端末でのウェルカムバナー overflow 修正、`/insights` クラッシュ修正、`AskUserQuestion` の multi-select 配列回答が破棄される問題修正、その他 30件超のバグ修正・UI 改善（v2.1.134・v2.1.135 はスキップ番号） |
 | **2.1.133** | **`worktree.baseRef` 設定（`fresh` \| `head`）** で `--worktree`/`EnterWorktree`/agent-isolation worktree のベース branch を制御。**注: デフォルトは `fresh` に戻り、`EnterWorktree` のベースは `origin/<default>` に再変更**（v2.1.128 以降は local HEAD だった）。未 push commit を保持したい場合は `worktree.baseRef: "head"` を設定。`sandbox.bwrapPath`/`sandbox.socatPath` マネージド設定（Linux/WSL の bubblewrap/socat バイナリパス指定）、`parentSettingsBehavior` 管理者キー（`'first-wins'`/`'merge'`、SDK `managedSettings` をポリシーマージに参加させる）、フックが effort.level JSON フィールドと `$CLAUDE_EFFORT` 環境変数を受け取れるように・Bash ツールでも参照可、focus モード挙動改善、メモリ圧迫時の warm-spare バックグラウンドワーカー解放によるメモリ使用量改善、refresh トークンレースでの並列セッション全 401 dead-end 修正、`Edit`/`Write` のドライブルート（`C:\`）/POSIX `/` 許可ルールが不正にマッチして毎回プロンプトする問題修正、history/session-log ファイルロック compromise 時の未ハンドル `ECOMPROMISED` rejection 修正、conversation compaction 中の Esc 押下でスプリアス "Error compacting conversation" 通知が出る問題修正、MCP OAuth フロー全体（discovery/dynamic client registration/token exchange/refresh）が `HTTP(S)_PROXY`/`NO_PROXY`/mTLS を尊重するよう修正、`--add-dir`/SDK `additionalDirectories` で渡したマップトネットワークドライブで Read/Write/Edit が拒否される問題修正、claude.ai からの Remote Control stop/interrupt がローカル Esc と同等にキャンセルしない問題修正、`/effort` が他の同時セッションの effort を意図せず変更する問題修正、サブエージェントが project/user/plugin スキルを Skill ツール経由で発見できない問題修正、`claude --help` に `--remote-control` フラグを表示、[VSCode] `claudeCode.claudeProcessWrapper` の "Unsupported platform" 修正 |
@@ -68,7 +71,29 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.137（最新）
+### 2.1.140 系（最新）
+- **Plugin Marketplace 関連変更** — マーケットプレース上のプラグイン配布・連携フロー周辺の整備
+- **`/plugin` コマンド整備** — プラグインの **インストール／アンインストール／一覧／詳細表示** を `/plugin` 配下で統一
+- **`/skills` リアルタイムフィルタ** — スキル一覧で **タイプしながらの絞り込み（インクリメンタルフィルタ）** に対応
+- その他 CLI 全般で **13 件の変更**（バグ修正・UI 改善含む）
+
+### 2.1.139（2026-05-11 PT / 2026-05-12 JST）
+- **Agent View (Research Preview)** — 複数バックグラウンドセッションを横断管理する新ビュー
+  - 起動方法: ターミナルで `claude agents` 実行、または既存セッション内で **左矢印キー（←）** 押下
+  - 表示内容: Session ID / Status（実行中／入力待ち／完了）/ Latest Response / Last Interaction
+  - 主な操作: 行選択で最終ターンプレビュー、入力待ちセッションへのインライン返信、Enter でフル会話履歴、`/bg` で既存セッションを Agent View 管理下に、`claude --bg [task]` で新規バックグラウンド起動
+  - 提供範囲: Pro / Max / Team / Enterprise / Claude API すべて（標準レート制限）
+- **`/goal` コマンド** — 完了条件（goal）を設定すると Claude がその条件を満たすまで **自動的にタスクを継続実行**
+
+### 2.1.138（2026-05-09 JST）
+- **`ANTHROPIC_BEDROCK_SERVICE_TIER` 環境変数** — Bedrock の Service Tier を `default` / `flex` / `priority` から選択可能
+- **`/resume` への PR URL ペースト検索** — GitHub / GitHub Enterprise / GitLab / Bitbucket の PR URL を貼り付けると、該当セッションを自動検索
+- **Remote Control 有効時の「Push when Claude decides」プッシュ通知オプション** — Claude 側がタイミングを判断して通知を送信
+- **`/tui` コマンド** — ちらつきのないフルスクリーン描画モードに切替
+- **Bedrock / Vertex / Foundry の 429 エラー修正**
+- **MCP 重複コネクタヒント** — 同一 URL の claude.ai コネクタとローカル定義の重複を検知してヒント表示
+
+### 2.1.137
 - **VS Code extension の Windows アクティベーション失敗を修正** — v2.1.131 と同種の追加修正
 
 ### 2.1.136
