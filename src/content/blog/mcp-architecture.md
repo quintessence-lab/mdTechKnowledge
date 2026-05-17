@@ -1,7 +1,7 @@
 ---
 title: "MCP (Model Context Protocol) アーキテクチャ詳細"
 date: 2026-04-26
-updatedDate: 2026-05-02
+updatedDate: 2026-05-17
 category: "Claude技術解説"
 tags: ["MCP", "Claude Code", "JSON-RPC", "GitHub", "OAuth", "プロトコル"]
 excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness）、MCP Apps（SEP-1865）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、約20万サーバーに影響した重大脆弱性事案の参照リンクまでを網羅"
@@ -81,7 +81,7 @@ USBデバイス（マウス等）    =    MCPサーバー（GitHub, Gmail等）
 |---|---|
 | **Transport Scalability** | Streamable HTTP のスケール課題への対応。ステートフルセッションがロードバランサと競合し水平スケールが困難な現状を緩和する設計（ステートレス HTTP の検討含む） |
 | **Agent Communication** | エージェント間通信プリミティブの標準化（Tasks primitive の発展形） |
-| **Governance Maturation** | AAIF（AI Alliance Foundation）配下での意思決定フローの整備、SEP（Specification Enhancement Proposal）プロセスの定着 |
+| **Governance Maturation** | AAIF（Agentic AI Foundation、Linux Foundation 傘下）配下での意思決定フローの整備、SEP（Specification Enhancement Proposal）プロセスの定着 |
 | **Enterprise Readiness** | エンタープライズ認証 SSO 対応、レジストリ自動登録、Server Cards による検出性向上 |
 
 参考: [2026 MCP Roadmap](https://blog.modelcontextprotocol.io/posts/2026-mcp-roadmap/) / [The New Stack 解説](https://thenewstack.io/model-context-protocol-roadmap-2026/)
@@ -1065,7 +1065,7 @@ GET https://example-mcp.com/.well-known/mcp-server-card
 
 ## 2026年4月以降の動向（エコシステム）
 
-MCPは2024年11月の公開以降、急速に普及しています。2025年12月の **AAIF（AI Application Interoperability Foundation）** へのガバナンス移管以降、仕様策定とエコシステム運営は中立的な財団のもとで進行しており、2026年4月時点では財団主導の SEP プロセスとメンテナー体制が安定運用に入っています。
+MCPは2024年11月の公開以降、急速に普及しています。2025年12月の **AAIF（Agentic AI Foundation、Linux Foundation 傘下）** へのガバナンス移管以降、仕様策定とエコシステム運営は中立的な財団のもとで進行しており、2026年4〜5月時点では財団主導の SEP プロセスとメンテナー体制が安定運用に入っています。Anthropic から AAIF への MCP プロトコル正式寄贈は、[The New Stack 解説記事](https://thenewstack.io/anthropic-donates-the-mcp-protocol-to-the-agentic-ai-foundation/) も参照してください。
 
 ### メンテナーチーム体制刷新（2026-04-08）
 
@@ -1102,6 +1102,41 @@ Lead Maintainer が Den Delimarsky に確定し、Core Maintainer として Clar
 本記事では概要のみに留めます。詳細な技術内容・影響範囲・推奨される緩和策・各SDKの対応状況については、別途用意している脆弱性専門記事を参照してください。
 
 参考: 詳細記事 [MCP脆弱性レポート（mcp-vulnerability-report.md）](./mcp-vulnerability-report.md)
+
+### AWS MCP Server が GA（正式提供）に移行（2026-05-06）
+
+AWS は 2026年5月6日（米時間）、**AWS MCP Server を Preview から GA（一般提供）** へ移行したと発表しました。AI コーディングエージェントが MCP プロトコル経由で **AWS サービスへ安全・監査可能にアクセス** するための、AWS マネージドな MCP サーバーです。
+
+| 項目 | 内容 |
+|---|---|
+| **提供状況** | GA（General Availability） |
+| **対応リージョン** | US East (N. Virginia) / Europe (Frankfurt) |
+| **追加課金** | なし（消費した AWS リソース分のみ課金） |
+
+#### Preview からの主な追加機能
+
+- **単一ツールから任意の AWS API を呼び出し可能**（ファイルアップロード・長時間オペレーション含む）
+- **サンドボックス内 Python スクリプト実行** — マルチステップタスクをファイルシステム／シェルアクセスなしで実行
+- **Agent Skills** が従来の SOP に代わり、オンデマンドでガイダンスを発見・提供
+- **ドキュメント検索・スキル発見が AWS 認証情報なしで実行可能** に変更
+
+参考: [AWS What's New（2026-05-06）](https://aws.amazon.com/about-aws/whats-new/2026/05/aws-mcp-server/)
+
+> AWS MCP Server の GA 移行に合わせ、MCP プロジェクト全体としても **新メンテナ体制が確立**：Den Delimarsky（Lead Maintainer）に加え、**Clare Liguori（Core Maintainer）** が就任し、Anthropic 外（AWS 在籍）からの中核メンテナが入ることで、AAIF（Linux Foundation 傘下）配下での **ベンダー中立性が実体面で進展** しています（詳細は次節）。
+
+### SDK・レジストリの更新（2026-05-08 / 09 JST）
+
+2026年5月上旬、MCP の **Rust SDK・TypeScript SDK・公式レジストリ** が相次いで更新されました。
+
+| 対象 | 更新内容（概要） | 日付 |
+|---|---|---|
+| **Rust SDK** | v2.1 仕様への追随（Server Cards / メディアサポート対応の API 追加）、エラーハンドリング改善 | 2026-05-08 JST |
+| **TypeScript SDK** | v2.1 対応強化、Tasks primitive クライアントヘルパ整備、型定義更新 | 2026-05-08 JST |
+| **公式レジストリ** | Server Cards 自動取り込みの試験運用、検索 UX 改善、メタデータスキーマ更新 | 2026-05-09 JST |
+
+これらの更新により、サーバー実装者は v2.1 仕様（Server Cards・メディア・Tasks）を **公式 SDK のみで完結して実装** できる範囲が広がりました。
+
+参考: [MCP 公式ブログ](https://blog.modelcontextprotocol.io/)
 
 ### エコシステム規模
 
