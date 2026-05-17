@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-05-17
+updatedDate: 2026-05-18
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code v2.0.59〜v2.1.140 系のバージョン履歴。Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定など主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.143 のバージョン履歴。plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-05-17
-**現在の最新バージョン**: 2.1.140 系
+**最終更新**: 2026-05-18
+**現在の最新バージョン**: 2.1.143
 
 ---
 
@@ -17,6 +17,7 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.143** | **Plugin dependency enforcement** — プラグイン間の依存関係を宣言的に解決し、不足プラグインの自動インストール／バージョン整合チェック／循環依存検知を行うランタイム強制機構。**`claude project purge` コマンド拡張** — プロジェクト履歴の選択削除（セッション単位・期間指定・パターン指定）を `claude project purge` 配下に統合（v2.1.126 で導入された雛形を本コマンドラインに昇格） |
 | **2.1.140 系** | **Plugin Marketplace 関連変更**（マーケットプレース連携・配布フローの整備）、**`/plugin` コマンド整備**（インストール／削除／一覧／詳細表示）、**`/skills` リアルタイムフィルタ**（タイプしながら絞り込み）、その他 CLI 全般で 13 件の変更 |
 | **2.1.139** | **Agent View (Research Preview)** — `claude agents` コマンドまたはセッション内左矢印キー（←）で起動。実行中／入力待ち／完了セッションを一覧表示し、複数バックグラウンドエージェントを横断管理可能（Pro/Max/Team/Enterprise/API 全プラン対応、標準レート制限適用）。**`/goal` コマンド** — 完了条件（goal）を設定すると Claude が自動的にタスクを継続実行 |
 | **2.1.138** | `ANTHROPIC_BEDROCK_SERVICE_TIER` 環境変数追加（`default` / `flex` / `priority`）、`/resume` に **PR URL を貼り付けて該当セッションを検索**（GitHub・GitHub Enterprise・GitLab・Bitbucket 対応）、**Remote Control 有効時の「Push when Claude decides」プッシュ通知オプション**（Claude が判断したタイミングで通知）、**`/tui` コマンド追加**（ちらつきなしのフルスクリーン描画）、Bedrock / Vertex / Foundry での 429 エラー修正、MCP **重複コネクタヒント**（同一 URL の claude.ai コネクタ／ローカル定義の重複検知） |
@@ -71,7 +72,18 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.140 系（最新）
+### 2.1.143（2026-05-15 PT / 2026-05-16 JST、最新）
+- **Plugin dependency enforcement** — プラグイン間の依存関係を宣言的に解決するランタイム強制機構
+  - プラグインマニフェストの `dependencies` フィールドを参照し、起動時／インストール時に不足プラグインを自動取得
+  - バージョン整合性チェック（semver 範囲指定）とバージョン不一致時の警告／インストール拒否
+  - 循環依存（A→B→A）を検知してロード時にエラー表示
+  - 既存の `claude plugin install` フローと統合され、依存ツリー全体を一括解決
+- **`claude project purge` コマンド** — プロジェクト履歴の選択削除を専用コマンド化
+  - セッション単位・期間指定・パターン指定で履歴／キャッシュを精密に削除
+  - `--dry-run` で削除対象のプレビュー、`-i` で対話的選択、`--all` でプロジェクト全履歴の一括削除
+  - v2.1.126 で導入された機能を本格コマンドラインに昇格、プロジェクト切替時のディスク領域回収・機密情報の選択的消去を容易化
+
+### 2.1.140 系
 - **Plugin Marketplace 関連変更** — マーケットプレース上のプラグイン配布・連携フロー周辺の整備
 - **`/plugin` コマンド整備** — プラグインの **インストール／アンインストール／一覧／詳細表示** を `/plugin` 配下で統一
 - **`/skills` リアルタイムフィルタ** — スキル一覧で **タイプしながらの絞り込み（インクリメンタルフィルタ）** に対応
