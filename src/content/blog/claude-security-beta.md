@@ -1,7 +1,7 @@
 ---
 title: "Claude Security Beta — Anthropic エンタープライズセキュリティ製品の全貌（2026年5月発表）"
 date: 2026-05-02
-updatedDate: 2026-05-02
+updatedDate: 2026-05-17
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude Security", "Opus 4.7", "セキュリティ", "脆弱性スキャン", "エンタープライズ"]
 excerpt: "2026年5月1日、Anthropic は Claude Opus 4.7 を中核に据えたエンタープライズ向けセキュリティ製品 Claude Security のパブリックベータを発表した。コードベース脆弱性スキャン・パッチ生成、CrowdStrike / Microsoft Security / Palo Alto Networks / SentinelOne / TrendAI / Wiz などの技術パートナー、Accenture / BCG / Deloitte / Infosys / PwC などのサービスパートナー連携を含め、全体像を整理する。"
@@ -198,6 +198,52 @@ jobs:
 
 つまり Claude Security は、**研究プレビュー時代の知見を、運用に耐える製品として再構築**したものと位置付けられます。
 
+## 2026年5月のベータ後追加機能 — 運用機能の強化
+
+パブリックベータ発表（2026年5月1日）の後、Anthropic は運用ユーザーからのフィードバックを反映する形で、5月中に複数の運用機能を追加しています。いずれも「大規模リポジトリでの定常運用」と「既存ワークフロー（SIEM・チケット）への結果フィード」を強く意識した機能群です。
+
+### 1. ディレクトリ指定スキャン（targeted directory analysis）
+
+スキャン対象をリポジトリ全体ではなく、**特定ディレクトリに絞り込んで実行**できます。モノレポや大規模リポジトリにおいて、サービス・ドメイン単位で実行できるようになり、スキャン時間とトークン消費の双方を抑制できます。
+
+```
+# 概念例
+claude-security scan \
+  --target "$REPO_ROOT" \
+  --include "services/payments/**" \
+  --include "services/auth/**" \
+  --exclude "vendor/**"
+```
+
+### 2. 検出結果の dismiss（根拠記録付き）
+
+検出された脆弱性候補を、**根拠コメントを残しながら dismiss（却下）**できる機能です。「ビジネス要件として許容」「別チケットで対応中」「false positive」などの理由を構造化された形で残せ、再スキャン時に同じ検出が再浮上した際の判断材料になります。監査ログにも残るため、コンプライアンス文脈での説明責任を満たしやすくなります。
+
+| dismiss 理由カテゴリ（例） | 想定ユースケース |
+|---|---|
+| Accepted risk | ビジネス判断で許容するリスク |
+| False positive | コンテキスト上、脆弱性に該当しない |
+| Duplicate | 別チケットで管理済 |
+| Won't fix | 廃止予定モジュール |
+
+### 3. 検出結果の CSV / Markdown エクスポート
+
+検出結果一覧を **CSV**（表計算ツール・BI 取り込み向け）または **Markdown**（チケット・社内 Wiki 添付向け）でエクスポートできます。SIEM 連携が確立していない段階でも、レポーティングや経営報告に直接使える形でデータを取り出せるようになりました。
+
+### 4. Slack / Jira などへの webhook 連携
+
+検出結果や重大度しきい値を超えたイベントを、**webhook 経由で Slack・Jira などの外部システムへ送信**できます。これまで SIEM/SOAR 中心だった連携先が、開発チームの日常ツールへ直接届けられる構造になりました。
+
+| 連携先（代表例） | 主な用途 |
+|---|---|
+| Slack | チャンネル通知、担当アサイン、議論 |
+| Jira | チケット自動起票、SLA 追跡 |
+| 任意の HTTP エンドポイント | 社内ワークフローエンジン連携 |
+
+### 4機能をまとめた位置づけ
+
+これら4機能は、いずれも**「検出して終わり」ではなく「検出をワークフローに乗せる」**ことに比重を置いた追加です。Phase 2〜3（限定運用〜全社展開）に進む組織にとって、運用面のボトルネックを直接解消する内容になっています。
+
 ## 既存セキュリティ事案との関係性
 
 Anthropic のセキュリティ系トピックは、過去半年でいくつかの大きな話題を経てきました。Claude Security の発表は、これらの流れの中でも一つの集大成として位置付けられます。
@@ -269,4 +315,7 @@ Claude Security Beta の発表は、単なる新機能リリースを超え、**
 
 - [Anthropic Claude Security Enters Public Beta for Enterprise (SQ Magazine)](https://sqmagazine.co.uk/anthropic-claude-security-public-beta-enterprise/)
 - [Anthropic announces Claude Security public beta to find and fix software vulnerabilities (SiliconANGLE)](https://siliconangle.com/2026/04/30/anthropic-announces-claude-security-public-beta-find-fix-software-vulnerabilities/)
+- [Help Net Security: Anthropic Claude Security public beta](https://www.helpnetsecurity.com/2026/05/04/anthropic-claude-security-public-beta/)
+- [Techzine: Anthropic Claude Security available to all enterprise customers](https://www.techzine.eu/news/security/140944/anthropic-claude-security-available-to-all-enterprise-customers/)
+- [DevOps.com: Anthropic brings AI-powered security scanning to enterprise teams with Claude Security](https://devops.com/anthropic-brings-ai-powered-security-scanning-to-enterprise-teams-with-claude-security/)
 - [Anthropic News (公式)](https://www.anthropic.com/news)
