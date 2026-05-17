@@ -1,10 +1,10 @@
 ---
 title: "MCP (Model Context Protocol) アーキテクチャ詳細"
 date: 2026-04-26
-updatedDate: 2026-05-17
+updatedDate: 2026-05-18
 category: "Claude技術解説"
-tags: ["MCP", "Claude Code", "JSON-RPC", "GitHub", "OAuth", "プロトコル"]
-excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness）、MCP Apps（SEP-1865）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、約20万サーバーに影響した重大脆弱性事案の参照リンクまでを網羅"
+tags: ["MCP", "Claude Code", "JSON-RPC", "GitHub", "OAuth", "プロトコル", "Claude for Legal"]
+excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness/エンタープライズSSO・監査トレイル・Governance Working Group・新コアメンテナー）、MCP Apps（SEP-1865）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、Claude for Legal で公開された20+ MCPコネクタ、約20万サーバーに影響した重大脆弱性事案の参照リンクまでを網羅"
 draft: false
 ---
 
@@ -84,7 +84,18 @@ USBデバイス（マウス等）    =    MCPサーバー（GitHub, Gmail等）
 | **Governance Maturation** | AAIF（Agentic AI Foundation、Linux Foundation 傘下）配下での意思決定フローの整備、SEP（Specification Enhancement Proposal）プロセスの定着 |
 | **Enterprise Readiness** | エンタープライズ認証 SSO 対応、レジストリ自動登録、Server Cards による検出性向上 |
 
-参考: [2026 MCP Roadmap](https://blog.modelcontextprotocol.io/posts/2026-mcp-roadmap/) / [The New Stack 解説](https://thenewstack.io/model-context-protocol-roadmap-2026/)
+#### 2026 ロードマップの追加トピック（2026-05 更新）
+
+ロードマップ公開後にコミュニティ Working Group での議論を経て、以下が新たに優先項目として明文化されている。
+
+| 項目 | 内容 |
+|---|---|
+| **エンタープライズ認証・SSO 対応** | SAML / OIDC ベースの SSO 連携、企業 IdP（Okta / Entra ID / Auth0 等）統合、サーバー横断のシングルセッション。Enterprise Readiness 柱の中核 |
+| **監査トレイル機能** | MCP サーバー側で全 tool call / resource access を構造化ログとして記録するための標準仕様。コンプライアンス（SOC 2 / ISO 27001 等）監査に必要な属性（actor / timestamp / parameters / result hash）を統一定義 |
+| **Governance Working Group 設立** | AAIF 配下に正式な Working Group を組成。仕様提案（SEP）の審議・承認フロー、メンテナー任命、エコシステム調整を担当 |
+| **新コアメンテナー加入** | **Clare Liguori（AWS）** と **Den Delimarsky（Microsoft）** がコアメンテナーチームに加入。ハイパースケーラー2社のシニアエンジニアが直接プロトコル設計に関与する体制となり、エンタープライズ要求の反映スピードが向上 |
+
+参考: [2026 MCP Roadmap](https://blog.modelcontextprotocol.io/posts/2026-mcp-roadmap/) / [MCP公式ロードマップ](https://modelcontextprotocol.io/development/roadmap) / [The New Stack 解説](https://thenewstack.io/model-context-protocol-roadmap-2026/)
 
 #### MCP Apps（SEP-1865）— 対話型UIのプロトコル仕様化
 
@@ -383,6 +394,30 @@ claude mcp remove <名前>     # 削除
   "args": ["/c", "npx", "some-mcp-server"]
 }
 ```
+
+---
+
+## 実用例: Claude for Legal で公開された 20+ MCP コネクタ（2026年5月）
+
+2026年5月、Anthropic は **Claude for Legal** 製品向けに **20以上の MCP コネクタ** と **12 の業務分野（practice area）プラグイン** を一括公開した。法律業界に特化した広範な MCP コネクタ群が単一ベンダーから提供された初の事例であり、MCP がエンタープライズ垂直市場で実用フェーズに入ったことを示すマイルストーンとなっている。
+
+### コネクタ一覧（カテゴリ別）
+
+| カテゴリ | コネクタ |
+|---|---|
+| **契約・文書管理** | Ironclad / DocuSign / Definely / iManage / NetDocuments |
+| **e-Discovery・訴訟支援** | Relativity / Everlaw / Consilio |
+| **ディール・バーチャルデータルーム** | Box / Datasite |
+| **リーガルリサーチ** | Midpage / Trellis / Legal Data Hunter（※ LexisNexis / Westlaw 系の主要DB連携を含む） |
+| **リーガル AI・特化サービス** | Harvey（リーガル AI）/ Thomson Reuters CoCounsel Legal / Solve Intelligence（特許業務）/ Courtroom5 / BoardWise（access-to-justice） |
+
+### MCP プロトコル観点での意義
+
+- **垂直特化レジストリの先行事例**: 業界別 MCP コネクタを一括認定・配布する運用モデルが確立され、他業界（医療・金融・製造）への展開テンプレートになる
+- **エンタープライズ認証要件の実証**: 法律 SaaS の多くは SSO・SAML 必須であり、ロードマップ「Enterprise Readiness（SSO 対応）」の即時的な検証ケースとなる
+- **監査トレイル要求の高まり**: 訴訟支援・契約管理は法的証拠能力が問われるため、Governance トラックで議論中の監査トレイル仕様の最有力ユースケース
+
+参考: [LawNext: Anthropic goes all-in on legal — 20+ connectors and 12 practice area plugins](https://www.lawnext.com/2026/05/anthropic-goes-all-in-on-legal-releasing-more-than-20-connectors-and-12-practice-area-plugins-for-claude.html)
 
 ---
 
