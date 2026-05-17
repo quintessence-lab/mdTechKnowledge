@@ -1,7 +1,7 @@
 ---
 title: "Claude Mythos Preview & Project Glasswing — セキュリティ特化LMと重要インフラ防衛プログラム"
 date: 2026-04-26
-updatedDate: 2026-05-03
+updatedDate: 2026-05-17
 category: "Claude技術解説"
 tags: ["Claude", "Mythos", "Glasswing", "セキュリティ", "Anthropic", "重要インフラ", "Bedrock", "Vertex AI", "Claude Security"]
 excerpt: "Anthropicがセキュリティタスク特化型LM「Claude Mythos Preview」と重要インフラ防衛プロジェクト「Project Glasswing」を発表。能力範囲・想定ユースケース・公開条件・既存Claudeとの差別化に加え、AWS Bedrock・Google Vertex AIでのGated Research Preview提供、GlasswingからClaude Security Beta（防御製品）への発展経緯までを整理。"
@@ -162,6 +162,56 @@ Glasswing (2026-04-07)              Claude Security Beta (2026-05-01)
 つまり Mythos / Glasswing は研究フェーズ、Claude Security Beta はそこから派生した製品フェーズという位置付けで、**両者は技術系譜上一直線につながっています**。詳細は [`claude-security-beta.md`](./claude-security-beta) を参照してください。
 
 参考: [SiliconANGLE](https://siliconangle.com/2026/04/30/anthropic-announces-claude-security-public-beta-find-fix-software-vulnerabilities/) / [SC World](https://www.scworld.com/brief/anthropic-opens-claude-security-public-beta-for-code-audits)
+
+### Pentagon・連邦政府との関係動向（2026年4〜5月）
+
+Mythos の限定公開方針は、米連邦政府（特に Pentagon）との関係においても緊張と進展の両面を生んでいます。2026年4月下旬から5月にかけて、以下の動きが報じられました。
+
+#### 2026-04-20（米時間） — TechCrunch / Axios: NSA が Pentagon 禁止令をよそに Mythos を利用
+
+[TechCrunch 報道](https://techcrunch.com/2026/04/20/nsa-spies-are-reportedly-using-anthropics-mythos-despite-pentagon-feud/)（Axios ソース）によると、**米国家安全保障局（NSA）が Claude Mythos Preview を利用していた** ことが明らかになりました。Pentagon が Anthropic を **"supply-chain risk"（サプライチェーンリスク）** に指定した数週間後の出来事です。
+
+| 項目 | 内容 |
+|---|---|
+| **NSA の用途** | 自組織環境内の **悪用可能な脆弱性スキャン**（防御側ユースケース） |
+| **Pentagon の指定理由** | Anthropic が Mythos のフル機能への無制限アクセス供与を拒否したため |
+| **Anthropic の対応** | 同指定を不服とし、**国防総省に対し訴訟を提起** |
+| **Mythos のアクセス組織数** | 約 **40 組織**（公表は約 12 組織のみ）。UK AI Security Institute も含まれる |
+
+この事案は「Pentagon と Anthropic の確執」が続く一方で、**情報コミュニティ（IC）側は独自に Mythos を利用し始めている** ことを示しており、連邦政府内でも Mythos に対する評価が一枚岩でないことを浮き彫りにしています。
+
+#### 2026-05-02（JST） — CNBC: Pentagon 技術責任者「Anthropic は依然 blacklist、Mythos は別案件」
+
+[CNBC 報道](https://www.cnbc.com/2026/05/01/pentagon-anthropic-blacklist-mythos-michael.html) によると、Pentagon の技術責任者は CNBC のインタビューで以下の趣旨を表明しました。
+
+- **Anthropic は引き続き Pentagon の blacklist 上に置かれている**（supply-chain risk 指定は維持）
+- ただし **Mythos の評価・調達検討は blacklist とは別案件** として扱われている
+- NSA を含む他連邦機関での Mythos 利用は Pentagon の管轄外であり、所管機関の判断による
+
+つまり「Anthropic 全社としての調達禁止」と「Mythos モデル個別の利用評価」は **異なるトラック** で進行しており、Pentagon 自身も Mythos 能力には関心を持っている、という構図が浮かび上がっています。
+
+#### 2026年5月 — 下院国土安全保障委員会による非公開ブリーフィング
+
+[The Hill 報道](https://thehill.com/policy/technology/5875253-house-briefing-anthropic-mythos/) によると、2026年5月、米下院国土安全保障委員会（House Homeland Security Committee）が Mythos に関する **非公開ブリーフィング** を実施しました。
+
+| 項目 | 内容 |
+|---|---|
+| **実施場所** | 下院国土安全保障委員会（非公開セッション） |
+| **Anthropic 側参加者** | **フロンティアレッドチーム**および**国家安全保障チーム** |
+| **内容** | Mythos の能力・リスクプロファイル・Glasswing 運用説明 |
+| **特記事項** | **ライブデモを実施** — Mythos が実際に脆弱性を発見・エクスプロイト生成する様子を委員会メンバーに提示 |
+
+立法府レベルでの Mythos 認知が本格化したことを示すイベントで、今後の **AI ガバナンス立法・予算審議** の前提情報として位置づけられます。Pentagon との対立構図に加え、議会側の独立評価という第三の軸が動き出した格好です。
+
+#### この3つの動きが意味するもの
+
+| 主体 | スタンス |
+|---|---|
+| **Pentagon（行政府・国防）** | Anthropic を blacklist 維持。ただし Mythos 個別評価は別トラック |
+| **NSA（行政府・情報）** | 既に防御目的で実利用中。Pentagon の指定とは独立した判断 |
+| **下院国土安全保障委員会（立法府）** | 非公開ブリーフィングで独自評価を開始。ライブデモで能力を直接確認 |
+
+Mythos / Glasswing は単一の「政府との関係」ではなく、**省庁・機関・立法府それぞれが独立した評価・利用判断を行う多層的な状況** に入っています。今後のセキュリティ立法、AI輸出管理、調達ポリシーへの波及に注目が必要です。
 
 ## 6. 開発者・企業へのインパクト
 
