@@ -27,6 +27,8 @@ draft: false
 ![サブエージェントとAgent Teamsのアーキテクチャ比較](https://mintcdn.com/claude-code/nsvRFSDNfpSU5nT7/images/subagents-vs-agent-teams-light.png?fit=max&auto=format&n=nsvRFSDNfpSU5nT7&q=85&s=2f8db9b4f3705dd3ab931fbe2d96e42a)
 *サブエージェントはメインに結果を返すだけ。Agent Teamsは共有タスクリストで自律的に協調する。（出典: [Anthropic公式ドキュメント](https://code.claude.com/docs/en/agent-teams)）*
 
+> **サブエージェントの権限差・タイプ別の使い分け**（Explore / general-purpose / Plan の違い、「read-only 切替」が起きる理由）は姉妹記事 [Claude Code サブエージェントの歩き方](/blog/claude-code-subagent-readonly-switch/) で詳しく扱っています。本記事は Agent Teams（複数 Claude Code インスタンスの協調）にフォーカスします。
+
 ---
 
 ## 有効化手順
