@@ -1,7 +1,7 @@
 ---
 title: "【必読】Claude マルチエージェントの初期設定"
 date: 2026-04-04
-updatedDate: 2026-05-07
+updatedDate: 2026-05-17
 category: "Claude技術解説"
 tags: ["Claude Code", "Agent Teams", "マルチエージェント", "tmux", "初期設定", "Managed Agents", "Multi-agent orchestration"]
 excerpt: "Claude Code Agent Teams（ローカル/tmuxで動くマルチエージェント機能）の有効化・表示モード・チーム管理を解説。クラウド側 Managed Agents の2026年5月新機能 Multi-agent orchestration（リードエージェント＋最大20専門エージェント並列処理）との位置づけや使い分け判断ガイドも掲載。"
@@ -409,9 +409,57 @@ Netflix はプラットフォームチームで Multi-agent orchestration を既
 
 ---
 
+## Agent View（Research Preview, v2.1.139〜）
+
+2026年5月リリースの **v2.1.139** で、Claude Code に **Agent View（Research Preview）** が追加されました。Agent Teams や `claude --bg` で起動した複数のバックグラウンドセッションを **一覧 UI で横断管理** できる新ビューです。
+
+### 起動方法
+
+| 方法 | 操作 |
+|---|---|
+| **CLI から直接起動** | ターミナルで `claude agents` を実行 |
+| **セッション内から起動** | 任意の Claude Code セッションで **左矢印キー（←）** を押下 |
+
+### 表示内容
+
+Agent View は各バックグラウンドセッションを1行ずつ表示し、以下のメタ情報を一覧できます。
+
+| 列 | 内容 |
+|---|---|
+| **Session ID** | セッション識別子 |
+| **Status** | 実行中 / 入力待ち（reply needed）/ 完了 |
+| **Latest Response** | 直近の応答内容（プレビュー） |
+| **Last Interaction** | 最終操作タイムスタンプ |
+
+### 主な操作
+
+- **行を選択** → 最終ターンをプレビュー
+- **入力待ちセッション** → その場でインライン返信が可能
+- **Enter** → 該当セッションのフル会話履歴を表示
+- **`/bg`** → 既存セッションを Agent View 管理下のバックグラウンドに移動
+- **`claude --bg [task]`** → 新規バックグラウンドセッションを起動
+
+### ユースケース
+
+- **複数タスクの並列ディスパッチ**（各セッションに別スキルを割り当て可能）
+- **長時間ループの進捗確認**（次の実行予定時刻も確認可能）
+- **関連タスクの切替**（コンテキストを失わずに行き来できる）
+- **PR を生成したセッションの特定**（レビュー待ちセッションを即座に発見）
+
+### 提供範囲
+
+Pro / Max / Team / Enterprise / Claude API すべてのプランで利用可能（Research Preview として）。標準のレート制限が適用されます。
+
+> Agent View は **Agent Teams（本記事で説明したローカル/tmux マルチエージェント機能）とは別レイヤー** の機能です。Agent Teams は1セッション内で複数チームメイトを協調動作させる仕組みで、Agent View は **複数のバックグラウンドセッション自体** を横断管理するビューです。両者は補完関係にあり、Agent Teams のリーダーセッションを `/bg` でバックグラウンド化し、Agent View から別タスクと並行して状況確認することも可能です。
+
+参考: [Anthropic公式ブログ: Agent View in Claude Code](https://claude.com/blog/agent-view-in-claude-code) / [公式ドキュメント](https://code.claude.com/docs/en/agent-view)
+
+---
+
 ## 参考リンク
 
 - [Anthropic公式: Agent Teams ドキュメント](https://code.claude.com/docs/en/agent-teams)
+- [Anthropic公式: Agent View（Research Preview）](https://code.claude.com/docs/en/agent-view)
 - [Anthropic公式: サブエージェント](https://code.claude.com/docs/en/sub-agents)
 - [Anthropic公式: Managed Agents Overview](https://platform.claude.com/docs/en/managed-agents/overview)
 - [Anthropic公式: New in Claude Managed Agents（2026/5/6）](https://claude.com/blog/new-in-claude-managed-agents)
