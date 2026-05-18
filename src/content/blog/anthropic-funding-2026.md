@@ -1,10 +1,10 @@
 ---
 title: "Anthropic 大型資本調達ラウンド — Amazon $5B/$100B AWSコミット・Google 最大$40B 投資・Series G $380B評価額 の戦略的意義"
 date: 2026-04-26
-updatedDate: 2026-05-18
+updatedDate: 2026-05-19
 category: "一般リサーチ"
-tags: ["Anthropic", "Amazon", "Google", "AWS", "GCP", "Trainium", "TPU", "投資", "クラウドインフラ", "Claude", "Series G", "CoreWeave", "Blackstone", "Goldman Sachs", "合弁会社", "EPAM", "Dragoneer", "Greenoaks", "Sequoia", "Altimeter"]
-excerpt: "2026年4月にAnthropicが立て続けに発表したAmazon・Googleからの巨額投資ラウンドと、Series G $380B評価額調達・年間収益ランレート $30B 突破（OpenAI 逆転）・CoreWeave との計算インフラ個別契約を整理。2026年5月3日発表のBlackstone・H&F・Goldman Sachs との$1.5Bエンタープライズ AI サービス合弁会社、5月7日発表のEPAM Systems との戦略的多年契約、5月8日 Fortune 報道『単一四半期で80倍成長』、5月12日 Bloomberg 報道の$30B 調達ラウンド合意確定（評価額 $900B 超、ARR $45B）まで追補。"
+tags: ["Anthropic", "Amazon", "Google", "AWS", "GCP", "Trainium", "TPU", "投資", "クラウドインフラ", "Claude", "Series G", "CoreWeave", "Blackstone", "Goldman Sachs", "合弁会社", "EPAM", "Dragoneer", "Greenoaks", "Sequoia", "Altimeter", "Gates Foundation", "公益"]
+excerpt: "2026年4月にAnthropicが立て続けに発表したAmazon・Googleからの巨額投資ラウンドと、Series G $380B評価額調達・年間収益ランレート $30B 突破（OpenAI 逆転）・CoreWeave との計算インフラ個別契約を整理。2026年5月3日発表のBlackstone・H&F・Goldman Sachs との$1.5Bエンタープライズ AI サービス合弁会社、5月7日発表のEPAM Systems との戦略的多年契約、5月8日 Fortune 報道『単一四半期で80倍成長』、5月12日 Bloomberg 報道の$30B 調達ラウンド合意確定（評価額 $900B 超、ARR $45B）、5月14日 Gates Foundation との $200M／4年 grant partnership（医療・K-12教育・経済モビリティ）まで追補。"
 draft: false
 ---
 
@@ -293,6 +293,28 @@ EPAM（5月7日発表、SI 大手 1万人認定計画）・Blackstone 合弁（5
 参考:
 - [Anthropic: PwC expanded partnership](https://www.anthropic.com/news/pwc-expanded-partnership)
 - [SiliconAngle: PwC expands Anthropic alliance, will train 30000 staff（2026/5/14）](https://siliconangle.com/2026/05/14/pwc-expands-anthropic-alliance-will-train-30000-staff-claude/)
+
+#### Gates Foundation との $200M パートナーシップ — 2026年5月14日 PT／15日 JST
+
+2026年5月14日（PT）、Anthropic は **Bill & Melinda Gates Foundation** との **$200M（2億ドル）／4年間** のパートナーシップを発表。低・中所得国の医療・教育・経済モビリティ領域における AI 活用を加速する **grant funding（投資ではなく助成）** の枠組みで、現金 grant に加え **Claude 利用クレジット**と**技術支援**を提供する。前述のエンタープライズ営業網拡大とは性質が異なる「公益・社会インパクト」軸の戦略的アライアンス。
+
+| 項目 | 内容 |
+|---|---|
+| 発表日 | 2026年5月14日（PT）／15日（JST） |
+| 総額 | **$200M / 4年間** |
+| 形態 | **Grant funding**（grants + Claude usage credits + technical support） |
+| 主領域 | グローバルヘルス／K-12 教育／経済モビリティ |
+| 地域フォーカス | 低・中所得国（医療中心）、サブサハラアフリカ・インド（教育）、米国（教育・経済モビリティ） |
+| 主要プログラム例 | ワクチン・治療法の開発加速、ポリオ／HPV／妊娠高血圧症候群スクリーニング、政府意思決定向けヘルスデータ分析、数学チューター・大学進学アドバイス・カリキュラム設計、小農家の生産性改善、キャリアガイダンス・スキル文書化 |
+| 提携パートナー組織 | Institute for Disease Modeling (IDM)、Global AI for Learning Alliance (GAILA) |
+| Anthropic 提供物 | Claude usage credits / 技術支援 / API コネクタ・ベンチマーク / 公開財（データセット・評価フレームワーク・知識グラフ）／非営利向けディスカウントアクセス |
+
+PwC・EPAM・Blackstone 合弁等の**営利エンタープライズ拡大**とは別軸で、**公益分野での Claude 標準化**を進める動き。Anthropic の "AI for societal benefit" メッセージングを実体化する施策と位置付けられる。
+
+参考:
+- [Anthropic 公式: Gates Foundation Partnership](https://www.anthropic.com/news/gates-foundation-partnership)
+- [Gates Foundation プレスリリース](https://www.gatesfoundation.org/ideas/media-center/press-releases/2026/05/ai-anthropic-partnership)
+- [TNW: Anthropic-Gates Foundation AI health, education partnership](https://thenextweb.com/news/anthropic-gates-foundation-ai-health-education-partnership)
 
 ---
 
