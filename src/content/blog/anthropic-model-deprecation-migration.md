@@ -1,7 +1,7 @@
 ---
 title: "Anthropic モデル廃止スケジュール & 移行ガイド — 1Mコンテキストβ廃止・Sonnet/Opus 4 廃止の対応"
 date: 2026-05-02
-updatedDate: 2026-05-02
+updatedDate: 2026-05-19
 category: "Claude技術解説"
 tags: ["Claude", "Anthropic", "API", "モデル廃止", "移行", "1Mコンテキスト", "Sonnet 4", "Opus 4", "extended thinking"]
 excerpt: "2026年4月30日に1Mコンテキストβ（context-1m-2025-08-07）が廃止、6月15日にSonnet 4 (claude-sonnet-4-0)とOpus 4 (claude-opus-4-0)が廃止される。本稿では緊急度の高い2件の廃止について、影響範囲・移行手順・extended thinkingの変更点・テストスニペット・ロールバック戦略まで体系的に整理する。"
@@ -29,7 +29,7 @@ Anthropic API利用者にとって、2026年5月初旬は**緊急度の高いモ
 | **2026-06-15** | `claude-sonnet-4-20250514` (Sonnet 4) | モデル | `claude-sonnet-4-6` |
 | **2026-06-15** | `claude-opus-4-20250514` (Opus 4) | モデル | `claude-opus-4-7` |
 
-### 公式ステータステーブル（2026年5月時点抜粋）
+### 公式ステータステーブル（2026年5月19日時点抜粋）
 
 | API モデル名 | 状態 | 廃止通知日 | リタイア予定日 |
 |:---|:---|:---|:---|
@@ -42,6 +42,7 @@ Anthropic API利用者にとって、2026年5月初旬は**緊急度の高いモ
 | `claude-sonnet-4-5-20250929` | Active | — | 2026-09-29 以降 |
 | `claude-sonnet-4-20250514` | **Deprecated** | 2026-04-14 | **2026-06-15** |
 | `claude-haiku-4-5-20251001` | Active | — | 2026-10-15 以降 |
+| `claude-3-haiku-20240307` | **Retired** | 2026-02-19 | 2026-04-20（**完了**） |
 
 リタイア後は該当モデルIDを指定したリクエストはエラー応答（典型的には`404 not_found_error` または `400 invalid_request`）となります。
 
@@ -162,10 +163,12 @@ API面の主要な互換性は維持されており、`messages.create`のパラ
 
 ### 廃止対象と推奨移行先
 
-| 廃止モデル | 廃止日 | デフォルト移行先 | パフォーマンス重視の移行先 |
-|:---|:---|:---|:---|
-| `claude-sonnet-4-20250514` | 2026-06-15 | `claude-sonnet-4-6` | `claude-opus-4-7` |
-| `claude-opus-4-20250514` | 2026-06-15 | `claude-opus-4-7` | `claude-opus-4-7` |
+| 廃止モデル | 廃止日 | デフォルト移行先（公式） | 代替候補（コスト/段階移行） | パフォーマンス重視 |
+|:---|:---|:---|:---|:---|
+| `claude-sonnet-4-20250514`<br>（Claude 4.0 初回リリース世代） | 2026-06-15 | `claude-sonnet-4-6` | `claude-sonnet-4-5-20250929` | `claude-opus-4-7` |
+| `claude-opus-4-20250514`<br>（Claude 4.0 初回リリース世代） | 2026-06-15 | `claude-opus-4-7` | `claude-opus-4-6` / `claude-opus-4-5-20251101` | `claude-opus-4-7` |
+
+> Anthropic 公式の推奨は **直近の最新世代（4-6 / 4-7）** ですが、プロンプト互換性検証や段階移行のリスク低減のため、**1世代前（4-5系）を経由する選択肢**も実務的に有効です。代替候補列の 4-5 系は 2026年9月末まで Active 維持予定。
 
 価格・速度バランスを保つなら**Sonnet 4 → Sonnet 4.6**、知能優先で完全に置換するなら**Sonnet 4 → Opus 4.7**を選びます。
 
@@ -179,7 +182,7 @@ MODEL = "claude-sonnet-4-20250514"
 MODEL = "claude-opus-4-0"
 MODEL = "claude-opus-4-20250514"
 
-# === 推奨指定（2026年5月時点） ===
+# === 推奨指定（2026年5月19日時点） ===
 MODEL = "claude-sonnet-4-6"      # Sonnet系の最新
 MODEL = "claude-opus-4-7"        # Opus系の最新
 ```
