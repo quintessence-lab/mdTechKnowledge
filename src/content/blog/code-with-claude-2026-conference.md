@@ -1,15 +1,16 @@
 ---
 title: "Code with Claude 2026 開発者カンファレンス まとめ — Remote Agents・Code Review・Routines・Dreaming"
 date: 2026-05-09
+updatedDate: 2026-05-21
 category: "Claude技術解説"
-tags: ["Claude Code", "Code with Claude", "Anthropic", "Remote Agents", "Code Review", "Multi-agent orchestration", "Dreaming", "Routines", "カンファレンス"]
-excerpt: "2026年5月6日（PT、JST 5/7）にサンフランシスコで開催された Anthropic 公式開発者カンファレンス Code with Claude 2026 のまとめ。Remote Agents・Code Review・Routines・Dreaming・Multi-agent orchestration・Outcomes など主要発表と Shopify／Mercado Libre の事例、レート制限倍増、SpaceX Colossus 1 連携を整理。London 5/19・Tokyo 6/10 ツアー予定。"
+tags: ["Claude Code", "Code with Claude", "Anthropic", "Remote Agents", "Code Review", "Multi-agent orchestration", "Dreaming", "Routines", "カンファレンス", "Agent View", "/goal"]
+excerpt: "2026年5月6日（PT、JST 5/7）にサンフランシスコで開催された Anthropic 公式開発者カンファレンス Code with Claude 2026 のまとめ。Remote Agents・Code Review・Routines・Dreaming・Multi-agent orchestration・Outcomes など主要発表と Shopify／Mercado Libre の事例、レート制限倍増、SpaceX Colossus 1 連携、v2.1.139 で Research Preview として出荷された Agent View（`claude agents`）／`/goal` コマンド、London 5/20-21・Tokyo 6/5-6 への巡回ツアー（日程拡張）まで整理。"
 draft: false
 ---
 
 ## はじめに — 「新モデル」ではなく「使いこなし」のカンファレンス
 
-**Code with Claude 2026** は Anthropic が開催した開発者向け年次カンファレンスで、**2026年5月6日（PT）／ 5月7日（JST）** にサンフランシスコ本社で行われました。同シリーズは **London（5/19）／ Tokyo（6/10）** にも巡回予定です。
+**Code with Claude 2026** は Anthropic が開催した開発者向け年次カンファレンスで、**2026年5月6日（PT）／ 5月7日（JST）** にサンフランシスコ本社で行われました。同シリーズは **London（5/20-21）／ Tokyo（6/5-6）** にも巡回予定（当初告知から2日間プログラムへ拡張）。
 
 例年とは異なり、**今回は新モデルの発表が主軸ではなく**、既存モデル（Opus 4.7 / Sonnet 4.6 / Haiku 4.5）を**いかに開発フローに織り込むか**を訴求するイベントとなりました。Anthropic の Chief Product Officer **Ami Vora** が冒頭で「**API 利用量が前年比 17 倍**」と紹介し、`Claude Code` を中心とした自律的ソフトウェアエンジニアリングの実装パターンが続々と提示されました。
 
@@ -49,6 +50,10 @@ draft: false
 | **Security Reviews** | ブランチ全体にセキュリティレビューをかける `/security-review` の拡張 | GA |
 | **Routines** | 高次プロンプトで非同期自動化。**「朝起きたら PR がマージ可能になっている」** | GA（v2.1.71+） |
 | **Multi-session デスクトップ** | デスクトップアプリで複数セッションを並列管理 | GA |
+| **Agent View**（`claude agents`） | 複数バックグラウンドセッションのフリート可視化ダッシュボード（Running/Blocked/Done のリアルタイム状態追跡）。`/bg` で背景化したセッションを横断管理 | **Research Preview（v2.1.139, 2026-05-11 PT 出荷）** |
+| **`/goal` コマンド** | 完了条件（goal）を宣言し Claude が自律的に実装・テスト・デバッグを反復。`--tokens` / `--turns` / `--time` フラグでリソース制約、独立 supervisor が最終状態を検証 | **Research Preview（v2.1.139, 2026-05-11 PT 出荷）** |
+
+> **2026-05 出荷確認**: カンファレンスで予告された **Agent View（`claude agents`）** と **`/goal` コマンド** は v2.1.139 (2026-05-11 PT / 2026-05-12 JST) で Research Preview としてリリースされました。詳細は [Claude Code バージョン履歴まとめ](/mdTechKnowledge/blog/claude-code-version-history) 該当バージョン節を参照。
 
 ### 2-2. Claude Managed Agents 新機能（Katelyn / Angela セッション）
 
@@ -203,10 +208,12 @@ Mercado Libre の「90% 自律コーディング」は、**人間レビュアー
 | 開催地 | 日付 | 状況 |
 |---|---|---|
 | サンフランシスコ | 2026-05-06 | 終了 |
-| ロンドン | 2026-05-19 | 登録受付中 |
-| 東京 | 2026-06-10 | **登録受付中**（東京開催あり） |
+| ロンドン | **2026-05-20〜21（PT） / 5/21（JST）** | 開催（旧 5/19 から日程更新） |
+| 東京 | **2026-06-05〜06** | **登録受付中**（東京開催あり、2日間構成） |
 
 東京開催はオンラインでの基調講演ストリーミングも予定されており、現地参加が難しい場合も基調セッションは追跡可能です。
+
+> **2026-05-21 時点 補足**: ロンドンは当初 5/19 単日告知でしたが、2日間プログラムに拡張されて 5/20-21 開催に。東京は 6/10 単日から **6/5-6 の2日間**に変更となっています。最新情報は [公式ページ](https://claude.com/code-with-claude) で確認してください。
 
 ---
 
