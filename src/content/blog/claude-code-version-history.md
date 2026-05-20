@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-05-18
+updatedDate: 2026-05-20
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code v2.0.59〜v2.1.143 のバージョン履歴。plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定など主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.144 のバージョン履歴。/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-05-18
-**現在の最新バージョン**: 2.1.143
+**最終更新**: 2026-05-20
+**現在の最新バージョン**: 2.1.144
 
 ---
 
@@ -17,7 +17,8 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
-| **2.1.143** | **Plugin dependency enforcement** — プラグイン間の依存関係を宣言的に解決し、不足プラグインの自動インストール／バージョン整合チェック／循環依存検知を行うランタイム強制機構。**`claude project purge` コマンド拡張** — プロジェクト履歴の選択削除（セッション単位・期間指定・パターン指定）を `claude project purge` 配下に統合（v2.1.126 で導入された雛形を本コマンドラインに昇格） |
+| **2.1.144** | **`/resume` バックグラウンドセッション対応** — `claude --bg` や Agent View 経由で起動したバックグラウンドセッションが `/resume` のインタラクティブ一覧に **`bg` タグ付き** で混在表示。バックグラウンド作業の引継ぎが対話セッションと同じ UI で完結。**`/plugin` パネル最終更新日表示** — Marketplace の browse/discover ペインに各プラグインの最終更新日が表示され、メンテ状況を即判断可能。**`/model` セッション単位化** — `/model` は現在のセッションだけにモデル変更を適用するように変更。`d` キーで新規セッション用デフォルトを設定。**他**：背景サブエージェント完了通知の経過時間表示（例 "3h 2m 5s"）、`/extra-usage` → `/usage-credits` リネーム（旧名残存）、`api.anthropic.com` 到達不可時の起動ハング 75s→15s タイムアウト、ターミナル化け修正、MCP/OAuth/バックグラウンドセッション系のバグ修正多数 |
+| **2.1.143** | **Plugin dependency enforcement** — プラグイン間の依存関係を宣言的に解決し、不足プラグインの自動インストール／バージョン整合チェック／循環依存検知を行うランタイム強制機構。**`claude project purge` コマンド拡張** — プロジェクト履歴の選択削除（セッション単位・期間指定・パターン指定）を `claude project purge` 配下に統合（v2.1.126 で導入された雛形を本コマンドラインに昇格）。**Projected context cost display**（`/plugin` Marketplace browse の per-turn/per-invocation トークン見積もり）、**worktree.bgIsolation: "none"** 設定（バックグラウンドセッションが worktree を経由せず working copy を直接編集）、**PowerShell -ExecutionPolicy Bypass** デフォルト適用（`CLAUDE_CODE_POWERSHELL_RESPECT_EXECUTION_POLICY=1` で opt-out）、バックグラウンドセッションのアイドル復帰時にモデル/effort を保持 |
 | **2.1.140 系** | **Plugin Marketplace 関連変更**（マーケットプレース連携・配布フローの整備）、**`/plugin` コマンド整備**（インストール／削除／一覧／詳細表示）、**`/skills` リアルタイムフィルタ**（タイプしながら絞り込み）、その他 CLI 全般で 13 件の変更 |
 | **2.1.139** | **Agent View (Research Preview)** — `claude agents` コマンドまたはセッション内左矢印キー（←）で起動。実行中／入力待ち／完了セッションを一覧表示し、複数バックグラウンドエージェントを横断管理可能（Pro/Max/Team/Enterprise/API 全プラン対応、標準レート制限適用）。**`/goal` コマンド** — 完了条件（goal）を設定すると Claude が自動的にタスクを継続実行 |
 | **2.1.138** | `ANTHROPIC_BEDROCK_SERVICE_TIER` 環境変数追加（`default` / `flex` / `priority`）、`/resume` に **PR URL を貼り付けて該当セッションを検索**（GitHub・GitHub Enterprise・GitLab・Bitbucket 対応）、**Remote Control 有効時の「Push when Claude decides」プッシュ通知オプション**（Claude が判断したタイミングで通知）、**`/tui` コマンド追加**（ちらつきなしのフルスクリーン描画）、Bedrock / Vertex / Foundry での 429 エラー修正、MCP **重複コネクタヒント**（同一 URL の claude.ai コネクタ／ローカル定義の重複検知） |
@@ -72,7 +73,24 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.143（2026-05-15 PT / 2026-05-16 JST、最新）
+### 2.1.144（2026-05-19 PT / 2026-05-19 JST、最新）
+
+- **`/resume` バックグラウンドセッション対応** — `claude --bg` や Agent View で起動したバックグラウンドセッションが、`/resume` のインタラクティブ一覧と同じピッカーに混在表示されるようになった
+  - 各エントリには **`bg` タグ** が付与され、バックグラウンド由来かインタラクティブ由来かを一目で識別可能
+  - 「バックグラウンドで走らせていた作業を対話セッションとして引き継ぎたい」「バックグラウンド ↔ インタラクティブの境界を意識せず作業履歴を辿りたい」というユースケースに対応
+- **`/plugin` ブラウズパネルの最終更新日表示** — Plugin Marketplace の browse / discover ペインに各プラグインの **最終更新日**が表示
+  - メンテナンスが続いているか、放置プラグインかが視覚的に判別できる
+  - 信頼性評価の判断材料が増えた
+- **`/model` がセッション単位変更に変更** — `/model` は **現在のセッションのみ** にモデル変更を適用する挙動に
+  - モデルピッカーで **`d` キーを押す** と、新規セッション用のデフォルトを設定可能
+  - 旧挙動は global default を変更していたため、複数並行セッションでの誤適用がしばしば発生していた
+- **背景サブエージェント完了通知の経過時間表示** — 例: `"Agent completed · 3h 2m 5s"` のように所要時間を併記
+- **`/extra-usage` → `/usage-credits` リネーム** — CLI 全体で "extra usage" 表記を "usage credits" に統一（旧コマンド名は引き続き動作）
+- **`api.anthropic.com` 到達不可時の起動ハング修正** — サイドチャネル API 呼び出しのタイムアウトを **75秒 → 15秒** に短縮
+- **ターミナル描画系修正** — ウィンドウリサイズイベント取り逃しによる描画化け、長時間セッションでの段階的描画破壊を修正
+- MCP / OAuth / バックグラウンドセッション系のバグ修正多数
+
+### 2.1.143（2026-05-15 PT / 2026-05-16 JST）
 - **Plugin dependency enforcement** — プラグイン間の依存関係を宣言的に解決するランタイム強制機構
   - プラグインマニフェストの `dependencies` フィールドを参照し、起動時／インストール時に不足プラグインを自動取得
   - バージョン整合性チェック（semver 範囲指定）とバージョン不一致時の警告／インストール拒否
