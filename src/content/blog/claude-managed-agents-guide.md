@@ -1,10 +1,10 @@
 ---
 title: "Claude Managed Agents 簡易ガイド — アーキテクチャ・比較・ユースケース"
 date: 2026-04-08
-updatedDate: 2026-05-17
+updatedDate: 2026-05-20
 category: "Claude技術解説"
-tags: ["Claude", "Managed Agents", "Agent SDK", "Claude Code", "API", "マルチエージェント", "Memory", "Enterprise"]
-excerpt: "Claude Managed Agentsの3層アーキテクチャ（Session/Harness/Sandbox）、p50 TTFT 60%削減のパフォーマンス改善、2026年4月23日パブリックベータ移行のMemory機能（全ユーザーに即時提供）、2026年5月発表の3新機能（Dreaming・Outcomes・Multi-agent orchestration）、エンタープライズ向けRBAC・OpenTelemetry対応、料金体系（$0.08/session-hour）までを1ページに整理。"
+tags: ["Claude", "Managed Agents", "Agent SDK", "Claude Code", "API", "マルチエージェント", "Memory", "Enterprise", "Self-hosted sandboxes", "MCP tunnels", "Cloudflare", "Modal", "Vercel", "Daytona"]
+excerpt: "Claude Managed Agentsの3層アーキテクチャ（Session/Harness/Sandbox）、p50 TTFT 60%削減のパフォーマンス改善、Memory機能、Dreaming・Outcomes・Multi-agent orchestration、エンタープライズ向けRBAC・OpenTelemetry、2026年5月19日発表のSelf-hosted sandboxes（Cloudflare/Daytona/Modal/Vercel対応、Public Beta）とMCP tunnels（Research Preview、プライベートネットワーク内MCPサーバーへの outbound-only E2E接続）、料金体系（$0.08/session-hour）までを1ページに整理。"
 draft: false
 ---
 
@@ -156,6 +156,48 @@ Claude Consoleでセッショントレーシング、ツール呼び出し、エ
 | **OpenTelemetry連携** | 既存の可観測性基盤（Datadog・Grafana等）にトレース・メトリクスをエクスポート |
 
 これにより、IT部門・財務部門が求めるガバナンス要件を満たしつつ、現場部門が本番エージェントを安心してスケールさせられる体制が整いました。
+
+## プライバシー・セキュリティ強化（2026年5月19日 PT）
+
+2026年5月19日（PT）、Managed Agents の **ツール実行・MCP接続まわりのプライバシー／セキュリティ層** を大幅に拡張する2機能が発表されました。エージェントのオーケストレーションループは Anthropic 側に残しつつ、**機密データを顧客側ネットワーク内に留める**設計です。
+
+### Self-hosted sandboxes（Public Beta）
+
+**エージェントのツール実行を、顧客自身のインフラまたはマネージドサンドボックスプロバイダー上で動かす**選択肢。Anthropic のサンドボックスにファイルやパッケージを送らずに済むため、コーポレートペリメータ内で機密データを完結処理可能。
+
+| 提供プロバイダー | 特徴 |
+|---|---|
+| **Cloudflare** | MicroVM ベース、Zero-trust secrets、カスタマイズ可能ネットワークプロキシ |
+| **Daytona** | フルステートフルなコンピュータ、長時間稼働、SSH／プレビューURLアクセス、状態保持 |
+| **Modal** | クラウドプラットフォーム、サブ秒起動、GPU/CPU オンデマンド、数十万並列スケール |
+| **Vercel** | VM セキュリティ、VPCピアリング、ミリ秒起動、ネットワーク境界での credential injection |
+
+| 観点 | 内容 |
+|---|---|
+| ステータス | Public Beta（即日利用可） |
+| 適用範囲 | Managed Agents / Messages API |
+| ガバナンス | 組織が compute resources・ネットワークポリシー・監査ログを統制 |
+
+### MCP tunnels（Research Preview）
+
+**プライベートネットワーク内の MCP サーバーへ、エージェントがファイアウォール変更なしに到達できる**仕組み。軽量ゲートウェイ経由で **outbound-only 接続**＋**E2E 暗号化**を実現し、社内 MCP サーバーをパブリック露出することなく Managed Agents から呼び出し可能になります。
+
+| 観点 | 内容 |
+|---|---|
+| ステータス | Research Preview（[`claude.com/form/claude-managed-agents`](https://claude.com/form/claude-managed-agents) 経由でアクセス申請） |
+| 接続方式 | 軽量ゲートウェイ + outbound-only + E2E 暗号化 |
+| 要件 | 顧客側にゲートウェイを配置（FW 設定変更は不要） |
+| 想定ユースケース | 社内 DB / 内部 API / オンプレ MCP コネクタ等の non-public MCP サーバーをエージェントから安全に利用 |
+
+### 位置付け
+
+| レイヤー | 従来 | 5月19日以降 |
+|---|---|---|
+| オーケストレーション | Anthropic ホスト | Anthropic ホスト（変更なし） |
+| ツール実行サンドボックス | Anthropic ホスト | **Anthropic / 顧客側インフラ / マネージド sandbox プロバイダ** から選択可能 |
+| MCP サーバー接続 | 公開 endpoint のみ | **プライベートネットワーク内 MCP サーバー** にもトンネル経由で接続可能 |
+
+エンタープライズで頻発する「データ persistence の境界を社外に出したくない」「社内 MCP コネクタを公開できない」という制約を、Managed Agents の利便性を維持したまま解消する設計です。料金面のアナウンスは無く、既存 Claude Platform offering に統合される形となります。
 
 ## 具体的なユースケース
 
