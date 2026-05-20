@@ -1,10 +1,10 @@
 ---
 title: "Anthropic Rate Limits API 完全ガイド — 組織・ワークスペースのレート制限をプログラム照会"
 date: 2026-04-29
-updatedDate: 2026-05-08
+updatedDate: 2026-05-21
 category: "Claude技術解説"
-tags: ["Anthropic", "Claude API", "Rate Limits", "Admin API", "エンタープライズ", "運用監視"]
-excerpt: "2026年4月25日リリースのAnthropic Rate Limits API（読み取り専用Admin API）を解説。組織・ワークスペース単位のレート制限をJSONで取得可能。2026年5月のSpaceX Colossus 1コンピュート契約によるレート制限大幅向上（Claude Code 5h制限2倍・Pro/Maxピーク廃止・Opus API上昇）も収録。CI/Slackボット/ゲートウェイから自動照会できる構成例、認証、レスポンス、運用ユースケースまで網羅。"
+tags: ["Anthropic", "Claude API", "Rate Limits", "Admin API", "エンタープライズ", "運用監視", "Agent SDK credits"]
+excerpt: "2026年4月25日リリースのAnthropic Rate Limits API（読み取り専用Admin API）を解説。組織・ワークスペース単位のレート制限をJSONで取得可能。2026年5月のSpaceX Colossus 1コンピュート契約によるレート制限大幅向上（Claude Code 5h制限2倍・Pro/Maxピーク廃止・Opus API上昇）、2026年6月15日施行のAgent SDK課金分離（Pro $20 / Max 5x $100 / Max 20x $200 月次credits、プログラム的利用を別プール化）まで収録。CI/Slackボット/ゲートウェイから自動照会できる構成例、認証、レスポンス、運用ユースケースまで網羅。"
 draft: false
 ---
 
@@ -463,6 +463,47 @@ Admin API キー（`sk-ant-admin-...`）は**通常の API キーよりも強力
 ### 背景情報
 
 Colossus 1契約の詳細は [Anthropic コンピュートインフラ & TPUパートナーシップ](/blog/anthropic-tpu-compute-partnership/)の第8章で解説している。コンピュート拡張とユーザー向けレート制限引き上げが同日実施された点は、Rate Limits APIが「Anthropic 側の意図的な調整」をリアルタイムで把握する手段として機能していることを示している。
+
+## 2026年6月15日 施行 — Agent SDK 課金分離（プログラム的利用を別プール化）
+
+2026年5月13日（PT）／14日（JST）に発表され、**2026年6月15日（PT）施行**となる **Agent SDK credits** は、サブスクリプション枠の課金構造を「インタラクティブ利用」と「プログラム的利用」の2系統に分離する重要な変更です。Rate Limits API の運用にも影響するため本記事でも収録します。
+
+### 分割内容
+
+| プール | 該当する利用 |
+|---|---|
+| **Agent SDK credits** | Claude Agent SDK（Python / TypeScript）、`claude -p` コマンド、Claude Code GitHub Actions、Agent SDK 認証を使う第三者アプリ |
+| **従来サブスク枠（継続）** | Claude.ai Web/アプリのチャット、Claude Code 端末でのインタラクティブ実行、Claude Cowork |
+
+### プラン別 月額 Agent SDK credits
+
+| プラン | 月額 credits |
+|---|---|
+| Pro | **$20** |
+| Max 5x | **$100** |
+| Max 20x | **$200** |
+| Team (Standard seats) | $20 |
+| Team (Premium seats) | $100 |
+| Enterprise (usage-based) | $20 |
+| Enterprise (seat-based Premium) | $200 |
+
+### 枯渇時の挙動
+
+- **`usage credits` を有効化済**: 超過分は **API 標準レート**で従量課金（自動継続）
+- **未有効化**: Agent SDK リクエストは **次回月次リフレッシュまで停止**（インタラクティブ利用には影響なし）
+
+### Rate Limits API への影響
+
+- **新プールはサブスクとは独立**: 従来 `subscription` 系の `model_group` で取得していたレート枠は Agent SDK 経由の利用を含まなくなる
+- **`usage credits` 有効化済の組織**: 超過分は **API（usage-based）のレート制限プール**側で消費されるため、`api_user_input_tokens_per_minute` 等の値の枯渇監視がより重要になる
+- **CI/CD で Claude Code GitHub Actions を回すユース**: 6/15 以降は月次 Agent SDK credits の残量チェックも合わせて行う運用設計に切替推奨
+- 該当ユーザーには **2026年6月15日までに案内メール**が届き、**一度きりの opt-in 操作**で月次自動リフレッシュが開始される
+
+### 参考: 公式情報
+
+- [Use the Claude Agent SDK with your Claude plan — Claude Support](https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan)
+- [Anthropic Splits Claude Subscriptions With Agent SDK Credits Coming June 2026 — The New Stack](https://thenewstack.io/anthropic-agent-sdk-credits/)
+- [Anthropic Splits Claude Subscriptions: Separate Budgets for Programmatic Use — The Decoder](https://the-decoder.com/claude-subscriptions-get-separate-budgets-for-programmatic-use-billed-at-full-api-prices/)
 
 ## まとめ
 
