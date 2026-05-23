@@ -1,10 +1,10 @@
 ---
 title: "MCP (Model Context Protocol) アーキテクチャ詳細"
 date: 2026-04-26
-updatedDate: 2026-05-18
+updatedDate: 2026-05-23
 category: "Claude技術解説"
-tags: ["MCP", "Claude Code", "JSON-RPC", "GitHub", "OAuth", "プロトコル", "Claude for Legal"]
-excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness/エンタープライズSSO・監査トレイル・Governance Working Group・新コアメンテナー）、MCP Apps（SEP-1865）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、Claude for Legal で公開された20+ MCPコネクタ、約20万サーバーに影響した重大脆弱性事案の参照リンクまでを網羅"
+tags: ["MCP", "Claude Code", "JSON-RPC", "GitHub", "OAuth", "プロトコル", "Claude for Legal", "Release Candidate", "ステートレス"]
+excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness/エンタープライズSSO・監査トレイル・Governance Working Group・新コアメンテナー）、MCP Apps（SEP-1865）、2026-05-21 Release Candidate ロック（プロトコルステートレス化＝Mcp-Session-Id 廃止、MCP Apps の HTML UI、Tasks Extension 再設計、最終仕様 2026-07-28 公開予定）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、Claude for Legal で公開された20+ MCPコネクタ、約20万サーバーに影響した重大脆弱性事案の参照リンクまでを網羅"
 draft: false
 ---
 
@@ -113,6 +113,56 @@ USBデバイス（マウス等）    =    MCPサーバー（GitHub, Gmail等）
 サーバー定義に同梱する `server.card.json`（仮称、SEP 準拠の自己記述メタ）を解析することで、MCP レジストリへの自動登録・検証・更新を行う仕組みが検討されている。エンタープライズ環境での MCP サーバーガバナンスの中核機能として位置づけられる。
 
 参考: [MCP公式ブログ](https://blog.modelcontextprotocol.io/) / [4月メンテナー更新](https://blog.modelcontextprotocol.io/posts/2026-04-08-maintainer-update/)
+
+#### MCP Release Candidate ロック（2026-05-21 PT／22 JST、最終仕様 2026-07-28 公開予定）
+
+2026年5月21日（PT）、MCP の **次期 Release Candidate（RC）** がロックされた。Transport Scalability・Tasks Extension・MCP Apps の3トピックが本 RC で確定し、最終仕様は **2026-07-28 公開予定**。実装者にとってのインパクトは大きく、特に**プロトコル層のステートレス化**は既存サーバー/クライアントの再設計を要する。
+
+##### 1. プロトコルのステートレス化（Mcp-Session-Id 廃止）
+
+| 観点 | 変更前 | 変更後（RC） |
+|---|---|---|
+| セッション識別 | `initialize` / `initialized` ハンドシェイクで **`Mcp-Session-Id` ヘッダー**を発行、以降のリクエストで携帯必須 | **ヘッダー廃止**。リクエストごとに `_meta` 経由でクライアント情報を渡す |
+| ルーティング | スティッキー LB が必須（同じサーバーインスタンスへ pin） | **プレーンなラウンドロビン LB で十分** |
+| 共有セッションストア | 水平スケール時に必須（Redis 等） | **不要** |
+| サーバー側状態管理 | プロトコル層のセッション初期化ロジック | **撤去**。状態が必要なアプリは tool call から ID を発行し、モデルが引数として渡し返す **明示的ハンドルパターン**で実装 |
+
+→ Streamable HTTP のスケール課題（ロードマップ「Transport Scalability」テーマ）に対する**根本解決**。
+
+##### 2. MCP Apps（server-rendered HTML UI）
+
+サーバーが**事前レンダリング済 HTML**をホストアプリへ提供し、**サンドボックス iframe** 内で表示。UI 内のすべての操作は通常の JSON-RPC 経路を通るため、**監査トレイルが直接ツール呼び出しと同等**に取れる。
+
+| 実装サイド | やること |
+|---|---|
+| サーバー | tool メタデータで UI テンプレートを宣言、HTML をテンプレートエンジンで事前生成 |
+| クライアント／ホスト | iframe sandbox を実装、レンダリング済 UI ⇄ プロトコルハンドラ間で JSON-RPC ブリッジを構築 |
+
+旧来の SEP-1865 提案を実装フェーズへ進めた形。
+
+##### 3. Tasks Extension の再設計
+
+長時間タスク機能が**実験的コア機能から opt-in 拡張**に格下げされる代わりに、**ステートレスなライフサイクル**を採用。
+
+| 観点 | 変更前 | 変更後（RC） |
+|---|---|---|
+| 位置付け | 実験的コア機能 | opt-in **拡張**（Tasks Extension） |
+| ライフサイクル | 永続接続状態が前提 | **ステートレス**。`tools/call` 応答に **task handle** を含め、`tasks/get` / `tasks/update` / `tasks/cancel` で駆動 |
+| `tasks/list` エンドポイント | 存在 | **廃止** |
+| タスク化の判断主体 | クライアント駆動 | **サーバー駆動**（サーバーが「これはタスクである」と判断） |
+
+→ **Breaking change**: 既存の実験的 Tasks API 実装は書き換えが必要。
+
+##### マイグレーション影響まとめ
+
+| 関係者 | 対応 |
+|---|---|
+| **MCP サーバー実装者** | セッション初期化ロジック撤去、Tasks 仕様書き換え、UI テンプレート宣言（オプション） |
+| **MCP クライアント／ホスト実装者** | session ID 管理撤去、`_meta` への client info 移行、iframe sandbox 実装、新 Tasks ライフサイクル対応 |
+| **インフラ運用** | スティッキー LB 設定解除、共有セッションストア撤去（コスト削減） |
+| **エンタープライズユーザー** | スケーリング容易化により水平展開コストが下がる |
+
+参考: [2026-07-28 Release Candidate（MCP公式ブログ）](https://blog.modelcontextprotocol.io/posts/2026-07-28-release-candidate/) / [The New Stack: Model Context Protocol Roadmap 2026](https://thenewstack.io/model-context-protocol-roadmap-2026/)
 
 ---
 
