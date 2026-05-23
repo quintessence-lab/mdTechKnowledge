@@ -1,7 +1,7 @@
 ---
 title: "Code with Claude 2026 開発者カンファレンス まとめ — Remote Agents・Code Review・Routines・Dreaming"
 date: 2026-05-09
-updatedDate: 2026-05-21
+updatedDate: 2026-05-23
 category: "Claude技術解説"
 tags: ["Claude Code", "Code with Claude", "Anthropic", "Remote Agents", "Code Review", "Multi-agent orchestration", "Dreaming", "Routines", "カンファレンス", "Agent View", "/goal"]
 excerpt: "2026年5月6日（PT、JST 5/7）にサンフランシスコで開催された Anthropic 公式開発者カンファレンス Code with Claude 2026 のまとめ。Remote Agents・Code Review・Routines・Dreaming・Multi-agent orchestration・Outcomes など主要発表と Shopify／Mercado Libre の事例、レート制限倍増、SpaceX Colossus 1 連携、v2.1.139 で Research Preview として出荷された Agent View（`claude agents`）／`/goal` コマンド、London 5/20-21・Tokyo 6/5-6 への巡回ツアー（日程拡張）まで整理。"
@@ -210,10 +210,11 @@ Mercado Libre の「90% 自律コーディング」は、**人間レビュアー
 | サンフランシスコ | 2026-05-06 | 終了 |
 | ロンドン | **2026-05-20〜21（PT） / 5/21（JST）** | 開催（旧 5/19 から日程更新） |
 | 東京 | **2026-06-05〜06** | **登録受付中**（東京開催あり、2日間構成） |
+| **東京 Extended** | **2026-06-11（JST）** | **登録受付中**（インディー開発者・初期スタートアップ向け追加開催枠） |
 
 東京開催はオンラインでの基調講演ストリーミングも予定されており、現地参加が難しい場合も基調セッションは追跡可能です。
 
-> **2026-05-21 時点 補足**: ロンドンは当初 5/19 単日告知でしたが、2日間プログラムに拡張されて 5/20-21 開催に。東京は 6/10 単日から **6/5-6 の2日間**に変更となっています。最新情報は [公式ページ](https://claude.com/code-with-claude) で確認してください。
+> **2026-05-23 時点 補足**: ロンドンは当初 5/19 単日告知でしたが、2日間プログラムに拡張されて 5/20-21 開催に。東京は 6/10 単日から **6/5-6 の2日間**に変更。さらに **東京 Extended（6/11）** がインディー開発者・初期スタートアップ向け追加枠として個別ページ ([claude.com/code-with-claude/tokyo-extended](https://claude.com/code-with-claude/tokyo-extended)) で公開されました。最新情報は [公式ページ](https://claude.com/code-with-claude) で確認してください。
 
 ---
 
