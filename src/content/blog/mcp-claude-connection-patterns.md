@@ -1,10 +1,10 @@
 ---
 title: "MCPサーバーとClaudeの接続パターン解説 — Browser / Claude Code Terminal / Claude Code Web"
 date: 2026-04-26
-updatedDate: 2026-04-26
+updatedDate: 2026-05-23
 category: "Claude技術解説"
-tags: ["MCP", "Claude", "Claude Code", "アーキテクチャ", "接続パターン", "GitHub MCP"]
-excerpt: "MCPサーバーとClaudeの3つの主要接続パターン（Browser / Claude Code Terminal / Claude Code Web）を図解。GitHub MCPを例にアクセス経路の違い・認証フロー・運用上の選択基準を整理。"
+tags: ["MCP", "Claude", "Claude Code", "アーキテクチャ", "接続パターン", "GitHub MCP", "Release Candidate", "ステートレス"]
+excerpt: "MCPサーバーとClaudeの3つの主要接続パターン（Browser / Claude Code Terminal / Claude Code Web）を図解。GitHub MCPを例にアクセス経路の違い・認証フロー・運用上の選択基準を整理。2026-05-21 ロックの MCP Release Candidate によるステートレス化（Mcp-Session-Id 廃止、スティッキー LB・共有セッションストア不要化）が各パターンへ与える実務影響と自社 MCP サーバー移行チェックリストも収録。"
 draft: false
 ---
 
@@ -563,6 +563,40 @@ jobs:
 - Claude Code on the WebのVPN/プライベートネットワーク対応
 - AnthropicのサブスクリプションとGitHub Actions連携の課金モデル変更
 - MCPプロトコル自体の認証拡張（mTLS等）
+
+---
+
+## 13. MCP Release Candidate（2026-05-21 ロック）— ステートレス化が接続パターンに与える影響
+
+2026年5月21日（PT）、MCP の次期 Release Candidate がロックされ、**Streamable HTTP トランスポートがステートレス化**される方針が確定しました（最終仕様 2026-07-28 公開予定）。本記事の3パターンすべての**「2回目以降のリクエストの振る舞い」**が変わるため、運用設計に影響が及びます。
+
+### 13.1 何が変わるか
+
+| 観点 | 変更前（〜2026-05-20） | 変更後（RC 適用後） |
+|---|---|---|
+| セッション識別 | `Mcp-Session-Id` ヘッダーで pin | **ヘッダー廃止**、`_meta` でクライアント情報をリクエストごとに渡す |
+| ロードバランシング | スティッキー LB が必須（同じサーバーインスタンスへ pin） | **プレーンなラウンドロビン LB で十分** |
+| 共有セッションストア | 水平スケール時に必須（Redis 等） | **不要** |
+| サーバー状態管理 | プロトコル層のセッション初期化 | **撤去**。状態が必要なアプリは tool call 引数の **明示的ハンドルパターン**で実装 |
+
+### 13.2 各接続パターンへの実務影響
+
+| パターン | 影響度 | 内容 |
+|---|---|---|
+| **パターン1: claude.ai（ブラウザ）** | 小（透過的） | Anthropic 側 MCP クライアントが自動追従。ユーザー側の操作変更は不要 |
+| **パターン2: Claude Code（端末）** | 中 | `mcp.json` の HTTP MCP 設定は同じだが、**自社運用 MCP サーバー側の RC 対応が必須**。Mcp-Session-Id を発行する旧実装は移行作業を伴う |
+| **パターン3: Claude Code on the Web** | 小（透過的） | サンドボックス内の MCP クライアントが自動追従。サーバー側の RC 対応が前提 |
+
+### 13.3 自社運用 MCP サーバーを持つ場合のチェックリスト
+
+- [ ] `initialize` / `initialized` のセッション初期化ロジックを撤去する準備
+- [ ] `Mcp-Session-Id` を発行・検証している箇所を特定し、廃止計画を立てる
+- [ ] アプリ状態が必要な場合は、**tool call 引数で渡す明示的ハンドル**（`session_handle` 等のフィールド）に再設計
+- [ ] Redis 等の共有セッションストア依存があれば撤去スケジュールを引く
+- [ ] LB 設定からスティッキー指定を解除（コスト削減効果あり）
+- [ ] **Tasks 機能を使っている場合は Breaking Change**。`tools/call` → task handle → `tasks/get` / `tasks/update` / `tasks/cancel` の新ライフサイクルへ書き換え
+
+詳細は [MCP (Model Context Protocol) アーキテクチャ詳細](/blog/mcp-architecture/) の「MCP Release Candidate ロック」節を参照。
 
 ---
 
