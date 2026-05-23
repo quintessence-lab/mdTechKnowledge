@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-05-20
+updatedDate: 2026-05-23
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code v2.0.59〜v2.1.144 のバージョン履歴。/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定など主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.149 のバージョン履歴。/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-05-20
-**現在の最新バージョン**: 2.1.144
+**最終更新**: 2026-05-23
+**現在の最新バージョン**: 2.1.149
 
 ---
 
@@ -17,6 +17,10 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.149** | `/usage` がスキル／サブエージェント／プラグイン／MCP サーバー別の**カテゴリ別内訳**を表示、`/diff` 詳細ビューをキーボードでスクロール、Markdown が GFM タスクリストチェックボックスをレンダリング、エンタープライズ向け **`allowAllClaudeAiMcps`** 設定追加。**セキュリティ修正多数**（PowerShell 権限バイパス、git worktree sandbox allowlist、PWD/OLDPWD/DIRSTACK 変数追跡）、macOS の `find` がファイル/vnode テーブル枯渇させる問題修正 |
+| **2.1.148** | v2.1.147 で混入した **Bash ツールが毎回 exit code 127 を返すリグレッション**を緊急修正 |
+| **2.1.147** | **`/simplify` を `/code-review` にリネーム** — effort レベル指定 (`/code-review high` 等) で正確性バグを検出、`--comment` で GitHub PR にインラインコメントとして投稿可能。**pin した background sessions がアイドル時も生存維持**＋アップデート時に in-place 再起動。auto-updater にリトライロジック追加、エンタープライズログイン制約強制の不具合修正、コマンド出力で `&` 文字表示不具合修正、プラグインエージェントが Agent type をドロップする問題修正、Windows PowerShell ツール系不具合修正 |
+| **2.1.145** | **`claude agents --json`** をスクリプト用に追加、`agent_id` / `parent_agent_id` を OpenTelemetry span に含める、`/plugin` がインストール前に commands/agents/skills/hooks/MCP を表示、フルスクリーンでエージェントパネルがマウス hover/click 対応、MCP prompt コマンドの検証エラー修正、UI フリーズ/トランスクリプト系修正多数 |
 | **2.1.144** | **`/resume` バックグラウンドセッション対応** — `claude --bg` や Agent View 経由で起動したバックグラウンドセッションが `/resume` のインタラクティブ一覧に **`bg` タグ付き** で混在表示。バックグラウンド作業の引継ぎが対話セッションと同じ UI で完結。**`/plugin` パネル最終更新日表示** — Marketplace の browse/discover ペインに各プラグインの最終更新日が表示され、メンテ状況を即判断可能。**`/model` セッション単位化** — `/model` は現在のセッションだけにモデル変更を適用するように変更。`d` キーで新規セッション用デフォルトを設定。**他**：背景サブエージェント完了通知の経過時間表示（例 "3h 2m 5s"）、`/extra-usage` → `/usage-credits` リネーム（旧名残存）、`api.anthropic.com` 到達不可時の起動ハング 75s→15s タイムアウト、ターミナル化け修正、MCP/OAuth/バックグラウンドセッション系のバグ修正多数 |
 | **2.1.143** | **Plugin dependency enforcement** — プラグイン間の依存関係を宣言的に解決し、不足プラグインの自動インストール／バージョン整合チェック／循環依存検知を行うランタイム強制機構。**`claude project purge` コマンド拡張** — プロジェクト履歴の選択削除（セッション単位・期間指定・パターン指定）を `claude project purge` 配下に統合（v2.1.126 で導入された雛形を本コマンドラインに昇格）。**Projected context cost display**（`/plugin` Marketplace browse の per-turn/per-invocation トークン見積もり）、**worktree.bgIsolation: "none"** 設定（バックグラウンドセッションが worktree を経由せず working copy を直接編集）、**PowerShell -ExecutionPolicy Bypass** デフォルト適用（`CLAUDE_CODE_POWERSHELL_RESPECT_EXECUTION_POLICY=1` で opt-out）、バックグラウンドセッションのアイドル復帰時にモデル/effort を保持 |
 | **2.1.140 系** | **Plugin Marketplace 関連変更**（マーケットプレース連携・配布フローの整備）、**`/plugin` コマンド整備**（インストール／削除／一覧／詳細表示）、**`/skills` リアルタイムフィルタ**（タイプしながら絞り込み）、その他 CLI 全般で 13 件の変更 |
@@ -73,7 +77,46 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.144（2026-05-19 PT / 2026-05-19 JST、最新）
+### 2.1.149（2026-05-22 PT、最新）
+
+- **`/usage` カテゴリ別内訳** — スキル／サブエージェント／プラグイン／MCP サーバー別のトークン消費を分解表示。コスト要因の特定が大幅に容易化
+- **`/diff` 詳細ビューをキーボードスクロール対応** — マウス不要で長い差分を確認可能
+- **GFM タスクリストチェックボックス対応** — Markdown 描画で `- [ ]` / `- [x]` が視覚的に表示
+- **エンタープライズ設定 `allowAllClaudeAiMcps`** — claude.ai 由来 MCP コネクタを組織横断で許可するワイルドカード設定
+- **セキュリティ修正多数**:
+  - PowerShell 権限バイパスの抜け穴
+  - git worktree sandbox allowlist の不備
+  - `PWD` / `OLDPWD` / `DIRSTACK` の変数追跡における権限解析ギャップ
+- macOS で `find` がファイル/vnode テーブルを枯渇させる問題修正
+- 各種 UI 修正・権限プロンプト修正
+
+### 2.1.148（2026-05-22 PT）
+
+- v2.1.147 で混入した **Bash ツールが毎回 exit code 127 を返すリグレッション**の緊急修正。バージョン番号は 1 つしか進めなかったが、Bash ベースのワークフロー全停止級の影響だったため即日 hotfix リリース
+
+### 2.1.147（2026-05-21 PT）
+
+- **`/simplify` → `/code-review` リネーム** — コマンド名と挙動を再定義
+  - `/code-review [effort]` で **effort レベル**（`standard` / `high` / `xhigh` / `max`）を選択してコード正確性のバグを検出
+  - **`--comment` フラグ**で GitHub PR の該当行にインラインコメントとして投稿
+  - 旧 `/simplify` の "cleanup-and-fix" 挙動は廃止
+- **Pinned background sessions の永続化** — `/pin` でピン留めした背景セッションは、アイドル時もメモリから降ろされず生存維持。Claude Code 本体のアップデートが発生してもそのセッションは **in-place 再起動**で文脈を保持
+- **Auto-updater リトライロジック** — 一時的ネットワークエラーを自動リトライし、原因別のエラーカテゴリを報告
+- **エンタープライズログイン制約強制** — 組織ポリシーで許可されていない認証フローが通ってしまう不具合修正
+- コマンド出力での `&` 文字 HTML エスケープによる表示崩れ修正
+- プラグインエージェントが Agent type 情報を伝播しない問題修正
+- Windows PowerShell ツール系の複数バグ修正
+
+### 2.1.145（2026-05-19 PT）
+
+- **`claude agents --json`** — Agent View で扱う情報を JSON で出力するフラグ。CI/CD やシェルパイプラインから状態取得・自動化に利用可能
+- **OTEL span 拡張** — `agent_id` と `parent_agent_id` を span 属性に含め、サブエージェント階層をテレメトリで追跡可能に
+- **`/plugin` インストール前プレビュー** — Marketplace 一覧で各プラグインが提供する commands / agents / skills / hooks / MCP サーバー一覧を**インストール前**に確認可能
+- **フルスクリーンでエージェントパネルのマウス操作対応** — hover / click でセッション選択
+- **MCP prompt コマンドの検証エラー修正** — 引数を要求しない MCP prompt が誤って「引数不足」エラーを出していた問題修正
+- UI フリーズ・トランスクリプト描画系の修正多数
+
+### 2.1.144（2026-05-19 PT / 2026-05-19 JST）
 
 - **`/resume` バックグラウンドセッション対応** — `claude --bg` や Agent View で起動したバックグラウンドセッションが、`/resume` のインタラクティブ一覧と同じピッカーに混在表示されるようになった
   - 各エントリには **`bg` タグ** が付与され、バックグラウンド由来かインタラクティブ由来かを一目で識別可能
