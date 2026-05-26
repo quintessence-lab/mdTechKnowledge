@@ -1,7 +1,7 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-05-23
+updatedDate: 2026-05-27
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
 excerpt: "Claude Code v2.0.59〜v2.1.149 のバージョン履歴。/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定など主要マイルストーンを解説。"
@@ -9,7 +9,7 @@ draft: false
 ---
 
 **最終更新**: 2026-05-23
-**現在の最新バージョン**: 2.1.149
+**現在の最新バージョン**: 2.1.150
 
 ---
 
@@ -77,7 +77,13 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.149（2026-05-22 PT、最新）
+### 2.1.150（2026-05-23 PT、最新）
+
+- **内部インフラ改善のみ（ユーザー向け変更なし）** — 公式リリースノートには "Internal infrastructure improvements (no user-facing changes)" と明記。CLI コマンド・UI・既存挙動の変更はない
+- バックエンド最適化・メンテナンスを目的とするリリース。新規バグ修正もこのバージョンでは公開されていない
+- コミットハッシュ: `39e853e`
+
+### 2.1.149（2026-05-22 PT）
 
 - **`/usage` カテゴリ別内訳** — スキル／サブエージェント／プラグイン／MCP サーバー別のトークン消費を分解表示。コスト要因の特定が大幅に容易化
 - **`/diff` 詳細ビューをキーボードスクロール対応** — マウス不要で長い差分を確認可能
