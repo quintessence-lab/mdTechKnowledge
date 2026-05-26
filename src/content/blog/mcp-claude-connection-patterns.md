@@ -1,7 +1,7 @@
 ---
 title: "MCPサーバーとClaudeの接続パターン解説 — Browser / Claude Code Terminal / Claude Code Web"
 date: 2026-04-26
-updatedDate: 2026-05-23
+updatedDate: 2026-05-27
 category: "Claude技術解説"
 tags: ["MCP", "Claude", "Claude Code", "アーキテクチャ", "接続パターン", "GitHub MCP", "Release Candidate", "ステートレス"]
 excerpt: "MCPサーバーとClaudeの3つの主要接続パターン（Browser / Claude Code Terminal / Claude Code Web）を図解。GitHub MCPを例にアクセス経路の違い・認証フロー・運用上の選択基準を整理。2026-05-21 ロックの MCP Release Candidate によるステートレス化（Mcp-Session-Id 廃止、スティッキー LB・共有セッションストア不要化）が各パターンへ与える実務影響と自社 MCP サーバー移行チェックリストも収録。"
@@ -563,6 +563,61 @@ jobs:
 - Claude Code on the WebのVPN/プライベートネットワーク対応
 - AnthropicのサブスクリプションとGitHub Actions連携の課金モデル変更
 - MCPプロトコル自体の認証拡張（mTLS等）
+
+---
+
+## 12.5 パターン4: MCP Tunnels — Managed Agentsからのプライベート網接続（2026-05-19 リサーチプレビュー）
+
+2026年5月19日（PT）/ 5月20日（JST）、**Code with Claude London** で発表された **MCP Tunnels (Research Preview)** により、Claude **Managed Agents** から **プライベートネットワーク内 MCP サーバー** へ、**アウトバウンドのみの暗号化接続** で到達する新パターンが追加されました。
+
+### 12.5.1 経路の特徴
+
+| 観点 | 内容 |
+|:-----|:-----|
+| 発信元 | Anthropic **Managed Agents** サンドボックス |
+| 接続方式 | **軽量ゲートウェイ経由のアウトバウンド単方向接続** |
+| インバウンドFW | **不要**（公開エンドポイント / インバウンド ACL 一切なし） |
+| 暗号化 | エンドツーエンド暗号化 |
+| 認証管理 | Claude Console の **Organization Admin** が Workspace Settings で集中管理 |
+| 認証情報のサンドボックス露出 | 防止される（Workspace層で隔離） |
+| 対象 | Managed Agents + Messages API |
+| ステータス | リサーチプレビュー（要 access request） |
+
+### 12.5.2 既存パターンとの違い
+
+| 観点 | パターン1 (claude.ai) | パターン2 (Code端末) | パターン3 (Code Web) | **パターン4: MCP Tunnels** |
+|:-----|:-----|:-----|:-----|:-----|
+| 接続元 | Anthropicクラウド | ローカル端末 | Anthropic管理VM | **Managed Agents サンドボックス** |
+| 公開エンドポイント要否 | 必要（パブリックHTTP MCP） | 不要（端末から発信） | 必要 | **不要（アウトバウンドのみ）** |
+| インバウンドFW穴あけ | 必要 | 不要 | 必要 | **不要** |
+| VPN/プロキシ運用 | 不可 | 可 | 不可 | **不要（ゲートウェイが代替）** |
+| 認証情報の管理場所 | Anthropic側 | ローカル端末 | プロキシ層 | **Workspace Settings（組織管理）** |
+| 主な対象MCP | パブリックSaaS | 自作・社内 | パブリックSaaS | **社内DB / プライベートAPI / KB / チケッティング** |
+
+### 12.5.3 ユースケース
+
+- **社内 ServiceNow / Jira on-prem** を Managed Agent から操作したい
+- **VPC内の Postgres / Snowflake** を「外向きエンドポイントなし」で参照したい
+- **社内ナレッジベース（Confluence内部インスタンス等）** を Managed Agent の知識源として使いたい
+
+従来 パターン1（claude.ai）でこれを実現するにはパブリックHTTP公開＋OAuth構築が必要でしたが、MCP Tunnels では**サーバー側を一切公開せずに**接続できます。パターン2（Claude Code 端末）の「端末から発信できる」という強みを、Managed Agents 側で再現するイメージです。
+
+### 12.5.4 既存3パターン比較表への影響
+
+セクション 5 の比較表は **5列構成（パターン1〜3 + パターン4）** に拡張する形で読み替えられます。要点を抜粋すると:
+
+| 観点 | パターン1〜3 | **パターン4 (MCP Tunnels)** |
+|:-----|:-----|:-----|
+| 社内VPN/プライベートネットワーク内のMCPサーバー | 原則パターン2のみ可（端末発信） | **可（公開エンドポイント不要のままManaged Agentsから）** |
+| 認証情報の保管場所 | 各パターンの設計に従う | **Workspace Settings（Org Admin集中管理）** |
+| 自動化（CI/Routinesからの利用） | パターン3またはAPI経由 | **Managed Agents経由で自然に組み合わせ可** |
+
+### 12.5.5 利用条件と注意
+
+- 現時点では **Research Preview**：Anthropic にアクセス申請が必要
+- 対象は **Managed Agents** と **Messages API**
+- 認証情報の管理権限は **Organization Admin** のみ（Workspace Settings UI 経由）
+- 既存パターン2を併用している組織では、**「端末発信ルート」と「Tunnels経由ルート」のどちらが正か** を整理しておくことが推奨される
 
 ---
 
