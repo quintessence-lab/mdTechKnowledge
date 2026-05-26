@@ -1,7 +1,7 @@
 ---
 title: "Claude Managed Agents 簡易ガイド — アーキテクチャ・比較・ユースケース"
 date: 2026-04-08
-updatedDate: 2026-05-20
+updatedDate: 2026-05-27
 category: "Claude技術解説"
 tags: ["Claude", "Managed Agents", "Agent SDK", "Claude Code", "API", "マルチエージェント", "Memory", "Enterprise", "Self-hosted sandboxes", "MCP tunnels", "Cloudflare", "Modal", "Vercel", "Daytona"]
 excerpt: "Claude Managed Agentsの3層アーキテクチャ（Session/Harness/Sandbox）、p50 TTFT 60%削減のパフォーマンス改善、Memory機能、Dreaming・Outcomes・Multi-agent orchestration、エンタープライズ向けRBAC・OpenTelemetry、2026年5月19日発表のSelf-hosted sandboxes（Cloudflare/Daytona/Modal/Vercel対応、Public Beta）とMCP tunnels（Research Preview、プライベートネットワーク内MCPサーバーへの outbound-only E2E接続）、料金体系（$0.08/session-hour）までを1ページに整理。"
@@ -198,6 +198,60 @@ Claude Consoleでセッショントレーシング、ツール呼び出し、エ
 | MCP サーバー接続 | 公開 endpoint のみ | **プライベートネットワーク内 MCP サーバー** にもトンネル経由で接続可能 |
 
 エンタープライズで頻発する「データ persistence の境界を社外に出したくない」「社内 MCP コネクタを公開できない」という制約を、Managed Agents の利便性を維持したまま解消する設計です。料金面のアナウンスは無く、既存 Claude Platform offering に統合される形となります。
+
+## ランタイム機能の追加（2026年5月22日 JST、Claude Code v2.1.149連動）
+
+2026年5月22日（JST）リリースの Claude Code v2.1.149 とAPIドキュメント更新により、Managed Agents の **実行時挙動を支える3機能** が追加されました。いずれも「長時間セッションを実運用に乗せた際のオペレーション課題」を直接解消する内容です。
+
+### セッション中の MCP 設定動的更新
+
+アクティブなセッションに紐づいた **MCP サーバー・ツール構成を、セッション継続中に変更** できるようになりました。従来は「セッション開始時に確定した MCP 構成」が固定されていたため、サーバー追加・撤去・認証情報更新のたびにセッションを切り替える必要がありました。
+
+| 観点 | 変更前 | 変更後 |
+|---|---|---|
+| MCP 構成変更 | セッション再作成が必要 | **アクティブセッションのまま変更可能** |
+| 想定運用 | 設計変更時はセッション破棄 | 長時間 Dreaming/Outcomes セッション内でも構成更新可能 |
+| 典型ユースケース | 環境差し替えごとに新セッション | 業務ロール切り替え・段階的なツール拡張 |
+
+→ Managed Agents で **数時間〜数日にわたる Dreaming セッション**を運用する組織にとって、構成変更コストを大幅削減。
+
+### 大容量ツール出力の自動スピル（agent_toolset / MCP 共通）
+
+`agent_toolset` や MCP ツールの出力が **100K トークン超** になった場合、自動的に **サンドボックス内ファイルへ書き出し**、モデルには「トランケート済みプレビュー＋ファイルパス」を返す仕組み。
+
+| 観点 | 内容 |
+|---|---|
+| 発火条件 | ツール出力が **100K トークン超** |
+| 保存先 | サンドボックス内ファイル（モデルからは `read_file` 等で参照可能） |
+| モデルへの返却 | **トランケート済みプレビュー + ファイルパス** |
+| 適用範囲 | agent_toolset / MCP ツール出力 共通 |
+| 効果 | コンテキスト圧迫の自動防止、長文ログ・大型ファイル取得時の安定動作 |
+
+→ 「巨大な検索結果や `grep` 出力でコンテキストが瞬間的に消費される」典型的トラブルを **harness 層で自動吸収**。エージェント側で「これは長すぎるから一旦ファイル化」と意識する必要がなくなる。
+
+### Cache diagnostics（Public Beta）
+
+Messages リクエストに **`diagnostics.previous_message_id`** を付与すると、レスポンスに **`cache_miss_reason`** が返るようになりました。前回ターンとのキャッシュプレフィックス分岐箇所を診断可能。
+
+| 観点 | 内容 |
+|---|---|
+| ステータス | **Public Beta** |
+| リクエスト側 | `diagnostics.previous_message_id` を指定 |
+| レスポンス側 | `cache_miss_reason` フィールドで分岐位置・原因を返却 |
+| 想定用途 | プロンプトキャッシュが「効くはずなのに効かない」事象の原因特定 |
+| 典型シナリオ | システムプロンプト末尾の動的フィールド・ツール定義変更・MCP 構成変更によるキャッシュ無効化を可視化 |
+
+→ プロンプトキャッシュ最適化が必要な高頻度トラフィック運用において、**キャッシュ効率低下の根本原因を機械的に追跡可能**に。従来は「効いてないはず」を勘で当てる必要があった領域。
+
+### 3機能の位置付け
+
+| 機能 | 解決する課題 | 影響レイヤー |
+|---|---|---|
+| **セッション中 MCP 更新** | 長時間セッションの構成変更コスト | セッション管理 |
+| **大容量出力スピル** | 大型ツール結果によるコンテキスト圧迫 | tool 実行 |
+| **Cache diagnostics** | プロンプトキャッシュ効率の透明性 | 課金・性能 |
+
+これら3機能は、5月19日の **Self-hosted sandboxes / MCP tunnels**（プライバシー層の拡張）と組み合わさることで、Managed Agents が「**長時間・大型データ・機密データを安定運用できる業務基盤**」へと一段階成熟したことを示しています。
 
 ## 具体的なユースケース
 
