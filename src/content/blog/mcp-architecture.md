@@ -1,7 +1,7 @@
 ---
 title: "MCP (Model Context Protocol) アーキテクチャ詳細"
 date: 2026-04-26
-updatedDate: 2026-05-23
+updatedDate: 2026-05-27
 category: "Claude技術解説"
 tags: ["MCP", "Claude Code", "JSON-RPC", "GitHub", "OAuth", "プロトコル", "Claude for Legal", "Release Candidate", "ステートレス"]
 excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness/エンタープライズSSO・監査トレイル・Governance Working Group・新コアメンテナー）、MCP Apps（SEP-1865）、2026-05-21 Release Candidate ロック（プロトコルステートレス化＝Mcp-Session-Id 廃止、MCP Apps の HTML UI、Tasks Extension 再設計、最終仕様 2026-07-28 公開予定）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、Claude for Legal で公開された20+ MCPコネクタ、約20万サーバーに影響した重大脆弱性事案の参照リンクまでを網羅"
@@ -117,6 +117,36 @@ USBデバイス（マウス等）    =    MCPサーバー（GitHub, Gmail等）
 #### MCP Release Candidate ロック（2026-05-21 PT／22 JST、最終仕様 2026-07-28 公開予定）
 
 2026年5月21日（PT）、MCP の **次期 Release Candidate（RC）** がロックされた。Transport Scalability・Tasks Extension・MCP Apps の3トピックが本 RC で確定し、最終仕様は **2026-07-28 公開予定**。実装者にとってのインパクトは大きく、特に**プロトコル層のステートレス化**は既存サーバー/クライアントの再設計を要する。
+
+##### 0. RC 構成 SEP 一覧（2026-05-27補追）
+
+RC で確定した変更は以下の **SEP（Specification Enhancement Proposal）** が束ねる形で構成される。実装者は各 SEP を起点に詳細仕様を追える。
+
+| 領域 | SEP | 内容 |
+|---|---|---|
+| ステートレス化（プロトコル骨格） | **SEP-2575** | 初期化ハンドシェイク（`initialize` / `initialized`）廃止 |
+| 〃 | **SEP-2567** | `Mcp-Session-Id` ヘッダーとサーバー側セッション概念の廃止 |
+| 〃 | **SEP-2260** | サーバー発信リクエストは「クライアント処理中」のみ許可（双方向接続前提を撤去） |
+| 〃 | **SEP-2322** | Multi Round-Trip Requests により SSE ストリームへの依存撤廃 |
+| 〃 | **SEP-2243** | `Mcp-Method` / `Mcp-Name` ヘッダーで操作識別を可能化 |
+| キャッシュ制御 | **SEP-2549** | `ttlMs` と `cacheScope` を追加（ステートレス前提でのキャッシュ最適化） |
+| エラーモデル統一 | **SEP-2164** | リソース未検出エラーを MCP独自 `-32002` → **JSON-RPC 標準 `-32602 Invalid Params`** に統一 |
+| UI 仕様 | **SEP-1865** | MCP Apps（server-rendered HTML UI） |
+| 認可強化 | **SEP-2468** / **SEP-837** / **SEP-2352** / **SEP-2207** / **SEP-2350** / **SEP-2351** | OAuth/OIDC 詳細仕様（`iss` 検証 / `application_type` / 資格情報バインディング / リフレッシュトークン / スコープ段階請求 / `.well-known` ディスカバリ） |
+
+→ ステートレス化テーマは **6本の SEP（2575/2567/2260/2322/2243/2549）が連動** することで完成。単独 SEP では成立しない設計。
+
+##### 0-1. エラーコード変更（SEP-2164）— 既存クライアント要修正
+
+リソース未検出時のエラーコードが、MCP独自 `-32002` から **JSON-RPC標準 `-32602 Invalid Params`** に変更。
+
+| 観点 | 変更前 | 変更後（RC） |
+|---|---|---|
+| コード | `-32002`（MCP独自） | `-32602 Invalid Params`（JSON-RPC標準準拠） |
+| 互換性 | MCP 仕様内のみ通用 | **JSON-RPC エコシステム全体と整合** |
+| クライアント影響 | `-32002` ハンドリングコード | **要書き換え**（`-32602` への分岐追加・旧コード判定の削除） |
+
+→ **Breaking change**: `-32002` をスイッチ条件にしているクライアント実装は **RC 適用前に必ず更新**。とくに自社 MCP クライアント実装を持つチームは、エラー分岐の grep / リプレース計画が必要。
 
 ##### 1. プロトコルのステートレス化（Mcp-Session-Id 廃止）
 
