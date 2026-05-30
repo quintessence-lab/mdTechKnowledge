@@ -4,11 +4,11 @@ date: 2026-04-01
 updatedDate: 2026-05-30
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code v2.0.59〜v2.1.149 のバージョン履歴。/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定など主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.157 のバージョン履歴。/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-05-23
+**最終更新**: 2026-05-30
 **現在の最新バージョン**: 2.1.157
 
 ---
@@ -17,6 +17,12 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.157** | v2.1.154 の Opus 4.8 / Dynamic Workflows ロールアウト後の**補助修正版群（2.1.155 / 2.1.156 / 2.1.157）**。細部の安定化・モデルデフォルト切替後の互換性調整が中心 |
+| **2.1.154** | **Claude Opus 4.8 がデフォルトモデルに昇格** ＋ **Dynamic Workflows（Research Preview、最大1000サブエージェントをファンアウト並列実行）**。`ultracode` 設定（xhigh effort + 自動オーケストレーション）、**Fast mode 価格3倍安化**、リーンシステムプロンプトのデフォルト化、Agent Teams 改善（`! <command>` で背景シェル起動）、macOS 背景エージェントの権限継続、`/model` セッションデフォルト保存 |
+| **2.1.153** | GitHub plugin マーケットプレイスに **`skipLfs`** オプション追加（Git LFS ダウンロードをスキップ）、MCP サーバー認証通知の統合（複数の "needs authentication" を1メッセージに集約）、`claude agents` の PR 列表示改善（単一は `PR #N`、複数は `N PRs`） |
+| **2.1.152** | **`/code-review --fix`** — レビュー後に reuse / simplification / efficiency 提案をワーキングツリーに適用（旧 `/simplify` は内部的にこれを呼ぶ形へ統合）、Skill フロントマターに **`disallowed-tools`**（スキル活性中に特定ツールを除外）、**`/reload-skills`** コマンド（セッション再起動なしでスキル再スキャン） |
+| **2.1.151** | マイナー修正（公式 changelog に詳細記載なし） |
+| **2.1.150** | **内部インフラ改善のみ（ユーザー向け変更なし）** — バックエンド最適化・メンテナンス目的のリリース（コミット `39e853e`） |
 | **2.1.149** | `/usage` がスキル／サブエージェント／プラグイン／MCP サーバー別の**カテゴリ別内訳**を表示、`/diff` 詳細ビューをキーボードでスクロール、Markdown が GFM タスクリストチェックボックスをレンダリング、エンタープライズ向け **`allowAllClaudeAiMcps`** 設定追加。**セキュリティ修正多数**（PowerShell 権限バイパス、git worktree sandbox allowlist、PWD/OLDPWD/DIRSTACK 変数追跡）、macOS の `find` がファイル/vnode テーブル枯渇させる問題修正 |
 | **2.1.148** | v2.1.147 で混入した **Bash ツールが毎回 exit code 127 を返すリグレッション**を緊急修正 |
 | **2.1.147** | **`/simplify` を `/code-review` にリネーム** — effort レベル指定 (`/code-review high` 等) で正確性バグを検出、`--comment` で GitHub PR にインラインコメントとして投稿可能。**pin した background sessions がアイドル時も生存維持**＋アップデート時に in-place 再起動。auto-updater にリトライロジック追加、エンタープライズログイン制約強制の不具合修正、コマンド出力で `&` 文字表示不具合修正、プラグインエージェントが Agent type をドロップする問題修正、Windows PowerShell ツール系不具合修正 |
