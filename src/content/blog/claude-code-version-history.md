@@ -1,7 +1,7 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-05-27
+updatedDate: 2026-05-30
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
 excerpt: "Claude Code v2.0.59〜v2.1.149 のバージョン履歴。/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定など主要マイルストーンを解説。"
@@ -9,7 +9,7 @@ draft: false
 ---
 
 **最終更新**: 2026-05-23
-**現在の最新バージョン**: 2.1.150
+**現在の最新バージョン**: 2.1.157
 
 ---
 
@@ -77,7 +77,43 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.150（2026-05-23 PT、最新）
+### 2.1.157（2026-05-29 PT、最新）
+
+- v2.1.154 の Opus 4.8 / Dynamic Workflows ロールアウト後の補助修正バージョン群（2.1.155 / 2.1.156 / 2.1.157）
+- 細部の安定化・モデルデフォルト切替後の互換性調整が中心
+
+### 2.1.154（2026-05-28 PT、2026-05-29 JST）— **Opus 4.8 デフォルト化 + Dynamic Workflows**
+
+このバージョンが本シリーズで**最大級の機能追加**。Anthropic 公式の Claude Opus 4.8 リリースに合わせた一括展開。
+
+- **Claude Opus 4.8 がデフォルトモデルに昇格** — `/effort xhigh` が高難度タスク向けデフォルト。既存ユーザーの個別設定は保持
+- **Dynamic Workflows（Research Preview）** — プロンプトに "workflow" を含めると、Claude が **数十〜最大1000サブエージェント** をバックグラウンドでファンアウト実行・並列ブレスト・収束。`/workflows` で実行状況を確認
+- **`ultracode` 設定** — `xhigh effort` + 自動オーケストレーション on を組み合わせた高難度モード
+- **Fast mode 価格3倍安化** — Opus 4.8 では「標準レート×2 で2.5倍速」へ（従来は更に高額）
+- **リーンシステムプロンプトのデフォルト化** — Haiku / Sonnet / Opus 4.7 以前を **除く** 全モデルで適用
+- **Agent Teams 改善** — `claude agents` 内で `! <command>` でバックグラウンドシェルセッション起動、attach / detach 可能。`claude --bg --exec '<command>'` でも同等
+- **macOS バックグラウンドエージェントの権限継続** — Privacy & Security に "Claude Code" として統一表示、アップグレード後も付与済み権限を保持
+- **`/model` セッションデフォルト保存** — 通常は新規セッションのデフォルトとして保存、`s` キーで現在セッションのみ変更（IDE 動作に一致）
+- **`claude agents` autocomplete 改善**
+
+### 2.1.153（2026-05-28 PT）
+
+- GitHub plugin マーケットプレイス: `skipLfs` オプション追加（clone/update で Git LFS ダウンロードをスキップ）
+- MCP サーバー認証通知の統合（複数の "needs authentication" 通知を1メッセージに集約）
+- `claude agents` の PR 列改善: 単一PRは `PR #N`、複数は `N PRs` 形式で表示
+
+### 2.1.152（2026-05-27 PT）
+
+- **`/code-review --fix`** — レビュー実行後に reuse / simplification / efficiency の提案をワーキングツリーに適用
+- 旧 `/simplify` は内部的に `/code-review --fix` を呼び出す形へ統合
+- **Skill フロントマターに `disallowed-tools`** — スキル活性中に特定ツールをモデルから除外可能
+- **`/reload-skills` コマンド** — セッション再起動なしでスキルディレクトリを再スキャン
+
+### 2.1.151（2026-05-25 PT）
+
+- マイナー修正（公式 changelog に詳細記載なし）
+
+### 2.1.150（2026-05-23 PT）
 
 - **内部インフラ改善のみ（ユーザー向け変更なし）** — 公式リリースノートには "Internal infrastructure improvements (no user-facing changes)" と明記。CLI コマンド・UI・既存挙動の変更はない
 - バックエンド最適化・メンテナンスを目的とするリリース。新規バグ修正もこのバージョンでは公開されていない
