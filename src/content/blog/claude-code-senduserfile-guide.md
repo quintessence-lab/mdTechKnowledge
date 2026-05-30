@@ -1,6 +1,7 @@
 ---
-title: "Claude Code SendUserFile 完全ガイド — PC↔iPhone 直結のファイル共有経路"
+title: "パソコン内のファイルをClaudeでiPhoneから見る方法 ー Claude Code SendUserFileの仕組み"
 date: 2026-05-23
+updatedDate: 2026-05-30
 category: "Claude技術解説"
 tags: ["Claude Code", "SendUserFile", "iPhone", "ファイル共有", "Remote Control", "Dispatch"]
 excerpt: "Claude Code の SendUserFile ツールを使えば、PCで生成したファイルを Anthropic サーバ経由で iPhone Claude Code に即時届けられる。仕組み・データフロー・制限事項・OneDrive 等の永続経路との使い分けまで、PC↔iPhone のファイル共有を最短実装するための完全ガイド。"
