@@ -1,7 +1,7 @@
 ---
 title: "Claude Mythos Preview & Project Glasswing — セキュリティ特化LMと重要インフラ防衛プログラム"
 date: 2026-04-26
-updatedDate: 2026-05-17
+updatedDate: 2026-05-30
 category: "Claude技術解説"
 tags: ["Claude", "Mythos", "Glasswing", "セキュリティ", "Anthropic", "重要インフラ", "Bedrock", "Vertex AI", "Claude Security"]
 excerpt: "Anthropicがセキュリティタスク特化型LM「Claude Mythos Preview」と重要インフラ防衛プロジェクト「Project Glasswing」を発表。能力範囲・想定ユースケース・公開条件・既存Claudeとの差別化に加え、AWS Bedrock・Google Vertex AIでのGated Research Preview提供、GlasswingからClaude Security Beta（防御製品）への発展経緯までを整理。"
@@ -162,6 +162,45 @@ Glasswing (2026-04-07)              Claude Security Beta (2026-05-01)
 つまり Mythos / Glasswing は研究フェーズ、Claude Security Beta はそこから派生した製品フェーズという位置付けで、**両者は技術系譜上一直線につながっています**。詳細は [`claude-security-beta.md`](./claude-security-beta) を参照してください。
 
 参考: [SiliconANGLE](https://siliconangle.com/2026/04/30/anthropic-announces-claude-security-public-beta-find-fix-software-vulnerabilities/) / [SC World](https://www.scworld.com/brief/anthropic-opens-claude-security-public-beta-for-code-audits)
+
+### Glasswing 初回進捗アップデート（2026-05-24〜25 PT / 2026-05-25〜26 JST）
+
+2026年5月24〜25日（PT）、Anthropic は **Project Glasswing 初回進捗アップデート** を公表しました（[公式記事](https://www.anthropic.com/research/glasswing-initial-update)）。約50パートナー企業のシステムで Claude Mythos Preview を運用し、**10,000件超** の高・クリティカル深刻度脆弱性を発見したことを明らかにしています。
+
+#### 数値サマリ
+
+| 観点 | 数値 |
+|---|---|
+| 約50パートナー企業の合計脆弱性発見数 | **10,000件超**（高・クリティカル深刻度） |
+| 真陽性（True Positive）件数 | **1,726件**（注: パートナー企業環境での確定数） |
+| 1,000+ OSSプロジェクトでの追加発見 | **6,202件**（高・クリティカル、検証精度 **90.6%**） |
+| Cloudflare 発見数 | **2,000件**（うち **400件** が高・クリティカル）。False positive 率はヒトテスター比でも優秀 |
+| Mozilla Firefox 発見数 | **271件**（旧モデル比 **10倍**） |
+| Microsoft / Oracle | パッチサイクルの **加速** を報告 |
+
+#### 代表事例：WolfSSL CVE-2026-5194
+
+| 項目 | 値 |
+|---|---|
+| 対象 | WolfSSL（IoT・組込み向け軽量 TLS/SSL ライブラリ） |
+| CVE | **CVE-2026-5194** |
+| CVSS | **9.1（Critical）** |
+| 発見者 | Mythos Preview（Glasswing パートナー経由） |
+| 含意 | IoT/組込み機器の TLS 実装が広範に影響 |
+
+#### 課題のシフト：「発見」から「修正・開示・パッチ適用」へ
+
+公式レポートのキーメッセージ:
+
+> *「ソフトウェアセキュリティの進歩は、これまで『どれだけ早く新しい脆弱性を見つけられるか』に制約されていた。今は『どれだけ早く検証し、開示し、パッチを当てられるか』が制約になっている。」*
+
+→ 「攻撃面の発見能力」が AI で大幅に底上げされた結果、**ボトルネックがパッチ運用サイクル側に移った** ことが現場データから裏付けられた格好。Anthropic はこれを受け、開発者にはパッチサイクル短縮を、利用者には常時最新版維持を推奨しています。
+
+#### Claude Security との関係
+
+Claude Security Beta（後述「Glasswing → Claude Security Beta」節）でも、**2026-05-22 時点でパブリックベータ開始 3週間** で Claude Opus 4.7 が **2,100件以上** のパッチを適用済みと公表。Glasswing（攻撃面の発見）→ Claude Security（防御側の修正生成）という両輪の規模感が、本初回進捗アップデートで具体的な数値として可視化されました。
+
+参考: [Anthropic 公式: Project Glasswing initial update](https://www.anthropic.com/research/glasswing-initial-update) / [Help Net Security](https://www.helpnetsecurity.com/2026/05/26/anthropic-project-glasswing-update/) / [Benzinga](https://www.benzinga.com/markets/private-markets/26/05/52759147/anthropics-project-glasswing-finds-more-than-10000-critical-bugs-expands-to-additional-pa)
 
 ### Pentagon・連邦政府との関係動向（2026年4〜5月）
 
