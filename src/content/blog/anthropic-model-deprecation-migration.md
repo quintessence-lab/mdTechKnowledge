@@ -1,7 +1,7 @@
 ---
 title: "Anthropic モデル廃止スケジュール & 移行ガイド — 1Mコンテキストβ廃止・Sonnet/Opus 4 廃止の対応"
 date: 2026-05-02
-updatedDate: 2026-05-19
+updatedDate: 2026-05-31
 category: "Claude技術解説"
 tags: ["Claude", "Anthropic", "API", "モデル廃止", "移行", "1Mコンテキスト", "Sonnet 4", "Opus 4", "extended thinking"]
 excerpt: "2026年4月30日に1Mコンテキストβ（context-1m-2025-08-07）が廃止、6月15日にSonnet 4 (claude-sonnet-4-0)とOpus 4 (claude-opus-4-0)が廃止される。本稿では緊急度の高い2件の廃止について、影響範囲・移行手順・extended thinkingの変更点・テストスニペット・ロールバック戦略まで体系的に整理する。"
@@ -33,6 +33,7 @@ Anthropic API利用者にとって、2026年5月初旬は**緊急度の高いモ
 
 | API モデル名 | 状態 | 廃止通知日 | リタイア予定日 |
 |:---|:---|:---|:---|
+| `claude-opus-4-8` | **Active（最新フラッグシップ）** | — | 未定 |
 | `claude-opus-4-7` | Active | — | 2027-04-16 以降 |
 | `claude-opus-4-6` | Active | — | 2027-02-05 以降 |
 | `claude-opus-4-5-20251101` | Active | — | 2026-11-24 以降 |
@@ -421,6 +422,43 @@ def call_with_fallback(messages):
 [ ] 本番ローリング切替の段取り（A/B、フィーチャーフラグ）
 [ ] 6/15 リタイア日まで2週間以上の余裕を持って完了
 [ ] Bedrock / Vertex / Foundry 経由は各プラットフォームの告知も並行確認
+```
+
+---
+
+## 9. 【2026年5月追記】Claude Opus 4.8 リリースと移行上の留意点
+
+2026年5月28日（PT）／5月29日（JST）、新フラッグシップ **Claude Opus 4.8（`claude-opus-4-8`）** がリリースされ、各プラットフォームでデフォルトモデルに昇格しました。Opus 4.7 からの移行・モデル選定に関わる留意点を整理します。
+
+### 9.1. Opus 4.7 の廃止スケジュール
+
+現時点（2026年5月末）で、**Opus 4.7（`claude-opus-4-7`）の廃止（Deprecated）は告知されていません**。ステータスは Active のままで、リタイア予定日も「2027-04-16 以降」と従来どおりです。Opus 4.8 は 4.7 の置き換えを推奨されますが、**4.7 が即座に使えなくなるわけではありません**。今後の公式廃止告知に注意してください。
+
+### 9.2. 価格と Fast mode
+
+標準価格は **Opus 4.7 据え置きの入力 $5 / 出力 $25 per MTok** です。一方、Fast mode は **入力 $10 / 出力 $50 per MTok**（標準の2倍単価・約2.5倍速）で、**従来モデルの Fast mode より約3倍安く**なりました（※「3倍安」は従来モデル比であり、Opus 4.7 比と断定された数値ではありません。金額は報道ベースのため公式料金ページで最終確認を推奨）。
+
+| モデル | 標準（in/out） | Fast mode（in/out） |
+|:---|:---|:---|
+| Opus 4.7 | $5 / $25 | $30 / $150 ※報道ベース |
+| **Opus 4.8** | $5 / $25（据え置き） | **$10 / $50 ※報道ベース** |
+
+### 9.3. Claude Code 側の廃止された環境変数
+
+Claude Code では、Opus 4.8 への移行に伴い **`CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE` 環境変数が廃止**されました。この変数を設定しているスクリプト・CI 設定がある場合は削除してください（残しても無視されますが、設定の混乱を避けるため除去推奨）。
+
+### 9.4. API 移行時の最大の注意点
+
+Opus 4.8 では **手動の extended thinking（`budget_tokens` 指定）が非対応**で、指定すると **400 エラー**になります。`budget_tokens` を使っている箇所は、本記事「§5 extended thinking の変更点」のとおり **effort レベル（`low`/`medium`/`high`/`xhigh`/`max`、既定 `high`）** へ書き換えてください。詳細は [Claude Opus 4.8 完全ガイド](/mdTechKnowledge/blog/claude-opus-4-8-guide/) を参照。
+
+### 9.5. 移行チェックリスト（Opus 4.7 → 4.8）
+
+```
+[ ] モデルID claude-opus-4-7 → claude-opus-4-8 の置換箇所を grep で特定
+[ ] budget_tokens 指定の残存を確認し effort へ書き換え（残すと 400 エラー）
+[ ] CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE の設定を削除
+[ ] コーディング/エージェント用途は /effort xhigh 開始 + max_tokens を大きく
+[ ] A/B で出力品質・コスト・レイテンシを実測してから本番切替
 ```
 
 ---
