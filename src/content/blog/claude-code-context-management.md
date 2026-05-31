@@ -1,7 +1,7 @@
 ---
 title: "Claude Codeのコンテキスト管理入門 — /compact・/clear・メモリ・セッション復元の使い分け"
 date: 2026-04-29
-updatedDate: 2026-04-29
+updatedDate: 2026-05-31
 category: "Claude技術解説"
 tags: ["Claude Code", "コンテキスト", "/compact", "/clear", "メモリ", "セッション", "初心者向け"]
 excerpt: "Claude Codeのコンテキストとは何か、ターミナル間やClaude.aiとの共有可否、/compactのトークン消費、端末再起動後のセッション復元、/clearとの違い、長期保存メモリの活用までを初心者向けに整理。日常運用で迷いやすい使い分けを表で比較。"
@@ -212,6 +212,59 @@ Read(file_path="huge.md", offset=100, limit=50)
 | 「再起動するとすべて消える」 | JSONLログがディスクに残る。`claude --resume` で復元可 |
 | 「`/clear`で特定の発言だけ消せる」 | 全削除のみ。部分削除は `/compact <focus>` で代用 |
 | 「メモリを書いておけば毎回詳細まで思い出せる」 | メモリは要約として読まれる。詳細はソースを参照する設計が安全 |
+
+---
+
+## 8.5. 【2026年5月追記】API レベルの新しいキャッシュ管理機能
+
+ここまでは Claude Code（CLI）のコンテキスト管理を中心に説明しましたが、2026年5月、その土台となる **Claude API（Messages API）側にも、キャッシュ管理に直結する2つの新機能**が追加されました。Claude Code を支える仕組みの理解として押さえておきます。
+
+### 8.5-1. Cache diagnostics（public beta、2026-05-13）
+
+プロンプトキャッシュが「**なぜミスしたか**」を特定できる診断機能です。
+
+- **使い方**: `anthropic-beta: cache-diagnosis-2026-04-07` ヘッダを付け、リクエストに `diagnostics.previous_message_id` を渡す（初回は `null`、2回目以降は直前レスポンスの `id`）。
+- **仕組み**: API はリクエストの軽量なフィンガープリント（ハッシュとトークン数推定のみ。生プロンプトは保存しない）を保存し、次回リクエストと比較して**最初に差分が出た箇所**を返します。
+- **キャッシュヒットの有無とは独立**で、「リクエストのどこが変わってキャッシュが無効化されたか」を切り分ける用途です（`usage.cache_read_input_tokens` と併読する設計）。
+
+`cache_miss_reason.type` の取り得る値は次の6種類です。
+
+| type | 意味 |
+|:---|:---|
+| `model_changed` | `model` が前回と相違（キャッシュはモデル単位） |
+| `system_changed` | `system` パラメータが相違（動的な時刻・IDの混入が典型） |
+| `tools_changed` | `tools` 配列が相違（追加/削除/並び替え等） |
+| `messages_changed` | 既存メッセージ履歴が改変・並び替え・削除された |
+| `previous_message_not_found` | 指定IDのフィンガープリントが見つからない（変更の証拠ではない） |
+| `unavailable` | 診断不能（`thinking`・`tool_choice` 等の他パラメータ相違や超長会話） |
+
+> **対象は Claude API のみ**（Amazon Bedrock / Vertex AI は非対応）。ドキュメントのコード例は `claude-opus-4-8` を使用。ZDR 適格（生プロンプトは保存しない）。
+
+### 8.5-2. 会話途中の system メッセージ（Mid-conversation system messages、2026-05-28）
+
+従来、命令（system プロンプト）は会話の**先頭**に置くものでした。これを**会話の途中**に挿入できるようになり、**プロンプトキャッシュのヒットを維持したまま命令を変更**できます。
+
+- **betaヘッダ不要**。`messages` 配列の**非先頭ポジション**に `{"role": "system", "content": ...}` を追加します。
+- **なぜキャッシュが維持されるか**: キャッシュは `tools` → `system` → `messages` の順でプレフィックスをハッシュします。トップレベルの `system` を書き換えると以降すべてが無効化されますが、**命令をメッセージ履歴の末尾に追加**する形なら、それ以前はバイト同一のままヒットし、新メッセージだけが新規入力になります。
+- **制約（守らないと 400 エラー）**: 先頭には置けない／`user` ターン（または server tool use で終わる `assistant` ターン）の直後に置く／連続する system メッセージは不可。送信済みの system メッセージは編集・削除しない（そこからキャッシュ無効化）。
+
+```bash
+# messages 末尾に system を追加してキャッシュ維持したまま方針変更
+{
+  "model": "claude-opus-4-8",
+  "system": "You are a code review assistant. Be concise.",
+  "messages": [
+    {"role": "user", "content": "Review process() in utils.py."},
+    {"role": "assistant", "content": "..."},
+    {"role": "user", "content": "Now review the calling code."},
+    {"role": "system", "content": "From now on, every suggestion must include explicit type annotations."}
+  ]
+}
+```
+
+> **対象は Claude Opus 4.8（`claude-opus-4-8`）のみ**。利用可能なのは Claude API と Claude Platform on AWS で、Amazon Bedrock / Vertex AI / Microsoft Foundry は非対応。なお、これは優先度を与える仕組みであってセキュリティ境界ではありません（信頼できない入力を信頼できるものに変えるわけではない）。
+
+これらは API レベルの機能ですが、「**キャッシュをいかに壊さずに文脈・命令を更新するか**」という本記事のテーマと同じ問題意識に立つものです。長い会話で命令を切り替えたい場合、従来は先頭 system の書き換えでキャッシュ全損していたところを、この2機能で**診断（なぜ壊れたか）と回避（壊さず変える）**の両面から対処できます。
 
 ---
 
