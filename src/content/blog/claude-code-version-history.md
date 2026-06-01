@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-05-30
+updatedDate: 2026-06-01
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code v2.0.59〜v2.1.157 のバージョン履歴。/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定など主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.159 のバージョン履歴。/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-05-30
-**現在の最新バージョン**: 2.1.157
+**最終更新**: 2026-06-01
+**現在の最新バージョン**: 2.1.159
 
 ---
 
@@ -17,7 +17,9 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
-| **2.1.157** | v2.1.154 の Opus 4.8 / Dynamic Workflows ロールアウト後の**補助修正版群（2.1.155 / 2.1.156 / 2.1.157）**。細部の安定化・モデルデフォルト切替後の互換性調整が中心 |
+| **2.1.159** | **内部インフラ改善のみ（ユーザー向け変更なし）** |
+| **2.1.158** | **Bedrock / Vertex / Foundry 上の Opus 4.7 / 4.8 で auto mode が利用可能に**（`CLAUDE_CODE_ENABLE_AUTO_MODE=1` でオプトイン） |
+| **2.1.157** | **`.claude/skills` 配下の plugin を Marketplace 登録なしで自動ロード**＋`claude plugin init <name>` でスケルトン生成、`settings.json` の **`agent` フィールドがディスパッチセッションに反映**（`--agent <name>` で上書き）、`EnterWorktree` がセッション中に Claude 管理 worktree 間を切替、**worktree をエージェント完了時にアンロック**（`git worktree remove`/`prune` で掃除可能）、**ゼロバイト/破損画像でリクエストがクラッシュする問題を修正**、`/config` に「Workflow keyword trigger」設定（"workflow" 語での誤起動を抑止）など多数 |
 | **2.1.154** | **Claude Opus 4.8 がデフォルトモデルに昇格** ＋ **Dynamic Workflows（Research Preview、最大1000サブエージェントをファンアウト並列実行）**。`ultracode` 設定（xhigh effort + 自動オーケストレーション）、**Fast mode 価格3倍安化**、リーンシステムプロンプトのデフォルト化、Agent Teams 改善（`! <command>` で背景シェル起動）、macOS 背景エージェントの権限継続、`/model` セッションデフォルト保存 |
 | **2.1.153** | GitHub plugin マーケットプレイスに **`skipLfs`** オプション追加（Git LFS ダウンロードをスキップ）、MCP サーバー認証通知の統合（複数の "needs authentication" を1メッセージに集約）、`claude agents` の PR 列表示改善（単一は `PR #N`、複数は `N PRs`） |
 | **2.1.152** | **`/code-review --fix`** — レビュー後に reuse / simplification / efficiency 提案をワーキングツリーに適用（旧 `/simplify` は内部的にこれを呼ぶ形へ統合）、Skill フロントマターに **`disallowed-tools`**（スキル活性中に特定ツールを除外）、**`/reload-skills`** コマンド（セッション再起動なしでスキル再スキャン） |
@@ -83,10 +85,27 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.157（2026-05-29 PT、最新）
+### 2.1.159（2026-05-31 PT、最新）
 
-- v2.1.154 の Opus 4.8 / Dynamic Workflows ロールアウト後の補助修正バージョン群（2.1.155 / 2.1.156 / 2.1.157）
-- 細部の安定化・モデルデフォルト切替後の互換性調整が中心
+- **内部インフラ改善のみ（ユーザー向け変更なし）** — 公式リリースノートに "Internal infrastructure improvements (no user-facing changes)" と明記
+
+### 2.1.158（2026-05-30 PT）
+
+- **Auto mode が Bedrock / Vertex / Foundry 上の Opus 4.7 および Opus 4.8 で利用可能に** — `CLAUDE_CODE_ENABLE_AUTO_MODE=1` を設定してオプトイン。サードパーティ展開（Bedrock/Vertex/Foundry）でも、分類器による事前アクションレビュー付きの auto mode が使えるようになった
+
+### 2.1.157（2026-05-29 PT）
+
+v2.1.154 の Opus 4.8 / Dynamic Workflows ロールアウト後の修正版だが、**plugin / worktree 周りで実質的な機能追加**を多数含む。
+
+- **`.claude/skills` 配下の plugin を Marketplace 登録なしで自動ロード** — `claude plugin init <name>` で `.claude/skills` に新規 plugin のスケルトンを生成。`/plugin` 引数のオートコンプリート（サブコマンド／インストール済み plugin 名／既知 Marketplace の plugin）も追加
+- **`settings.json` の `agent` フィールドがディスパッチセッションで尊重される** — `--agent <name>` で上書き可能
+- **`EnterWorktree` がセッション中に Claude 管理 worktree 間を切替可能に**
+- **Claude 管理 worktree をエージェント完了時にアンロック** — `git worktree remove`/`prune` でクリーンアップできるよう変更（30日リテンション後の orphan 化も修正）
+- **ゼロバイト/破損画像（paste・MCP・dialog 経由）がリクエストをクラッシュさせる問題を修正** — テキストプレースホルダにフォールバック
+- `tool_decision` テレメトリに `tool_parameters`（bash コマンド・MCP/skill 名）を追加（`OTEL_LOG_TOOL_DETAILS=1` 時）
+- `/config` に **「Workflow keyword trigger」設定** — プロンプト中の "workflow" 語で動的ワークフローが起動するのを抑止。トリガー語直後の backspace で起動要求を取り消し（alt+w と同等）
+- [VSCode] Opus 4.8 で fast mode インジケータが出ない問題、background subagent の Stop が効かない問題を修正
+- そのほか `--resume`／`claude agents`／WSL 画像ペースト／長い会話のレンダリング性能など多数の修正
 
 ### 2.1.154（2026-05-28 PT、2026-05-29 JST）— **Opus 4.8 デフォルト化 + Dynamic Workflows**
 
