@@ -1,6 +1,7 @@
 ---
 import PostLayout from '../../layouts/PostLayout.astro';
 import { getCollection } from 'astro:content';
+import noteUrls from '../../data/note-urls.json';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -12,6 +13,10 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await post.render();
+
+// note公開済み(handoff note: ON)の記事は canonical を note URL に向ける（note=本体方針）。
+// 未公開記事はマップに無いため undefined となり、canonical は出力されない（自URLが正規）。
+const canonical = (noteUrls as Record<string, string>)[post.slug];
 ---
 
 <PostLayout
@@ -21,6 +26,7 @@ const { Content } = await post.render();
   category={post.data.category}
   tags={post.data.tags}
   rawContent={post.body}
+  canonical={canonical}
 >
   <Content />
 </PostLayout>
