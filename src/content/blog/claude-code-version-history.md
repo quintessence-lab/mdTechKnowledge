@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-06-01
+updatedDate: 2026-06-04
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code v2.0.59〜v2.1.159 のバージョン履歴。/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.160 のバージョン履歴。Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-06-01
-**現在の最新バージョン**: 2.1.159
+**最終更新**: 2026-06-04
+**現在の最新バージョン**: 2.1.160
 
 ---
 
@@ -17,6 +17,7 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.160** | **Dynamic Workflows のトリガー語を `workflow` → `ultracode` に変更**（`workflow` の語では起動しなくなり、自然文での依頼は引き続き有効。トリガー語はプロンプト入力で violet にハイライト）、**シェル起動ファイル（`.zshenv`/`.zlogin`/`.bash_login`）と `~/.config/git/` への書き込み前にプロンプト追加**（意図しないコマンド実行を防止）、**`acceptEdits` モードでコード実行を許す可能性のあるビルドツール設定ファイル（`.npmrc`/`.yarnrc*`/`bunfig.toml`/`.bazelrc`/`.pre-commit-config.yaml`/`.devcontainer/` 等）書き込み前にプロンプト追加**、単一ファイルの `grep`/`egrep`/`fgrep` 後の Edit が別途 Read 不要に、`/effort ultracode` 関連修正、バックグラウンドセッション／エージェント系の多数の修正（計27変更） |
 | **2.1.159** | **内部インフラ改善のみ（ユーザー向け変更なし）** |
 | **2.1.158** | **Bedrock / Vertex / Foundry 上の Opus 4.7 / 4.8 で auto mode が利用可能に**（`CLAUDE_CODE_ENABLE_AUTO_MODE=1` でオプトイン） |
 | **2.1.157** | **`.claude/skills` 配下の plugin を Marketplace 登録なしで自動ロード**＋`claude plugin init <name>` でスケルトン生成、`settings.json` の **`agent` フィールドがディスパッチセッションに反映**（`--agent <name>` で上書き）、`EnterWorktree` がセッション中に Claude 管理 worktree 間を切替、**worktree をエージェント完了時にアンロック**（`git worktree remove`/`prune` で掃除可能）、**ゼロバイト/破損画像でリクエストがクラッシュする問題を修正**、`/config` に「Workflow keyword trigger」設定（"workflow" 語での誤起動を抑止）など多数 |
@@ -85,7 +86,21 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.159（2026-05-31 PT、最新）
+### 2.1.160（2026-06-01 PT、最新）— **セキュリティ強化 + Dynamic Workflows トリガー語変更**
+
+セキュリティ関連のプロンプト追加と、Dynamic Workflows のトリガー語変更を含む27変更のリリース。
+
+- **Dynamic Workflows のトリガー語を `workflow` → `ultracode` に変更** — `workflow` という語ではワークフローが起動しなくなった（自分の言葉で依頼すれば引き続き起動する）。トリガー語はプロンプト入力で violet（紫）にハイライトされる
+- **シェル起動ファイルへの書き込み前にプロンプトを追加** — `.zshenv` / `.zlogin` / `.bash_login` および `~/.config/git/` への書き込みは意図しないコマンド実行につながり得るため、書き込み前に確認プロンプトを表示
+- **`acceptEdits` モードでビルドツール設定ファイルの書き込み前にプロンプトを追加** — コード実行を許す可能性のある `.npmrc` / `.yarnrc*` / `bunfig.toml` / `.bazelrc` / `.pre-commit-config.yaml` / `.devcontainer/` 等を `acceptEdits` モードでも書き込み前に確認
+- **`grep` 閲覧後の Edit が別途 Read 不要に** — 単一ファイルの `grep` / `egrep` / `fgrep` コマンドが read-before-edit チェックを満たすようになった
+- **`/effort ultracode` 関連修正** — モデルが xhigh を実行できない場合に dynamic workflows 設定のせいだと誤って表示する問題を修正。ultracode をサポートしないモデルでは ultracode を提示しないように変更
+- WSL で copy-on-select が Windows クリップボードに書き込めない問題を修正（OSC 52 ではなく PowerShell interop を使用、MobaXterm 等の OSC 52 非対応端末でも動作）
+- サードパーティプロバイダ（Bedrock/Vertex/Foundry）での auto mode 利用不可メッセージを、モデルのせいにするのではなく `CLAUDE_CODE_ENABLE_AUTO_MODE` オプトインを案内するよう修正
+- `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE` を削除（no-op 化）、起動時の JetBrains プラグインインストール提案を削除
+- そのほかバックグラウンドセッション／`claude agents`／`claude --bg`／音声モード／Windows 入力応答性／vim モードなど多数の修正（計27変更）
+
+### 2.1.159（2026-05-31 PT）
 
 - **内部インフラ改善のみ（ユーザー向け変更なし）** — 公式リリースノートに "Internal infrastructure improvements (no user-facing changes)" と明記
 
