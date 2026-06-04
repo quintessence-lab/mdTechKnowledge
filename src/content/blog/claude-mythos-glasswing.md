@@ -1,10 +1,10 @@
 ---
 title: "Claude Mythos Preview & Project Glasswing — セキュリティ特化LMと重要インフラ防衛プログラム"
 date: 2026-04-26
-updatedDate: 2026-05-30
+updatedDate: 2026-06-05
 category: "Claude技術解説"
 tags: ["Claude", "Mythos", "Glasswing", "セキュリティ", "Anthropic", "重要インフラ", "Bedrock", "Vertex AI", "Claude Security"]
-excerpt: "Anthropicがセキュリティタスク特化型LM「Claude Mythos Preview」と重要インフラ防衛プロジェクト「Project Glasswing」を発表。能力範囲・想定ユースケース・公開条件・既存Claudeとの差別化に加え、AWS Bedrock・Google Vertex AIでのGated Research Preview提供、GlasswingからClaude Security Beta（防御製品）への発展経緯までを整理。"
+excerpt: "Anthropicがセキュリティタスク特化型LM「Claude Mythos Preview」と重要インフラ防衛プロジェクト「Project Glasswing」を発表。能力範囲・想定ユースケース・公開条件・既存Claudeとの差別化に加え、AWS Bedrock・Google Vertex AIでのGated Research Preview提供、GlasswingからClaude Security Beta（防御製品）への発展経緯、さらに2026年6月の第2次拡張（約150組織・15カ国以上、公共インフラ・医療等へ拡大）と Mythosクラスのモデルを『数週間以内』に一般提供する方針転換までを整理。"
 draft: false
 ---
 
@@ -49,7 +49,7 @@ Opus 4.6では成功率がほぼ0%だったFirefoxエクスプロイト開発タ
 
 ### アクセス・公開条件
 
-Anthropicは**Mythos Previewを一般公開しない方針**を明確にしています。利用は次の3つに限定されます。
+Anthropicは当初**Mythos Previewを一般公開しない方針**を明確にしていました（※2026年5月末以降、Mythosクラスのモデルを「数週間以内に全顧客へ提供する見込み」と方針を転換。詳細は後述「『数週間以内』の一般提供方針」節を参照）。発表当初の利用は次の3つに限定されていました。
 
 1. Project Glasswingの参加組織（後述）
 2. オープンソースセキュリティチーム（限定的）
@@ -201,6 +201,31 @@ Glasswing (2026-04-07)              Claude Security Beta (2026-05-01)
 Claude Security Beta（後述「Glasswing → Claude Security Beta」節）でも、**2026-05-22 時点でパブリックベータ開始 3週間** で Claude Opus 4.7 が **2,100件以上** のパッチを適用済みと公表。Glasswing（攻撃面の発見）→ Claude Security（防御側の修正生成）という両輪の規模感が、本初回進捗アップデートで具体的な数値として可視化されました。
 
 参考: [Anthropic 公式: Project Glasswing initial update](https://www.anthropic.com/research/glasswing-initial-update) / [Help Net Security](https://www.helpnetsecurity.com/2026/05/26/anthropic-project-glasswing-update/) / [Benzinga](https://www.benzinga.com/markets/private-markets/26/05/52759147/anthropics-project-glasswing-finds-more-than-10000-critical-bugs-expands-to-additional-pa)
+
+### Glasswing 第2次拡張：約150組織・15カ国以上へ（2026-06-02）
+
+2026年6月2日（JST 6/3）、Anthropic は Project Glasswing を **約150の新規組織** へ拡大すると発表しました（[Anthropic 公式: Expanding Project Glasswing](https://www.anthropic.com/news/expanding-project-glasswing)）。これにより参加組織は **合計約200組織** となり、新規パートナーは **15カ国以上** に所在します。初期コホート（約50組織）で手薄だった分野を重点的に補強し、**電力・水道（公共インフラ）、医療、通信、ハードウェア** の各事業者が加わりました。
+
+| 観点 | 数値・内容 |
+|---|---|
+| 新規参加組織 | **約150組織**（追加分） |
+| 拡張後の合計 | **約200組織** |
+| 対象国 | **15カ国以上** |
+| 重点補強分野 | 電力・水道（公共インフラ）、医療、通信、ハードウェア |
+| 想定リスク規模 | 新規パートナーの多くは「大規模攻撃が **1億人超** に影響し得る」重要度（Anthropic 公式） |
+| 利用条件 | 従来同様、アクセス前に所定のセキュリティ要件を満たす必要がある |
+
+Anthropic 公式は拡大記事のなかで、約50社の初期パートナーがこれまでに **10,000件超** の高・クリティカル深刻度の脆弱性を発見したことを改めて挙げ、重要インフラ防衛を地理的・分野的に広げる狙いを示しています。
+
+> 本節の数値・分野は Anthropic 公式発表および報道（[CNBC](https://www.cnbc.com/2026/06/02/anthropic-mythos-ai-project-glasswing.html) / [9to5mac](https://9to5mac.com/2026/06/02/anthropic-expands-glasswing-as-it-promises-public-claude-mythos-class-model-releases/)）に基づきます。合計組織数（約200）など一部数値は報道ベースである点に留意してください。
+
+### 「数週間以内」の一般提供方針（Mythosクラス・モデル）
+
+第2次拡張に併せ、Anthropic は **Mythosクラスのモデルを一般顧客にも提供する方針** を改めて示しました。公式の文言は次のとおりです（条件付きである点に注意）。
+
+> *「We're making swift progress on developing these safeguards and expect to be able to bring Mythos-class models to all our customers in the coming weeks.（セーフガードの開発を急速に進めており、数週間以内にMythosクラスのモデルを全顧客に提供できる見込み）」*
+
+この声明はもともと **2026年5月28日の Claude Opus 4.8 発表に併せて** 公表されたもので、6月2日の Glasswing 拡大発表で再掲されました（[BleepingComputer](https://www.bleepingcomputer.com/news/artificial-intelligence/anthropic-confirms-claude-mythos-class-models-will-roll-out-to-the-public/) / [9to5mac](https://9to5mac.com/2026/06/02/anthropic-expands-glasswing-as-it-promises-public-claude-mythos-class-model-releases/)）。ただし提供は **危険な出力を遮断するセーフガードの完成が前提** であり、Anthropic 公式の拡大記事自体は具体的な公開日を明示せず「安全に一般提供できるよう可能な限り急いでいる」とするにとどまっています。Mythos Preview を「公開しない」とした当初方針から、**段階的に一般提供へ舵を切る転換点** と位置づけられます。
 
 ### Pentagon・連邦政府との関係動向（2026年4〜5月）
 
