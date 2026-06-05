@@ -1,16 +1,16 @@
 ---
 title: "Code with Claude 2026 開発者カンファレンス まとめ — Remote Agents・Code Review・Routines・Dreaming"
 date: 2026-05-09
-updatedDate: 2026-05-23
+updatedDate: 2026-06-05
 category: "Claude技術解説"
-tags: ["Claude Code", "Code with Claude", "Anthropic", "Remote Agents", "Code Review", "Multi-agent orchestration", "Dreaming", "Routines", "カンファレンス", "Agent View", "/goal"]
-excerpt: "2026年5月6日（PT、JST 5/7）にサンフランシスコで開催された Anthropic 公式開発者カンファレンス Code with Claude 2026 のまとめ。Remote Agents・Code Review・Routines・Dreaming・Multi-agent orchestration・Outcomes など主要発表と Shopify／Mercado Libre の事例、レート制限倍増、SpaceX Colossus 1 連携、v2.1.139 で Research Preview として出荷された Agent View（`claude agents`）／`/goal` コマンド、London 5/20-21・Tokyo 6/5-6 への巡回ツアー（日程拡張）まで整理。"
+tags: ["Claude Code", "Code with Claude", "Anthropic", "Remote Agents", "Code Review", "Multi-agent orchestration", "Dreaming", "Routines", "カンファレンス", "Agent View", "/goal", "Tokyo", "Code with Claude Tokyo"]
+excerpt: "2026年5月6日（PT、JST 5/7）にサンフランシスコで開催された Anthropic 公式開発者カンファレンス Code with Claude 2026 のまとめ。Remote Agents・Code Review・Routines・Dreaming・Multi-agent orchestration・Outcomes など主要発表と Shopify／Mercado Libre の事例、レート制限倍増、SpaceX Colossus 1 連携、v2.1.139 で Research Preview として出荷された Agent View（`claude agents`）／`/goal` コマンド、London 5/20-21・Tokyo 6/10（メイン）／6/11（Extended: 個人開発者・スタートアップ向け）への巡回ツアーまで整理。"
 draft: false
 ---
 
 ## はじめに — 「新モデル」ではなく「使いこなし」のカンファレンス
 
-**Code with Claude 2026** は Anthropic が開催した開発者向け年次カンファレンスで、**2026年5月6日（PT）／ 5月7日（JST）** にサンフランシスコ本社で行われました。同シリーズは **London（5/20-21）／ Tokyo（6/5-6）** にも巡回予定（当初告知から2日間プログラムへ拡張）。
+**Code with Claude 2026** は Anthropic が開催した開発者向け年次カンファレンスで、**2026年5月6日（PT）／ 5月7日（JST）** にサンフランシスコ本社で行われました。同シリーズは **London（5/20-21）／ Tokyo（6/10 メイン・6/11 Extended）** にも巡回しました。
 
 例年とは異なり、**今回は新モデルの発表が主軸ではなく**、既存モデル（Opus 4.7 / Sonnet 4.6 / Haiku 4.5）を**いかに開発フローに織り込むか**を訴求するイベントとなりました。Anthropic の Chief Product Officer **Ami Vora** が冒頭で「**API 利用量が前年比 17 倍**」と紹介し、`Claude Code` を中心とした自律的ソフトウェアエンジニアリングの実装パターンが続々と提示されました。
 
@@ -209,12 +209,32 @@ Mercado Libre の「90% 自律コーディング」は、**人間レビュアー
 |---|---|---|
 | サンフランシスコ | 2026-05-06 | 終了 |
 | ロンドン | **2026-05-20〜21（PT） / 5/21（JST）** | 開催（旧 5/19 から日程更新） |
-| 東京 | **2026-06-05〜06** | **登録受付中**（東京開催あり、2日間構成） |
-| **東京 Extended** | **2026-06-11（JST）** | **登録受付中**（インディー開発者・初期スタートアップ向け追加開催枠） |
+| 東京（メイン） | **2026-06-10** | **登録受付中**（現地参加・ライブストリームともに無料） |
+| **東京 Extended** | **2026-06-11** | **登録受付中**（個人開発者・初期スタートアップ向け追加開催枠） |
 
-東京開催はオンラインでの基調講演ストリーミングも予定されており、現地参加が難しい場合も基調セッションは追跡可能です。
+東京（メイン, 6/10）はオンラインでのライブストリーム配信（バーチャル参加）が用意されており、現地参加が難しい場合も「Attend virtually」の登録で基調セッションを追跡できます。セッションは主に英語・一部日本語で、双方向の同時通訳が全編で提供されます。
 
-> **2026-05-23 時点 補足**: ロンドンは当初 5/19 単日告知でしたが、2日間プログラムに拡張されて 5/20-21 開催に。東京は 6/10 単日から **6/5-6 の2日間**に変更。さらに **東京 Extended（6/11）** がインディー開発者・初期スタートアップ向け追加枠として個別ページ ([claude.com/code-with-claude/tokyo-extended](https://claude.com/code-with-claude/tokyo-extended)) で公開されました。最新情報は [公式ページ](https://claude.com/code-with-claude) で確認してください。
+> **2026-06-05 時点 補足**: ロンドンは当初 5/19 単日告知でしたが、2日間プログラムに拡張されて 5/20-21 開催に。東京はメインイベントが **6/10**（[claude.com/code-with-claude/tokyo](https://claude.com/code-with-claude/tokyo)）、さらに個人開発者・初期スタートアップ向けの追加枠 **東京 Extended が 6/11**（[claude.com/code-with-claude/tokyo-extended](https://claude.com/code-with-claude/tokyo-extended)）として個別ページで公開されています。最新情報は [公式ページ](https://claude.com/code-with-claude) で確認してください。
+
+### 7-1. 東京（メイン, 6/10）の構成
+
+東京メインイベントは **Research / Claude Platform / Claude Code** の3トラック構成で、08:00 のチェックイン・朝食から 20:00 のイブニングレセプションまで終日開催されます。
+
+| 時間帯 | 内容 |
+|---|---|
+| 09:00–10:00 | オープニングキーノート |
+| 10:30–12:30 | 午前セッション（3トラック並行）／「What's new in Claude Code」やエージェント開発ワークショップ等 |
+| 12:30–14:00 | ランチ |
+| 14:00 以降 | 午後セッション・企業事例（Canva・Rakuten・Mizuho 等） |
+| 18:00–20:00 | イブニングレセプション |
+
+### 7-2. 東京 Extended（6/11）の構成
+
+Extended は **個人開発者・初期スタートアップ向け** の追加開催枠で、08:30〜18:00。**Founder stage / Builder stage / Workshops** の3トラックで構成されます。
+
+- **Founder stage**: スタートアップ創業者がプロトタイプから初収益までの道のりや意思決定を語る
+- **Builder stage**: 「ドメインエキスパートが自らソフトウェアを作れるようになると何が起きるか」等、実プロダクト出荷の実演
+- **Workshops**: managed agents・エージェントメモリ・evals・マルチエージェント分解（multi-agent decomposition）、対戦形式の「Agent Battle」など実践ハンズオン
 
 ---
 
