@@ -1,10 +1,10 @@
 ---
 title: "Anthropic コンピュートインフラ & TPUパートナーシップ — Google・BroadcomとのマルチギガワットTPU契約（2027年稼働）"
 date: 2026-04-29
-updatedDate: 2026-05-31
+updatedDate: 2026-06-05
 category: "一般リサーチ"
-tags: ["Anthropic", "Google", "Broadcom", "TPU", "AIインフラ", "コンピュート", "パートナーシップ", "SpaceX", "xAI", "Colossus", "GPU", "Akamai"]
-excerpt: "2026年4月6日発表のGoogle・BroadcomとのマルチギガワットTPU契約（2027年稼働）に加え、2026年5月のSpaceX xAI Colossus 1データセンター全容量契約（300MW超・GPU22万台超）、Akamai Technologies $1.8B・7年間クラウドコンピュート契約を収録。Anthropicのマルチクラウド・マルチベンダーインフラ戦略を整理。"
+tags: ["Anthropic", "Google", "Broadcom", "TPU", "AIインフラ", "コンピュート", "パートナーシップ", "SpaceX", "xAI", "Colossus", "GPU", "Akamai", "Fluidstack", "データセンター", "米国インフラ投資"]
+excerpt: "2026年4月6日発表のGoogle・BroadcomとのマルチギガワットTPU契約（2027年稼働）に加え、2026年5月のSpaceX xAI Colossus 1データセンター全容量契約（300MW超・GPU22万台超）、Akamai Technologies $1.8B・7年間クラウドコンピュート契約を収録。Anthropicのマルチクラウド・マルチベンダーインフラ戦略を整理。あわせて2025年11月発表の$50B米国AIインフラ投資（Fluidstackと組みテキサス州・ニューヨーク州にデータセンターを建設、2026年中に順次稼働）も収録。"
 draft: false
 ---
 
@@ -23,7 +23,8 @@ draft: false
 7. [競合比較 — OpenAI / Google DeepMind](#第7章-競合比較--openai--google-deepmind)
 8. [SpaceX xAI Colossus 1 — GPU 300MW超・全容量契約（2026-05-07 JST）](#第8章-spacex-xai-colossus-1--gpu-300mw超全容量契約)
 9. [Akamai Technologies — $1.8Bクラウドコンピュート契約（2026-05-08）](#第9章-akamai-technologies--18bクラウドコンピュート契約2026-05-08)
-10. [情報ソース一覧](#第10章-情報ソース一覧)
+10. [$50B 米国AIインフラ投資 — Fluidstackと組むTX・NY州データセンター（2025-11-12）](#第10章-50b-米国aiインフラ投資--fluidstackと組むtxny州データセンター)
+11. [情報ソース一覧](#第11章-情報ソース一覧)
 
 ---
 
@@ -109,7 +110,7 @@ Broadcomの8-K開示には条件文がある — *"The consumption of such expan
 | 日付 | 内容 | 性質 |
 |---|---|---|
 | 4月6日 | **Google・Broadcom 3.5GW TPU契約**（本記事） | コンピュートインフラ |
-| 4月20日 | Amazon追加$5B、10年で$100B AWS支出 | 資本＋AWS消費 |
+| 4月20日 | Amazon追加$5B（最大+$20B）、10年で$100B超AWS支出、**新規5GW容量**確保 | 資本＋AWS消費 |
 | 4月24日 | Google最大$40B投資（5GW TPU含む） | 資本＋GCP消費 |
 
 つまり**4月6日のTPU契約が「インフラ層の確保」を先行宣言し、20日・24日の資本ラウンドが「その費用を払える資金体力」を裏打ちする**構造だ。
@@ -286,12 +287,42 @@ AWS（$100B超 / 10年）と GCP（$200B / 5年）の **年率支出ベースで
 
 ---
 
-## 第10章: 情報ソース一覧
+## 第10章: $50B 米国AIインフラ投資 — Fluidstackと組むTX・NY州データセンター（2025-11-12）
+
+### 投資の概要
+
+2025年11月12日、Anthropicは**米国の計算インフラに総額$50B（500億ドル）を投資**すると発表した。本記事の第1章・第4章で繰り返し言及してきた「$50B米国AIインフラ投資コミット」の本体がこれであり、TPU契約をはじめとする各種コンピュート確保の**物理的なデータセンター基盤**を成す。データセンターのパートナーには、AIクラウドプラットフォームの**Fluidstack**（本社ニューヨーク）が選定された。
+
+| 項目 | 内容 |
+|---|---|
+| 発表日 | 2025年11月12日（PT） |
+| 投資総額 | $50B（500億ドル） |
+| パートナー | Fluidstack（本社ニューヨーク、大規模GPUクラスタ供給。Meta・Midjourney・Mistral等が顧客） |
+| 建設地 | テキサス州・ニューヨーク州（今後さらに拠点を追加予定） |
+| 稼働時期 | 2026年中に順次オンライン化 |
+| 雇用 | 常勤約800人（平均年収約$144,000）＋建設関連約2,400人 |
+| 性格 | Anthropic専用にカスタム設計・効率最適化された自社ワークロード向けDC |
+| 政策的文脈 | トランプ政権のAI Action Plan（米国のAIリーダーシップ維持）に沿う |
+
+AnthropicがFluidstackを選んだ理由は、**ギガワット級の電力を迅速に供給できる機動力**にある。Fluidstackは従来からMeta・Midjourney・Mistral等に大規模GPUクラスタを提供してきたAIクラウド事業者で、これらのデータセンターはAnthropic向けにカスタム構築され、自社ワークロードの効率最大化に焦点を置いている。
+
+### コンピュート確保戦略における位置づけ
+
+本記事で扱ってきたGoogle/Broadcom TPU（3.5GW・2027年〜）やAmazon Trainium、SpaceX Colossus等が**「どのチップ・どのクラウドから計算能力を借りるか」**という供給契約であるのに対し、$50B投資は**「自社専用のデータセンターを米国内に建てる」**という物理アセット側の取り組みである点が対照的だ。第1章・第4章で述べたとおり、この$50B投資はTPU契約の設置地域（大半が米国内）とも重なり、Anthropicのコンピュート基盤の**ハードウェア・立地面の中核**を構成する。
+
+発表時点でAnthropicは30万社超のビジネス顧客を抱え、年間$100K超を支出する大口アカウントは過去1年で約7倍に増加していた。この急成長する需要を支えるための、自社主導の大規模インフラ投資という位置づけになる。
+
+---
+
+## 第11章: 情報ソース一覧
 
 ### 一次情報
 
 - [Anthropic公式: Higher usage limits for Claude and a compute deal with SpaceX（2026/5/6）](https://www.anthropic.com/news/higher-limits-spacex)
 - [xAI公式: New Compute Partnership with Anthropic（2026/5/6）](https://x.ai/news/anthropic-compute-partnership)
+- [Anthropic公式: Anthropic invests $50 billion in American AI infrastructure（2025/11/12）](https://www.anthropic.com/news/anthropic-invests-50-billion-in-american-ai-infrastructure) — Fluidstackと組みTX・NY州にDC建設、2026年中に順次稼働
+- [Fluidstack公式: Fluidstack selected by Anthropic to deliver custom data centers in the US](https://www.fluidstack.io/about-us/blog/fluidstack-selected-by-anthropic-to-deliver-custom-data-centers-in-the-us)
+- [Anthropic公式: Anthropic and Amazon expand collaboration for up to 5 gigawatts of new compute（2026/4/20）](https://www.anthropic.com/news/anthropic-amazon-compute) — 新規5GW容量・$100B超10年AWSコミット
 - [Anthropic公式: Anthropic expands partnership with Google and Broadcom for compute（2026/4/6）](https://www.anthropic.com/news/google-broadcom-partnership-compute)
 - [Google Cloud Press: Anthropic Expands Use of Google Cloud and TPUs（2026/4/6）](https://www.googlecloudpresscorner.com/2026-04-06-Anthropic-Expands-Use-of-Google-Cloud-and-TPUs)
 - [Broadcom 8-K SEC開示（2026/4/7）](https://www.stocktitan.net/sec-filings/AVGO/8-k-broadcom-inc-reports-material-event-35aab0650b17.html)
