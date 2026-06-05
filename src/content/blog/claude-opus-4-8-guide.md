@@ -1,9 +1,10 @@
 ---
 title: "Claude Opus 4.8 完全ガイド — System Card準拠ベンチ詳説・Effort 5段階の正準対応・4.7→4.8実務移行"
 date: 2026-05-30
+updatedDate: 2026-06-05
 category: "Claude技術解説"
-tags: ["Claude", "Opus 4.8", "Anthropic", "Effort Control", "ベンチマーク", "API", "アライメント"]
-excerpt: "2026-05-28（PT）リリースの新フラッグシップ Claude Opus 4.8 を System Card 準拠で徹底解説。SWE-bench Pro 69.2%・HLE・GDPval Elo の正確な読み方、Effort 5段階（low/medium/high/xhigh/max）と claude.ai/Claude Code/API の名称対応、Fast mode の経済性、near-Mythos アライメントの正確な意味、claude-opus-4-8 への実務移行（budget_tokens の罠）まで網羅。"
+tags: ["Claude", "Opus 4.8", "Anthropic", "Effort Control", "ベンチマーク", "API", "アライメント", "Fast mode"]
+excerpt: "2026-05-28（PT）リリースの新フラッグシップ Claude Opus 4.8 を System Card 準拠で徹底解説。SWE-bench Pro 69.2%・HLE・GDPval Elo の正確な読み方、Effort 5段階（low/medium/high/xhigh/max）と claude.ai/Claude Code/API の名称対応、Fast mode の経済性、near-Mythos アライメントの正確な意味、claude-opus-4-8 への実務移行（budget_tokens の罠）まで網羅。Fast mode は標準比2倍単価で約2.5倍速、かつ従来モデルのFast mode比で約3倍安（$10/$50・公式値）という2軸を整理。"
 draft: false
 ---
 
@@ -141,6 +142,7 @@ resp = client.messages.create(
 |:---|:---|:---|
 | モデルID | `claude-opus-4-7` | `claude-opus-4-8` |
 | 標準価格（in/out per MTok） | $5 / $25 | **$5 / $25（据え置き）** |
+| Fast mode 価格（in/out per MTok） | 公式値なし | **$10 / $50（公式・標準比2倍／従来モデルのFast mode比 約3倍安）** |
 | コンテキスト窓 | 1M | 1M（Microsoft Foundry のみ 200k ※二次情報） |
 | thinking | extended/adaptive | **adaptive のみ**（`budget_tokens` 指定で 400 エラー） |
 | 既定 effort | xhigh | **high** |
@@ -192,19 +194,19 @@ Opus 4.8 では、**「評価されていると認識し、採点方法を推論
 | **標準** | $5 | $25 | 1.0× | 通常のバッチ・非対話 |
 | **Fast mode** | $10 ※ | $50 ※ | **約2.5×** | レイテンシ重視・対話的UX |
 
-※ Fast mode の $10/$50 は**報道ベース**（VentureBeat 等が一致）。公式は数値を明示せず「2.5倍速」「3倍安」とのみ述べているため、最終的には公式料金ページでの確認を推奨します。
+※ Fast mode の **$10/$50（per MTok）は公式値**です。Anthropic 公式ニュースの Availability セクションが "Pricing for fast mode is $10 per million input tokens and $50 per million output tokens." と明記しています（標準 $5/$25 の **ちょうど2倍単価**）。なお冒頭文では "fast mode for Opus 4.8—where the model can work at 2.5× the speed—is now three times cheaper than it was for previous models." と、**2.5倍速**と**従来モデル比3倍安**の2点を述べています。
 
-理解すべき2軸:
+理解すべき2軸（**混同しないこと**）:
 
-1. **標準 vs Fast mode**: Fast mode は**標準の2倍単価**で、その代わり**約2.5倍速**。
-2. **世代比**: 公式は Fast mode が **「従来モデル（previous models）の Fast mode より約3倍安い」** と表現。**これは "Opus 4.7 比" と断定はできません**（公式は一般の "previous models" と記載）。一方、**標準価格は明確に "Opus 4.7 据え置き"** です。
+1. **標準比（速度・単価の軸）**: Fast mode は**標準の2倍単価（$10/$50）**で、その代わり**約2.5倍速**。公式原文は "2x the standard rate for 2.5x the speed"。**つまり「2.5倍速」は標準（通常モード）との比較**で、料金は標準の2倍です。
+2. **世代比（安くなった軸）**: 公式は Fast mode が **「従来モデル（previous models）の Fast mode より約3倍安い（three times cheaper than it was for previous models）」** と表現。**この「3倍安」は世代間（旧 Fast mode → 4.8 Fast mode）の値下げを指し**、上の「標準比2倍単価」とは**別の軸**です。なお公式は一般の "previous models" と記載しており、**"Opus 4.7 比" と断定はできません**。一方、**標準価格（$5/$25）は明確に "Opus 4.7 据え置き"** です。
 
 | モデル | 標準（in/out） | Fast mode（in/out） |
 |:---|:---|:---|
 | Opus 4.7 | $5 / $25 | $30 / $150 ※二次 |
 | **Opus 4.8** | $5 / $25 | **$10 / $50 ※二次** |
 
-→ 単価は2倍でも2.5倍速になるため、**スループット単価（時間あたり処理量）で見ると Fast mode が有利になる**ケースが対話的ワークロードで生じます。
+→ 単価は2倍でも2.5倍速になるため、**スループット単価（時間あたり処理量）で見ると Fast mode が有利になる**ケースが対話的ワークロードで生じます。さらに**世代比では従来モデルの Fast mode より約3倍安く**なっており、Fast mode 利用そのもののコスト効率も改善しています（[Anthropic 公式](https://www.anthropic.com/news/claude-opus-4-8)）。
 
 ---
 
