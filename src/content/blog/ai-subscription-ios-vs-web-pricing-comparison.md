@@ -1,7 +1,7 @@
 ---
 title: "Claude / Gemini / ChatGPT — iOS と Web どちらで契約するのが本当に安いか（2026年5月版）"
 date: 2026-05-06
-updatedDate: 2026-05-20
+updatedDate: 2026-06-05
 category: "一般リサーチ"
 tags: ["Claude", "Gemini", "ChatGPT", "サブスクリプション", "iOS", "App Store", "料金比較", "Apple", "Agent SDK credits"]
 excerpt: "主要AIサービス3社（Claude / Gemini / ChatGPT）について、iOS App Store経由とWeb直接契約の料金差を整理。Apple 30%コミッションの転嫁パターン（完全転嫁・部分転嫁・吸収）、日本円固定価格の為替逆転現象に加え、2026年6月15日施行のClaude Agent SDK課金分離（Pro $20 / Max 5x $100 / Max 20x $200 月次credits）まで解説。"
@@ -70,6 +70,8 @@ ChatGPT ▏▏▏▏▏▏▏▏▏▏▏▏▏▏▏▏▏▏▏▏▏▏▏▏
 | Max 5x / 20x | +25% |
 
 **Pro 月額のみ価格を据え置き**、Pro 年契約と Max は Apple 手数料を一部転嫁する戦略。Max ユーザーの場合、月 $25〜$50 の差は無視できません。
+
+> 📌 **2026年6月15日の課金分離に注意**: Anthropic は 2026年6月15日（PT）から、Claude サブスクの **プログラマティック利用（Agent SDK / `claude -p` / Claude Code GitHub Actions）を独立した月次クレジットプールに分離**します（Pro $20 / Max 5x $100 / Max 20x $200 相当）。クレジットは毎月リフレッシュされ**繰り越し不可**で、枯渇後は usage credits 未有効化なら**リクエストが自動停止**します。チャットや端末でのインタラクティブ実行は従来枠のまま影響を受けませんが、Agent SDK を業務利用するなら契約経路として Web の優位性がさらに高まります。詳細は別記事（予定）を参照。
 
 ### 3-2. Gemini（Google）— 完全吸収
 
