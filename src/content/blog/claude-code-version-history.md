@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-06-04
+updatedDate: 2026-06-05
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code v2.0.59〜v2.1.160 のバージョン履歴。Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.162 のバージョン履歴。Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-06-04
-**現在の最新バージョン**: 2.1.160
+**最終更新**: 2026-06-05
+**現在の最新バージョン**: 2.1.162
 
 ---
 
@@ -17,6 +17,8 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.162** | **`claude agents --json` に `waitingFor` フィールド追加**（待機中セッションが何でブロックされているか＝例: 権限プロンプト を表示）、**Remote Control が永続フッターのピル表示に**（起動時メッセージから、セッションへのリンク付き常時表示へ変更）、**`/ide` メニュー・`/terminal-setup`・`/scroll-speed` で Windsurf を Devin Desktop に改名**（エディタのリブランドに追随）、`--tools` で Grep/Glob を明示指定するとネイティブビルドで専用検索ツールを提供（従来は無視）、オートコンプリートのスラッシュコマンドはクリックで即実行せずプロンプトに入力（Enterで実行）、`/effort` がデフォルト永続化の確認表示、設定ディレクトリが読み取り専用時の起動ハング修正・WebFetch 許可ルールがプリアプルーブドドメインに効かない問題修正・Windows のバックスラッシュ表記許可ルール不一致修正など多数 |
+| **2.1.161** | **`OTEL_RESOURCE_ATTRIBUTES` の値がメトリクスデータポイントのラベルに反映**（team / repo 等のカスタム次元で使用量メトリクスをスライス可能）、**`claude agents` の行が `done/total` を詳細の前に表示**（作業がファンアウトされているとき。peek は最長実行中の項目を表示）、`/mcp` が未サインインの claude.ai コネクタを「Show unused connectors」行に折りたたみ、**並列ツール呼び出しで失敗した Bash が同一バッチの他呼び出しをキャンセルしなくなった**（各ツールが独立して結果を返す）、フルスクリーンで Linux クリップボードが `wl-copy`/`xclip`/`xsel` 対応・PRIMARY セレクションにもコピー、OTel ログイベントが初期化完了前に送出されると無音で破棄される問題修正、`claude mcp` がシークレットを端末出力する問題修正など多数 |
 | **2.1.160** | **Dynamic Workflows のトリガー語を `workflow` → `ultracode` に変更**（`workflow` の語では起動しなくなり、自然文での依頼は引き続き有効。トリガー語はプロンプト入力で violet にハイライト）、**シェル起動ファイル（`.zshenv`/`.zlogin`/`.bash_login`）と `~/.config/git/` への書き込み前にプロンプト追加**（意図しないコマンド実行を防止）、**`acceptEdits` モードでコード実行を許す可能性のあるビルドツール設定ファイル（`.npmrc`/`.yarnrc*`/`bunfig.toml`/`.bazelrc`/`.pre-commit-config.yaml`/`.devcontainer/` 等）書き込み前にプロンプト追加**、単一ファイルの `grep`/`egrep`/`fgrep` 後の Edit が別途 Read 不要に、`/effort ultracode` 関連修正、バックグラウンドセッション／エージェント系の多数の修正（計27変更） |
 | **2.1.159** | **内部インフラ改善のみ（ユーザー向け変更なし）** |
 | **2.1.158** | **Bedrock / Vertex / Foundry 上の Opus 4.7 / 4.8 で auto mode が利用可能に**（`CLAUDE_CODE_ENABLE_AUTO_MODE=1` でオプトイン） |
@@ -86,7 +88,35 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.160（2026-06-01 PT、最新）— **セキュリティ強化 + Dynamic Workflows トリガー語変更**
+### 2.1.162（2026-06-03 PT、最新）— **`waitingFor` / Remote Control フッター常時表示 / Windsurf→Devin Desktop 改名**
+
+`claude agents` 系の改善と、エディタ連携・起動まわりの修正を中心とするリリース。
+
+- **`claude agents --json` に `waitingFor` フィールド追加** — 待機中セッションが何でブロックされているか（例: 権限プロンプト）を表示
+- **`--tools` での Grep/Glob 明示指定が機能** — 埋め込み検索を持つネイティブビルドで、Grep/Glob を明示すると専用検索ツールが提供される（従来はこれらの名前が無音で無視されていた）
+- **`/effort` がデフォルト永続化を確認表示** — 選択したレベルが新規セッションのデフォルトとして永続化される場合に確認を表示
+- **オートコンプリートのスラッシュコマンドはクリックで即実行しない** — メニューでクリックするとプロンプトに入力され、Enter で実行する挙動に変更
+- **Remote Control が永続フッターのピル表示に** — 起動時メッセージではなく、セッションへのリンク付きのフッターピルとして常時表示されるよう変更
+- **`/ide` メニュー・`/terminal-setup`・`/scroll-speed` で Windsurf を Devin Desktop に改名** — エディタのリブランドに追随
+- 設定ディレクトリが読み取り専用／書き込み不可のときの無音起動ハングを修正（インメモリ設定で起動し、空白画面ではなく起動エラーを表示）
+- WebFetch 許可ルールが組み込みプリアプルーブドドメインに適用されない問題を修正（明示的な `WebFetch(domain:...)` の deny/ask/allow がプリアプルーブド自動許可より優先）
+- Windows の許可ルールがバックスラッシュ表記（`~\`、`\\server\share`）や大文字小文字違いのパスで一致しない問題、Read の deny ルールが Glob/Grep 結果からファイルを隠さない問題を修正
+- そのほか stream-json/SDK セッションでのターン冒頭 Esc 取りこぼし、絵文字混入時の API 400 `no low surrogate in string`、MCP per-server `timeout` の 1000ms 未満値処理、LSP の `workspaceSymbol`、`claude agents` の表示幅／名前列／アタッチ／画像ペースト、起動通知の整理など多数の修正
+
+### 2.1.161（2026-06-02 PT）— **OTEL_RESOURCE_ATTRIBUTES のメトリクスラベル反映 + `claude agents` の done/total 表示**
+
+テレメトリとエージェント表示の改善を含むリリース。
+
+- **`OTEL_RESOURCE_ATTRIBUTES` の値がメトリクスデータポイントのラベルに含まれるように** — team や repo といったカスタム次元で使用量メトリクスをスライスできるようになった
+- **`claude agents` の行が `done/total` を詳細の前に表示** — 作業がファンアウトされているときに完了数／総数を表示し、peek では最長実行中の項目を表示
+- **`/mcp` が未サインインの claude.ai コネクタを折りたたみ表示** — 一度もサインインしていないコネクタを「Show unused connectors」行の下にまとめる
+- **並列ツール呼び出しで失敗した Bash が他をキャンセルしない** — 同一バッチ内の Bash コマンドが失敗しても他の呼び出しはキャンセルされず、各ツールが独立して結果を返す
+- フルスクリーンモードでクリップボードが Linux で `wl-copy`/`xclip`/`xsel` を利用、クリップボードと PRIMARY セレクション両方にコピー（ミドルクリック貼り付け対応）
+- OpenTelemetry ログイベントがテレメトリ初期化完了前に送出されると無音で破棄される問題を修正
+- `claude mcp` の list/get/add がシークレットを端末に出力する問題を修正（`${VAR}` 参照を展開せず、認証ヘッダー・URL シークレットを秘匿）
+- そのほか `claude -p` の stdout 破損、`/usage-credits` の再ログイン誤発生、`/autofix-pr` の worktree 誤判定、Windows hooks の bash 明示呼び出し失敗、Write ツール結果レンダリングのクラッシュなど多数の修正
+
+### 2.1.160（2026-06-01 PT）— **セキュリティ強化 + Dynamic Workflows トリガー語変更**
 
 セキュリティ関連のプロンプト追加と、Dynamic Workflows のトリガー語変更を含む27変更のリリース。
 
