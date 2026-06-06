@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-06-05
+updatedDate: 2026-06-06
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code v2.0.59〜v2.1.162 のバージョン履歴。Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.163 のバージョン履歴。requiredMinimumVersion/requiredMaximumVersion マネージド設定・/plugin list（--enabled/--disabled フィルタ）・バックグラウンドセッションの自動バージョン更新（コールドリスタート不要）・Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-06-05
-**現在の最新バージョン**: 2.1.162
+**最終更新**: 2026-06-06
+**現在の最新バージョン**: 2.1.163
 
 ---
 
@@ -17,6 +17,7 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.163** | **`requiredMinimumVersion` / `requiredMaximumVersion` マネージド設定追加**（バージョンが許可範囲外なら Claude Code が起動を拒否し、承認済みバージョンへ誘導＝組織でのバージョン固定が可能に）、**`/plugin list` コマンド追加**（インストール済みプラグインを一覧表示、`--enabled` / `--disabled` フィルタ付き）、**バックグラウンドセッションが Claude Code 更新後にバックグラウンドで新バージョンへ更新**（更新後にセッションを開いてもコールドリスタート待ちが発生しなくなった）、`/btw` に「`c` でコピー」ショートカット（生 markdown 回答をクリップボードへコピーし貼り付け先で書式維持）、**Stop / SubagentStop フックが `hookSpecificOutput.additionalContext` を返せるように**（フックエラー扱いされずに Claude へフィードバックしてターンを継続）、Skills でコマンド本文の数字直前にリテラル `$` を入れる `\$` エスケープ構文、stdio MCP サーバーが `--resume` 時に hooks/Bash と同じ `CLAUDE_CODE_SESSION_ID` を受け取る、**`claude -p` がバックグラウンドコマンドの未終了で最終結果後に無限ハングする問題を修正**（stdin クローズ後 ~5s で背景シェルを停止）、`claude -p` が Bedrock/Vertex/Foundry で `CI=true`・Anthropic APIキー未設定時に「ANTHROPIC_API_KEY required」で失敗する問題修正、bazel/EDR 保護 Go ワークフローで `$TMPDIR` が全コマンドに上書きされ失敗する問題修正（2.1.154 リグレッション）、Windows で read-only 属性／OneDrive 配下の session-env ディレクトリで「EEXIST」失敗する問題修正、新規 config ディレクトリで起動中にマネージド設定取得が完了すると組織管理権限ルールがセッション全体に適用されない問題修正、agent view を Esc で抜ける際の端末崩れ・数秒ハング修正、フック `if: "Bash(...)"` 条件がサブシェル/バッククォート内のコマンドにもマッチするよう修正、ホームディレクトリパスの deny ルール（例 `Read(~/Desktop/**)`）が `$HOME` 経由参照の Bash をブロックしない問題修正、`/` メニューの組み込みコマンド/スキル説明の明確化など多数 |
 | **2.1.162** | **`claude agents --json` に `waitingFor` フィールド追加**（待機中セッションが何でブロックされているか＝例: 権限プロンプト を表示）、**Remote Control が永続フッターのピル表示に**（起動時メッセージから、セッションへのリンク付き常時表示へ変更）、**`/ide` メニュー・`/terminal-setup`・`/scroll-speed` で Windsurf を Devin Desktop に改名**（エディタのリブランドに追随）、`--tools` で Grep/Glob を明示指定するとネイティブビルドで専用検索ツールを提供（従来は無視）、オートコンプリートのスラッシュコマンドはクリックで即実行せずプロンプトに入力（Enterで実行）、`/effort` がデフォルト永続化の確認表示、設定ディレクトリが読み取り専用時の起動ハング修正・WebFetch 許可ルールがプリアプルーブドドメインに効かない問題修正・Windows のバックスラッシュ表記許可ルール不一致修正など多数 |
 | **2.1.161** | **`OTEL_RESOURCE_ATTRIBUTES` の値がメトリクスデータポイントのラベルに反映**（team / repo 等のカスタム次元で使用量メトリクスをスライス可能）、**`claude agents` の行が `done/total` を詳細の前に表示**（作業がファンアウトされているとき。peek は最長実行中の項目を表示）、`/mcp` が未サインインの claude.ai コネクタを「Show unused connectors」行に折りたたみ、**並列ツール呼び出しで失敗した Bash が同一バッチの他呼び出しをキャンセルしなくなった**（各ツールが独立して結果を返す）、フルスクリーンで Linux クリップボードが `wl-copy`/`xclip`/`xsel` 対応・PRIMARY セレクションにもコピー、OTel ログイベントが初期化完了前に送出されると無音で破棄される問題修正、`claude mcp` がシークレットを端末出力する問題修正など多数 |
 | **2.1.160** | **Dynamic Workflows のトリガー語を `workflow` → `ultracode` に変更**（`workflow` の語では起動しなくなり、自然文での依頼は引き続き有効。トリガー語はプロンプト入力で violet にハイライト）、**シェル起動ファイル（`.zshenv`/`.zlogin`/`.bash_login`）と `~/.config/git/` への書き込み前にプロンプト追加**（意図しないコマンド実行を防止）、**`acceptEdits` モードでコード実行を許す可能性のあるビルドツール設定ファイル（`.npmrc`/`.yarnrc*`/`bunfig.toml`/`.bazelrc`/`.pre-commit-config.yaml`/`.devcontainer/` 等）書き込み前にプロンプト追加**、単一ファイルの `grep`/`egrep`/`fgrep` 後の Edit が別途 Read 不要に、`/effort ultracode` 関連修正、バックグラウンドセッション／エージェント系の多数の修正（計27変更） |
