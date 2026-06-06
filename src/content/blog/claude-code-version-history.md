@@ -89,7 +89,23 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.162（2026-06-03 PT、最新）— **`waitingFor` / Remote Control フッター常時表示 / Windsurf→Devin Desktop 改名**
+### 2.1.163（2026-06-04 PT、最新）— **バージョン固定（requiredMin/MaxVersion）/ `/plugin list` / バックグラウンド自動更新**
+
+組織でのバージョン統制、プラグイン一覧、バックグラウンド更新の体験改善を中心とするリリース。
+
+- **`requiredMinimumVersion` / `requiredMaximumVersion` マネージド設定追加** — バージョンが許可範囲外なら Claude Code が起動を拒否し、承認済みバージョンへ誘導。組織で使用バージョンを固定できる
+- **`/plugin list` コマンド追加** — インストール済みプラグインを一覧表示。`--enabled` / `--disabled` フィルタ付き
+- **バックグラウンドセッションが Claude Code 更新後にバックグラウンドで新バージョンへ更新** — 更新後にセッションを開いてもコールドリスタート待ちが発生しなくなった
+- **`/btw` に「`c` でコピー」ショートカット** — 生 markdown 回答をクリップボードへコピーし、貼り付け先で書式を維持
+- **Stop / SubagentStop フックが `hookSpecificOutput.additionalContext` を返せるように** — フックエラー扱いされずに Claude へフィードバックしてターンを継続できる
+- **Skills**: コマンド本文で数字の直前にリテラル `$` を入れる `\$` エスケープ構文を追加
+- stdio MCP サーバーが `--resume` 時に hooks/Bash と同じ `CLAUDE_CODE_SESSION_ID` を受け取る
+- **`claude -p` の修正**: バックグラウンドコマンドが終了しないと最終結果後に無限ハングする問題（stdin クローズ後 ~5s で背景シェルを停止）、Bedrock/Vertex/Foundry で `CI=true`・Anthropic APIキー未設定時に「ANTHROPIC_API_KEY required」で失敗する問題を修正
+- bazel/EDR 保護 Go ワークフローで `$TMPDIR` が全コマンドに上書きされ失敗する問題修正（2.1.154 リグレッション）、Windows で read-only 属性／OneDrive 配下の session-env ディレクトリで「EEXIST」失敗する問題修正
+- 新規 config ディレクトリで起動中にマネージド設定取得が完了すると組織管理権限ルールがセッション全体に適用されない問題、agent view を Esc で抜ける際の端末崩れ・数秒ハング、フック `if: "Bash(...)"` がサブシェル/バッククォート内コマンドにマッチしない問題、ホームディレクトリの deny ルール（例 `Read(~/Desktop/**)`）が `$HOME` 経由参照の Bash をブロックしない問題などを修正
+- `/` メニューの組み込みコマンド/スキルの説明を明確化、サブスクリプション切替サジェストを起動時アナウンス枠に表示
+
+### 2.1.162（2026-06-03 PT）— **`waitingFor` / Remote Control フッター常時表示 / Windsurf→Devin Desktop 改名**
 
 `claude agents` 系の改善と、エディタ連携・起動まわりの修正を中心とするリリース。
 
