@@ -197,4 +197,7 @@ draft: false
 - [Claude Code pricing after June 15 — decision table（FindSkill）](https://findskill.ai/blog/claude-code-pricing-after-june-15-decision-table/)
 - [Anthropic Claude Agent SDK billing split — developer guide（ChatForest）](https://chatforest.com/reviews/anthropic-claude-agent-sdk-billing-split-june-15-2026-credit-pool-developer-guide/)
 - [Anthropic June 2026 billing change for Claude Code（Codersera）](https://codersera.com/blog/anthropic-june-2026-billing-change-claude-code/)
+- [Claude subscriptions get separate budgets for programmatic use, billed at full API prices（The Decoder・初報）](https://the-decoder.com/claude-subscriptions-get-separate-budgets-for-programmatic-use-billed-at-full-api-prices/)
+- [Anthropic Claude credit overhaul (June 15, 2026)（Digital Applied）](https://www.digitalapplied.com/blog/anthropic-claude-credit-overhaul-june-15-2026)
+- [Anthropic splits Claude subscriptions: Agent SDK credit (June 2026)（DevToolPicks）](https://devtoolpicks.com/blog/anthropic-splits-claude-subscriptions-agent-sdk-credit-june-2026)
 - [Anthropic API Pricing（公式）](https://www.anthropic.com/pricing)
