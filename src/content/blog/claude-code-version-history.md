@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-06-06
+updatedDate: 2026-06-07
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code v2.0.59〜v2.1.163 のバージョン履歴。requiredMinimumVersion/requiredMaximumVersion マネージド設定・/plugin list（--enabled/--disabled フィルタ）・バックグラウンドセッションの自動バージョン更新（コールドリスタート不要）・Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.168 のバージョン履歴。fallbackModel 設定（最大3つのフォールバックモデル）・deny ルールの glob 対応・クロスセッションメッセージング堅牢化・既定思考モデルの thinking 無効化・requiredMinimumVersion/requiredMaximumVersion マネージド設定・/plugin list（--enabled/--disabled フィルタ）・バックグラウンドセッションの自動バージョン更新（コールドリスタート不要）・Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-06-06
-**現在の最新バージョン**: 2.1.163
+**最終更新**: 2026-06-07
+**現在の最新バージョン**: 2.1.168
 
 ---
 
@@ -17,6 +17,10 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.168** | バグ修正・信頼性向上 |
+| **2.1.167** | バグ修正・信頼性向上 |
+| **2.1.166** | **`fallbackModel` 設定追加**（プライマリモデルが過負荷／利用不可のときに順に試す最大3つのフォールバックモデルを設定。`--fallback-model` が対話セッションにも適用）、**deny ルールのツール名位置で glob パターン対応**（`"*"` で全ツール拒否。allow ルールは非MCPの glob を拒否、deny の未知ツール名は起動時に警告）、**クロスセッションメッセージングの堅牢化**（他 Claude セッションから `SendMessage` で中継されたメッセージはユーザー権限を持たず、受信側は中継された権限要求を拒否・auto モードもブロック）、**`MAX_THINKING_TOKENS=0` / `--thinking disabled` / モデル別 thinking トグルで、既定で思考するモデルの thinking を無効化可能に**（Claude API 経由。3Pプロバイダは不変）、API が想定外の非リトライ可能エラーを返したとき**フォールバックモデルで1回リトライ**（認証・レート制限・リクエストサイズ・トランスポートエラーは即時表面化）、`claude update` がダウンロード前に対象バージョンを通知、`claude agents` のリストにURL入力で該当セッションを絞り込み。多数の修正（画像処理エラーと余分なトークン消費、起動時ワーカー登録中の一時障害でリモートセッションが恒久停止、JetBrains 2026.1+ 端末のちらつき＝同期出力で解消、Kitty キーボードプロトコル端末で Shift+非ASCII が欠落、Windows の PowerShell コマンド検証ハング、macOS で daemon 死後の `claude --bg-pty-host` が100% CPU、voice モードの stale 認証、無効エントリでマネージド設定の残り有効ポリシーが無効化される問題、`allowedMcpServers`/`deniedMcpServers` の `${VAR}` 参照不一致、git worktree に入った背景セッションが再オープンで crash-loop、Ctrl+O トランスクリプトの思考テキスト重複、`/doctor` の矛盾チェック 等） |
+| **2.1.165** | バグ修正・信頼性向上 |
 | **2.1.163** | **`requiredMinimumVersion` / `requiredMaximumVersion` マネージド設定追加**（バージョンが許可範囲外なら Claude Code が起動を拒否し、承認済みバージョンへ誘導＝組織でのバージョン固定が可能に）、**`/plugin list` コマンド追加**（インストール済みプラグインを一覧表示、`--enabled` / `--disabled` フィルタ付き）、**バックグラウンドセッションが Claude Code 更新後にバックグラウンドで新バージョンへ更新**（更新後にセッションを開いてもコールドリスタート待ちが発生しなくなった）、`/btw` に「`c` でコピー」ショートカット（生 markdown 回答をクリップボードへコピーし貼り付け先で書式維持）、**Stop / SubagentStop フックが `hookSpecificOutput.additionalContext` を返せるように**（フックエラー扱いされずに Claude へフィードバックしてターンを継続）、Skills でコマンド本文の数字直前にリテラル `$` を入れる `\$` エスケープ構文、stdio MCP サーバーが `--resume` 時に hooks/Bash と同じ `CLAUDE_CODE_SESSION_ID` を受け取る、**`claude -p` がバックグラウンドコマンドの未終了で最終結果後に無限ハングする問題を修正**（stdin クローズ後 ~5s で背景シェルを停止）、`claude -p` が Bedrock/Vertex/Foundry で `CI=true`・Anthropic APIキー未設定時に「ANTHROPIC_API_KEY required」で失敗する問題修正、bazel/EDR 保護 Go ワークフローで `$TMPDIR` が全コマンドに上書きされ失敗する問題修正（2.1.154 リグレッション）、Windows で read-only 属性／OneDrive 配下の session-env ディレクトリで「EEXIST」失敗する問題修正、新規 config ディレクトリで起動中にマネージド設定取得が完了すると組織管理権限ルールがセッション全体に適用されない問題修正、agent view を Esc で抜ける際の端末崩れ・数秒ハング修正、フック `if: "Bash(...)"` 条件がサブシェル/バッククォート内のコマンドにもマッチするよう修正、ホームディレクトリパスの deny ルール（例 `Read(~/Desktop/**)`）が `$HOME` 経由参照の Bash をブロックしない問題修正、`/` メニューの組み込みコマンド/スキル説明の明確化など多数 |
 | **2.1.162** | **`claude agents --json` に `waitingFor` フィールド追加**（待機中セッションが何でブロックされているか＝例: 権限プロンプト を表示）、**Remote Control が永続フッターのピル表示に**（起動時メッセージから、セッションへのリンク付き常時表示へ変更）、**`/ide` メニュー・`/terminal-setup`・`/scroll-speed` で Windsurf を Devin Desktop に改名**（エディタのリブランドに追随）、`--tools` で Grep/Glob を明示指定するとネイティブビルドで専用検索ツールを提供（従来は無視）、オートコンプリートのスラッシュコマンドはクリックで即実行せずプロンプトに入力（Enterで実行）、`/effort` がデフォルト永続化の確認表示、設定ディレクトリが読み取り専用時の起動ハング修正・WebFetch 許可ルールがプリアプルーブドドメインに効かない問題修正・Windows のバックスラッシュ表記許可ルール不一致修正など多数 |
 | **2.1.161** | **`OTEL_RESOURCE_ATTRIBUTES` の値がメトリクスデータポイントのラベルに反映**（team / repo 等のカスタム次元で使用量メトリクスをスライス可能）、**`claude agents` の行が `done/total` を詳細の前に表示**（作業がファンアウトされているとき。peek は最長実行中の項目を表示）、`/mcp` が未サインインの claude.ai コネクタを「Show unused connectors」行に折りたたみ、**並列ツール呼び出しで失敗した Bash が同一バッチの他呼び出しをキャンセルしなくなった**（各ツールが独立して結果を返す）、フルスクリーンで Linux クリップボードが `wl-copy`/`xclip`/`xsel` 対応・PRIMARY セレクションにもコピー、OTel ログイベントが初期化完了前に送出されると無音で破棄される問題修正、`claude mcp` がシークレットを端末出力する問題修正など多数 |
@@ -89,7 +93,34 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.163（2026-06-04 PT、最新）— **バージョン固定（requiredMin/MaxVersion）/ `/plugin list` / バックグラウンド自動更新**
+### 2.1.168（2026-06-06 PT、最新）
+
+- バグ修正・信頼性向上のみ（公式リリースノートに個別項目の記載なし）
+
+### 2.1.167（2026-06-06 PT）
+
+- バグ修正・信頼性向上のみ（公式リリースノートに個別項目の記載なし）
+
+### 2.1.166（2026-06-06 PT）— **`fallbackModel` 設定 / deny ルールの glob 対応 / クロスセッションメッセージング堅牢化**
+
+フォールバックモデル、権限ルールの glob、マルチセッション安全性を中心とする機能追加＋多数の修正を含むリリース。
+
+- **`fallbackModel` 設定追加** — プライマリモデルが過負荷／利用不可のとき、**順に試す最大3つのフォールバックモデル**を設定できる。`--fallback-model` が**対話セッションにも**適用されるようになった
+- **deny ルールのツール名位置で glob パターン対応** — `"*"` で全ツールを拒否できる。allow ルールは非MCPの glob を拒否し、deny ルールの未知ツール名は起動時に警告
+- **クロスセッションメッセージングの堅牢化** — 他の Claude セッションから `SendMessage` で中継されたメッセージは**ユーザー権限を持たない**。受信側は中継された権限要求を拒否し、auto モードもこれをブロックする
+- **既定で思考するモデルの thinking を無効化可能に** — `MAX_THINKING_TOKENS=0` / `--thinking disabled` / モデル別 thinking トグルが、Claude API 経由で既定思考モデルの thinking を無効化（サードパーティプロバイダ経由は変更なし）
+- **API の想定外エラー時にフォールバックモデルで1回リトライ** — 非リトライ可能エラーを返した場合、フォールバックモデルでターンを1回再試行。認証・レート制限・リクエストサイズ・トランスポートエラーは即時表面化
+- `claude update` がダウンロード前に**対象バージョンを通知**（従来は無音）
+- `claude agents`: リストにURLを入力すると、最初のプロンプトにそのURLを含むセッションに絞り込み
+- 多数の修正: 処理不能画像での「image could not be processed」エラーと余分なトークン消費、起動時ワーカー登録中の一時的バックエンド障害でリモートセッションが恒久停止する問題、JetBrains 2026.1+ IDE 端末（IntelliJ/PyCharm/WebStorm 等）のちらつき（同期出力の有効化で解消）、Kitty キーボードプロトコル端末（WezTerm/Ghostty/kitty）で Shift+非ASCII 文字（例 Shift+ä → Ä）が欠落する問題、Windows で kill されたプロセスの子が出力パイプを保持した際の PowerShell コマンド検証ハング、macOS で daemon 死後に `claude --bg-pty-host` が100% CPU で回り続ける問題、`/voice` 切替後に stale な認証チェックが残る問題、無効エントリを含むマネージド設定が残りの有効ポリシーの強制を無音で無効化する問題、`allowedMcpServers`/`deniedMcpServers` の `${VAR}` 参照が一致しない問題、git worktree に入った背景セッションが `claude agents` から再オープンすると「No conversation found」で crash-loop する問題、Ctrl+O トランスクリプト表示の思考テキスト重複、リモートセッション内で `/doctor` が矛盾した「Not inside a remote session」失敗を表示する問題 など
+
+### 2.1.165（2026-06-05 PT）
+
+- バグ修正・信頼性向上のみ（公式リリースノートに個別項目の記載なし）
+
+> 注: **2.1.164 は欠番**（公式 changelog に記載なし）。
+
+### 2.1.163（2026-06-04 PT）— **バージョン固定（requiredMin/MaxVersion）/ `/plugin list` / バックグラウンド自動更新**
 
 組織でのバージョン統制、プラグイン一覧、バックグラウンド更新の体験改善を中心とするリリース。
 
