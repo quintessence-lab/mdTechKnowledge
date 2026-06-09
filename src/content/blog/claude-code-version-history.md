@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-06-07
+updatedDate: 2026-06-09
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code v2.0.59〜v2.1.168 のバージョン履歴。fallbackModel 設定（最大3つのフォールバックモデル）・deny ルールの glob 対応・クロスセッションメッセージング堅牢化・既定思考モデルの thinking 無効化・requiredMinimumVersion/requiredMaximumVersion マネージド設定・/plugin list（--enabled/--disabled フィルタ）・バックグラウンドセッションの自動バージョン更新（コールドリスタート不要）・Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.169 のバージョン履歴。`--safe-mode` フラグ（カスタマイズ無効化でトラブルシュート）・`/cd` コマンド（プロンプトキャッシュを壊さない作業ディレクトリ変更）・`disableBundledSkills` 設定・fallbackModel 設定（最大3つのフォールバックモデル）・deny ルールの glob 対応・クロスセッションメッセージング堅牢化・既定思考モデルの thinking 無効化・requiredMinimumVersion/requiredMaximumVersion マネージド設定・/plugin list（--enabled/--disabled フィルタ）・バックグラウンドセッションの自動バージョン更新（コールドリスタート不要）・Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-06-07
-**現在の最新バージョン**: 2.1.168
+**最終更新**: 2026-06-09
+**現在の最新バージョン**: 2.1.169
 
 ---
 
@@ -17,6 +17,7 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.169** | **`--safe-mode` フラグ / `CLAUDE_CODE_SAFE_MODE`**（カスタマイズを無効化してトラブルシュート）、**`/cd` コマンド**（プロンプトキャッシュを壊さずにセッションの作業ディレクトリを変更）、**`disableBundledSkills` 設定 / `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS`**（バンドルスキルをモデルから隠す）、`claude agents --json` の出力拡張（新フィールド・フィルタ）、`/workflows` がターン中に即座に開く、`TaskCreate` の信頼性向上（自動入力修復）、`CLAUDE.md` 警告閾値がモデルのコンテキストウィンドウに応じてスケール、多数の修正（Up/Down キーが折返し行を飛ばす問題、enterprise MCP ポリシー強制、macOS の claude.ai 認証時 UI ストール、Windows の `claude -p` 遅延、Git Credential Manager 起動時ポップアップ、Remote Control 再接続、フッターヒント非表示、stale な権限/ダイアログプロンプト、ストリーミング中の CPU 使用率削減 等） |
 | **2.1.168** | バグ修正・信頼性向上 |
 | **2.1.167** | バグ修正・信頼性向上 |
 | **2.1.166** | **`fallbackModel` 設定追加**（プライマリモデルが過負荷／利用不可のときに順に試す最大3つのフォールバックモデルを設定。`--fallback-model` が対話セッションにも適用）、**deny ルールのツール名位置で glob パターン対応**（`"*"` で全ツール拒否。allow ルールは非MCPの glob を拒否、deny の未知ツール名は起動時に警告）、**クロスセッションメッセージングの堅牢化**（他 Claude セッションから `SendMessage` で中継されたメッセージはユーザー権限を持たず、受信側は中継された権限要求を拒否・auto モードもブロック）、**`MAX_THINKING_TOKENS=0` / `--thinking disabled` / モデル別 thinking トグルで、既定で思考するモデルの thinking を無効化可能に**（Claude API 経由。3Pプロバイダは不変）、API が想定外の非リトライ可能エラーを返したとき**フォールバックモデルで1回リトライ**（認証・レート制限・リクエストサイズ・トランスポートエラーは即時表面化）、`claude update` がダウンロード前に対象バージョンを通知、`claude agents` のリストにURL入力で該当セッションを絞り込み。多数の修正（画像処理エラーと余分なトークン消費、起動時ワーカー登録中の一時障害でリモートセッションが恒久停止、JetBrains 2026.1+ 端末のちらつき＝同期出力で解消、Kitty キーボードプロトコル端末で Shift+非ASCII が欠落、Windows の PowerShell コマンド検証ハング、macOS で daemon 死後の `claude --bg-pty-host` が100% CPU、voice モードの stale 認証、無効エントリでマネージド設定の残り有効ポリシーが無効化される問題、`allowedMcpServers`/`deniedMcpServers` の `${VAR}` 参照不一致、git worktree に入った背景セッションが再オープンで crash-loop、Ctrl+O トランスクリプトの思考テキスト重複、`/doctor` の矛盾チェック 等） |
@@ -93,7 +94,20 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.168（2026-06-06 PT、最新）
+### 2.1.169（2026-06-08 PT、最新）— **`--safe-mode` / `/cd` コマンド / `disableBundledSkills`**
+
+トラブルシュート用セーフモード、作業ディレクトリ変更コマンド、スキル制御設定を中心とする機能追加＋多数の修正を含むリリース。
+
+- **`--safe-mode` フラグ / `CLAUDE_CODE_SAFE_MODE` 環境変数追加** — カスタマイズ（設定・プラグイン・スキル等）を無効化して起動し、問題の切り分けを容易にする
+- **`/cd` コマンド追加** — セッションの作業ディレクトリを**プロンプトキャッシュを壊さずに**新しいディレクトリへ移動できる
+- **`disableBundledSkills` 設定 / `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS` 環境変数追加** — バンドルされた組み込みスキルをモデルから隠す
+- `claude agents --json` の出力を拡張（新フィールド・フィルタリングオプション）、`claude agents` を並行セッション向けに勧めるヒントを追加
+- `/workflows` がターン実行中でも即座に開くように
+- `TaskCreate` の信頼性向上（入力の自動修復）
+- `CLAUDE.md` の警告閾値がモデルのコンテキストウィンドウサイズに応じてスケール、スキルタグの色コントラスト改善
+- 多数の修正: Up/Down 矢印キーが折り返し行をまたいでコマンド履歴を飛ばす問題、再接続時／IDE 設定での enterprise MCP ポリシー強制、リモートセッション再アタッチ時に権限・ダイアログプロンプトが再表示される問題、macOS で claude.ai 認証情報利用時の ~30-50ms UI ストール、Windows でのスラッシュコマンド/スキルスキャン時の `claude -p` 遅延、Windows 起動時の Git Credential Manager ポップアップ、MCPB プラグインキャッシュの無効化、背景エージェントがプロジェクトレベルの環境設定を無視する問題、Remote Control 再接続、ストリーミング・アニメーション中の CPU 使用率削減、フッターヒント非表示、retire→wake サイクルでの背景セッションのフラグ保持 など
+
+### 2.1.168（2026-06-06 PT）
 
 - バグ修正・信頼性向上のみ（公式リリースノートに個別項目の記載なし）
 
