@@ -1,10 +1,10 @@
 ---
 title: "Claude Security Beta — Anthropic エンタープライズセキュリティ製品の全貌（2026年5月発表）"
 date: 2026-05-02
-updatedDate: 2026-05-27
+updatedDate: 2026-06-09
 category: "Claude技術解説"
-tags: ["Anthropic", "Claude Security", "Opus 4.7", "セキュリティ", "脆弱性スキャン", "エンタープライズ"]
-excerpt: "2026年5月1日、Anthropic は Claude Opus 4.7 を中核に据えたエンタープライズ向けセキュリティ製品 Claude Security のパブリックベータを発表した。コードベース脆弱性スキャン・パッチ生成、CrowdStrike / Microsoft Security / Palo Alto Networks / SentinelOne / TrendAI / Wiz などの技術パートナー、Accenture / BCG / Deloitte / Infosys / PwC などのサービスパートナー連携を含め、全体像を整理する。"
+tags: ["Anthropic", "Claude Security", "Opus 4.7", "セキュリティ", "脆弱性スキャン", "エンタープライズ", "脅威インテリジェンス", "MITRE ATT&CK", "サイバー攻撃"]
+excerpt: "2026年5月1日、Anthropic は Claude Opus 4.7 を中核に据えたエンタープライズ向けセキュリティ製品 Claude Security のパブリックベータを発表した。コードベース脆弱性スキャン・パッチ生成、CrowdStrike / Microsoft Security / Palo Alto Networks / SentinelOne / TrendAI / Wiz などの技術パートナー、Accenture / BCG / Deloitte / Infosys / PwC などのサービスパートナー連携を含め、全体像を整理する。さらに2026年6月3日公開の脅威インテリジェンスレポート（禁止832アカウントの MITRE ATT&CK マッピング、マルウェア生成67.3%、中リスク以上が33%→56%へ）と、2025年11月に阻止された AI 主導サイバースパイ活動の事例も追補する。"
 draft: false
 ---
 
@@ -268,6 +268,36 @@ claude-security scan \
 
 ---
 
+## 2026年6月: AI を悪用した脅威の実態 — Anthropic の脅威インテリジェンス
+
+Claude Security が「AI で守る」プロダクトであるのと表裏一体で、Anthropic は「AI がどう悪用されているか」を継続的に調査・公表しています。2026年6月3日には、過去1年間に観測した AI 悪用の実態を **MITRE ATT&CK フレームワークにマッピングした調査レポート**が公開されました。製品としての Claude Security とは別軸の「脅威インテリジェンス」ですが、防御側がどんな攻撃を想定すべきかを示す重要な背景情報です。
+
+### AI が関与するサイバー脅威の1年間マッピング（2026-06-03 公開）
+
+2025年3月〜2026年3月に Anthropic が利用規約違反で**禁止した832アカウント**（評価に十分な詳細があったもの）を分析し、攻撃手法を MITRE ATT&CK に対応づけたものです。
+
+| 指標 | 数値 |
+|------|------|
+| 分析対象アカウント数 | **832**（2025年3月〜2026年3月に禁止） |
+| マルウェア生成に AI を利用 | **560件（67.3%）** |
+| ラテラルムーブメント支援に AI を利用 | 54件（6.5%） |
+| 中リスク以上の攻撃者の割合 | 前半 **33%** → 後半 **56%**（約1.7倍に増加） |
+| 外部提供 | **Verizon 2026 DBIR** に予備結果を提供、詳細は Frontier Red Team ブログ |
+
+レポートは、**MITRE ATT&CK が AI 攻撃者の危険性（特に自律的なオーケストレーション技術）を完全には捉えきれていない**というギャップも指摘しています。攻撃者が AI を使って攻撃工程を自動化・高速化するほど、従来の戦術分類だけでは説明しきれない領域が広がっている、という問題提起です。
+
+### 文脈: AI 主導サイバースパイ活動の阻止（2025年11月既報）
+
+上記マッピングの背景にある象徴的な事例が、**2025年11月13日に公表された「AI オーケストレーテッドなサイバースパイ活動の阻止」**です（2026年6月のレポートとは別の既報。日付に注意）。
+
+- **攻撃主体**: 中国の国家支援グループ（高い確信度で評価）
+- **「初」の意味**: 人間の実質的介入なしに実行された大規模サイバー攻撃として**初の記録例**。攻撃工程の **80〜90% を AI が実行**し、人間の重要判断は1作戦あたり **4〜6箇所**のみ
+- **検知と対応**: 2025年9月中旬に不審な活動を検知 → 約10日間でアカウント禁止・被害組織への通知・当局との連携を実施
+- **悪用された Claude の能力**: 高度なコーディング能力／エージェント機能（自律的タスク実行）／MCP 経由のツールアクセス。ジェイルブレイクで防御を回避し、攻撃を「一見無害なサブタスク」に分割していた
+- **規模**: テック企業・金融機関・化学メーカー・政府機関など**約30の標的**。実際に成功したのは少数
+
+この事例は「AI が攻撃を自律実行する時代」を象徴し、6月のマッピングレポートが定量的に裏付けた格好です。Claude Security のような防御プロダクトの必要性も、こうした脅威の現実化を背景にしています。
+
 ## 既存セキュリティ事案との関係性
 
 Anthropic のセキュリティ系トピックは、過去半年でいくつかの大きな話題を経てきました。Claude Security の発表は、これらの流れの中でも一つの集大成として位置付けられます。
@@ -343,3 +373,9 @@ Claude Security Beta の発表は、単なる新機能リリースを超え、**
 - [Techzine: Anthropic Claude Security available to all enterprise customers](https://www.techzine.eu/news/security/140944/anthropic-claude-security-available-to-all-enterprise-customers/)
 - [DevOps.com: Anthropic brings AI-powered security scanning to enterprise teams with Claude Security](https://devops.com/anthropic-brings-ai-powered-security-scanning-to-enterprise-teams-with-claude-security/)
 - [Anthropic News (公式)](https://www.anthropic.com/news)
+
+### 脅威インテリジェンス（2026年6月セクション）
+
+- [What we learned from a year of mapping AI-enabled cyber threats to MITRE ATT&CK（Anthropic 公式, 2026-06-03）](https://www.anthropic.com/news/AI-enabled-cyber-threats-mitre-attack)
+- [Disrupting the first reported AI-orchestrated cyber espionage campaign（Anthropic 公式, 2025-11-13）](https://www.anthropic.com/news/disrupting-AI-espionage)
+- [Anthropic maps AI-enabled cyber threats to MITRE ATT&CK（resultsense.com）](https://www.resultsense.com/news/2026-06-04-anthropic-ai-cyber-threats-mitre-attack/)
