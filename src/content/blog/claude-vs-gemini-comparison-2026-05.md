@@ -1,7 +1,7 @@
 ---
 title: "Claude vs Gemini 完全比較 — 有料プラン・NotebookLM・Gemini CLI・画像生成API料金（2026年5月版）"
 date: 2026-05-04
-updatedDate: 2026-05-30
+updatedDate: 2026-06-10
 category: "Claude技術解説"
 tags: ["Claude", "Gemini", "NotebookLM", "Gemini CLI", "画像生成", "プラン比較", "API料金"]
 excerpt: "Anthropic ClaudeとGoogle Geminiの有料プランを2026年5月時点で徹底比較。NotebookLM・Gemini CLI・Imagen 4の画像生成API単価まで網羅。"
@@ -155,7 +155,29 @@ Opus 4.8 では **コード欠陥の見落としが Opus 4.7 比で約 1/4**（A
 
 ---
 
+## 7. Claude Fable 5 リリースで「最上位」が更新（2026-06-09 PT / 2026-06-10 JST 追記）
+
+2026年6月9日（PT）、Anthropic は **Opus クラスより上位の「Mythos クラス」** を一般公開しました。これにより、Claude 側の最上位は Opus 4.8 から **Claude Fable 5** に更新されます。
+
+| 項目 | Claude Fable 5（新・最上位） | Claude Opus 4.8（従来フラッグシップ） |
+|:---|:---|:---|
+| モデルID | `claude-fable-5` | `claude-opus-4-8` |
+| 能力クラス | **Mythos クラス（Opus クラスより上位）** | Opus クラス |
+| API 標準価格（in/out per MTok） | **$10 / $50** | $5 / $25 |
+| 位置づけ | 最も高性能な一般公開モデル | Fable 5 のフォールバック先 |
+
+- **性能**: 公式は FrontierCode で frontier モデル中最高、Hebbia Finance ベンチで全モデル中最高、スプレッドシート系で Opus 4.8 比 25〜30% 高速などを挙げ、「ほぼ全ベンチで SOTA」としています。
+- **特殊な提供形態（重要）**: 対話プランでは **6月9日〜6月22日（PT）まで Pro / Max / Team / 座席制 Enterprise に追加料金なし**で利用でき、**6月23日以降はこれらのプランから外れクレジット制**に移行します（API・消費ベース Enterprise は当初から通常提供）。Opus 4.8 のように常時プランに含まれるわけではない点に注意。
+- **安全設計**: 高リスク領域（サイバー・生物・化学・蒸留）でリクエストを拒否し **Opus 4.8 へ自動フォールバック**できる設計。Anthropic は「95%超のセッションはフォールバックなしで完結」としています。
+- Gemini 側の最上位（Gemini 3.x 系）との比較は、料金・提供形態が大きく異なるため単純比較は困難ですが、**Claude は"期間限定で最上位を開放→以降クレジット制"という独特の提供形態**を採った点が特徴です。
+
+> 詳細は別記事 [Claude Mythos Preview & Project Glasswing](/blog/claude-mythos-glasswing/) の Fable 5 / Mythos 5 追記、および Fable 5 専用記事（予定）を参照。
+
+---
+
 ## 参考資料
+
+- [Anthropic公式: Claude Fable 5 / Mythos 5（2026/6/9）](https://www.anthropic.com/news/claude-fable-5-mythos-5)
 
 - [Anthropic公式: Claude Opus 4.8（2026/5/28）](https://www.anthropic.com/news/claude-opus-4-8)
 - [Google AI Plans (Google One)](https://one.google.com/about/google-ai-plans/)
