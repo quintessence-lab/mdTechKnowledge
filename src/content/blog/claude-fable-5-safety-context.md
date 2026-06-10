@@ -1,5 +1,5 @@
 ---
-title: "Claude Fable 5 完全ガイド③安全設計・社会的文脈編 — フォールバック機構と「政府を不安にさせた技術」"
+title: "Claude Fable 5 完全ガイド③ — 「政府を不安にさせた技術」に売り物のブレーキは付けられるのか"
 date: 2026-06-10
 category: "Claude技術解説"
 tags: ["Claude Fable 5", "Anthropic", "AI安全性", "Project Glasswing", "Mythos 5", "セキュリティ", "Fable 5"]

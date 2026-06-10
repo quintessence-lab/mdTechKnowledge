@@ -1,5 +1,5 @@
 ---
-title: "Claude Fable 5 完全ガイド①概要編 — Mythos クラス初の一般公開モデルとは"
+title: "Claude Fable 5 完全ガイド① — 「危険すぎて封印」された Mythos は、なぜ一般公開できたのか"
 date: 2026-06-10
 category: "Claude技術解説"
 tags: ["Claude Fable 5", "Anthropic", "Mythos", "Fable 5", "Mythos 5", "AIモデル", "Claude"]
