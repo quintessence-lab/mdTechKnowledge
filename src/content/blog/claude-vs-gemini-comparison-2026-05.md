@@ -1,7 +1,7 @@
 ---
 title: "Claude vs Gemini 完全比較 — 有料プラン・NotebookLM・Gemini CLI・画像生成API料金（2026年5月版）"
 date: 2026-05-04
-updatedDate: 2026-06-10
+updatedDate: 2026-06-11
 category: "Claude技術解説"
 tags: ["Claude", "Gemini", "NotebookLM", "Gemini CLI", "画像生成", "プラン比較", "API料金"]
 excerpt: "Anthropic ClaudeとGoogle Geminiの有料プランを2026年5月時点で徹底比較。NotebookLM・Gemini CLI・Imagen 4の画像生成API単価まで網羅。"
@@ -171,7 +171,7 @@ Opus 4.8 では **コード欠陥の見落としが Opus 4.7 比で約 1/4**（A
 - **安全設計**: 高リスク領域（サイバー・生物・化学・蒸留）でリクエストを拒否し **Opus 4.8 へ自動フォールバック**できる設計。Anthropic は「95%超のセッションはフォールバックなしで完結」としています。
 - Gemini 側の最上位（Gemini 3.x 系）との比較は、料金・提供形態が大きく異なるため単純比較は困難ですが、**Claude は"期間限定で最上位を開放→以降クレジット制"という独特の提供形態**を採った点が特徴です。
 
-> 詳細は別記事 [Claude Mythos Preview & Project Glasswing](/blog/claude-mythos-glasswing/) の Fable 5 / Mythos 5 追記、および Fable 5 専用記事（予定）を参照。
+> 詳細は別記事 [Claude Mythos Preview & Project Glasswing](/blog/claude-mythos-glasswing/) の Fable 5 / Mythos 5 追記、および [Claude Fable 5 徹底解剖](/blog/claude-fable-5-overview/) を参照。
 
 ---
 
