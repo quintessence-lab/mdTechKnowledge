@@ -1,5 +1,5 @@
 ---
-title: "Claude Fable 5 完全ガイド① — 「危険すぎて封印」された Mythos は、なぜ Fable 5 として一般公開できたのか"
+title: "Claude Fable 5 徹底解剖① — 「危険すぎて封印」された Mythos は、なぜ Fable 5 として一般公開できたのか"
 date: 2026-06-10
 category: "Claude技術解説"
 tags: ["Claude Fable 5", "Anthropic", "Mythos", "Fable 5", "Mythos 5", "AIモデル", "Claude"]
@@ -9,9 +9,9 @@ draft: false
 
 **本記事は3部構成の第1話「概要編」です。** Claude Fable 5 を、①概要（本記事）→ ②ベンチマーク・性能 → ③安全設計と社会的文脈、の順で詳しく解説します。
 
-- 第1話（本記事）: [Claude Fable 5 完全ガイド①概要編](/blog/claude-fable-5-overview/)
-- 第2話: [Claude Fable 5 完全ガイド②ベンチマーク・性能編](/blog/claude-fable-5-benchmarks/)
-- 第3話: [Claude Fable 5 完全ガイド③安全設計・社会的文脈編](/blog/claude-fable-5-safety-context/)
+- 第1話（本記事）: [Claude Fable 5 徹底解剖①概要編](/blog/claude-fable-5-overview/)
+- 第2話: [Claude Fable 5 徹底解剖②ベンチマーク・性能編](/blog/claude-fable-5-benchmarks/)
+- 第3話: [Claude Fable 5 徹底解剖③安全設計・社会的文脈編](/blog/claude-fable-5-safety-context/)
 
 ---
 
@@ -122,7 +122,7 @@ Fable 5 の提供形態は以下の通りです。
 
 次回・第2話では、Fable 5 が「どれだけ強いのか」を、SWE-Bench Pro をはじめとする**ベンチマーク数値と実世界の事例**（5,000万行のコード移行を1日で完了した Stripe の例など）で具体的に見ていきます。
 
-→ [Claude Fable 5 完全ガイド②ベンチマーク・性能編](/blog/claude-fable-5-benchmarks/)
+→ [Claude Fable 5 徹底解剖②ベンチマーク・性能編](/blog/claude-fable-5-benchmarks/)
 
 ## 参考資料
 

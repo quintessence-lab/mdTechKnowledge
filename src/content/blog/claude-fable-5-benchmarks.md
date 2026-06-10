@@ -1,5 +1,5 @@
 ---
-title: "Claude Fable 5 完全ガイド② — 2ヶ月の仕事が1日で終わる。Fable 5 の5,000万行移行と SWE-Bench Pro 80.3% の衝撃"
+title: "Claude Fable 5 徹底解剖② — 2ヶ月の仕事が1日で終わる。Fable 5 の5,000万行移行と SWE-Bench Pro 80.3% の衝撃"
 date: 2026-06-10
 category: "Claude技術解説"
 tags: ["Claude Fable 5", "Anthropic", "ベンチマーク", "SWE-Bench", "Fable 5", "AIモデル", "性能比較"]
@@ -9,9 +9,9 @@ draft: false
 
 **本記事は3部構成の第2話「ベンチマーク・性能編」です。**
 
-- 第1話: [Claude Fable 5 完全ガイド①概要編](/blog/claude-fable-5-overview/)
-- 第2話（本記事）: [Claude Fable 5 完全ガイド②ベンチマーク・性能編](/blog/claude-fable-5-benchmarks/)
-- 第3話: [Claude Fable 5 完全ガイド③安全設計・社会的文脈編](/blog/claude-fable-5-safety-context/)
+- 第1話: [Claude Fable 5 徹底解剖①概要編](/blog/claude-fable-5-overview/)
+- 第2話（本記事）: [Claude Fable 5 徹底解剖②ベンチマーク・性能編](/blog/claude-fable-5-benchmarks/)
+- 第3話: [Claude Fable 5 徹底解剖③安全設計・社会的文脈編](/blog/claude-fable-5-safety-context/)
 
 ---
 
@@ -108,7 +108,7 @@ Fable 5 は最高水準の性能と引き換えに、価格も最高水準です
 
 次回・第3話では、この強力なモデルを安全に公開するための仕組み——高リスク領域での **Opus 4.8 へのフォールバック**、30日データ保持ポリシー、専門家の懸念、そして「政府を不安にさせた技術」をめぐる社会的文脈を掘り下げます。
 
-→ [Claude Fable 5 完全ガイド③安全設計・社会的文脈編](/blog/claude-fable-5-safety-context/)
+→ [Claude Fable 5 徹底解剖③安全設計・社会的文脈編](/blog/claude-fable-5-safety-context/)
 
 ## 参考資料
 
