@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-06-10
+updatedDate: 2026-06-11
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code v2.0.59〜v2.1.170 のバージョン履歴。Claude Fable 5 へのアクセス追加・`--safe-mode` フラグ（カスタマイズ無効化でトラブルシュート）・`/cd` コマンド（プロンプトキャッシュを壊さない作業ディレクトリ変更）・`disableBundledSkills` 設定・fallbackModel 設定（最大3つのフォールバックモデル）・deny ルールの glob 対応・クロスセッションメッセージング堅牢化・既定思考モデルの thinking 無効化・requiredMinimumVersion/requiredMaximumVersion マネージド設定・/plugin list（--enabled/--disabled フィルタ）・バックグラウンドセッションの自動バージョン更新（コールドリスタート不要）・Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.172 のバージョン履歴。サブエージェントが自身のサブエージェントを生成可能（最大5階層）・Claude Fable 5 へのアクセス追加・`--safe-mode` フラグ（カスタマイズ無効化でトラブルシュート）・`/cd` コマンド（プロンプトキャッシュを壊さない作業ディレクトリ変更）・`disableBundledSkills` 設定・fallbackModel 設定（最大3つのフォールバックモデル）・deny ルールの glob 対応・クロスセッションメッセージング堅牢化・既定思考モデルの thinking 無効化・requiredMinimumVersion/requiredMaximumVersion マネージド設定・/plugin list（--enabled/--disabled フィルタ）・バックグラウンドセッションの自動バージョン更新（コールドリスタート不要）・Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-06-10
-**現在の最新バージョン**: 2.1.170
+**最終更新**: 2026-06-11
+**現在の最新バージョン**: 2.1.172
 
 ---
 
@@ -17,6 +17,7 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.172** | **サブエージェントが自身のサブエージェントを生成可能（最大5階層）**、Amazon Bedrock が `AWS_REGION` 未設定時に `~/.aws` 設定からリージョン読取（`/status` で取得元表示）、`/plugin` マーケットプレイス閲覧に検索バー、`claude_code.lines_of_code.count` OTEL メトリクスに `model` 属性、**1M コンテキストを usage クレジットなしで使用時のセッション恒久停止を修正**（標準上限まで自動コンパクト）、多数の修正（複数画像の処理エラー、agents ビューの30秒ビジースピナー残留、背景エージェントが別ディレクトリ設定を読む問題、`availableModels` 制限がサブエージェント／advisor 等に未適用、`WebFetch(domain:*.example.com)` ワイルドカードのサブドメイン不一致、リモートのチームメモリストア未検出 等）、パフォーマンス改善（長い会話・アイドル時CPU）、[VSCode] PowerShell ツール呼び出しの生JSON表示修正 |
 | **2.1.170** | **Claude Fable 5 へのアクセス追加**（Mythos クラスを安全に一般利用可能にしたモデル。2.1.170 へ更新するとアクセス可能になる）、VS Code 統合ターミナル（または Claude Code 環境変数を継承したシェル）から起動したセッションがトランスクリプトを保存せず `--resume` に表示されない問題を修正 |
 | **2.1.169** | **`--safe-mode` フラグ / `CLAUDE_CODE_SAFE_MODE`**（カスタマイズを無効化してトラブルシュート）、**`/cd` コマンド**（プロンプトキャッシュを壊さずにセッションの作業ディレクトリを変更）、**`disableBundledSkills` 設定 / `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS`**（バンドルスキルをモデルから隠す）、`claude agents --json` の出力拡張（新フィールド・フィルタ）、`/workflows` がターン中に即座に開く、`TaskCreate` の信頼性向上（自動入力修復）、`CLAUDE.md` 警告閾値がモデルのコンテキストウィンドウに応じてスケール、多数の修正（Up/Down キーが折返し行を飛ばす問題、enterprise MCP ポリシー強制、macOS の claude.ai 認証時 UI ストール、Windows の `claude -p` 遅延、Git Credential Manager 起動時ポップアップ、Remote Control 再接続、フッターヒント非表示、stale な権限/ダイアログプロンプト、ストリーミング中の CPU 使用率削減 等） |
 | **2.1.168** | バグ修正・信頼性向上 |
@@ -95,7 +96,22 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.170（2026-06-09 PT、最新）— **Claude Fable 5 へのアクセス追加**
+### 2.1.172（2026-06-10 PT、最新）— **サブエージェントの多階層生成（最大5階層）**
+
+サブエージェントが自身のサブエージェントを生成できるようになり、エージェントの階層的なファンアウトが可能になったリリース。1M コンテキスト関連の重要修正と多数の安定化も含む。
+
+- **サブエージェントが自身のサブエージェントを生成可能（最大5階層）** — エージェントがさらに下位のサブエージェントへ作業を委任でき、深さ5までの階層的なタスク分解が可能に
+- **Amazon Bedrock のリージョン自動読取** — `AWS_REGION` 未設定時に `~/.aws` 設定ファイルからリージョンを読み取り、AWS SDK と同じ優先順位に整合。`/status` でリージョンの取得元を表示
+- **`/plugin` マーケットプレイスに検索バー追加** — マーケットプレイスのプラグイン閲覧時に検索でフィルタ可能
+- **OTEL メトリクス拡張** — `claude_code.lines_of_code.count` メトリクスに `model` 属性を追加
+- **1M コンテキストの恒久停止を修正** — usage クレジットなしで 1M コンテキストを使用するセッションが恒久的にスタックする問題を修正（標準のコンテキスト上限まで自動的にコンパクトして復帰）
+- バグ修正多数 — 会話に複数画像が含まれるときの「画像を処理できず削除した」エラー繰り返し、agents ビューでワーカー応答後も最大30秒ビジースピナーが残る問題、背景エージェントがプリウォームされたワーカー上で別ディレクトリのプロジェクト設定（`.mcp.json` 承認・trust）を読む問題、`availableModels` 制限がサブエージェントのモデル上書き／ディスパッチ用モデルピッカー／advisor モデルに適用されない問題、Bedrock の `/model` ピッカーが提供されないモデルを表示し選択でサイレントにモデル変更する問題、`WebFetch(domain:*.example.com)` のワイルドカードドメインルールがサブドメインに一致しない問題、メモリリコールがリモートセッションでマウントされたチームメモリストア（`CLAUDE_MEMORY_STORES`）を見つけられない問題、ワークフロー検証が `Date.now()`/`Math.random()` に言及しただけのスクリプトを誤って拒否する問題 等
+- **パフォーマンス改善** — 長い会話でのメッセージ正規化の冗長処理を削減、アイドル時の CPU 使用率削減（`/goal` ステータスチップの 5Hz 再描画停止 等）、Claude in Chrome のブラウザツールを単一バッチで読み込み
+- **その他** — 非対話時の Usage Policy 拒否メッセージに新セッション開始／モデル変更の提案を追加、`/code-review` が claude.ai 未サインインでも `ultra` オプションを表示、Remote Control フッター表示を「/rc active」に短縮、リモートセッションでの `/loop` 推奨を停止、[VSCode] PowerShell ツール呼び出しが生 JSON でなく適切なコマンド表示／権限ダイアログでレンダリングされるよう修正・表示シェル出力から ANSI エスケープを除去
+
+> 注: **2.1.171 は欠番**（公式 changelog に記載なし。2.1.170 の次は 2.1.172）。
+
+### 2.1.170（2026-06-09 PT）— **Claude Fable 5 へのアクセス追加**
 
 Mythos クラスを安全に一般利用可能にした新モデル **Claude Fable 5** へのアクセスを追加するリリース。
 
