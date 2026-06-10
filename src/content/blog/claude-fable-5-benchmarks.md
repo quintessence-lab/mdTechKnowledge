@@ -1,5 +1,5 @@
 ---
-title: "Claude Fable 5 完全ガイド② — 2ヶ月の仕事が1日で終わる。5,000万行移行と SWE-Bench Pro 80.3% の衝撃"
+title: "Claude Fable 5 完全ガイド② — 2ヶ月の仕事が1日で終わる。Fable 5 の5,000万行移行と SWE-Bench Pro 80.3% の衝撃"
 date: 2026-06-10
 category: "Claude技術解説"
 tags: ["Claude Fable 5", "Anthropic", "ベンチマーク", "SWE-Bench", "Fable 5", "AIモデル", "性能比較"]
