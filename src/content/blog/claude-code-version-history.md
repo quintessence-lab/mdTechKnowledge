@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-06-09
+updatedDate: 2026-06-10
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code v2.0.59〜v2.1.169 のバージョン履歴。`--safe-mode` フラグ（カスタマイズ無効化でトラブルシュート）・`/cd` コマンド（プロンプトキャッシュを壊さない作業ディレクトリ変更）・`disableBundledSkills` 設定・fallbackModel 設定（最大3つのフォールバックモデル）・deny ルールの glob 対応・クロスセッションメッセージング堅牢化・既定思考モデルの thinking 無効化・requiredMinimumVersion/requiredMaximumVersion マネージド設定・/plugin list（--enabled/--disabled フィルタ）・バックグラウンドセッションの自動バージョン更新（コールドリスタート不要）・Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.170 のバージョン履歴。Claude Fable 5 へのアクセス追加・`--safe-mode` フラグ（カスタマイズ無効化でトラブルシュート）・`/cd` コマンド（プロンプトキャッシュを壊さない作業ディレクトリ変更）・`disableBundledSkills` 設定・fallbackModel 設定（最大3つのフォールバックモデル）・deny ルールの glob 対応・クロスセッションメッセージング堅牢化・既定思考モデルの thinking 無効化・requiredMinimumVersion/requiredMaximumVersion マネージド設定・/plugin list（--enabled/--disabled フィルタ）・バックグラウンドセッションの自動バージョン更新（コールドリスタート不要）・Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-06-09
-**現在の最新バージョン**: 2.1.169
+**最終更新**: 2026-06-10
+**現在の最新バージョン**: 2.1.170
 
 ---
 
@@ -17,6 +17,7 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.170** | **Claude Fable 5 へのアクセス追加**（Mythos クラスを安全に一般利用可能にしたモデル。2.1.170 へ更新するとアクセス可能になる）、VS Code 統合ターミナル（または Claude Code 環境変数を継承したシェル）から起動したセッションがトランスクリプトを保存せず `--resume` に表示されない問題を修正 |
 | **2.1.169** | **`--safe-mode` フラグ / `CLAUDE_CODE_SAFE_MODE`**（カスタマイズを無効化してトラブルシュート）、**`/cd` コマンド**（プロンプトキャッシュを壊さずにセッションの作業ディレクトリを変更）、**`disableBundledSkills` 設定 / `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS`**（バンドルスキルをモデルから隠す）、`claude agents --json` の出力拡張（新フィールド・フィルタ）、`/workflows` がターン中に即座に開く、`TaskCreate` の信頼性向上（自動入力修復）、`CLAUDE.md` 警告閾値がモデルのコンテキストウィンドウに応じてスケール、多数の修正（Up/Down キーが折返し行を飛ばす問題、enterprise MCP ポリシー強制、macOS の claude.ai 認証時 UI ストール、Windows の `claude -p` 遅延、Git Credential Manager 起動時ポップアップ、Remote Control 再接続、フッターヒント非表示、stale な権限/ダイアログプロンプト、ストリーミング中の CPU 使用率削減 等） |
 | **2.1.168** | バグ修正・信頼性向上 |
 | **2.1.167** | バグ修正・信頼性向上 |
@@ -94,7 +95,14 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.169（2026-06-08 PT、最新）— **`--safe-mode` / `/cd` コマンド / `disableBundledSkills`**
+### 2.1.170（2026-06-09 PT、最新）— **Claude Fable 5 へのアクセス追加**
+
+Mythos クラスを安全に一般利用可能にした新モデル **Claude Fable 5** へのアクセスを追加するリリース。
+
+- **Claude Fable 5 の導入** — Mythos クラスを一般利用向けに安全化したモデルで、「これまで一般提供してきたどのモデルの能力をも上回る」とされる。**2.1.170 へ更新するとアクセス可能**になる（詳細は別シリーズ [Claude Fable 5 完全ガイド](/blog/claude-fable-5-overview/) を参照）
+- **バグ修正（セッショントランスクリプト）** — VS Code 統合ターミナル、または Claude Code の環境変数を継承した任意のシェルから起動した際に、セッションがトランスクリプトを保存せず `--resume` に表示されない問題を修正
+
+### 2.1.169（2026-06-08 PT）— **`--safe-mode` / `/cd` コマンド / `disableBundledSkills`**
 
 トラブルシュート用セーフモード、作業ディレクトリ変更コマンド、スキル制御設定を中心とする機能追加＋多数の修正を含むリリース。
 
