@@ -1,8 +1,9 @@
 ---
 title: "Claude Fable 5 徹底解剖③ — 「政府を不安にさせた技術」Fable 5 に、売り物のブレーキは効くのか"
 date: 2026-06-10
+updatedDate: 2026-06-13
 category: "Claude技術解説"
-tags: ["Claude Fable 5", "Anthropic", "AI安全性", "Project Glasswing", "Mythos 5", "セキュリティ", "Fable 5"]
+tags: ["Claude Fable 5", "Anthropic", "AI安全性", "Project Glasswing", "Mythos 5", "セキュリティ", "Fable 5", "refusal", "fallbacks"]
 excerpt: "最強クラスのモデルを、なぜ安全に一般公開できるのか。Claude Fable 5 は高リスク領域（サイバー・生物化学・蒸留）を検知すると応答を Claude Opus 4.8 にフォールバックする。本シリーズ最終話では、この安全設計の仕組み、30日データ保持ポリシー、ジェイルブレイク耐性をめぐる専門家の懸念、Mythos と政府・Project Glasswing の関係、そして評価額9,650億ドルでOpenAIを上回ったAnthropicのIPO文脈までを整理する。"
 draft: false
 ---
@@ -34,6 +35,14 @@ Fable 5 には分類器が組み込まれており、特定の高リスク領域
 重要な数値として、Anthropic は「**早期データでは95%超の Fable セッションでフォールバックがまったく起きていない**」と述べています。つまりフォールバックが発動するのは5%未満で、大半のユーザーは Fable 5 の能力をそのまま使えます。さらに、**Opus 4.8 に転送されたリクエストには Fable 価格を課金しない**仕組みになっています。
 
 この設計こそが、「危険な双子」である Mythos 5（安全装置解除版）を非公開にしたまま、その能力をほぼそのまま一般公開できる理由です。
+
+### API から見た拒否とフォールバック（2026-06-09 文書化）
+
+この安全機構は、API レベルでも具体的な仕様として定義されています（[公式リリースノート](https://platform.claude.com/docs/en/release-notes/overview) 2026年6月9日）。
+
+- **`stop_reason: "refusal"`** — Fable 5 はリクエスト時および応答生成中に安全分類器を走らせる。分類器がリクエストを拒否すると、Messages API は `stop_reason: "refusal"` を返す。**出力が一切生成される前に拒否されたリクエストは課金されない**。
+- **`fallbacks` パラメータ（opt-in・beta）** — 拒否されたリクエストを**別モデルで再実行**する任意パラメータ（Claude API と Claude Platform on AWS で beta、Message Batches API は非対応）。この opt-in の再実行は**フォールバック先モデルの料金**で課金される（＝上記の「自動フォールバックは Fable 価格で課金しない」とは別に、利用者が明示設定する再実行の経路）。
+- **新カテゴリ `"reasoning_extraction"`** — 拒否応答の `stop_details.category` フィールドに、Fable 5 では新たに `"reasoning_extraction"` が追加された。Anthropic の利用規約が禁じる**リバースエンジニアリングやモデル出力の複製**に該当するリクエストをブロックした際に返る（上表の「蒸留（distillation）」防止と同じ系譜）。既存の `"cyber"` / `"bio"` カテゴリは変更なし（beta ヘッダ不要）。
 
 ## 30日データ保持ポリシー — 新たな論点
 
