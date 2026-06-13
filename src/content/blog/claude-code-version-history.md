@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-06-11
+updatedDate: 2026-06-13
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code v2.0.59〜v2.1.172 のバージョン履歴。サブエージェントが自身のサブエージェントを生成可能（最大5階層）・Claude Fable 5 へのアクセス追加・`--safe-mode` フラグ（カスタマイズ無効化でトラブルシュート）・`/cd` コマンド（プロンプトキャッシュを壊さない作業ディレクトリ変更）・`disableBundledSkills` 設定・fallbackModel 設定（最大3つのフォールバックモデル）・deny ルールの glob 対応・クロスセッションメッセージング堅牢化・既定思考モデルの thinking 無効化・requiredMinimumVersion/requiredMaximumVersion マネージド設定・/plugin list（--enabled/--disabled フィルタ）・バックグラウンドセッションの自動バージョン更新（コールドリスタート不要）・Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.176 のバージョン履歴。会話言語でのセッションタイトル生成・`enforceAvailableModels` マネージド設定・`wheelScrollAccelerationEnabled`・サブエージェントが自身のサブエージェントを生成可能（最大5階層）・Claude Fable 5 へのアクセス追加・`--safe-mode` フラグ（カスタマイズ無効化でトラブルシュート）・`/cd` コマンド（プロンプトキャッシュを壊さない作業ディレクトリ変更）・`disableBundledSkills` 設定・fallbackModel 設定（最大3つのフォールバックモデル）・deny ルールの glob 対応・クロスセッションメッセージング堅牢化・既定思考モデルの thinking 無効化・requiredMinimumVersion/requiredMaximumVersion マネージド設定・/plugin list（--enabled/--disabled フィルタ）・バックグラウンドセッションの自動バージョン更新（コールドリスタート不要）・Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-06-11
-**現在の最新バージョン**: 2.1.172
+**最終更新**: 2026-06-13
+**現在の最新バージョン**: 2.1.176
 
 ---
 
@@ -17,6 +17,8 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.176** | **セッションタイトルを会話の言語で生成**（`language` 設定で固定可）、`footerLinksRegexes` 設定（フッターのリンクバッジを正規表現で）、Bedrock クレデンシャルを `Expiration` までキャッシュ、`availableModels` 強制の抜け穴修正（環境変数経由のリダイレクト・`/fast` 切替を阻止）、Opus 4.8 非対応組織で Fable 5 の auto モードが失敗する問題を修正（最良の Opus へフォールバック）、Remote Control の各種修正（モデルのサイレント切替・切断理由の可読化・別アカウントサインインで切断）、多数の背景セッション安定化 |
+| **2.1.175** | **`enforceAvailableModels` マネージド設定** — 有効化すると `availableModels` 許可リストが Default モデルにも適用され（不許可に解決される Default は先頭の許可モデルへフォールバック）、ユーザー／プロジェクト設定でマネージドの許可リストを広げられなくなる |
 | **2.1.172** | **サブエージェントが自身のサブエージェントを生成可能（最大5階層）**、Amazon Bedrock が `AWS_REGION` 未設定時に `~/.aws` 設定からリージョン読取（`/status` で取得元表示）、`/plugin` マーケットプレイス閲覧に検索バー、`claude_code.lines_of_code.count` OTEL メトリクスに `model` 属性、**1M コンテキストを usage クレジットなしで使用時のセッション恒久停止を修正**（標準上限まで自動コンパクト）、多数の修正（複数画像の処理エラー、agents ビューの30秒ビジースピナー残留、背景エージェントが別ディレクトリ設定を読む問題、`availableModels` 制限がサブエージェント／advisor 等に未適用、`WebFetch(domain:*.example.com)` ワイルドカードのサブドメイン不一致、リモートのチームメモリストア未検出 等）、パフォーマンス改善（長い会話・アイドル時CPU）、[VSCode] PowerShell ツール呼び出しの生JSON表示修正 |
 | **2.1.170** | **Claude Fable 5 へのアクセス追加**（Mythos クラスを安全に一般利用可能にしたモデル。2.1.170 へ更新するとアクセス可能になる）、VS Code 統合ターミナル（または Claude Code 環境変数を継承したシェル）から起動したセッションがトランスクリプトを保存せず `--resume` に表示されない問題を修正 |
 | **2.1.169** | **`--safe-mode` フラグ / `CLAUDE_CODE_SAFE_MODE`**（カスタマイズを無効化してトラブルシュート）、**`/cd` コマンド**（プロンプトキャッシュを壊さずにセッションの作業ディレクトリを変更）、**`disableBundledSkills` 設定 / `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS`**（バンドルスキルをモデルから隠す）、`claude agents --json` の出力拡張（新フィールド・フィルタ）、`/workflows` がターン中に即座に開く、`TaskCreate` の信頼性向上（自動入力修復）、`CLAUDE.md` 警告閾値がモデルのコンテキストウィンドウに応じてスケール、多数の修正（Up/Down キーが折返し行を飛ばす問題、enterprise MCP ポリシー強制、macOS の claude.ai 認証時 UI ストール、Windows の `claude -p` 遅延、Git Credential Manager 起動時ポップアップ、Remote Control 再接続、フッターヒント非表示、stale な権限/ダイアログプロンプト、ストリーミング中の CPU 使用率削減 等） |
@@ -96,7 +98,36 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-### 2.1.172（2026-06-10 PT、最新）— **サブエージェントの多階層生成（最大5階層）**
+### 2.1.176（2026-06-12 PT、最新）— **会話言語でのセッションタイトル生成 / `availableModels` 強制の堅牢化**
+
+セッションタイトルを会話の言語で自動生成するようになったほか、`availableModels` 許可リストの抜け穴修正、Fable 5 の auto モード修正、Remote Control の安定化を含む大型の修正リリース。
+
+- **セッションタイトルを会話の言語で生成** — `language` 設定で特定言語に固定可能
+- **`footerLinksRegexes` 設定** — フッター行に正規表現マッチのリンクバッジを表示（ユーザー／マネージド設定で構成）
+- **Bedrock クレデンシャルキャッシュ改善** — `awsCredentialExport` のクレデンシャルを固定1時間でなく `Expiration` までキャッシュ
+- **`availableModels` 強制の抜け穴を修正** — エイリアスのモデル選択が `ANTHROPIC_DEFAULT_*_MODEL` 環境変数でブロック対象モデルへリダイレクトされる問題、`/fast` が許可リスト外モデルへ切り替わる場合にトグルを拒否
+- **Fable 5 の auto モード修正** — Opus 4.8 非対応の組織で Fable 5 の auto モードが失敗する問題を修正（分類器が利用可能な最良の Opus モデルへフォールバック）
+- **Remote Control の各種修正** — web/mobile からの接続でセッションのモデルがサイレント切替される問題、切断通知が数値コードでなく可読な理由を表示、別アカウントにサインインしたときに切断
+- その他多数の修正 — フック `if` 条件のツールパスマッチ（`Edit(src/**)`・`Read(.env)` 等）、tmux/SSH 下の `/copy`・クリップボード、`/cd`・worktree 移動後の git ブランチ表示、`claude agents` のウィンドウ操作、背景セッションの安定化（Windows ネットワークパス・ReadOnly デーモン・アイドル後の「認証方式を解決できない」失敗 等）
+
+### 2.1.175（2026-06-11 PT）— **`enforceAvailableModels` マネージド設定**
+
+- **`enforceAvailableModels` マネージド設定** — 有効化すると `availableModels` 許可リストが Default モデルにも適用される。不許可モデルに解決される Default は先頭の許可モデルへフォールバックし、ユーザー／プロジェクト設定がマネージドの `availableModels` リストを拡張できなくなる
+
+### 2.1.174（2026-06-11 PT）— **`wheelScrollAccelerationEnabled` / `/model` ピッカー改善**
+
+- **`wheelScrollAccelerationEnabled` 設定** — フルスクリーンモードでマウスホイールのスクロール加速を無効化
+- **`/model` ピッカーの表示改善** — Default が解決するモデルファミリーを隠さず、Max/Team Premium/Enterprise では Opus、Pro/Team では Sonnet、従量課金 API では Opus を独立行として表示
+- **Workflow ツール修正** — `agent()` サブエージェントにエージェント単位の attribution ヘッダが欠落する問題を修正
+- **[VSCode] `/usage` に使用量内訳** — キャッシュミス・ロングコンテキスト・サブエージェント、スキル/エージェント/プラグイン/MCP 別の内訳を直近24h/7d で表示
+- その他修正 — `ANTHROPIC_DEFAULT_SONNET_MODEL` 指定時の `/model` ラベル、Bedrock GovCloud（`us-gov-*`）の推論プロファイルプレフィックス誤り（400エラー）、背景セッションのプロバイダ環境変数継承、git コミットの co-author モデル名、`/advisor` のブロック済みモデル事前選択 等
+
+### 2.1.173（2026-06-10 PT）— Fable 5 モデル名の正規化修正
+
+- **Fable 5 の `[1m]` サフィックス正規化** — Fable 5 は 1M コンテキストを既定で含むため、`[1m]` サフィックスが付いたモデル名を自動的に除去
+- Windows でサンドボックスを設定有効化した際の誤った「sandbox dependencies missing」起動警告を修正
+
+### 2.1.172（2026-06-10 PT）— **サブエージェントの多階層生成（最大5階層）**
 
 サブエージェントが自身のサブエージェントを生成できるようになり、エージェントの階層的なファンアウトが可能になったリリース。1M コンテキスト関連の重要修正と多数の安定化も含む。
 
