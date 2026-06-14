@@ -1,5 +1,7 @@
 {
   "_comment": "Zenn に全文掲載する記事をここで選ぶ。slug は src/content/blog/<slug>.md のファイル名。Claude の使い方Tips（技術系）のみを推奨。編集後 `npm run zenn-sync` で articles/ を再生成する。emoji=任意の絵文字1つ / type=tech|idea / topics=最大5（小文字・空白なし推奨。note公開済みなら canonical は自動で note を指す）。",
+  "zenn_user": "",
+  "_comment_zenn_user": "Zenn のユーザー名。article_list.csv の zenn_url（https://zenn.dev/<zenn_user>/articles/<slug>）生成に使う。Publication 運用の場合は別途相談。空のうちは zenn_url は空欄。",
   "articles": [
     {
       "slug": "claude-code-agent-view-guide",
