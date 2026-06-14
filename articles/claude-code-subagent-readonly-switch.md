@@ -4,6 +4,7 @@ emoji: "🤖"
 type: "tech"
 topics: ["claude", "claudecode", "ai", "subagent"]
 published: true
+canonical_url: "https://note.com/mdtechknowledge/n/n951a187ce586"
 ---
 
 > **本記事の位置づけ**：[【必読】Claude マルチエージェントの初期設定](https://note.com/mdtechknowledge/n/nc6a96fea435a)はAgent Teams（複数の Claude Code インスタンスをチームとして動かす機能）を扱う **マルチエージェント編** でした。本記事はその姉妹記事として、Agent Teams より一段下のレイヤーである **サブエージェント**（メインエージェントが委任する単一の作業者）にフォーカスします。
