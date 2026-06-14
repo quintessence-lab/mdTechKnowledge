@@ -4,6 +4,7 @@ emoji: "🧭"
 type: "tech"
 topics: ["claude", "claudecode", "ai", "dynamicworkflows", "マルチエージェント"]
 published: true
+canonical_url: "https://note.com/mdtechknowledge/n/n8a8404198f9d"
 ---
 
 **最終更新**: 2026-05-31
