@@ -1,7 +1,7 @@
 ---
 title: "Claude Code Routines 解説 — クラウド自動化の新機能"
 date: 2026-04-26
-updatedDate: 2026-06-05
+updatedDate: 2026-06-14
 category: "Claude技術解説"
 tags: ["Claude Code", "Routines", "自動化", "MCP", "GitHub", "料金", "クレジットプール"]
 excerpt: "2026年4月にリサーチプレビューとしてリリースされたClaude Code Routinesの仕組み・実行環境・料金・活用例、/ultrareviewとの位置づけ比較をまとめます。2026年6月15日のプログラマティック利用 課金分離（独立クレジットプール）がRoutinesに及ぶ可能性についても触れます。"
@@ -262,6 +262,28 @@ claude agents \
 ```
 
 これにより、Routines の API トリガー経由で「特定の permission-mode・model・effort で背景セッションを起動」というパターンが Agent View からも統一的に扱えるようになりました。
+
+---
+
+## 【2026-06追記】Claude Managed Agents のスケジュール実行・credential vaults との使い分け
+
+2026年6月9日（PT）、**Claude Managed Agents**（クラウド側のマネージドエージェント）に、Routines と機能が重なる2つの Public Beta 機能が追加されました（[公式: What's new in Claude Managed Agents](https://claude.com/blog/whats-new-in-claude-managed-agents)）。
+
+- **スケジュール実行（cron）** — Managed Agents を **cron スケジュール**で定期実行できる。各実行のたびに新しいエージェントセッションが起動し、外部スケジューラは不要。デプロイの一時停止・再開・アーカイブ・手動トリガーにも対応する。夜間のデータ同期・週次コンプライアンススキャン・日次ダイジェストなどが想定用途。
+- **credential vaults（環境変数の安全な保管）** — API キーを「**環境変数名＋許可ドメイン**」で登録し、**モデルにキーを見せずに** CLI ツールを認証させる仕組み。サンドボックスにはプレースホルダだけが渡り、実際のキーは**ネットワーク境界で差し込まれる**（モデルは本物のキーを一切見ない）。Browserbase / KERNEL / Notion / Ramp / Sentry などの CLI 連携が対象。
+
+### Routines とどう違う？
+
+「スケジュールで定期実行」という点が Routines のスケジュールトリガーと重なりますが、動くレイヤーが異なります。
+
+| 観点 | Claude Code Routines | Managed Agents スケジュール |
+|---|---|---|
+| 位置づけ | **コード不要のクラウド自動化**（Claude Code をクラウドで定期/イベント起動） | **API ベースのマネージドエージェント**を cron で定期起動 |
+| 主な利用者 | Claude Code ユーザー（リポジトリ作業の自動化） | エージェントを API で組み込む開発者 |
+| 認証情報の扱い | リポジトリ／MCP コネクタ経由 | **credential vaults**（キーを隠して CLI 認証） |
+| トリガー | スケジュール／GitHub／API | cron スケジュール（＋手動トリガー） |
+
+使い分けの目安は、**「Claude Code のワークフローをそのまま定期化したい」なら Routines**、**「API で組んだエージェントを定期実行し、CLI ツールへ安全に認証情報を渡したい」なら Managed Agents のスケジュール＋credential vaults**。両者は競合というより、自動化したい対象（Claude Code の作業か／API エージェントか）で住み分けます。
 
 ---
 
