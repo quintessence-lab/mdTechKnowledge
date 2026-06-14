@@ -1,5 +1,5 @@
 ---
-title: "Dynamic Workflows を起点に理解する Claude のマルチエージェント3系統 — Agent View・Managed Agents との比較と使い分け"
+title: "Claudeのマルチエージェント3系統 — Dynamic Workflows / Agent View / Managed Agents"
 emoji: "🧭"
 type: "tech"
 topics: ["claude", "claudecode", "ai", "dynamicworkflows", "マルチエージェント"]

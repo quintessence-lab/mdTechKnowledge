@@ -72,6 +72,9 @@ function buildZenn(entry, noteMap) {
   const raw = readFileSync(resolve(BLOG_DIR, `${entry.slug}.md`), 'utf-8');
   const { fm, body } = parseFrontmatter(raw);
   const title = entry.title || fm.title;
+  if (title.length > 70) {
+    console.error(`  ⚠ [${entry.slug}] タイトル ${title.length} 字（Zenn上限70超過）— zenn-selection.json の "title" で短縮してください`);
+  }
   const emoji = entry.emoji || '📝';
   const type = entry.type || 'tech';
   const topics = sanitizeTopics(entry.topics && entry.topics.length ? entry.topics : fm.tags);

@@ -3,6 +3,7 @@
   "articles": [
     {
       "slug": "claude-code-agent-view-guide",
+      "title": "Claudeのマルチエージェント3系統 — Dynamic Workflows / Agent View / Managed Agents",
       "emoji": "🧭",
       "type": "tech",
       "topics": ["claude", "claudecode", "ai", "dynamicworkflows", "マルチエージェント"]
@@ -15,6 +16,7 @@
     },
     {
       "slug": "claude-code-subagent-readonly-switch",
+      "title": "Claude Code サブエージェントの歩き方 — Explore が read-only な理由と切替の仕組み",
       "emoji": "🤖",
       "type": "tech",
       "topics": ["claude", "claudecode", "ai", "subagent"]

@@ -1,5 +1,5 @@
 ---
-title: "Claude Code サブエージェントの歩き方 — Exploreがread-onlyだった理由と general-purpose 切替の仕組み（マルチエージェント編の続編）"
+title: "Claude Code サブエージェントの歩き方 — Explore が read-only な理由と切替の仕組み"
 emoji: "🤖"
 type: "tech"
 topics: ["claude", "claudecode", "ai", "subagent"]
