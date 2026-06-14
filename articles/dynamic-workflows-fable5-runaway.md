@@ -50,7 +50,7 @@ agent(prompt, { model: 'sonnet' })
 
 ---
 
-> この一幕は、約9.8時間のアーカイブをスライド書き起こしした際の制作裏話です。完成物はこちら: [Code with Claude Tokyo 2026 全セッションまとめ](https://quintessence-lab.github.io/mdTechKnowledge/blog/code-with-claude-tokyo-sessions/)
+> この一幕は、約9.8時間のアーカイブをスライド書き起こしした際の制作裏話です。完成物はこちら: [Code with Claude Tokyo 2026 全セッションまとめ](https://note.com/mdtechknowledge/n/nf921803c2112)
 >
 > 関連: [Claude Code Dynamic Workflows ガイド](https://note.com/mdtechknowledge/n/ndacb07ee23fa) ／ [Claude Fable 5 徹底解剖①概要編](https://note.com/mdtechknowledge/n/n5fdb0e2f02ad)
 

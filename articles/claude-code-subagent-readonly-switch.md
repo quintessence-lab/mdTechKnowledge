@@ -188,7 +188,7 @@ published: true
 
 - [【必読】Claude マルチエージェントの初期設定](https://note.com/mdtechknowledge/n/nc6a96fea435a) — 本記事の姉妹編。Agent Teams（複数 Claude Code インスタンスの協調）の有効化・表示モード・チーム管理
 - [Claude Codeのコンテキスト管理入門 — /compact・/clear・メモリ・セッション復元の使い分け](https://note.com/mdtechknowledge/n/ne945a8b8b92c) — サブエージェントがコンテキスト保護に貢献する仕組みを土台から理解
-- [Claude Managed Agents 簡易ガイド](https://quintessence-lab.github.io/mdTechKnowledge/blog/claude-managed-agents-guide/) — クラウド側の Managed Agents との比較
+- [Claude Managed Agents 簡易ガイド](https://note.com/mdtechknowledge/n/n13473a66b658) — クラウド側の Managed Agents との比較
 
 ---
 
