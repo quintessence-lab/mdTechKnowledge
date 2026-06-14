@@ -1,0 +1,23 @@
+{
+  "_comment": "Zenn に全文掲載する記事をここで選ぶ。slug は src/content/blog/<slug>.md のファイル名。Claude の使い方Tips（技術系）のみを推奨。編集後 `npm run zenn-sync` で articles/ を再生成する。emoji=任意の絵文字1つ / type=tech|idea / topics=最大5（小文字・空白なし推奨。note公開済みなら canonical は自動で note を指す）。",
+  "articles": [
+    {
+      "slug": "claude-code-agent-view-guide",
+      "emoji": "🧭",
+      "type": "tech",
+      "topics": ["claude", "claudecode", "ai", "dynamicworkflows", "マルチエージェント"]
+    },
+    {
+      "slug": "dynamic-workflows-fable5-runaway",
+      "emoji": "😱",
+      "type": "tech",
+      "topics": ["claude", "claudecode", "ai", "dynamicworkflows"]
+    },
+    {
+      "slug": "claude-code-subagent-readonly-switch",
+      "emoji": "🤖",
+      "type": "tech",
+      "topics": ["claude", "claudecode", "ai", "subagent"]
+    }
+  ]
+}

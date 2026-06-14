@@ -7,6 +7,7 @@
     "dev": "astro dev",
     "build": "node scripts/gen-note-canonical.mjs && astro build",
     "preview": "astro preview",
+    "zenn-sync": "node scripts/sync-zenn.mjs",
     "astro": "astro"
   },
   "dependencies": {
