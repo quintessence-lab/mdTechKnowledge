@@ -28,6 +28,12 @@
       "emoji": "🗼",
       "type": "tech",
       "topics": ["claude", "claudecode", "ai", "anthropic", "イベント"]
+    },
+    {
+      "slug": "agent-teams-vs-dynamic-workflows",
+      "emoji": "⚖️",
+      "type": "tech",
+      "topics": ["claude", "claudecode", "agentteams", "dynamicworkflows", "マルチエージェント"]
     }
   ]
 }
