@@ -69,9 +69,10 @@ function sanitizeTopics(topics) {
 }
 
 function buildZenn(entry, noteMap) {
-  const raw = readFileSync(resolve(BLOG_DIR, `${entry.slug}.md`), 'utf-8');
+  let raw = readFileSync(resolve(BLOG_DIR, `${entry.slug}.md`), 'utf-8');
+  raw = raw.replace(/^﻿/, '').replace(/\r\n/g, '\n'); // BOM除去＋改行正規化(CRLF対策)
   const { fm, body } = parseFrontmatter(raw);
-  const title = entry.title || fm.title;
+  const title = entry.title || fm.title || entry.slug;
   if (title.length > 70) {
     console.error(`  ⚠ [${entry.slug}] タイトル ${title.length} 字（Zenn上限70超過）— zenn-selection.json の "title" で短縮してください`);
   }

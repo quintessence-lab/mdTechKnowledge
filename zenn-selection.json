@@ -22,6 +22,12 @@
       "emoji": "🤖",
       "type": "tech",
       "topics": ["claude", "claudecode", "ai", "subagent"]
+    },
+    {
+      "slug": "code-with-claude-tokyo-sessions",
+      "emoji": "🗼",
+      "type": "tech",
+      "topics": ["claude", "claudecode", "ai", "anthropic", "イベント"]
     }
   ]
 }
