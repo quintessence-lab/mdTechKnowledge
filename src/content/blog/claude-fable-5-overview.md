@@ -1,9 +1,10 @@
 ---
 title: "Claude Fable 5 徹底解剖① — 「危険すぎて封印」された Mythos は、なぜ Fable 5 として一般公開できたのか"
 date: 2026-06-10
+updatedDate: 2026-06-17
 category: "Claude技術解説"
 tags: ["Claude Fable 5", "Anthropic", "Mythos", "Fable 5", "Mythos 5", "AIモデル", "Claude"]
-excerpt: "2026年6月9日、Anthropic は最強クラスのモデル群「Mythos」を初めて一般公開した。その公開版が Claude Fable 5 だ。Fable 5 と非公開の Mythos 5 は同じ基盤モデルで、違いは安全装置の有無だけ——高リスク領域では応答を Claude Opus 4.8 にフォールバックする。本シリーズ第1話では、Fable 5 とは何か、Mythos 5 との関係、モデルファミリーの系譜、「AIは危険になりすぎている」と警告した数日後に最強モデルを公開したリリースの文脈、価格、そして使える場所までを整理する。"
+excerpt: "2026年6月9日、Anthropic は最強クラスのモデル群「Mythos」を初めて一般公開した。その公開版が Claude Fable 5 だ。Fable 5 と非公開の Mythos 5 は同じ基盤モデルで、違いは安全装置の有無だけ——高リスク領域では応答を Claude Opus 4.8 にフォールバックする。本シリーズ第1話では、Fable 5 とは何か、Mythos 5 との関係、モデルファミリーの系譜、「AIは危険になりすぎている」と警告した数日後に最強モデルを公開したリリースの文脈、価格、そして使える場所までを整理する。さらに API 利用者向けに、新トークナイザ（同一テキストで約30%トークン増）・`stop_reason: refusal`・opt-in `fallbacks`・30日データ保持必須（ZDR不可）・手動 thinking バジェット非対応（400エラー）といった破壊的 API 変更も解説する。"
 draft: false
 ---
 
@@ -109,6 +110,22 @@ Fable 5 の提供形態は以下の通りです。
 特に注意したいのが**6月22日までの無料同梱期間**です。Pro / Max / Team / Enterprise の契約者は、この期間中は追加費用なしで Fable 5 を試せますが、6月23日以降は各プランから外れ、従量課金に切り替わります。
 
 また、Mythos クラスのトラフィックには**30日間のデータ保持が必須化**されました。従来ゼロ保持契約だった企業にも適用されるため、機密性の高い用途では事前の確認が必要です（この新ポリシーをめぐる議論は第3話で扱います）。
+
+## API利用時の重要な破壊的変更（移行前に必読）
+
+> **モデル紹介だけ見て「モデルIDを差し替えるだけ」で移行すると事故ります。** Fable 5 / Mythos 5 には **API レベルの破壊的変更**が複数あり、Anthropic 公式リリースノート（2026年6月9日）に明記されています。API / SDK で利用する場合は以下を必ず確認してください。
+
+| 変更点 | 内容 |
+|---|---|
+| **新トークナイザ（約30%増）** | Fable 5 / Mythos 5 は Claude Opus 4.7 で導入されたトークナイザを採用。**Opus 4.7 より前のモデルと比べ、同じテキストで約30%多くトークンを消費**します。コスト・コンテキスト見積もりは token counting API（`model: "claude-fable-5"`）で実測してください。 |
+| **`stop_reason: "refusal"`** | リクエスト時・応答生成中に安全分類器が走り、拒否されると Messages API が `stop_reason: "refusal"` を返します。**出力生成前に拒否された分は課金されません**。`stop_details.category` は従来の `cyber` / `bio` に加え **`reasoning_extraction`**（リバースエンジニアリング等の利用規約制限による拒否）が追加されました。 |
+| **opt-in `fallbacks` パラメータ** | 拒否されたリクエストを別モデルで再実行する `fallbacks` パラメータ（beta。Claude API / Claude Platform on AWS で対応、**Message Batches API は非対応**）。課金はフォールバック先モデルのレートです。 |
+| **手動 thinking バジェット非対応（400エラー）** | Fable 5 / Mythos 5 は **adaptive thinking のみ**。`thinking: {"type":"disabled"}` は不可で、**手動の extended thinking バジェット指定・assistant prefill はいずれも 400 エラー**になります。`thinking.display` の既定は `"omitted"`（`"summarized"` で要約取得）。 |
+| **30日データ保持が必須（ZDR不可）** | Fable 5 は Claude API で **30日間のデータ保持が必須**で、**ゼロデータ保持（ZDR）環境では利用できません**。 |
+
+これらは Opus 4.8 等からの「モデルID差し替えだけ」の移行では踏み抜きやすい落とし穴です。とりわけ **トークン約30%増（実コスト増）**・**手動 thinking バジェットの 400 エラー**・**ZDR不可**は既存パイプラインに直接影響します。API 移行の詳細チェックリストは別記事で扱う予定です。
+
+*（出典: [Anthropic Platform release notes 2026年6月9日](https://platform.claude.com/docs/en/release-notes/overview)）*
 
 ## まとめと次回予告
 
