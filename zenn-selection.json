@@ -34,6 +34,19 @@
       "emoji": "⚖️",
       "type": "tech",
       "topics": ["claude", "claudecode", "agentteams", "dynamicworkflows", "マルチエージェント"]
+    },
+    {
+      "slug": "claude-access-methods-overview",
+      "title": "Claude Cowork / ブラウザ / Claude Code / Claude Code Web の使い分け早わかり",
+      "emoji": "🚪",
+      "type": "tech",
+      "topics": ["claude", "claudecode", "ai", "anthropic", "初心者向け"]
+    },
+    {
+      "slug": "claude-code-dynamic-workflows-guide",
+      "emoji": "⚙️",
+      "type": "tech",
+      "topics": ["claude", "claudecode", "ai", "dynamicworkflows", "マルチエージェント"]
     }
   ]
 }
