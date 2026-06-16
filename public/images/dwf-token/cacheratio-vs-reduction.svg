@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="740" height="460" viewBox="0 0 740 460" font-family="'Yu Gothic','Hiragino Sans','Noto Sans JP','Meiryo',sans-serif" role="img" aria-label="キャッシュ読込比率とトークン削減率は連動する">
+<rect x="0" y="0" width="740" height="460" fill="#FFFFFF"/>
+<text x="370" y="30" text-anchor="middle" font-size="19" font-weight="bold" fill="#333333">キャッシュ読込比率とトークン削減率は連動する</text>
+<line x1="66" y1="402.0" x2="718" y2="402.0" stroke="#D9D9D9" stroke-width="1"/>
+<text x="58" y="406.0" text-anchor="end" font-size="13" fill="#666666">0%</text>
+<line x1="66" y1="334.4" x2="718" y2="334.4" stroke="#D9D9D9" stroke-width="1"/>
+<text x="58" y="338.4" text-anchor="end" font-size="13" fill="#666666">20%</text>
+<line x1="66" y1="266.8" x2="718" y2="266.8" stroke="#D9D9D9" stroke-width="1"/>
+<text x="58" y="270.8" text-anchor="end" font-size="13" fill="#666666">40%</text>
+<line x1="66" y1="199.2" x2="718" y2="199.2" stroke="#D9D9D9" stroke-width="1"/>
+<text x="58" y="203.2" text-anchor="end" font-size="13" fill="#666666">60%</text>
+<line x1="66" y1="131.6" x2="718" y2="131.6" stroke="#D9D9D9" stroke-width="1"/>
+<text x="58" y="135.6" text-anchor="end" font-size="13" fill="#666666">80%</text>
+<line x1="66" y1="64.0" x2="718" y2="64.0" stroke="#D9D9D9" stroke-width="1"/>
+<text x="58" y="68.0" text-anchor="end" font-size="13" fill="#666666">100%</text>
+<line x1="66.0" y1="64" x2="66.0" y2="402" stroke="#D9D9D9" stroke-width="1"/>
+<text x="66.0" y="424" text-anchor="middle" font-size="13" fill="#666666">40%</text>
+<line x1="184.5" y1="64" x2="184.5" y2="402" stroke="#D9D9D9" stroke-width="1"/>
+<text x="184.5" y="424" text-anchor="middle" font-size="13" fill="#666666">50%</text>
+<line x1="303.1" y1="64" x2="303.1" y2="402" stroke="#D9D9D9" stroke-width="1"/>
+<text x="303.1" y="424" text-anchor="middle" font-size="13" fill="#666666">60%</text>
+<line x1="421.6" y1="64" x2="421.6" y2="402" stroke="#D9D9D9" stroke-width="1"/>
+<text x="421.6" y="424" text-anchor="middle" font-size="13" fill="#666666">70%</text>
+<line x1="540.2" y1="64" x2="540.2" y2="402" stroke="#D9D9D9" stroke-width="1"/>
+<text x="540.2" y="424" text-anchor="middle" font-size="13" fill="#666666">80%</text>
+<line x1="658.7" y1="64" x2="658.7" y2="402" stroke="#D9D9D9" stroke-width="1"/>
+<text x="658.7" y="424" text-anchor="middle" font-size="13" fill="#666666">90%</text>
+<line x1="66" y1="64" x2="66" y2="402" stroke="#666666" stroke-width="1.5"/>
+<line x1="66" y1="402" x2="718" y2="402" stroke="#666666" stroke-width="1.5"/>
+<text x="392" y="446" text-anchor="middle" font-size="14" fill="#333333">キャッシュ読込比率（横）→ トークン削減率（縦）</text>
+<line x1="66.0" y1="335.6" x2="718.0" y2="120.8" stroke="#548235" stroke-width="2" stroke-dasharray="6 4" opacity="0.55"/>
+<circle cx="396.7" cy="226.9" r="5.5" fill="#548235" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="119.3" cy="322.9" r="5.5" fill="#548235" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="485.7" cy="195.1" r="5.5" fill="#548235" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="277.0" cy="265.1" r="5.5" fill="#548235" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="472.6" cy="203.3" r="5.5" fill="#548235" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="393.2" cy="227.3" r="5.5" fill="#548235" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="461.9" cy="206.0" r="5.5" fill="#548235" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="291.2" cy="258.7" r="5.5" fill="#548235" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="319.7" cy="251.3" r="5.5" fill="#548235" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="526.0" cy="182.3" r="5.5" fill="#548235" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="530.7" cy="180.3" r="5.5" fill="#548235" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="598.3" cy="159.3" r="5.5" fill="#548235" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="659.9" cy="141.4" r="5.5" fill="#548235" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="117.0" cy="317.5" r="5.5" fill="#548235" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="575.7" cy="172.5" r="5.5" fill="#548235" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<rect x="458" y="68" width="260" height="32" fill="#FFFFFF" fill-opacity="0.85" stroke="#D9D9D9" stroke-width="1" rx="4"/>
+<circle cx="474" cy="84" r="5.5" fill="#548235" fill-opacity="0.85"/>
+<text x="488" y="88" font-size="13" fill="#333333">各実行（n=15）</text>
+</svg>

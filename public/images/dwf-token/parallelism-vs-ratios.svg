@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="740" height="460" viewBox="0 0 740 460" font-family="'Yu Gothic','Hiragino Sans','Noto Sans JP','Meiryo',sans-serif" role="img" aria-label="並列度（エージェント数）が上がるほど両指標も上がる">
+<rect x="0" y="0" width="740" height="460" fill="#FFFFFF"/>
+<text x="370" y="30" text-anchor="middle" font-size="19" font-weight="bold" fill="#333333">並列度（エージェント数）が上がるほど両指標も上がる</text>
+<line x1="66" y1="402.0" x2="718" y2="402.0" stroke="#D9D9D9" stroke-width="1"/>
+<text x="58" y="406.0" text-anchor="end" font-size="13" fill="#666666">0%</text>
+<line x1="66" y1="334.4" x2="718" y2="334.4" stroke="#D9D9D9" stroke-width="1"/>
+<text x="58" y="338.4" text-anchor="end" font-size="13" fill="#666666">20%</text>
+<line x1="66" y1="266.8" x2="718" y2="266.8" stroke="#D9D9D9" stroke-width="1"/>
+<text x="58" y="270.8" text-anchor="end" font-size="13" fill="#666666">40%</text>
+<line x1="66" y1="199.2" x2="718" y2="199.2" stroke="#D9D9D9" stroke-width="1"/>
+<text x="58" y="203.2" text-anchor="end" font-size="13" fill="#666666">60%</text>
+<line x1="66" y1="131.6" x2="718" y2="131.6" stroke="#D9D9D9" stroke-width="1"/>
+<text x="58" y="135.6" text-anchor="end" font-size="13" fill="#666666">80%</text>
+<line x1="66" y1="64.0" x2="718" y2="64.0" stroke="#D9D9D9" stroke-width="1"/>
+<text x="58" y="68.0" text-anchor="end" font-size="13" fill="#666666">100%</text>
+<line x1="66.0" y1="64" x2="66.0" y2="402" stroke="#D9D9D9" stroke-width="1"/>
+<text x="66.0" y="424" text-anchor="middle" font-size="13" fill="#666666">0</text>
+<line x1="184.5" y1="64" x2="184.5" y2="402" stroke="#D9D9D9" stroke-width="1"/>
+<text x="184.5" y="424" text-anchor="middle" font-size="13" fill="#666666">10</text>
+<line x1="303.1" y1="64" x2="303.1" y2="402" stroke="#D9D9D9" stroke-width="1"/>
+<text x="303.1" y="424" text-anchor="middle" font-size="13" fill="#666666">20</text>
+<line x1="421.6" y1="64" x2="421.6" y2="402" stroke="#D9D9D9" stroke-width="1"/>
+<text x="421.6" y="424" text-anchor="middle" font-size="13" fill="#666666">30</text>
+<line x1="540.2" y1="64" x2="540.2" y2="402" stroke="#D9D9D9" stroke-width="1"/>
+<text x="540.2" y="424" text-anchor="middle" font-size="13" fill="#666666">40</text>
+<line x1="658.7" y1="64" x2="658.7" y2="402" stroke="#D9D9D9" stroke-width="1"/>
+<text x="658.7" y="424" text-anchor="middle" font-size="13" fill="#666666">50</text>
+<line x1="66" y1="64" x2="66" y2="402" stroke="#666666" stroke-width="1.5"/>
+<line x1="66" y1="402" x2="718" y2="402" stroke="#666666" stroke-width="1.5"/>
+<text x="392" y="446" text-anchor="middle" font-size="14" fill="#333333">サブエージェント数（並列度）</text>
+<line x1="66.0" y1="203.5" x2="718.0" y2="87.3" stroke="#2E75B6" stroke-width="2" stroke-dasharray="6 4" opacity="0.55"/>
+<line x1="66.0" y1="263.3" x2="718.0" y2="126.4" stroke="#C00000" stroke-width="2" stroke-dasharray="6 4" opacity="0.55"/>
+<circle cx="184.5" cy="172.5" r="5.5" fill="#2E75B6" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="125.3" cy="251.6" r="5.5" fill="#2E75B6" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="255.7" cy="147.1" r="5.5" fill="#2E75B6" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="160.8" cy="206.6" r="5.5" fill="#2E75B6" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="172.7" cy="150.9" r="5.5" fill="#2E75B6" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="279.4" cy="173.5" r="5.5" fill="#2E75B6" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="137.1" cy="153.9" r="5.5" fill="#2E75B6" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="125.3" cy="202.6" r="5.5" fill="#2E75B6" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="184.5" cy="194.5" r="5.5" fill="#2E75B6" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="433.5" cy="135.7" r="5.5" fill="#2E75B6" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="433.5" cy="134.3" r="5.5" fill="#2E75B6" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="682.4" cy="115.0" r="5.5" fill="#2E75B6" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="492.8" cy="97.5" r="5.5" fill="#2E75B6" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="208.3" cy="252.3" r="5.5" fill="#2E75B6" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<circle cx="160.8" cy="121.5" r="5.5" fill="#2E75B6" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<path d="M 184.5 220.9 L 190.5 226.9 L 184.5 232.9 L 178.5 226.9 Z" fill="#C00000" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<path d="M 125.3 316.9 L 131.3 322.9 L 125.3 328.9 L 119.3 322.9 Z" fill="#C00000" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<path d="M 255.7 189.1 L 261.7 195.1 L 255.7 201.1 L 249.7 195.1 Z" fill="#C00000" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<path d="M 160.8 259.1 L 166.8 265.1 L 160.8 271.1 L 154.8 265.1 Z" fill="#C00000" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<path d="M 172.7 197.3 L 178.7 203.3 L 172.7 209.3 L 166.7 203.3 Z" fill="#C00000" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<path d="M 279.4 221.3 L 285.4 227.3 L 279.4 233.3 L 273.4 227.3 Z" fill="#C00000" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<path d="M 137.1 200.0 L 143.1 206.0 L 137.1 212.0 L 131.1 206.0 Z" fill="#C00000" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<path d="M 125.3 252.7 L 131.3 258.7 L 125.3 264.7 L 119.3 258.7 Z" fill="#C00000" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<path d="M 184.5 245.3 L 190.5 251.3 L 184.5 257.3 L 178.5 251.3 Z" fill="#C00000" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<path d="M 433.5 176.3 L 439.5 182.3 L 433.5 188.3 L 427.5 182.3 Z" fill="#C00000" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<path d="M 433.5 174.3 L 439.5 180.3 L 433.5 186.3 L 427.5 180.3 Z" fill="#C00000" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<path d="M 682.4 153.3 L 688.4 159.3 L 682.4 165.3 L 676.4 159.3 Z" fill="#C00000" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<path d="M 492.8 135.4 L 498.8 141.4 L 492.8 147.4 L 486.8 141.4 Z" fill="#C00000" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<path d="M 208.3 311.5 L 214.3 317.5 L 208.3 323.5 L 202.3 317.5 Z" fill="#C00000" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<path d="M 160.8 166.5 L 166.8 172.5 L 160.8 178.5 L 154.8 172.5 Z" fill="#C00000" fill-opacity="0.78" stroke="#FFFFFF" stroke-width="1"/>
+<rect x="458" y="68" width="260" height="54" fill="#FFFFFF" fill-opacity="0.85" stroke="#D9D9D9" stroke-width="1" rx="4"/>
+<circle cx="474" cy="84" r="5.5" fill="#2E75B6" fill-opacity="0.85"/>
+<text x="488" y="88" font-size="13" fill="#333333">キャッシュ読込比率</text>
+<path d="M 474 100 L 480 106 L 474 112 L 468 106 Z" fill="#C00000" fill-opacity="0.85"/>
+<text x="488" y="110" font-size="13" fill="#333333">トークン削減率</text>
+</svg>
