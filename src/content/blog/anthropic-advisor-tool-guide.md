@@ -1,6 +1,7 @@
 ---
 title: "Anthropic Advisor Tool 完全ガイド — Opus を『助言役』にして安いモデルを賢くする"
 date: 2026-06-07
+updatedDate: 2026-06-16
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude", "Advisor Tool", "API", "Opus", "Sonnet", "Haiku", "コスト最適化", "ツール"]
 excerpt: "Anthropic の Advisor Tool（advisor_20260301、2026年4月9日 Public Beta）は、Sonnet/Haiku を『エグゼキュータ（実行役）』、Opus を『アドバイザー（助言役）』として単一APIコール内でペアリングする新パターン。アドバイザーはツールも最終出力も生成せず助言だけを返すため、Opus の推論力を借りつつ、最終生成は安いモデルが担うことでコストを抑える。役割分担の仕組み・対応モデルの組み合わせ・課金（usage.iterations）・APIコード例・制約（Bedrock/Vertex 非対応）・ベンチマークまでを公式ドキュメント一次ソースで整理する。"
@@ -76,7 +77,7 @@ Anthropic の **Advisor Tool** は、この板挟みに対する答えです。*
 | `name` | string | 必須 | `"advisor"` 固定 |
 | `model` | string | 必須 | アドバイザーのモデルID（このレートで課金） |
 | `max_uses` | integer | 無制限 | **1リクエスト内**のアドバイザー呼び出し上限。超過時は助言なしで続行 |
-| `max_tokens` | integer | モデルの出力上限 | アドバイザー1回の総出力（thinking+text）上限。**最小1024**。推奨開始値は `2048` |
+| `max_tokens` | integer | モデルの出力上限 | アドバイザー1回の総出力（thinking+text）上限。**最小1024**。推奨開始値は `2048`。**フル長の助言を必要としないワークロードでは、これを設定することで1コールあたりのレイテンシと出力トークンコストを削減できる**（Claude Developer Platform で正式サポート） |
 | `caching` | object\|null | `null`（off） | アドバイザーのトランスクリプトのプロンプトキャッシュ。`{"type":"ephemeral","ttl":"5m"\|"1h"}` |
 
 ### 最小コード例（curl）
