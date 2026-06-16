@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-06-16
+updatedDate: 2026-06-17
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code v2.0.59〜v2.1.178 のバージョン履歴。権限ルールのツールパラメータマッチング構文 `Agent(model:opus)`・ネスト `.claude/skills` の自動ロード・auto モードのサブエージェント起動前評価・会話言語でのセッションタイトル生成・`enforceAvailableModels` マネージド設定・`wheelScrollAccelerationEnabled`・サブエージェントが自身のサブエージェントを生成可能（最大5階層）・Claude Fable 5 へのアクセス追加・`--safe-mode` フラグ（カスタマイズ無効化でトラブルシュート）・`/cd` コマンド（プロンプトキャッシュを壊さない作業ディレクトリ変更）・`disableBundledSkills` 設定・fallbackModel 設定（最大3つのフォールバックモデル）・deny ルールの glob 対応・クロスセッションメッセージング堅牢化・既定思考モデルの thinking 無効化・requiredMinimumVersion/requiredMaximumVersion マネージド設定・/plugin list（--enabled/--disabled フィルタ）・バックグラウンドセッションの自動バージョン更新（コールドリスタート不要）・Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.179 のバージョン履歴。接続断時の部分レスポンス保持・WSL2/Windows Terminal スクロール修正・権限ルールのツールパラメータマッチング構文 `Agent(model:opus)`・ネスト `.claude/skills` の自動ロード・auto モードのサブエージェント起動前評価・会話言語でのセッションタイトル生成・`enforceAvailableModels` マネージド設定・`wheelScrollAccelerationEnabled`・サブエージェントが自身のサブエージェントを生成可能（最大5階層）・Claude Fable 5 へのアクセス追加・`--safe-mode` フラグ（カスタマイズ無効化でトラブルシュート）・`/cd` コマンド（プロンプトキャッシュを壊さない作業ディレクトリ変更）・`disableBundledSkills` 設定・fallbackModel 設定（最大3つのフォールバックモデル）・deny ルールの glob 対応・クロスセッションメッセージング堅牢化・既定思考モデルの thinking 無効化・requiredMinimumVersion/requiredMaximumVersion マネージド設定・/plugin list（--enabled/--disabled フィルタ）・バックグラウンドセッションの自動バージョン更新（コールドリスタート不要）・Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-06-16
-**現在の最新バージョン**: 2.1.178
+**最終更新**: 2026-06-17
+**現在の最新バージョン**: 2.1.179
 
 ---
 
@@ -17,6 +17,7 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.179** | **mid-stream（ストリーミング中）の接続断を改善**: 部分レスポンスを生エラー表示せず保持し、スピナーが "running tool" で固まらないよう修正、**WSL2 + Windows Terminal / VS Code のマウスホイールスクロール修正**（2.1.172 のリグレッション）、サンドボックスの `denyRead`/`allowRead` glob が巨大ディレクトリツリーに対して Bash ツール説明文を肥大化させ Linux でセッション不能になる問題を修正、ターン完了直後にフィードバックサーベイが1桁の返信をセッション評価として誤取得する問題を修正、ウェルカム画面に複数のプロモバナーが積み重なる問題を修正（1セッション最大1つ）、`Ctrl+O` でサブエージェント閲覧時にトランスクリプトが表示されない問題を修正、プロンプト入力クリックでサブエージェント/フッターパネルからフォーカスが戻らない問題を修正、リモートセッションのバックグラウンドタスクがターン間で "still running" のまま固まる問題を修正、**リモートセッションのプラグインロード性能を改善** |
 | **2.1.178** | **権限ルールにツールパラメータマッチング構文 `Tool(param:value)` を追加**（ツールの入力パラメータに `*` ワイルドカードでマッチ。例: `Agent(model:opus)` で Opus サブエージェントの起動をブロック）、**ネストした `.claude/skills` ディレクトリのスキルが、その配下のファイルで作業する際に自動ロード**（名前衝突時は `<dir>:<name>` 形式で表示され双方が利用可能）、**ネスト `.claude/` の衝突解決**（作業ディレクトリに最も近い agent / workflow / output-style が優先。プロジェクトスコープの workflow 保存は最も近い既存 `.claude/workflows/` を対象）、**auto モード改善: サブエージェントの起動を起動前に分類器が評価**（サブエージェントがレビューを経ずにブロック対象アクションを要求できる抜け穴を解消）、`/doctor` のレイアウト改善（全セクションで一貫したフラットツリー表示・ステータスアイコン明確化・コマンド名のハイライト）、**Dynamic Workflows のトリガー語を紫シマーでハイライトし、"run a workflow" / "workflow:" など明示フレーズでのみ起動**（語の単なる言及では起動しない）、`/bug` が送信前に説明を必須化（モデル拒否テキストを GitHub Issue タイトルに使わない）、多数の修正（stale な websocket/OAuth ファイルディスクリプタ継承による OOM クラッシュ、Claude in Chrome の OAuth アカウント不一致での無音接続失敗、非対話実行でディレクトリ修飾名のネストスキルが権限プロンプトでブロックされる問題、サブエージェント関連〔トランスクリプトにツール結果／ライブ進捗を表示・完了処理中に送ったメッセージの欠落・ctrl+b の背景化で最初からやり直しになる問題〕、カスタム API ゲートウェイ起動時に `claude agents` ワーカーが 401 になる問題、`--fallback-model` を尊重しないコンパクション、認証情報更新後も stale キャッシュで失敗し続ける問題、`disallowedTools` の MCP サーバーレベル指定〔`mcp__server` 等〕が無視される問題、vim モードの undo 等）。**※ v2.1.177 はスキップ番号**（公式 changelog は 2.1.176 → 2.1.178） |
 | **2.1.176** | **セッションタイトルを会話の言語で生成**（`language` 設定で固定可）、`footerLinksRegexes` 設定（フッターのリンクバッジを正規表現で）、Bedrock クレデンシャルを `Expiration` までキャッシュ、`availableModels` 強制の抜け穴修正（環境変数経由のリダイレクト・`/fast` 切替を阻止）、Opus 4.8 非対応組織で Fable 5 の auto モードが失敗する問題を修正（最良の Opus へフォールバック）、Remote Control の各種修正（モデルのサイレント切替・切断理由の可読化・別アカウントサインインで切断）、多数の背景セッション安定化 |
 | **2.1.175** | **`enforceAvailableModels` マネージド設定** — 有効化すると `availableModels` 許可リストが Default モデルにも適用され（不許可に解決される Default は先頭の許可モデルへフォールバック）、ユーザー／プロジェクト設定でマネージドの許可リストを広げられなくなる |
