@@ -1,10 +1,10 @@
 ---
 title: "Anthropic Enterprise Analytics API 完全ガイド — 組織別利用データの照会と活用"
 date: 2026-05-02
-updatedDate: 2026-06-10
+updatedDate: 2026-06-19
 category: "Claude技術解説"
-tags: ["Anthropic", "Claude API", "Admin API", "Analytics", "エンタープライズ", "FinOps", "Slack連携"]
-excerpt: "2026年4月、Anthropic は Claude / Claude Code Remote / Claude Cowork の組織別利用データをプログラム照会できる Enterprise Analytics API を拡張した。Rate Limits API との位置付けの違い、エンドポイント構造、認証、レスポンス、Python/curl 実装例、Slackボット連携、運用ユースケース、制限事項までをまとめて解説する。"
+tags: ["Anthropic", "Claude API", "Admin API", "Analytics", "エンタープライズ", "FinOps", "Slack連携", "Workload Identity Federation", "OIDC"]
+excerpt: "2026年4月、Anthropic は Claude / Claude Code Remote / Claude Cowork の組織別利用データをプログラム照会できる Enterprise Analytics API を拡張した。Rate Limits API との位置付けの違い、エンドポイント構造、認証、レスポンス、Python/curl 実装例、Slackボット連携、運用ユースケース、制限事項までをまとめて解説する。さらに2026年6月の Workload Identity Federation（WIF＝OIDCトークンによるAPIキー不要認証）対応と、Admin API に追加された issuers / service accounts / federation rules エンドポイントも解説する。"
 draft: false
 ---
 
@@ -413,6 +413,36 @@ Enterprise Analytics API が **named user（メールアドレス付き）単位
 > データ更新の目安: コスト/使用量は約4時間ごと（最大24時間）、エンゲージメント系は約3日遅延。コストは30日間改訂され得るため、請求精度を求める照会は30日以上前の日付を対象にするのが安全です。
 
 これにより、「どのチーム / 個人が、どのプロダクト（Claude Code / Cowork / チャット）で、どれだけ使い・どんな成果（コミット・PR）を出したか」を**named user 粒度**で把握できるようになりました（人事・採用分析や FinOps の精度が向上）。なお個人特定データの取り扱いは社内規程・各国法令（GDPR 等）に従ってください。
+
+## 【2026-06追記】Workload Identity Federation（WIF）— APIキー不要のOIDC認証
+
+2026年6月、Admin API（本記事の Analytics/Admin 系 API を含む）の認証手段として **Workload Identity Federation（WIF）** が追加されました。長寿命の `sk-ant-...` API キーの代わりに、**自社の ID プロバイダー（IdP）が発行する短命の OIDC（JWT）トークン**でワークロードを認証できます。「CI やコンテナに API キーを置かない」運用が可能になります。
+
+- **対応 IdP**: AWS IAM、Google Cloud、GitHub Actions、Kubernetes、SPIFFE、Microsoft Entra ID、Okta など標準準拠の OIDC 発行体。
+- **狙い**: 静的シークレットの発行・保管・ローテーション・漏洩リスクを排除し、**数分で失効するトークン**へ置き換える（IdP 側の条件付きアクセス・監査と組み合わせて多層防御）。
+
+### 3つの構成リソース（Console／Admin API で作成）
+
+| リソース | ID 接頭辞 | 役割 |
+|---|---|---|
+| **Service account** | `svac_...` | フェデレーショントークンが「成り代わる」非人間アイデンティティ。ワークスペースのレート制限・使用量按分は API キーと同様に適用 |
+| **Federation issuer** | `fdis_...` | OIDC IdP を登録（`iss` クレーム値＝Issuer URL＋JWKS 取得方法: `discovery`(既定)/`explicit_url`/`inline`） |
+| **Federation rule** | `fdrl_...` | 「issuer X の JWT が条件 Y を満たせば service account Z のトークンを発行」。match（`subject_prefix`/`audience`/`claims`/CEL `condition`）＋ scope（既定 `workspace:developer`）＋ `token_lifetime_seconds`（60〜86400・既定3600） |
+
+### 認証フロー
+1. IdP がワークロードに JWT を発行（K8s の projected token、GCP メタデータ、Azure IMDS、GitHub Actions OIDC 等、多くは自動取得）。
+2. SDK が JWT を **`POST /v1/oauth/token`**（RFC 7523 `jwt-bearer` グラント）で交換 → Anthropic が JWKS とルールの match を検証し、**短命の `sk-ant-oat01-...` アクセストークン**を返す。
+3. SDK が以後のリクエストに付与し、失効前に自動リフレッシュ（API キー未設定でクライアント生成）。
+
+### Admin API での管理（IaC 化）
+WIF リソースはコンソールの「Connect workload」ウィザードに加え、**Admin API の新エンドポイント**で管理できます: **Service accounts API / Federation issuers API / Federation rules API**。Infrastructure as Code でフェデレーション設定をコード管理可能です。
+
+### 注意点
+- 取得対象となる Issuer/JWKS URL は **https・443・公開DNSホスト名**が必須（`explicit_url`/`inline` では `issuer_url` は文字列比較で内部ホスト名も可）。
+- **`ANTHROPIC_API_KEY` はフェデレーションより優先**されるため、移行時は当該ワークロードの全実行環境（コンテナ env・CI シークレット・シェル）で**確実に unset**する（`ant auth status` でどの資格情報が選ばれたか確認可）。
+- 発行トークンの寿命は「ルールの `token_lifetime_seconds`」と「提示した IdP JWT の残存寿命×2」の**短い方**（最低60秒）。
+
+> 出典: [Workload Identity Federation — Anthropic 公式ドキュメント](https://platform.claude.com/docs/en/manage-claude/workload-identity-federation)。Admin API 詳細は Service accounts / Federation issuers / Federation rules の各 API リファレンス参照。
 
 ## まとめ — Rate Limits API との両輪で運用する
 
