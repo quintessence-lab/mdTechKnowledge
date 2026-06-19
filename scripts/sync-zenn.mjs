@@ -118,9 +118,14 @@ function main() {
     if (!entry.slug) continue;
     try {
       const { text, canonical, hasIframe } = buildZenn(entry, noteMap);
-      writeFileSync(resolve(ARTICLES_DIR, `${entry.slug}.md`), text, 'utf-8');
-      selected.add(`${entry.slug}.md`);
-      console.log(`  ✓ ${entry.slug}.md${canonical ? ' (canonical→note)' : ' (canonicalなし)'}${hasIframe ? '  ⚠ iframeを除去（本文がiframe主体なら要確認）' : ''}`);
+      // Zenn slug は既定で entry.slug（=src/content/blog のファイル名）と同じ。
+      // Zenn 側で slug 衝突（過去デプロイ/削除済み slug の予約等）が起きた場合は
+      // entry.zenn_slug で出力ファイル名（=Zenn slug）だけを上書きする。
+      // 入力読み込み・canonical 引き当ては entry.slug のままなので SEO は note 集約のまま。
+      const outSlug = entry.zenn_slug || entry.slug;
+      writeFileSync(resolve(ARTICLES_DIR, `${outSlug}.md`), text, 'utf-8');
+      selected.add(`${outSlug}.md`);
+      console.log(`  ✓ ${outSlug}.md${outSlug !== entry.slug ? ` (zenn_slug←${entry.slug})` : ''}${canonical ? ' (canonical→note)' : ' (canonicalなし)'}${hasIframe ? '  ⚠ iframeを除去（本文がiframe主体なら要確認）' : ''}`);
       n++;
     } catch (e) {
       console.error(`  ✗ ${entry.slug}: ${e.message}`);
