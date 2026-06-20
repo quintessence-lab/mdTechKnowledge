@@ -5,7 +5,7 @@
   "articles": [
     {
       "slug": "claude-code-agent-view-guide",
-      "title": "Claudeのマルチエージェント3系統 — Dynamic Workflows / Agent View / Managed Agents",
+      "title": "Claudeのマルチエージェント4系統 — DW・Agent View・Managed Agents・Agent Teams",
       "emoji": "🧭",
       "type": "tech",
       "topics": ["claude", "claudecode", "ai", "dynamicworkflows", "マルチエージェント"]
