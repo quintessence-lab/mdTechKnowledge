@@ -1,7 +1,7 @@
 ---
 title: "MCP (Model Context Protocol) アーキテクチャ詳細"
 date: 2026-04-26
-updatedDate: 2026-06-18
+updatedDate: 2026-06-20
 category: "Claude技術解説"
 tags: ["MCP", "Claude Code", "JSON-RPC", "GitHub", "OAuth", "プロトコル", "Claude for Legal", "Release Candidate", "ステートレス", "SEP-2577", "SEP-2663", "Sampling", "非推奨ポリシー", "MCP Apps", "Extensions", "JSON Schema 2020-12", "W3C Trace Context"]
 excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness/エンタープライズSSO・監査トレイル・Governance Working Group・新コアメンテナー）、MCP Apps（SEP-1865）、2026-05-21 Release Candidate ロック（プロトコルステートレス化＝Mcp-Session-Id 廃止、MCP Apps の HTML UI、Tasks Extension 再設計、最終仕様 2026-07-28 公開予定）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、Claude for Legal で公開された20+ MCPコネクタ、約20万サーバーに影響した重大脆弱性事案、さらに 2026-07-28 RC で制定された SEP-2577 の非推奨ポリシー（Active/Deprecated/Removed の3段階・最低12ヶ月）と Sampling/Roots/Logging の deprecated 化までの参照リンクを網羅"
@@ -96,6 +96,18 @@ USBデバイス（マウス等）    =    MCPサーバー（GitHub, Gmail等）
 | **新コアメンテナー加入** | **Clare Liguori（AWS）** と **Den Delimarsky（Microsoft）** がコアメンテナーチームに加入。ハイパースケーラー2社のシニアエンジニアが直接プロトコル設計に関与する体制となり、エンタープライズ要求の反映スピードが向上 |
 
 参考: [2026 MCP Roadmap](https://blog.modelcontextprotocol.io/posts/2026-mcp-roadmap/) / [MCP公式ロードマップ](https://modelcontextprotocol.io/development/roadmap) / [The New Stack 解説](https://thenewstack.io/model-context-protocol-roadmap-2026/)
+
+#### 【2026-06-18】MCP Enterprise-Managed Authorization（EMA）が安定版（GA）に — ゼロタッチSSO
+
+上記ロードマップ「Enterprise Readiness（SSO 統合認証）」の具体化として、**MCP Enterprise-Managed Authorization（EMA）拡張が 2026-06-18 に安定版（stable / GA）**になりました（コアメンテナ Paul Carleton の告知）。
+
+- **解決する課題**: 従来は「**全従業員が全サーバーを個別に OAuth 認可する**」必要があり、セキュリティチームが一貫したポリシーを強制できなかった。EMA では**管理者が IdP で一度プロビジョニングすれば、ユーザーは初回ログイン時にゼロタッチで接続済みサーバーが利用可能**（アプリごとの同意画面が不要）になる。
+- **IdP**: **Okta が最初の対応 IdP**（Okta の **Cross App Access（XAA）** プロトコルを使用）。他 IdP は今後拡大。
+- **対応 MCP サーバー（7社）**: **Asana / Atlassian / Canva / Figma / Granola / Linear / Supabase**（「Slack ほかも対応追加中」）。
+- **対応サーフェス**: **Claude チャット / Claude Code / Cowork** の3面に加え、**VS Code** も対応。
+- 位置づけ: 個々のユーザー認可（後述の OAuth フロー）に対し、**組織単位の一括プロビジョニング層**。Enterprise Readiness 4課題のうち「SSO 統合認証」を実運用レベルに引き上げるもの。
+
+参考: [Enterprise-Managed Authorization（MCP公式ブログ）](https://blog.modelcontextprotocol.io/posts/enterprise-managed-auth/) / [The New Stack 解説](https://www.techtimes.com/articles/318708/20260619/mcp-enterprise-authorization-goes-stable-zero-touch-sso-okta-anthropic-vs-code.htm)
 
 #### MCP Apps（SEP-1865）— 対話型UIのプロトコル仕様化
 
