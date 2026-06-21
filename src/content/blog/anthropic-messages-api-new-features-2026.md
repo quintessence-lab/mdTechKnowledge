@@ -1,6 +1,7 @@
 ---
 title: "Anthropic Messages API 新機能まとめ（2026年5〜6月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ"
 date: 2026-06-20
+updatedDate: 2026-06-22
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "プロンプトキャッシュ"]
 excerpt: "2026年5〜6月に Anthropic Messages API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details まで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
@@ -79,7 +80,7 @@ draft: false
 | `web_search_20260209` | 動的フィルタリング対応 | 対応 |
 | `web_search_20260318` | 上記 + `response_inclusion` 制御を追加 | 対応 |
 
-最新版（`web_search_20260318`）の動的フィルタリングがサポートするモデルは、公式ドキュメントによると **Claude Fable 5 / Opus 4.8 / Mythos 5 / Mythos Preview / Opus 4.7 / Opus 4.6 / Sonnet 4.6** です。`web_search_20260318` は、code execution で消費済みの検索結果ブロックをレスポンスから落とす `response_inclusion`（既定 `"full"`、`"excluded"` で除外）をエージェント向けに追加しています。
+最新版（`web_search_20260318`）は **2026年6月11日にリリース**され（同日 web fetch も `web_fetch_20260318`、code execution も `code_execution_20260521` に対応。いずれも **beta ヘッダー不要**）、動的フィルタリングがサポートするモデルは、公式ドキュメントによると **Claude Fable 5 / Opus 4.8 / Mythos 5 / Mythos Preview / Opus 4.7 / Opus 4.6 / Sonnet 4.6** です。`web_search_20260318` は、code execution で消費済みの検索結果ブロックをレスポンスから落とす `response_inclusion`（既定 `"full"`、`"excluded"` で除外）をエージェント向けに追加しています。なお `"excluded"` の除外対象は **code execution で完了消費された結果ブロックに限られ**、直接呼び出しの結果や完了前に pause した呼び出しの結果は次ターンで必要なため常に全文返却されます。
 
 > プラットフォーム制約: web search（動的フィルタリング有無問わず）は Claude API・Claude Platform on AWS・Microsoft Foundry で利用可能。**Vertex AI は基本 web search のみ（動的フィルタリング非対応）**、**Amazon Bedrock は web search 非対応**です（公式ドキュメント）。
 

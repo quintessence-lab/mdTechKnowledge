@@ -1,7 +1,7 @@
 ---
 title: "Anthropic Enterprise Analytics API 完全ガイド — 組織別利用データの照会と活用"
 date: 2026-05-02
-updatedDate: 2026-06-19
+updatedDate: 2026-06-22
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Admin API", "Analytics", "エンタープライズ", "FinOps", "Slack連携", "Workload Identity Federation", "OIDC"]
 excerpt: "2026年4月、Anthropic は Claude / Claude Code Remote / Claude Cowork の組織別利用データをプログラム照会できる Enterprise Analytics API を拡張した。Rate Limits API との位置付けの違い、エンドポイント構造、認証、レスポンス、Python/curl 実装例、Slackボット連携、運用ユースケース、制限事項までをまとめて解説する。さらに2026年6月の Workload Identity Federation（WIF＝OIDCトークンによるAPIキー不要認証）対応と、Admin API に追加された issuers / service accounts / federation rules エンドポイントも解説する。"
@@ -416,7 +416,7 @@ Enterprise Analytics API が **named user（メールアドレス付き）単位
 
 ## 【2026-06追記】Workload Identity Federation（WIF）— APIキー不要のOIDC認証
 
-2026年6月、Admin API（本記事の Analytics/Admin 系 API を含む）の認証手段として **Workload Identity Federation（WIF）** が追加されました。長寿命の `sk-ant-...` API キーの代わりに、**自社の ID プロバイダー（IdP）が発行する短命の OIDC（JWT）トークン**でワークロードを認証できます。「CI やコンテナに API キーを置かない」運用が可能になります。
+**2026年6月17日に GA（一般提供）**となった **Workload Identity Federation（WIF）** により、Admin API（本記事の Analytics/Admin 系 API を含む）を含む全 Claude API エンドポイント（第一者 SDK・**Claude Code** 経由を含む）の認証手段として、長寿命の `sk-ant-...` API キーの代わりに、**自社の ID プロバイダー（IdP）が発行する短命の OIDC（JWT）トークン**でワークロードを認証できます。「CI やコンテナに API キーを置かない」運用が可能になります。
 
 - **対応 IdP**: AWS IAM、Google Cloud、GitHub Actions、Kubernetes、SPIFFE、Microsoft Entra ID、Okta など標準準拠の OIDC 発行体。
 - **狙い**: 静的シークレットの発行・保管・ローテーション・漏洩リスクを排除し、**数分で失効するトークン**へ置き換える（IdP 側の条件付きアクセス・監査と組み合わせて多層防御）。
@@ -436,6 +436,8 @@ Enterprise Analytics API が **named user（メールアドレス付き）単位
 
 ### Admin API での管理（IaC 化）
 WIF リソースはコンソールの「Connect workload」ウィザードに加え、**Admin API の新エンドポイント**で管理できます: **Service accounts API / Federation issuers API / Federation rules API**。Infrastructure as Code でフェデレーション設定をコード管理可能です。
+
+> **重要（認証の要件）**: これら WIF 管理エンドポイントは、本記事の Analytics 系で使う **Admin API キー（`x-api-key`）を受け付けません**。**`org:admin` スコープを持つ OAuth ベアラートークン**（admin / owner / primary owner ロール）が必須です。さらに `org:admin` などの特権スコープを持つルールの作成は **Claude Console からの操作に限られ**、OAuth 経由では `workspace:developer` / `workspace:inference` スコープのルールのみ作成・変更できます。各リソースはハードデリートではなく**アーカイブ（ソフト削除・冪等）**で無効化します。
 
 ### 注意点
 - 取得対象となる Issuer/JWKS URL は **https・443・公開DNSホスト名**が必須（`explicit_url`/`inline` では `issuer_url` は文字列比較で内部ホスト名も可）。
