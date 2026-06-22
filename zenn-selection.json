@@ -54,6 +54,13 @@
       "emoji": "📊",
       "type": "tech",
       "topics": ["claude", "claudecode", "dynamicworkflows", "プロンプトキャッシュ", "コスト最適化"]
+    },
+    {
+      "slug": "claude-max-web-direct-savings",
+      "title": "Claude Max は Web契約が月3,800〜7,200円安い — iOS(App Store)を避けてclaude.com直接契約",
+      "emoji": "💰",
+      "type": "idea",
+      "topics": ["claude", "anthropic", "ai", "料金", "コスト最適化"]
     }
   ]
 }
