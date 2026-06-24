@@ -1,7 +1,7 @@
 ---
 title: "Anthropic モデル廃止スケジュール & 移行ガイド — 1Mコンテキストβ廃止・Sonnet/Opus 4 廃止の対応"
 date: 2026-05-02
-updatedDate: 2026-06-16
+updatedDate: 2026-06-24
 category: "Claude技術解説"
 tags: ["Claude", "Anthropic", "API", "モデル廃止", "移行", "1Mコンテキスト", "Sonnet 4", "Opus 4", "Opus 4.8", "extended thinking", "Agent SDK", "課金"]
 excerpt: "2026年4月30日に1Mコンテキストβ（context-1m-2025-08-07）が廃止、2026年6月15日にSonnet 4 (claude-sonnet-4-0)とOpus 4 (claude-opus-4-0)が廃止された（リタイア済み）。本稿では緊急度の高い2件の廃止について、影響範囲・移行手順・extended thinkingの変更点・テストスニペット・ロールバック戦略まで体系的に整理する。【2026-06-08更新】6/15は同日にAgent SDK／claude -p（headless）の課金分離（独立クレジットプール: Pro $20／Max 5x $100／Max 20x $200、ロールオーバーなし）も発生（§10）。さらに2026-06-05にOpus 4.1（claude-opus-4-1-20250805）がDeprecated通知され、2026-08-05リタイア・移行先claude-opus-4-8に確定。【2026-06-16更新】6/15のSonnet 4／Opus 4リタイアは実施済み。旧モデルID指定はエラー化するため移行完了の確認を推奨。"
@@ -39,8 +39,9 @@ Anthropic API利用者にとって、2026年5月初旬は**緊急度の高いモ
 | **2026-04-30** | `context-1m-2025-08-07` ベータヘッダー | ヘッダー | ヘッダー削除＋Sonnet 4.6へ移行 |
 | **2026-06-15** | `claude-sonnet-4-20250514` (Sonnet 4) | モデル | `claude-sonnet-4-6` |
 | **2026-06-15** | `claude-opus-4-20250514` (Opus 4) | モデル | `claude-opus-4-8`（公式推奨。段階移行なら `claude-opus-4-7` も可） |
+| **2026-06-30** | `claude-mythos-preview` (Mythos Preview) | モデル | `claude-mythos-5`（⚠️輸出管理で停止中／一般版は `claude-fable-5`） |
 
-### 公式ステータステーブル（2026年6月16日時点抜粋）
+### 公式ステータステーブル（2026年6月24日時点抜粋）
 
 | API モデル名 | 状態 | 廃止通知日 | リタイア予定日 |
 |:---|:---|:---|:---|
@@ -54,7 +55,10 @@ Anthropic API利用者にとって、2026年5月初旬は**緊急度の高いモ
 | `claude-sonnet-4-5-20250929` | Active | — | 2026-09-29 以降 |
 | `claude-sonnet-4-20250514` | **Retired（完了）** | 2026-04-14 | **2026-06-15（完了）** |
 | `claude-haiku-4-5-20251001` | Active | — | 2026-10-15 以降 |
+| `claude-mythos-preview` | **Deprecated（6/30 リタイア予定）** | — | **2026-06-30** |
 | `claude-3-haiku-20240307` | **Retired** | 2026-02-19 | 2026-04-20（**完了**） |
+
+> **【2026-06-24追記】Claude Mythos Preview が 2026-06-30 にリタイア予定**: 公式の Model deprecations ページにより、初代セキュリティ特化版 `claude-mythos-preview` は **2026年6月30日にリタイア**します（残りわずか）。公式の移行先は後継の **`claude-mythos-5`** ですが、**Mythos 5 は 2026-06-12 の米輸出管理指令で全ユーザー向けにアクセス停止中**との報道があり（復旧時期未発表）、一般提供の同等代替 `claude-fable-5` も同じ停止対象とされています（公式 docs は停止に触れず Mythos 5 を移行先として案内し続けている点に注意。両論併記）。Mythos 系を利用中の場合、移行先が実質利用不可となるリスクを織り込んでください。詳細は [米政府、Claude Fable 5 と Mythos 5 を停止](/mdTechKnowledge/blog/claude-fable-5-export-control-suspension/) 参照。
 
 > **【2026-06-08追記】Claude Opus 4.1 が Deprecated に**: 2026年6月5日（PT）、Anthropic は `claude-opus-4-1-20250805`（Opus 4.1）の廃止を通知しました。**リタイア予定日は 2026年8月5日**、**公式推奨の移行先は `claude-opus-4-8`** です。6/15 の Sonnet 4 / Opus 4 リタイアに続く対応として、Opus 4.1 利用者は 8/5 までに `claude-opus-4-8` への移行を計画してください。
 

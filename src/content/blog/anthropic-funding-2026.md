@@ -1,7 +1,7 @@
 ---
 title: "Anthropic 大型資本調達ラウンド — Amazon $5B/$100B AWSコミット・Google 最大$40B 投資・Series G $380B → Series H $965B評価額（OpenAI超）の戦略的意義"
 date: 2026-04-26
-updatedDate: 2026-06-05
+updatedDate: 2026-06-24
 category: "一般リサーチ"
 tags: ["Anthropic", "Amazon", "Google", "AWS", "GCP", "Trainium", "TPU", "投資", "クラウドインフラ", "Claude", "Series G", "Series H", "CoreWeave", "Blackstone", "Goldman Sachs", "合弁会社", "EPAM", "Dragoneer", "Greenoaks", "Sequoia", "Altimeter", "Gates Foundation", "公益", "IPO", "S-1", "SEC", "Micron", "Samsung", "SK hynix", "Fluidstack", "データセンター", "HBM", "半導体"]
 excerpt: "2026年4月にAnthropicが立て続けに発表したAmazon・Googleからの巨額投資ラウンドと、Series G $380B評価額調達・年間収益ランレート $30B 突破（OpenAI 逆転）・CoreWeave との計算インフラ個別契約を整理。2026年5月3日発表のBlackstone・H&F・Goldman Sachs との$1.5Bエンタープライズ AI サービス合弁会社、5月7日発表のEPAM Systems との戦略的多年契約、5月8日 Fortune 報道『単一四半期で80倍成長』、5月12日 Bloomberg 報道の$30B 調達ラウンド合意確定（評価額 $900B 超、ARR $45B）、5月14日 Gates Foundation との $200M／4年 grant partnership（医療・K-12教育・経済モビリティ）まで追補。さらに2026年5月28日発表の Series H — $65B 調達・post-money $965B 評価額（OpenAI を上回り AI スタートアップ史上最高）・年率 run-rate revenue $47B 到達・ハイパースケーラー既コミット $15B（Amazon $5B 含む）、さらに2026年6月1日（PT）に SEC へ機密ドラフト S-1 を提出した IPO 申請開始まで追補。"
@@ -379,6 +379,23 @@ GPU/TPU の確保（Amazon・Google・SpaceX）やメモリ供給（Micron・Sam
 - [TechCrunch: Anthropic files to go public（2026/6/1）](https://techcrunch.com/2026/06/01/anthropic-files-to-go-public/)
 - [CNBC: Anthropic IPO S-1 prospectus（2026/6/1）](https://www.cnbc.com/2026/06/01/anthropic-ipo-s1-prospectus.html)
 - [NPR: Anthropic IPO filing（2026/6/1）](https://www.npr.org/2026/06/01/nx-s1-5843199/anthropic-ipo-filing-ai-large)
+
+---
+
+### Micron の Series H 戦略投資と収益ランレート $47B（2026-06-22）
+
+2026年6月22日、メモリ大手 **Micron Technology** が Anthropic の **Series H ラウンドに戦略的投資**として参加したことを明らかにした（投資額は非開示）。Series H は2026年5月28日にクローズした **調達額 $65B・ポストマネー評価額 $965B** のラウンドで、Samsung・SK hynix・Altimeter・Sequoia・Amazon 等が名を連ねる。Micron の参加は、同日発表のメモリ/ストレージ供給協定（HBM・DRAM・SSD の複数年契約）と連動しており、**出資・供給・社内 Claude 活用が一体**となった協定となっている（コンピュート面の詳細は [Anthropic コンピュートインフラ & TPU パートナーシップ](/mdTechKnowledge/blog/anthropic-tpu-compute-partnership/) 参照）。
+
+背景には Anthropic の急成長がある。同社の **年間収益ランレートは2026年5月に約 $47B を突破**した（Anthropic 公式）。2025年末の約 $9B から約5倍の伸びで、Series G（2026年2月）時点の約 $30B からさらに拡大しており、エンタープライズ各社が中核業務に Claude を組み込んでいることが牽引役だ。この収益成長が、$965B 評価額や大型コンピュート/メモリ協定を支える資本市場の評価につながっている。
+
+| 項目 | 内容 |
+|---|---|
+| Micron の Series H 投資 | 戦略的投資として参加（**金額非開示**） |
+| Series H ラウンド | $65B 調達 / ポストマネー評価額 $965B（2026-05-28 クローズ） |
+| 収益ランレート | **2026年5月に約 $47B**（2025年末 約$9B から約5倍、Series G 時 約$30B） |
+| 連動協定 | Micron とのメモリ/ストレージ供給契約（HBM・DRAM・SSD・複数年） |
+
+参考: [Micron: Strategic Agreement with Anthropic（2026/6/22）](https://investors.micron.com/news-releases/news-release-details/micron-and-anthropic-announce-strategic-agreement-scale-next) / [CNBC: Anthropic revenue growth（2026/5）](https://www.cnbc.com/2026/05/20/anthropic-revenue-explosive-growth-ipo-profitable-quarter.html)
 
 ---
 

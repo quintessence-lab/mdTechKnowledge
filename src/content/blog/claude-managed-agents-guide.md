@@ -1,7 +1,7 @@
 ---
 title: "Claude Managed Agents 簡易ガイド — アーキテクチャ・比較・ユースケース"
 date: 2026-04-08
-updatedDate: 2026-06-16
+updatedDate: 2026-06-24
 category: "Claude技術解説"
 tags: ["Claude", "Managed Agents", "Agent SDK", "Claude Code", "API", "マルチエージェント", "Memory", "Enterprise", "Self-hosted sandboxes", "MCP tunnels", "Cloudflare", "Modal", "Vercel", "Daytona", "Cloudflare Environments", "Webhooks", "microVM", "V8 Isolate", "Scheduled deployments", "Vault環境変数"]
 excerpt: "Claude Managed Agentsの3層アーキテクチャ（Session/Harness/Sandbox）、p50 TTFT 60%削減のパフォーマンス改善、Memory機能、Dreaming・Outcomes・Multi-agent orchestration、エンタープライズ向けRBAC・OpenTelemetry、2026年5月19日発表のSelf-hosted sandboxes（Cloudflare/Daytona/Modal/Vercel対応、Public Beta）とMCP tunnels（Research Preview、プライベートネットワーク内MCPサーバーへの outbound-only E2E接続）、料金体系（$0.08/session-hour）、さらに Cloudflare Environments（brain/hands 分離・Linux microVM と V8 Isolate を選択可能・ブラウザ/メール/アウトバウンドプロキシ/Cloudflare Mesh・Workers VPC）の概要までを1ページに整理。"
@@ -311,6 +311,16 @@ Managed Agents の **Vault が「環境変数クレデンシャル」に対応**
 > 公式: *"Claude Managed Agents vaults now support environment variable credentials, so you can securely inject secrets into the agent's sandbox for CLIs, SDKs, and other services that authenticate through environment variables."*
 
 これにより、`gh` CLI・各種クラウド SDK・データベースクライアントのように **「環境変数にトークンを置く」前提のツール**を、シークレットをプロンプトやコードに平文で晒すことなく Managed Agents から扱えるようになります。
+
+## MCPコネクタの一括認可 EMA（2026年6月18日 PT、Beta）
+
+2026年6月18日（PT）／19日（JST）、**MCPコネクタの認可をエンタープライズで一括管理する Enterprise-Managed Authorization（EMA）が Beta 提供**を開始しました。Managed Agents が呼び出す MCP コネクタ（SaaS 連携）の認可にも関わるため、本ガイドでも触れておきます。
+
+- **仕組み**: IT 管理者が IdP（ローンチ対応は **Okta**、Cross App Access を利用）で一度コネクタを承認すれば、社員は所属グループ／ロールに応じて**初回ログイン時にゼロタッチでアクセスを継承**（アプリごとの個別 OAuth 同意画面が不要）。
+- **対応コネクタ（ローンチ時7種）**: Asana / Atlassian / Canva / Figma / Granola / Linear / Supabase（Slack ほか追加予定）。
+- **適用範囲**: Claude チャット／Claude Code／Cowork を横断（**GA ではなく Beta**、Team / Enterprise 向け）。
+
+> **位置づけの注意**: EMA は Managed Agents 専用機能ではなく、Claude 全体の MCP コネクタ認可をエンタープライズ向けに整備するものです。Managed Agents の文脈では「呼び出す MCP コネクタの認可も一元化できる」という関係になります。技術詳細は [MCP アーキテクチャ詳細](/mdTechKnowledge/blog/mcp-architecture/) の EMA 節、および [Enterprise Analytics API ガイド](/mdTechKnowledge/blog/anthropic-enterprise-analytics-api/) を参照してください。
 
 ## 具体的なユースケース
 
