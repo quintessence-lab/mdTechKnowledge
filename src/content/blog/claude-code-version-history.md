@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-06-24
+updatedDate: 2026-06-25
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
 excerpt: "Claude Code v2.0.59〜v2.1.183 のバージョン履歴。`/config key=value` でプロンプトから設定変更・auto モードでの破壊的 git コマンドのブロック・Bun 1.4 ランタイム・接続断時の部分レスポンス保持・WSL2/Windows Terminal スクロール修正・権限ルールのツールパラメータマッチング構文 `Agent(model:opus)`・ネスト `.claude/skills` の自動ロード・auto モードのサブエージェント起動前評価・会話言語でのセッションタイトル生成・`enforceAvailableModels` マネージド設定・`wheelScrollAccelerationEnabled`・サブエージェントが自身のサブエージェントを生成可能（最大5階層）・Claude Fable 5 へのアクセス追加・`--safe-mode` フラグ（カスタマイズ無効化でトラブルシュート）・`/cd` コマンド（プロンプトキャッシュを壊さない作業ディレクトリ変更）・`disableBundledSkills` 設定・fallbackModel 設定（最大3つのフォールバックモデル）・deny ルールの glob 対応・クロスセッションメッセージング堅牢化・既定思考モデルの thinking 無効化・requiredMinimumVersion/requiredMaximumVersion マネージド設定・/plugin list（--enabled/--disabled フィルタ）・バックグラウンドセッションの自動バージョン更新（コールドリスタート不要）・Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-06-24
-**現在の最新バージョン**: 2.1.187
+**最終更新**: 2026-06-25
+**現在の最新バージョン**: 2.1.191
 
 ---
 
@@ -17,6 +17,8 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.191** | **`/rewind` が `/clear` 実行前の状態への会話復元に対応**（クリア前のコンテキストへ巻き戻せる）、**ストリーミング応答中の CPU 使用量を約 37% 削減**（テキスト更新を 100ms 単位でまとめる）、長時間セッションでのターミナル出力キャッシュによるメモリ増加を抑制、多数の修正（ストリーミング中に過去出力を読むとスクロールが最下部へ飛ぶ問題、**タスクパネルから停止した背景エージェントが復活する問題＝停止を恒久化**、`"Bash,PowerShell"` のようなカンマ区切り matcher のフックが発火しない問題、`/permissions` の Recently-denied タブで承認が閉じても残らない問題、Windows Terminal で折り返した `/login` URL の途切れ、組織ポリシーで無効化された `/voice` の汎用メッセージ 等）、MCP の信頼性改善（capability discovery / OAuth discovery・トークン要求の一時的ネットワークエラー時の自動リトライ、HTTP 404 エラーで URL と設定箇所を表示）、サンドボックスのネットワーク許可ダイアログで「Yes」したホストをセッション間記憶 |
+| **2.1.190** | バグ修正・信頼性改善（"Bug fixes and reliability improvements"）。**※ v2.1.188・v2.1.189 はスキップ番号** |
 | **2.1.187** | **`sandbox.credentials` 設定を追加**（サンドボックス内コマンドが**資格情報ファイル・秘密の環境変数を読み取れないようにブロック**）、**組織設定のモデル制限を model picker / `--model` / `/model` / `ANTHROPIC_MODEL` に適用**（制限モデル選択時に「組織設定により制限」メッセージ表示）、フルスクリーンモードのメニュー（権限プロンプト・`/model`・`/config` 等）でマウスクリック選択に対応、多数の修正（`-p` 実行がモデルターンを生成しなかった場合の `--resume` 失敗、`--json-schema`/Workflow `agent({schema})` の StructuredOutput 無限再呼び出し、応答なしで5分ハングするリモート MCP ツール呼び出しをエラー中断（`CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT` で上書き可）、**貼り付けた韓国語/CJK テキストの文字化け修正**、エージェント深度トラッキング（再開・fork サブエージェント）、kill されたエージェントの worktree 登録リーク自動クリーンアップ、agents ビューで「working」のまま固着する背景ジョブ 等）、`/install-github-app` 改善（**GitHub Actions ワークフロー設定を任意化**＝App だけ入れて workflow/secret 手順をスキップ可）、`/btw` の ←/→ ナビゲーション、`/plugin` の未使用プラグイン整理、[VSCode] 大規模セッション再開時の拡張機能フリーズ修正 |
 | **2.1.186** | **`claude mcp login <name>` / `claude mcp logout <name>` を追加**（CLI での MCP 認証。SSH 環境の `--no-browser` stdin 対応含む）、**`/workflows` エージェント詳細ビューにステータスフィルター**（`f` キー）、**`/plugin` Installed タブに「Skills」セクション**追加、**`teammateMode: "iterm2"` 設定**追加、**`!` bash コマンド実行後に Claude が自動応答**（`"respondToBashCommands": false` で無効化可）、多数の修正（マシンスリープ後のストリーミング失敗、サブエージェント transcript スクロール位置、背景タスクプレビューの生ツール名表示、並行 CLI セッションの Chrome タブグループ分離、**`Agent(type)` deny ルールの名前付きサブエージェント起動への適用**、背景エージェント使用時の Esc/Ctrl+C 応答性、終了済みサブエージェントを `x` で消せない問題、退役ツールの MCP 切断通知 等）、`CLAUDE_CODE_MAX_RETRIES` の上限を 15 に変更、**背景サブエージェントの権限プロンプトをメインセッションに表示**、`/review <pr>` を `/code-review medium` と同じエンジンに変更 |
 | **2.1.185** | **stream-stall（ストリーム停滞）ヒントのメッセージ文言とタイミング閾値を更新**（「No response from API」→「Waiting for API response」系の文言へ。表示までの閾値を **10秒 → 20秒** に延長）。**※ v2.1.184 はスキップ番号** |

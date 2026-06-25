@@ -1,7 +1,7 @@
 ---
 title: "MCPサーバーとClaudeの接続パターン解説 — Browser / Claude Code Terminal / Claude Code Web"
 date: 2026-04-26
-updatedDate: 2026-05-27
+updatedDate: 2026-06-25
 category: "Claude技術解説"
 tags: ["MCP", "Claude", "Claude Code", "アーキテクチャ", "接続パターン", "GitHub MCP", "Release Candidate", "ステートレス"]
 excerpt: "MCPサーバーとClaudeの3つの主要接続パターン（Browser / Claude Code Terminal / Claude Code Web）を図解。GitHub MCPを例にアクセス経路の違い・認証フロー・運用上の選択基準を整理。2026-05-21 ロックの MCP Release Candidate によるステートレス化（Mcp-Session-Id 廃止、スティッキー LB・共有セッションストア不要化）が各パターンへ与える実務影響と自社 MCP サーバー移行チェックリストも収録。"
@@ -456,6 +456,19 @@ jobs:
             └─ 隔離環境で安全に試したい新規MCP
                   → パターン3（Claude Code on the Web）
 ```
+
+---
+
+## 9.5 補足: エンタープライズ向けの新しい認可・接続（2026-06）
+
+ここまでの3パターン（claude.ai / Claude Code / Web）に加え、2026年6月にはエンタープライズ運用を見据えた**認可**と**到達経路**の新方式が追加されました。本記事では概要のみ触れ、詳細は [MCP アーキテクチャ詳細](/mdTechKnowledge/blog/mcp-architecture/) に譲ります。
+
+| 機能 | 何を変えるか | どのパターンに効くか |
+|---|---|---|
+| **Enterprise-Managed Authorization（EMA）** | 各ユーザーが MCP コネクタを個別に OAuth 認可する代わりに、**IT 管理者が IdP（ローンチ対応は Okta）で一度承認すれば、初回ログイン時にゼロタッチでアクセスを自動付与**。認可は Anthropic 共有 MCP レイヤーに実装され、**claude.ai チャット / Claude Code / Cowork を横断**して一貫適用。 | 「2.2 認証情報の流れ」「3.3 認証情報の流れ」を組織単位で一括化 |
+| **MCP tunnels（Research Preview）** | **社内プライベートネットワーク上の MCP サーバー**へ、パブリックエンドポイントを公開せずアクセス。軽量ゲートウェイが**アウトバウンド1本の暗号化接続**を Anthropic 側へ確立する。 | 「3.4 到達可能なネットワーク」の制約（外部から内部 MCP に届かない）を、インバウンド開放なしで解消 |
+
+> **位置づけ**: EMA は「**誰が・どのコネクタを使えるか**（認可）」を組織で一元管理する仕組み、MCP tunnels は「**Anthropic 側からどうやって内部 MCP サーバーに到達するか**（経路）」を変える仕組みで、両者は独立かつ補完的です。いずれも本記事の3パターンを置き換えるものではなく、**エンタープライズ運用時の認可・到達性を補強する追加レイヤー**として捉えてください。技術仕様（ID-JAG フロー・対応コネクタ等）は [MCP アーキテクチャ詳細](/mdTechKnowledge/blog/mcp-architecture/) を参照。
 
 ---
 
