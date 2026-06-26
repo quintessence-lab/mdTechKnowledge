@@ -1,6 +1,7 @@
 ---
 title: "Claude Design 解説 — Opus 4.7搭載のビジュアル生成新プロダクト"
 date: 2026-04-26
+updatedDate: 2026-06-26
 category: "Claude技術解説"
 tags: ["Claude", "Claude Design", "Anthropic Labs", "デザイン", "Opus 4.7"]
 excerpt: "2026年4月17日リサーチプレビュー開始のClaude Design。Opus 4.7の高解像度ビジョンで、プレーン英語からプロトタイプ・スライド・ワンページャー・デザインシステムを生成。Pro/Max/Team/Enterprise向け。Figma株7%下落の市場インパクトも整理。"
@@ -51,6 +52,25 @@ Claude Designは、Anthropicの社内インキュベーター組織である**An
 ### 5. 協調編集
 
 複数のチームメンバーが同じデザインにアクセスし、コメント・直接編集・チャット指示を加えられます。
+
+---
+
+## 【2026年6月17日】大規模改訂 — デザインシステム取込・実編集・トークン効率化
+
+2026年6月17日（PT）、Anthropic は Claude Design の**大規模アップデート**を発表し、同ツールを research preview から **beta** へ移行しました（初週で利用者100万人超）。主な強化点は次の4つです。
+
+| 改訂項目 | 内容 |
+|---|---|
+| **デザインシステムのインポート** | **GitHub リポジトリ／デザインファイル／生アップロード**から自社デザインシステムを取り込み可能に。Claude が**ユーザー独自のコンポーネント**でビルドし、出力を自社デザインシステムと照合して**ユーザーが見る前に自動修正**。管理者が標準システムを1つ承認・編集ロックすれば、全成果物を社内ブランドガイドラインに準拠させられる |
+| **キャンバス編集の強化** | 新しいレイアウトコントロールで要素を**ドラッグ・リサイズ・整列**。これらの直接操作は**モデルのターンを消費しない**。数百件の安定性修正でエラー・再生成の無駄を削減 |
+| **トークン効率の改善** | Claude Design が **chat・Claude Cowork・Claude Code とクォータを共有**する方式に変更。平均ターンあたりのトークン消費を削減（改訂前は「約25分で Pro 週次上限の80%を消費」と報じられた“トークン浪費”問題への対応） |
+| **`/design-sync` 双方向同期 ＋ エクスポート先拡大** | Claude Code ↔ Claude Design の双方向同期に対応（詳細は[連携アップデート記事](/mdTechKnowledge/blog/claude-design-integrations-update/)）。連携先は Adobe・Base44・Canva・Gamma・Lovable・Miro・Replit・Vercel・Wix の**計9ツール**＋ PDF / PowerPoint 書き出し |
+
+対象は **Pro / Max / Team / Enterprise**（追加料金なし）。`claude.ai/design` および Claude デスクトップのサイドバーから利用できます。
+
+> この改訂で Claude Design は「プロトタイプを速く作る」段階から、**社内デザインシステムに準拠した成果物を、実装（Claude Code）と往復しながら仕上げる**実務ツールへと一歩進みました。
+
+参考: [Anthropic: Claude Design stays on brand for daily work](https://claude.com/blog/claude-design-stays-on-brand-for-daily-work) ／ [VentureBeat（Claude Design overhaul）](https://venturebeat.com/technology/anthropic-ships-major-claude-design-overhaul-with-design-system-imports-code-round-trips-and-a-fix-for-its-token-burning-problem)
 
 ---
 

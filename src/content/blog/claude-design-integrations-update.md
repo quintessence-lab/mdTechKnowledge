@@ -1,7 +1,7 @@
 ---
 title: "Claude Design 連携アップデート（2026年5月） — Canva・Adobe・Blender 連携と外部エクスポート"
 date: 2026-05-02
-updatedDate: 2026-05-02
+updatedDate: 2026-06-26
 category: "Claude技術解説"
 tags: ["Claude", "Claude Design", "Anthropic Labs", "Canva", "Adobe", "Blender", "Connectors", "ビジュアルワークフロー"]
 excerpt: "2026年4月のリサーチプレビュー以降、Claude Designは外部ツール連携を急速に拡張。Canva送出に加え、Adobe Creative Cloud（Photoshop/Illustrator/Firefly等50+ツール）、Blender、Affinity、Autodesk Fusion、SketchUp、Ableton、Splice、Resolumeへの9コネクタが2026年4月28日に発表された。本稿では2026年5月時点の最新動向、ビジュアルワークフローの新パターン、外部エクスポート活用のヒントを整理する。"
@@ -47,6 +47,22 @@ Adobe連携は今回もっとも広範な実装で、**Photoshop / Illustrator /
 - カスタム機能のオンザフライ生成（指示に応じてアプリ内挙動を即席で組み立てる）
 
 「制作系のクリエイターが嫌う繰り返し作業」を会話的に片付けることで、本来の創作時間を取り戻すという狙いが明確です。
+
+---
+
+## 【2026年6月17日 追記】Claude Code との双方向同期（`/design-sync`）とエクスポート先の拡大
+
+2026年6月17日（PT）の Claude Design 大規模改訂で、**Claude Code と Claude Design が双方向同期**するようになりました。これまで本記事が扱ってきた「プロ向けアプリへの常駐」型コネクタとは別軸の、**設計（デザイン）と実装（コード）を往復させる**ための連携です。
+
+- **`/design-sync`（双方向同期）**: Claude Code のターミナルから実行。①自分のデザインシステムを取り込み**プロジェクトの実コンポーネントからビルド**する、②逆に **Claude Code 側で書いたものを Claude Design のキャンバスへ戻して編集を続ける**、の双方向に対応。
+- **`/design` コマンド**: ターミナルを離れずに、設計プロジェクトの**作成・編集・同期**を完結できる。
+- **エクスポート／連携先の拡大**: 連携先は Adobe・Base44・Canva・Gamma・Lovable・Miro・Replit・Vercel・Wix の**計9ツール**に拡大し、**PDF / PowerPoint** 書き出しにも対応。とくに **Vercel・Replit・Wix** などデプロイ系への受け渡しが加わり、デザイン → 実装 → 公開の流れが直結しやすくなりました。
+
+> 本記事前半の「プロ向けアプリ連携（Adobe/Blender/Affinity 等）」が**横（制作系アプリ）への広がり**だとすれば、`/design-sync` は**縦（設計⇄実装）の往復**を担う連携です。Claude Design 本体の改訂全体像は [Claude Design 解説](/mdTechKnowledge/blog/claude-design-overview/) を参照してください。
+>
+> 注: `/design-sync` の詳細仕様（事前プラン承認・ファイル数/サイズ上限・増分同期など）は一部メディアの報道に基づくもので、Anthropic 公式ブログには明記がありません。
+
+参考: [Anthropic: Claude Design stays on brand for daily work](https://claude.com/blog/claude-design-stays-on-brand-for-daily-work) ／ [Claude Code × Claude Design two-way sync（pasqualepillitteri.it）](https://pasqualepillitteri.it/en/news/5308/claude-code-claude-design-two-way-sync-design-sync)
 
 ---
 
