@@ -1,7 +1,7 @@
 ---
 title: "MCPサーバーとClaudeの接続パターン解説 — Browser / Claude Code Terminal / Claude Code Web"
 date: 2026-04-26
-updatedDate: 2026-06-25
+updatedDate: 2026-06-27
 category: "Claude技術解説"
 tags: ["MCP", "Claude", "Claude Code", "アーキテクチャ", "接続パターン", "GitHub MCP", "Release Candidate", "ステートレス"]
 excerpt: "MCPサーバーとClaudeの3つの主要接続パターン（Browser / Claude Code Terminal / Claude Code Web）を図解。GitHub MCPを例にアクセス経路の違い・認証フロー・運用上の選択基準を整理。2026-05-21 ロックの MCP Release Candidate によるステートレス化（Mcp-Session-Id 廃止、スティッキー LB・共有セッションストア不要化）が各パターンへ与える実務影響と自社 MCP サーバー移行チェックリストも収録。"
@@ -469,6 +469,17 @@ jobs:
 | **MCP tunnels（Research Preview）** | **社内プライベートネットワーク上の MCP サーバー**へ、パブリックエンドポイントを公開せずアクセス。軽量ゲートウェイが**アウトバウンド1本の暗号化接続**を Anthropic 側へ確立する。 | 「3.4 到達可能なネットワーク」の制約（外部から内部 MCP に届かない）を、インバウンド開放なしで解消 |
 
 > **位置づけ**: EMA は「**誰が・どのコネクタを使えるか**（認可）」を組織で一元管理する仕組み、MCP tunnels は「**Anthropic 側からどうやって内部 MCP サーバーに到達するか**（経路）」を変える仕組みで、両者は独立かつ補完的です。いずれも本記事の3パターンを置き換えるものではなく、**エンタープライズ運用時の認可・到達性を補強する追加レイヤー**として捉えてください。技術仕様（ID-JAG フロー・対応コネクタ等）は [MCP アーキテクチャ詳細](/mdTechKnowledge/blog/mcp-architecture/) を参照。
+
+### `claude mcp login` / `claude mcp logout` — CLI から MCP 認証（v2.1.186）
+
+パターン2（Claude Code）では、これまで OAuth が必要な MCP サーバーの認証は対話 UI（`/mcp`）経由が中心でした。2026年6月22日（PT）の **Claude Code v2.1.186** で、**CLI から直接 MCP 認証できる**コマンドが追加されています。
+
+| コマンド | 動作 |
+|---|---|
+| `claude mcp login <name>` | 指定した MCP サーバーへ OAuth ログイン（SSH 環境では `--no-browser` の stdin 対応も） |
+| `claude mcp logout <name>` | 指定した MCP サーバーからログアウト（トークン破棄） |
+
+CI・SSH・ヘッドレス寄りの運用で、**ブラウザを開けない環境でも MCP 認証を完結**しやすくなりました。あわせて v2.1.193 では、MCP サーバー認証が必要なときに起動時通知（`/mcp` を案内）も追加されています。
 
 ---
 

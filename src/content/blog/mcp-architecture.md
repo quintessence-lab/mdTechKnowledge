@@ -1,7 +1,7 @@
 ---
 title: "MCP (Model Context Protocol) アーキテクチャ詳細"
 date: 2026-04-26
-updatedDate: 2026-06-20
+updatedDate: 2026-06-27
 category: "Claude技術解説"
 tags: ["MCP", "Claude Code", "JSON-RPC", "GitHub", "OAuth", "プロトコル", "Claude for Legal", "Release Candidate", "ステートレス", "SEP-2577", "SEP-2663", "Sampling", "非推奨ポリシー", "MCP Apps", "Extensions", "JSON Schema 2020-12", "W3C Trace Context"]
 excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness/エンタープライズSSO・監査トレイル・Governance Working Group・新コアメンテナー）、MCP Apps（SEP-1865）、2026-05-21 Release Candidate ロック（プロトコルステートレス化＝Mcp-Session-Id 廃止、MCP Apps の HTML UI、Tasks Extension 再設計、最終仕様 2026-07-28 公開予定）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、Claude for Legal で公開された20+ MCPコネクタ、約20万サーバーに影響した重大脆弱性事案、さらに 2026-07-28 RC で制定された SEP-2577 の非推奨ポリシー（Active/Deprecated/Removed の3段階・最低12ヶ月）と Sampling/Roots/Logging の deprecated 化までの参照リンクを網羅"
@@ -108,6 +108,12 @@ USBデバイス（マウス等）    =    MCPサーバー（GitHub, Gmail等）
 - 位置づけ: 個々のユーザー認可（後述の OAuth フロー）に対し、**組織単位の一括プロビジョニング層**。Enterprise Readiness 4課題のうち「SSO 統合認証」を実運用レベルに引き上げるもの。
 
 参考: [Enterprise-Managed Authorization（MCP公式ブログ）](https://blog.modelcontextprotocol.io/posts/enterprise-managed-auth/) / [The New Stack 解説](https://www.techtimes.com/articles/318708/20260619/mcp-enterprise-authorization-goes-stable-zero-touch-sso-okta-anthropic-vs-code.htm)
+
+#### 【2026-06-08】Connectors Directory（300+ コネクタ・アプリ内サブミット）
+
+MCP エコシステムの広がりを示す指標として、Anthropic は公開の **Connectors Directory** を提供しています。2026年6月8日のアップデート時点で、ディレクトリには **300 を超えるサードパーティ製コネクタ**が掲載され（いずれも MCP 上に構築・「毎日数百万人が利用」）、開発者は自分の MCP サーバーを **Claude 内から直接ディレクトリへサブミット**できるようになりました（in-app submission）。同時に、掲載コネクタの**アクティブユーザー数・総ツールコール数・ディレクトリ内ランク・ヘルススコア・エラー率・レイテンシ**を可視化するパフォーマンスダッシュボードも追加されています。MCP が「仕様」だけでなく**流通基盤（マーケットプレイス的レイヤー）**を備えつつあることを示す動きです。
+
+参考: [Anthropic Connectors Directory FAQ](https://support.claude.com/en/articles/11596036-anthropic-connectors-directory-faq) / [Releasebot（Claude updates 2026-06-08）](https://releasebot.io/updates/anthropic/claude)
 
 #### MCP Apps（SEP-1865）— 対話型UIのプロトコル仕様化
 

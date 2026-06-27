@@ -1,6 +1,7 @@
 ---
 title: "Anthropic エンタープライズ攻勢2026 — PwC・KPMG・DXC・TCS と Big Four/SIer 連携、$1.5B FDE スタジオまで"
 date: 2026-06-20
+updatedDate: 2026-06-27
 category: "一般リサーチ"
 tags: ["Anthropic", "Claude", "エンタープライズAI", "PwC", "KPMG", "DXC", "TCS", "Forward Deployed Engineer"]
 excerpt: "2026年5〜6月、Anthropic は PwC・KPMG・DXC・TCS という Big Four / 大手 SIer との大型連携を相次いで発表し、さらに Blackstone・Goldman Sachs・Hellman & Friedman と組んで FDE 型のエンタープライズ AI サービス会社（報道で総額 $1.5B 規模）を立ち上げた。コンサル・SIer・PE を「実装の通り道」として、規制業種・大企業・PE 保有の中堅市場へ Claude を一気に押し込む攻勢の全体像と、各社の認定規模・活用製品・狙う市場を比較整理する一般リサーチ。"
@@ -80,6 +81,27 @@ DXC が「製品基盤への組み込み」なら、TCS は **「自社従業員
 | **KPMG** | 2026-05-19 | 監査法人（Big Four） | 全社 276,000 名以上 | Cowork / Managed Agents / Blaze | 既存基盤 Digital Gateway に統合、税務・PE |
 | **DXC** | 2026-06-11 | IT サービス / SIer | 数万名の認定 FDE | DXC OASIS（Claude が既定基盤モデル）| 銀行・航空・保険・製造・政府、製品標準化 |
 | **TCS** | 2026-06-12 | IT サービス / SIer | 56カ国 50,000 名 | Claude Code / 業界特化製品 | 金融・ヘルスケア・保険請求・融資審査 |
+
+---
+
+## 第1.5部：販売チャネルと物理インフラの提携 — Snowflake / Micron
+
+コンサル・SIer 経由の「実装の通り道」（第1部）に加え、Anthropic は **クラウドデータ基盤（販売チャネル）** と **メモリ／ストレージ（物理インフラ供給）** の両面でもエンタープライズ基盤を固めています。
+
+### 1.5-1. Snowflake — $200M 拡大パートナーシップ（2025-12-03）
+
+2025年12月3日、Anthropic は **Snowflake** との拡大パートナーシップを発表しました。**$200M（2億ドル）規模の複数年契約**で、Amazon Bedrock・Google Cloud Vertex AI・Microsoft Azure 経由で **12,600 社超のグローバル顧客**に Claude モデルを提供します。**Claude Sonnet 4.5** が Snowflake Intelligence を駆動し、**Claude Opus 4.5** も提携初日からホスト、Cortex AI Functions 経由でマルチモーダル分析にも各種 Claude が利用可能になりました。コンサル提携が「人による実装」だとすれば、Snowflake は **データウェアハウス上で Claude を呼び出す販売チャネル**の確保にあたります。
+
+### 1.5-2. Micron — メモリ／ストレージの戦略的合意＋Series H 投資（2026-06-22）
+
+2026年6月22日、Anthropic はメモリ大手 **Micron** と戦略的合意を発表しました。Micron のデータセンター向けポートフォリオ（**HBM〔高帯域幅メモリ〕・DRAM・SSD**）の供給を軸に、AI ワークロードでのメモリ／ストレージ性能の**共同検証**、Micron 社内での Claude 導入、そして **Micron による Anthropic の Series H ラウンドへの戦略的投資**までを含みます（財務条件は非開示。発表当日 Micron 株は終値 $1,211.38 の過去最高値を記録）。GPU／TPU の確保競争に対し、**記憶階層（メモリ／ストレージ）まで垂直に押さえる**動きで、詳細は [Anthropic コンピュートインフラ & TPU パートナーシップ](/mdTechKnowledge/blog/anthropic-tpu-compute-partnership/) も参照。
+
+| 提携先 | 発表日 | 規模・形態 | 主な内容 |
+|---|---|---|---|
+| **Snowflake** | 2025-12-03 | $200M・複数年契約 | 12,600 社超に Claude 提供（Sonnet 4.5 / Opus 4.5・Cortex AI Functions） |
+| **Micron** | 2026-06-22 | 戦略的合意＋Series H 投資（条件非開示） | HBM/DRAM/SSD 供給、メモリ／ストレージ性能の共同検証、社内 Claude 導入 |
+
+出典: [Anthropic: Snowflake expanded partnership](https://www.anthropic.com/news/snowflake-anthropic-expanded-partnership) ／ [Micron: Strategic Agreement with Anthropic](https://investors.micron.com/news-releases/news-release-details/micron-and-anthropic-announce-strategic-agreement-scale-next)
 
 ---
 

@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-06-25
+updatedDate: 2026-06-27
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
 excerpt: "Claude Code v2.0.59〜v2.1.183 のバージョン履歴。`/config key=value` でプロンプトから設定変更・auto モードでの破壊的 git コマンドのブロック・Bun 1.4 ランタイム・接続断時の部分レスポンス保持・WSL2/Windows Terminal スクロール修正・権限ルールのツールパラメータマッチング構文 `Agent(model:opus)`・ネスト `.claude/skills` の自動ロード・auto モードのサブエージェント起動前評価・会話言語でのセッションタイトル生成・`enforceAvailableModels` マネージド設定・`wheelScrollAccelerationEnabled`・サブエージェントが自身のサブエージェントを生成可能（最大5階層）・Claude Fable 5 へのアクセス追加・`--safe-mode` フラグ（カスタマイズ無効化でトラブルシュート）・`/cd` コマンド（プロンプトキャッシュを壊さない作業ディレクトリ変更）・`disableBundledSkills` 設定・fallbackModel 設定（最大3つのフォールバックモデル）・deny ルールの glob 対応・クロスセッションメッセージング堅牢化・既定思考モデルの thinking 無効化・requiredMinimumVersion/requiredMaximumVersion マネージド設定・/plugin list（--enabled/--disabled フィルタ）・バックグラウンドセッションの自動バージョン更新（コールドリスタート不要）・Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-06-25
-**現在の最新バージョン**: 2.1.191
+**最終更新**: 2026-06-27
+**現在の最新バージョン**: 2.1.195
 
 ---
 
@@ -17,6 +17,8 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.195** | **`CLAUDE_CODE_DISABLE_MOUSE_CLICKS`**（フルスクリーンモードでマウスのクリック/ドラッグ/ホバーを無効化しつつホイールスクロールは維持）、多数の修正（ハイフン入り識別子（`code-reviewer` / `mcp__brave-search` 等）を持つフック matcher が部分一致で誤発火する問題、**スペースで区切らない言語（日本語・中国語・タイ語）で音声入力の自動送信が発火しない問題**、macOS で既定入力デバイス変更後に長時間セッションの音声入力が無音を拾う問題、プロジェクト `.claude/settings.json` のみで有効化した外部プラグインが毎回の install consent を要求しない問題、`plugin.json` の `name` がマーケットプレイス名と異なると `/plugin` の有効/無効が効かない問題、新しい Claude Code で書かれた背景ジョブが `claude agents` から消える問題、クラッシュした背景タスク再オープン時に最大5秒間ブランク画面になる問題 等）、Linux 音声モードで「マイクなし」と「SoX 未導入」を区別、`claude agents` 完了リストの縦スペース活用、Remote セッション起動時のプロビジョニング・チェックリスト表示。**※ v2.1.192・v2.1.194 はスキップ番号** |
+| **2.1.193** | **`autoMode.classifyAllShell` 設定を追加**（**すべての Bash/PowerShell コマンド**を auto-mode 分類器に通す。従来は任意コード実行パターンのみ。既定では従来動作＝オプトイン）、**auto-mode の拒否理由（denial reasons）をトランスクリプト・拒否トースト・`/permissions` の最近の拒否一覧に表示**、`claude_code.assistant_response` OpenTelemetry ログイベント追加（応答テキストを含むが `OTEL_LOG_ASSISTANT_RESPONSES=1` 指定時のみ）、**bash モード（`!`）にライブのファイルパス自動補完**を追加、MCP サーバー認証が必要なときの起動時通知（`/mcp` を案内）、アイドルなバックグラウンドシェルのメモリ圧迫時自動回収 |
 | **2.1.191** | **`/rewind` が `/clear` 実行前の状態への会話復元に対応**（クリア前のコンテキストへ巻き戻せる）、**ストリーミング応答中の CPU 使用量を約 37% 削減**（テキスト更新を 100ms 単位でまとめる）、長時間セッションでのターミナル出力キャッシュによるメモリ増加を抑制、多数の修正（ストリーミング中に過去出力を読むとスクロールが最下部へ飛ぶ問題、**タスクパネルから停止した背景エージェントが復活する問題＝停止を恒久化**、`"Bash,PowerShell"` のようなカンマ区切り matcher のフックが発火しない問題、`/permissions` の Recently-denied タブで承認が閉じても残らない問題、Windows Terminal で折り返した `/login` URL の途切れ、組織ポリシーで無効化された `/voice` の汎用メッセージ 等）、MCP の信頼性改善（capability discovery / OAuth discovery・トークン要求の一時的ネットワークエラー時の自動リトライ、HTTP 404 エラーで URL と設定箇所を表示）、サンドボックスのネットワーク許可ダイアログで「Yes」したホストをセッション間記憶 |
 | **2.1.190** | バグ修正・信頼性改善（"Bug fixes and reliability improvements"）。**※ v2.1.188・v2.1.189 はスキップ番号** |
 | **2.1.187** | **`sandbox.credentials` 設定を追加**（サンドボックス内コマンドが**資格情報ファイル・秘密の環境変数を読み取れないようにブロック**）、**組織設定のモデル制限を model picker / `--model` / `/model` / `ANTHROPIC_MODEL` に適用**（制限モデル選択時に「組織設定により制限」メッセージ表示）、フルスクリーンモードのメニュー（権限プロンプト・`/model`・`/config` 等）でマウスクリック選択に対応、多数の修正（`-p` 実行がモデルターンを生成しなかった場合の `--resume` 失敗、`--json-schema`/Workflow `agent({schema})` の StructuredOutput 無限再呼び出し、応答なしで5分ハングするリモート MCP ツール呼び出しをエラー中断（`CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT` で上書き可）、**貼り付けた韓国語/CJK テキストの文字化け修正**、エージェント深度トラッキング（再開・fork サブエージェント）、kill されたエージェントの worktree 登録リーク自動クリーンアップ、agents ビューで「working」のまま固着する背景ジョブ 等）、`/install-github-app` 改善（**GitHub Actions ワークフロー設定を任意化**＝App だけ入れて workflow/secret 手順をスキップ可）、`/btw` の ←/→ ナビゲーション、`/plugin` の未使用プラグイン整理、[VSCode] 大規模セッション再開時の拡張機能フリーズ修正 |
