@@ -1,7 +1,7 @@
 ---
 title: "Anthropic Messages API 新機能まとめ（2026年5〜6月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ"
 date: 2026-06-20
-updatedDate: 2026-06-22
+updatedDate: 2026-06-28
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "プロンプトキャッシュ"]
 excerpt: "2026年5〜6月に Anthropic Messages API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details まで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
@@ -223,6 +223,24 @@ for i, user_message in enumerate(
 **Advisor Tool**（2026年4月9日 public beta、beta ヘッダー `advisor-tool-2026-03-01`）は、安価で高速な「エグゼキューター（実行役）」モデルに、高知能の「アドバイザー（助言役）」モデルを単一 API コール内でペアリングし、長期エージェントタスクの品質をアドバイザー単独に近づけつつトークン生成の大半を安いモデルで賄う機能です。2026年5月28日に Opus 4.8 対応、6月2日に出力上限を絞る `max_tokens` パラメータが追加されました。
 
 本機能は専用記事で詳しく解説しているため、本記事ではここまでとします。詳細は [Advisor Tool ガイド](/mdTechKnowledge/blog/anthropic-advisor-tool-guide/) を参照してください。
+
+## 6. 2026年6月後半の追加アップデート（コード実行・fast mode・レート制限）
+
+5〜6月前半の機能群に続き、6月後半にも API 周りで3つの実務的な変更が入りました。
+
+### `code_execution_20260120` が全公式SDKに対応（2026-06-18）
+
+**Python・TypeScript・Go・Java・Ruby・PHP・C#** の各 SDK が、コード実行ツールの新バージョン **`code_execution_20260120`** に対応しました。**REPL 状態の永続化**に対応し、**プログラマティックツール呼び出し（programmatic tool calling）の最小バージョン**でもあります。ツールの `type` を `code_execution_20260120` に設定するだけで利用でき、**ベータヘッダーは不要**です（対応モデル: Fable 5 / Mythos 5 / Opus 4.5以降 / Sonnet 4.5以降）。
+
+### Opus 4.7 の fast mode が廃止予告（2026-06-25・削除7/24）
+
+Claude Opus 4.7 の fast mode（`speed: "fast"`）が非推奨化され、**2026年7月24日に削除**されます。削除後、`claude-opus-4-7` に `speed: "fast"` を付けたリクエストは**エラー**になります（standard 速度は引き続き利用可）。継続には **Opus 4.8 の fast mode** への移行が必要です（モデルIDを差し替えるだけ。fast 料金も 4.8 の方が安い）。詳細は [モデル廃止・移行ガイド](/mdTechKnowledge/blog/anthropic-model-deprecation-migration/) を参照。
+
+### API レート制限の大改定（2026-06-26）
+
+**Sonnet / Haiku のレート制限が Opus と同一水準**（RPM/ITPM/OTPM）に引き上げられ、利用ティアが **Start / Build / Scale の3段階に統合**されました。大半の組織は自動で上位ティアへ移行し、操作は不要・降格なしです。詳細・新ティアの数値は [Rate Limits API 完全ガイド](/mdTechKnowledge/blog/anthropic-rate-limits-api-guide/) を参照。
+
+> 出典: [Anthropic Release notes](https://platform.claude.com/docs/en/release-notes/overview)
 
 ## まとめ — どの機能をいつ使うか
 
