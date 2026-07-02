@@ -1,7 +1,7 @@
 ---
 title: "Claude Fable 5 徹底解剖① — 「危険すぎて封印」された Mythos は、なぜ Fable 5 として一般公開できたのか"
 date: 2026-06-10
-updatedDate: 2026-06-17
+updatedDate: 2026-07-02
 category: "Claude技術解説"
 tags: ["Claude Fable 5", "Anthropic", "Mythos", "Fable 5", "Mythos 5", "AIモデル", "Claude"]
 excerpt: "2026年6月9日、Anthropic は最強クラスのモデル群「Mythos」を初めて一般公開した。その公開版が Claude Fable 5 だ。Fable 5 と非公開の Mythos 5 は同じ基盤モデルで、違いは安全装置の有無だけ——高リスク領域では応答を Claude Opus 4.8 にフォールバックする。本シリーズ第1話では、Fable 5 とは何か、Mythos 5 との関係、モデルファミリーの系譜、「AIは危険になりすぎている」と警告した数日後に最強モデルを公開したリリースの文脈、価格、そして使える場所までを整理する。さらに API 利用者向けに、新トークナイザ（同一テキストで約30%トークン増）・`stop_reason: refusal`・opt-in `fallbacks`・30日データ保持必須（ZDR不可）・手動 thinking バジェット非対応（400エラー）といった破壊的 API 変更も解説する。"
@@ -13,6 +13,8 @@ draft: false
 - 第1話（本記事）: [Claude Fable 5 徹底解剖①概要編](/blog/claude-fable-5-overview/)
 - 第2話: [Claude Fable 5 徹底解剖②ベンチマーク・性能編](/blog/claude-fable-5-benchmarks/)
 - 第3話: [Claude Fable 5 徹底解剖③安全設計・社会的文脈編](/blog/claude-fable-5-safety-context/)
+
+> **【2026-07-01 追記】Fable 5 は全面解除・全世界で再開しました。** 本記事公開後、Fable 5 / Mythos 5 は米政府の輸出管理指令で一時停止していました（2026-06-12〜）が、**2026年6月30日（PT）に輸出管理が解除され、Fable 5 は 2026年7月1日に全世界で再開**しました（Claude.ai / Claude Platform / Claude Code / Claude Cowork）。Mythos 5 は米国の一部組織向けに限定復旧。停止から再開までの詳しい経緯は [Fable 5 輸出管理停止の全記録](/mdTechKnowledge/blog/claude-fable-5-export-control-suspension/) を参照してください。
 
 ---
 
