@@ -1,7 +1,7 @@
 ---
 title: "Claude vs Gemini 完全比較 — 有料プラン・NotebookLM・Gemini CLI・画像生成API料金（2026年5月版）"
 date: 2026-05-04
-updatedDate: 2026-06-11
+updatedDate: 2026-07-03
 category: "Claude技術解説"
 tags: ["Claude", "Gemini", "NotebookLM", "Gemini CLI", "画像生成", "プラン比較", "API料金"]
 excerpt: "Anthropic ClaudeとGoogle Geminiの有料プランを2026年5月時点で徹底比較。NotebookLM・Gemini CLI・Imagen 4の画像生成API単価まで網羅。"
@@ -172,6 +172,20 @@ Opus 4.8 では **コード欠陥の見落としが Opus 4.7 比で約 1/4**（A
 - Gemini 側の最上位（Gemini 3.x 系）との比較は、料金・提供形態が大きく異なるため単純比較は困難ですが、**Claude は"期間限定で最上位を開放→以降クレジット制"という独特の提供形態**を採った点が特徴です。
 
 > 詳細は別記事 [Claude Mythos Preview & Project Glasswing](/blog/claude-mythos-glasswing/) の Fable 5 / Mythos 5 追記、および [Claude Fable 5 徹底解剖](/blog/claude-fable-5-overview/) を参照。
+
+## 8. Claude Sonnet 5 でデフォルトモデルが交代（2026-07-01 追記）
+
+2026年6月30日（PT）／7月1日（JST）に **Claude Sonnet 5** がリリースされ、**Free / Pro / Claude Code のデフォルトが Sonnet 4.6 → Sonnet 5 に交代**しました。本記事の比較表で「デフォルトモデル」と記した箇所は、現在は Sonnet 5 に読み替えてください。
+
+| 項目 | Claude Sonnet 5 |
+|:---|:---|
+| リリース | 2026-06-30（PT） |
+| デフォルト先 | Free / Pro / Claude Code |
+| コンテキスト | 1M トークン |
+| 料金 | 導入 $2 / $10（〜2026-08-31）→ 通常 $3 / $15 per MTok |
+| agentic coding | 63.2%（Sonnet 4.6=58.1%・Opus 4.8=69.2%） |
+
+Opus 4.8 に迫る性能を低価格で回せるため、Gemini 各モデルとのコスト・性能比較は Sonnet 5 基準での再評価が要ります。詳細は [Claude Sonnet 5 完全ガイド](/blog/claude-sonnet-5-guide/) を参照。
 
 ---
 

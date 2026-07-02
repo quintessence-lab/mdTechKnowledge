@@ -1,7 +1,7 @@
 ---
 title: "Anthropic Messages API 新機能まとめ（2026年5〜6月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ"
 date: 2026-06-20
-updatedDate: 2026-06-28
+updatedDate: 2026-07-03
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "プロンプトキャッシュ"]
 excerpt: "2026年5〜6月に Anthropic Messages API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details まで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
@@ -241,6 +241,20 @@ Claude Opus 4.7 の fast mode（`speed: "fast"`）が非推奨化され、**2026
 **Sonnet / Haiku のレート制限が Opus と同一水準**（RPM/ITPM/OTPM）に引き上げられ、利用ティアが **Start / Build / Scale の3段階に統合**されました。大半の組織は自動で上位ティアへ移行し、操作は不要・降格なしです。詳細・新ティアの数値は [Rate Limits API 完全ガイド](/mdTechKnowledge/blog/anthropic-rate-limits-api-guide/) を参照。
 
 > 出典: [Anthropic Release notes](https://platform.claude.com/docs/en/release-notes/overview)
+
+## 7. Workload Identity Federation（WIF）GA — 静的 API キーを OIDC トークンに置換（2026-06-17）
+
+2026年6月17日、**Workload Identity Federation（WIF）が GA** となりました。長寿命の静的 API キー（`sk-ant-...`）を廃止し、**OIDC 準拠の ID プロバイダが発行する短命・スコープ付きトークン**でリクエスト時に認証できます。
+
+| 項目 | 内容 |
+|:---|:---|
+| GA日 | 2026-06-17 |
+| 対応範囲 | 全 Claude API エンドポイント＋各 SDK |
+| 対応プロバイダ | AWS IAM ロール／GCP・Kubernetes サービスアカウント／Azure managed identity／GitHub Actions トークン／Okta ほか OIDC 準拠すべて |
+| サービスアカウント | `svac_` プレフィックス。ワークロードごとに独自 ID・ロール・監査ログを付与 |
+| 移行 | 既存 API キーと**並行利用可**（段階移行）。インタラクティブ用途は `ant auth login` |
+
+CI/CD やクラウド実行環境で「API キーをシークレットに焼き込む」運用が不要になり、**鍵の共有・漏洩リスクを構造的に排除**できます。出典: [Workload Identity Federation 公式](https://claude.com/blog/workload-identity-federation)。
 
 ## まとめ — どの機能をいつ使うか
 
