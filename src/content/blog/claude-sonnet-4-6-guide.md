@@ -1,7 +1,7 @@
 ---
 title: "Claude Sonnet 4.6 完全ガイド — Free/Pro/Code/Cowork デフォルトモデルの実力"
 date: 2026-05-02
-updatedDate: 2026-05-02
+updatedDate: 2026-07-02
 category: "Claude技術解説"
 tags: ["Claude", "Sonnet 4.6", "Anthropic", "AIモデル", "コンピュータユース", "Adaptive Thinking"]
 excerpt: "2026年2月17日リリースのClaude Sonnet 4.6は、Free/Pro/Claude Code/Coworkすべての新規デフォルトモデル。1Mトークンコンテキスト・SWE-bench 79.6%・コンピュータユース 94%・OSWorld 72.5% という性能で、$3/$15のSonnet価格帯を維持しながらOpus 4.7に匹敵する場面も多い。スペック・機能・Opusとの使い分けを総点検する。"
@@ -11,6 +11,8 @@ draft: false
 ## 1. リリース概要・位置づけ
 
 Anthropic は **2026年2月17日**、Sonnet シリーズの新世代として **Claude Sonnet 4.6**（API モデル ID: `claude-sonnet-4-6`）をリリースしました。同モデルは即日、**Claude.ai の Free / Pro プラン、Claude Code、Claude Cowork のデフォルトモデル**として展開されており、「日常的に最も多く触れる Claude」がそのまま 4.6 になった形です。
+
+> **【2026-07-01 追記】デフォルトモデルは Claude Sonnet 5 に交代しました。** 2026年6月30日（PT）に **Claude Sonnet 5** がリリースされ、**Free / Pro / Claude Code のデフォルトが Sonnet 4.6 → Sonnet 5 に交代**しました（Claude Code は v2.1.197 でデフォルト変更）。Sonnet 5 は 1M コンテキスト・agentic coding ベンチ 63.2%（Sonnet 4.6=58.1%・Opus 4.8=69.2%）で、**導入価格 $2 / $10**（〜2026-08-31、以降 $3 / $15）。本記事の「デフォルトモデル」という記述は Sonnet 5 登場前のものですが、Sonnet 4.6 自体のスペック解説としては引き続き有効です。出典: [Claude Sonnet 5 公式](https://www.anthropic.com/news/claude-sonnet-5)。
 
 | 項目 | 値 |
 |------|-----|
