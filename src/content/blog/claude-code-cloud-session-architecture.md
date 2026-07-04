@@ -1,6 +1,7 @@
 ---
 title: "Claude Code クラウドセッション構成図"
 date: 2026-04-26
+updatedDate: 2026-07-04
 category: "Claude技術解説"
 tags: ["Claude Code", "クラウドアーキテクチャ", "サンドボックス", "GitHub", "AI開発ツール", "Desktop", "Routines"]
 excerpt: "claude.ai / code.claude.comからClaude Codeを利用する際のクラウドセッションアーキテクチャを図解。2026年4月14日のDesktopリデザインとRoutines統合情報を反映。"
@@ -136,3 +137,19 @@ claude.ai / code.claude.comからClaude Codeを利用する際のアーキテク
 - **Routines** = 人不在でもトリガーから自動実行（バックグラウンド実行）
 - 両者ともサンドボックスコンテナ経由で同じ通信アーキテクチャを共有
 - Desktop版マルチセッションサイドバーから両者を横断管理可能
+
+## 【2026-07-04追記】Claude apps gateway — 企業向けセルフホスト型コントロールプレーン（2026-06-29）
+
+2026年6月29日、企業が Claude Code を自己ホストで統制するための **Claude apps gateway** が発表されました（Amazon Bedrock / Google Cloud 向け）。上記の「Anthropic ホストのクラウドセッション」とは別に、**自社インフラ側に制御レイヤーを1つ挟む**構成です。
+
+| 要素 | 内容 |
+|:---|:---|
+| 構成 | Linux 上の**単一ステートレスコンテナ**＋ PostgreSQL。`claude` バイナリに統合 |
+| 認証 | OIDC リライングパーティ（Google Workspace / Microsoft Entra ID / Okta ほか OIDC 準拠）で短期セッション発行 |
+| ポリシー | 中央で一度定義 → クライアントへ自動配布・適用 |
+| アクセス制御 | ロールベースアクセス制御（RBAC） |
+| コスト帰属 | ユーザー単位の利用追跡・支出レポート |
+| 推論ルーティング | Claude API / Amazon Bedrock / Google Cloud へルーティング＋プロバイダ間フェイルオーバー |
+| 支出上限 | 日次 / 週次 / 月次を組織・グループ・ユーザー単位で設定 |
+
+「クラウドセッション（Anthropic ホスト）」に対し、apps gateway は**自社が SSO・ポリシー・課金を握る自己ホスト型**という位置づけです。出典: [Claude apps gateway 公式](https://claude.com/blog/introducing-the-claude-apps-gateway)。

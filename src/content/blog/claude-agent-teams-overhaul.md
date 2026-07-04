@@ -1,6 +1,7 @@
 ---
 title: "Agent Teams 大改訂 — Claudeの『エージェント』の全体像と、v2.1.178で何が変わったか"
 date: 2026-06-20
+updatedDate: 2026-07-04
 category: "Claude技術解説"
 tags: ["Claude Code", "Agent Teams", "サブエージェント", "マルチエージェント", "v2.1.178", "TeamCreate", "Dynamic Workflows", "Managed Agents"]
 excerpt: "Claude Code v2.1.178（2026-06-15 PT）で Agent Teams の内部モデルが大きく改訂された。TeamCreate / TeamDelete ツールが廃止され、CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 を立てると各セッションが最初から『暗黙の1チーム』を持ち、Agent ツールの name パラメータでチームメイトを直接スポーンする方式へ。本記事ではまず Claude の『エージェント』にどんな種類があるか（サブエージェント / Agent Teams / Dynamic Workflows / Managed Agents / Agent View）を体系的に整理し、そのうえで今回の改訂内容を CHANGELOG 原文つきで詳述、さらに改訂の背景を（公式見解がないため）推定として考察する。"
@@ -188,6 +189,17 @@ Agent Teams は一貫して **`CLAUDE_CODE_EXPERIMENTAL_*` フラグ配下の実
 | サブエージェント（結果を返すだけ）を使っている | **影響なし** | `name` を付けなければ従来どおりサブエージェント |
 
 あわせて、`Tool(param:value)` 構文が使えるようになったので、**チームメイト／サブエージェントの起動をコストやモデル単位で縛りたい**場合は、`settings.json` の権限ルールに `Agent(model:opus)` のようなルールを追加して、想定外の高コストエージェントの自動起動を防げます。
+
+## 【2026-07-02追記】v2.1.198 — サブエージェントが既定でバックグラウンド実行に
+
+2026年7月2日（PT）の **v2.1.198** で、**サブエージェント（`Agent(name:...)` でスポーンしたチームメイトを含む）が既定でバックグラウンド実行**になりました（従来は段階的ロールアウト）。
+
+- メインの Claude は**サブエージェントの完了を待たず並行して作業を継続**し、完了時に通知を受け取る
+- `claude agents` のバックグラウンド通知として `Notification` フック（`agent_needs_input` / `agent_completed`）が発火
+- worktree でコード作業を終えたバックグラウンドエージェントは、停止して尋ねる代わりに **commit・push・ドラフトPR作成**まで自動実行
+- フォーカスモード改善：ターン内で起動したサブエージェントが activity summary に表示され、完了通知は件数に集約
+
+Agent Teams の「1セッション＝1チーム」モデルと組み合わさり、**チームメイトを投げて待たずに本流を進める**運用が既定化しました。出典: [Claude Code v2.1.198 リリースノート](https://code.claude.com/docs/en/changelog)。
 
 ---
 
