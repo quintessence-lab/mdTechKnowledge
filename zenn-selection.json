@@ -61,6 +61,12 @@
       "emoji": "💰",
       "type": "idea",
       "topics": ["claude", "anthropic", "ai", "料金", "コスト最適化"]
+    },
+    {
+      "slug": "claude-fable-5-pro-plan-availability",
+      "emoji": "💸",
+      "type": "idea",
+      "topics": ["claude", "anthropic", "fable5", "料金", "ai"]
     }
   ]
 }
