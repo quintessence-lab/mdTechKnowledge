@@ -1,7 +1,7 @@
 ---
 title: "Anthropic Messages API 新機能まとめ（2026年5〜6月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ"
 date: 2026-06-20
-updatedDate: 2026-07-03
+updatedDate: 2026-07-05
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "プロンプトキャッシュ"]
 excerpt: "2026年5〜6月に Anthropic Messages API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details まで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
@@ -239,6 +239,10 @@ Claude Opus 4.7 の fast mode（`speed: "fast"`）が非推奨化され、**2026
 ### API レート制限の大改定（2026-06-26）
 
 **Sonnet / Haiku のレート制限が Opus と同一水準**（RPM/ITPM/OTPM）に引き上げられ、利用ティアが **Start / Build / Scale の3段階に統合**されました。大半の組織は自動で上位ティアへ移行し、操作は不要・降格なしです。詳細・新ティアの数値は [Rate Limits API 完全ガイド](/mdTechKnowledge/blog/anthropic-rate-limits-api-guide/) を参照。
+
+### MCP Tunnels 管理 API が Claude API へ移管（2026-06-22）
+
+リサーチプレビュー中の **MCP Tunnels**（社内プライベートネットワーク上の MCP サーバーへパブリック公開なしで接続する機能）の管理 API が、**Admin API（`/v1/organizations/tunnels`）から Claude API（`/v1/tunnels`）へ移管**されました。新サーフェスは **`anthropic-beta: mcp-tunnels-2026-06-22`** ベータヘッダーと **`workspace:manage_tunnels`** WIF スコープを使用します。**旧 Admin API 側のエンドポイントも移行期間中は利用可能**なので、既存実装は猶予期間内に切り替えれば問題ありません。MCP Tunnels 自体の解説は [MCP アーキテクチャ詳細](/mdTechKnowledge/blog/mcp-architecture/) を参照。
 
 > 出典: [Anthropic Release notes](https://platform.claude.com/docs/en/release-notes/overview)
 

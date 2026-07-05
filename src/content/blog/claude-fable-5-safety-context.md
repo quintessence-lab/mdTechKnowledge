@@ -1,7 +1,7 @@
 ---
 title: "Claude Fable 5 徹底解剖③ — 「政府を不安にさせた技術」Fable 5 に、売り物のブレーキは効くのか"
 date: 2026-06-10
-updatedDate: 2026-07-02
+updatedDate: 2026-07-05
 category: "Claude技術解説"
 tags: ["Claude Fable 5", "Anthropic", "AI安全性", "Project Glasswing", "Mythos 5", "セキュリティ", "Fable 5", "refusal", "fallbacks"]
 excerpt: "最強クラスのモデルを、なぜ安全に一般公開できるのか。Claude Fable 5 は高リスク領域（サイバー・生物化学・蒸留）を検知すると応答を Claude Opus 4.8 にフォールバックする。本シリーズ最終話では、この安全設計の仕組み、30日データ保持ポリシー、ジェイルブレイク耐性をめぐる専門家の懸念、Mythos と政府・Project Glasswing の関係、そして評価額9,650億ドルでOpenAIを上回ったAnthropicのIPO文脈までを整理する。"
@@ -60,6 +60,37 @@ Fable 5 / Mythos 5 のような Mythos クラスのトラフィックには、**
 - **公式が認める限界**: 一方で Anthropic は、**UK AISI（英国 AI 安全研究所）が短い初期テスト期間内に普遍的ジェイルブレイクの発見へ「前進した（made progress towards）」**とも記しています。つまり「完全に無敵」ではないことを公式が認めています。
 
 実際、Fable 5 のサイバー能力ベンチ（ExploitBench）は78.0%と高い一方、ブロッキングモードが機能している状態では「攻撃的サイバータスクの進捗は0%」とされ、安全装置が能力を確実に抑え込んでいる、という構図です。
+
+## 【2026-07 追記】CJS フレームワーク — jailbreak 深刻度の「業界共通の物差し」草案
+
+輸出管理による停止（6/12〜6/30）を経て Fable 5 が再開した翌日の **2026年7月2日**、Anthropic は jailbreak の実害リスクを業界共通の尺度で採点する **Cyber Jailbreak Severity（CJS）フレームワーク**の草案を公表しました（Amazon・Microsoft・Google ら Glasswing パートナーと共同開発を継続する体制）。今回の停止劇の教訓——「1件の jailbreak 報告が、深刻度の共通尺度がないまま緊急のアクセス遮断に直結してしまった」——への構造的な回答です。
+
+### 5段階の深刻度と4つの評価軸
+
+4軸の加点合計（最大10点）を、5段階のバンドに割り当てます。**バンドは線形ではなく指数的**で、公式は「1段階上がるごとに前の段階より数倍深刻」と説明しています。
+
+| レベル | 名称 | スコア |
+|---|---|---|
+| **CJS-0** | Informational（情報提供） | 0 |
+| **CJS-1** | Low | 1〜3.5 |
+| **CJS-2** | Medium | 4〜6.5 |
+| **CJS-3** | High | 7〜8.5 |
+| **CJS-4** | Critical | 9〜10 |
+
+| 評価軸 | 内容 | 配点 |
+|---|---|---|
+| **Capability gain** | 既存ツールを超えて攻撃者の能力をどれだけ引き上げるか | 0〜4 |
+| **Breadth** | 同一手法が通用する攻撃対象・タスクの幅 | 0〜2 |
+| **Ease of weaponization** | 手動プロンプトから「ターンキー」自動化までの実装容易性 | 0〜2 |
+| **Discoverability** | 手法の入手容易性（信頼できる報告者経由=0、公開済み=2） | 0〜2 |
+
+### 何が変わり得るか
+
+CJS が業界標準になれば、jailbreak 報告への対応は「緊急対応（アクセス遮断）一択」ではなく、**「緊急対応か・通常パッチか・対応不要か」を構造的に振り分けるトリアージ**へ移行し得ます。今回のような輸出管理レベルの介入は、本来 CJS-4 級に限定されるべき判断だった——という整理を可能にする共通言語です。ただし公式は**最終化のタイムラインは未設定・ラボ間でスコアが割れた場合の調停者も未定**としており、まだ「草案」段階です。
+
+なお、再開にあたり Fable 5 に追加された**新しいサイバー分類器**は、停止のトリガーとなった bypass 手法（Amazon 報告）を **99%超のケースでブロック**することが、NIST 傘下の **CAISI（Center for AI Standards and Innovation）** による独立検証で確認されています。
+
+参考: [Anthropic: More details on Fable 5's cyber safeguards and our jailbreak framework](https://www.anthropic.com/news/fable-safeguards-jailbreak-framework) ／ [Anthropic: Redeploying Fable 5](https://www.anthropic.com/news/redeploying-fable-5) ／ [GBHackers（2026-07-03）](https://gbhackers.com/anthropic-unveils-cyber-jailbreak-severity-framework/)
 
 ## Mythos と政府・Project Glasswing
 

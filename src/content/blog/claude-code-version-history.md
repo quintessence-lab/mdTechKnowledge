@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-07-02
+updatedDate: 2026-07-05
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
 excerpt: "Claude Code v2.0.59〜v2.1.198 のバージョン履歴。`/config key=value` でプロンプトから設定変更・auto モードでの破壊的 git コマンドのブロック・Bun 1.4 ランタイム・接続断時の部分レスポンス保持・WSL2/Windows Terminal スクロール修正・権限ルールのツールパラメータマッチング構文 `Agent(model:opus)`・ネスト `.claude/skills` の自動ロード・auto モードのサブエージェント起動前評価・会話言語でのセッションタイトル生成・`enforceAvailableModels` マネージド設定・`wheelScrollAccelerationEnabled`・サブエージェントが自身のサブエージェントを生成可能（最大5階層）・Claude Fable 5 へのアクセス追加・`--safe-mode` フラグ（カスタマイズ無効化でトラブルシュート）・`/cd` コマンド（プロンプトキャッシュを壊さない作業ディレクトリ変更）・`disableBundledSkills` 設定・fallbackModel 設定（最大3つのフォールバックモデル）・deny ルールの glob 対応・クロスセッションメッセージング堅牢化・既定思考モデルの thinking 無効化・requiredMinimumVersion/requiredMaximumVersion マネージド設定・/plugin list（--enabled/--disabled フィルタ）・バックグラウンドセッションの自動バージョン更新（コールドリスタート不要）・Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-06-27
-**現在の最新バージョン**: 2.1.195
+**最終更新**: 2026-07-05
+**現在の最新バージョン**: 2.1.201
 
 ---
 
@@ -17,6 +17,9 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.201** | Claude Sonnet 5 セッションで、ハーネスのリマインダーに mid-conversation system ロールを使用しないよう変更 |
+| **2.1.200** | **デフォルト権限モードの名称を「Manual」に変更**（従来「default」と表示されていたモード。CLI・`--help`・VS Code・JetBrains 横断）、**`AskUserQuestion` ダイアログの自動継続（auto-continue）を既定で無効化**（アイドルタイムアウトによる自動続行は `/config` でオプトイン）、多数の背景セッション/デーモン修正（スリープ復帰後にターン途中で静かに停止する問題、キャンセル済みターンの再実行、stale lock でデーモン復帰不能、roster 破損、**レート制限で切られたサブエージェントが空を返す問題＝クリーンに失敗するように** 等）、スクリーンリーダー向け出力改善、`disabledMcpServers` 不正値での起動クラッシュ修正 |
+| **2.1.199** | **スタックしたスラッシュスキル呼び出し（`/skill-a /skill-b …`）で先頭のスキルを最大5個まで読み込み**（従来は先頭1個のみ）、**レート制限/サーバエラーで切られたサブエージェントが部分成果を親へ返すように**（静かな失敗を解消）、**plan mode が状態変更系ブラウザツール呼び出しで確認を要求**（read-only の `browser_batch` は自動許可）、サブスクライバーの一時的 429 を自動リトライ（バックオフ付き）、`CLAUDE_CODE_RETRY_WATCHDOG` でリトライ上限300へ、ストリーム途中の overloaded エラーで部分出力を保持、多数の背景エージェント/フック/設定復旧まわりの修正 |
 | **2.1.198** | **Claude in Chrome が一般提供（GA）**、**バックグラウンドエージェント通知**（`Notification` フック: `agent_needs_input` / `agent_completed`）、**`/dataviz` スキル**（チャート・ダッシュボード設計＋カラーパレット検証）、**ゲートウェイに Claude Platform on AWS を上流プロバイダ追加**、**バックグラウンドエージェントがコード作業完了時に commit・push・ドラフトPR作成**、Explore エージェントがメインセッションのモデルを継承（Opus上限）、サブエージェント／コンテキスト圧縮が extended thinking 設定を継承、多数の修正（ネットワーク切断でのターン中断→バックオフ再試行、agent teams の failed 誤報告、`/diff` パネル更新、markdown テーブルのフルスクリーン溢れ 等）、`/agents` ウィザード削除（計32変更） |
 | **2.1.197** | **Claude Sonnet 5 をデフォルトモデルに**（1M トークンコンテキスト・促進価格。Free/Pro に続き Claude Code のデフォルトも Sonnet 4.6 → Sonnet 5 へ） |
 | **2.1.196** | **組織デフォルトモデル対応**（`/model` に「Org default」表示）、起動時の読みやすいデフォルトセッション名、チャットでのファイル添付クリック（Cmd/Ctrl+クリック）、**セキュリティ: `claude mcp list`/`get` が self-approved サーバーを起動しないよう修正**、`/code-review` ワークフロー効率25%改善、stream watchdog デフォルト有効化、背景ジョブ・レート制限・ステータス報告の各修正 |
