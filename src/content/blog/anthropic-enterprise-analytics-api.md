@@ -1,7 +1,7 @@
 ---
 title: "Anthropic Enterprise Analytics API 完全ガイド — 組織別利用データの照会と活用"
 date: 2026-05-02
-updatedDate: 2026-06-22
+updatedDate: 2026-07-07
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Admin API", "Analytics", "エンタープライズ", "FinOps", "Slack連携", "Workload Identity Federation", "OIDC"]
 excerpt: "2026年4月、Anthropic は Claude / Claude Code Remote / Claude Cowork の組織別利用データをプログラム照会できる Enterprise Analytics API を拡張した。Rate Limits API との位置付けの違い、エンドポイント構造、認証、レスポンス、Python/curl 実装例、Slackボット連携、運用ユースケース、制限事項までをまとめて解説する。さらに2026年6月の Workload Identity Federation（WIF＝OIDCトークンによるAPIキー不要認証）対応と、Admin API に追加された issuers / service accounts / federation rules エンドポイントも解説する。"
@@ -445,6 +445,21 @@ WIF リソースはコンソールの「Connect workload」ウィザードに加
 - 発行トークンの寿命は「ルールの `token_lifetime_seconds`」と「提示した IdP JWT の残存寿命×2」の**短い方**（最低60秒）。
 
 > 出典: [Workload Identity Federation — Anthropic 公式ドキュメント](https://platform.claude.com/docs/en/manage-claude/workload-identity-federation)。Admin API 詳細は Service accounts / Federation issuers / Federation rules の各 API リファレンス参照。
+
+## 【2026-07-02】管理者向け大型アップデート — コスト可視化・モデル制限・支出アラート
+
+2026年7月2日、Anthropic は Claude Enterprise の**管理者向けコントロールを大幅に強化**しました。本記事が扱う Analytics API の周辺（管理ダッシュボード・エンタイトルメント・アラート）が一気に拡充されています（[公式ブログ](https://claude.com/blog/giving-admins-more-visibility-and-control-over-claude-usage-and-spend)）。
+
+| 新機能 | 内容 |
+|---|---|
+| **グループ/ユーザー別のコスト×生産性表示** | 管理ダッシュボードで「利用とコストをグループ別・ユーザー別」に表示。**Artifacts 作成数・ファイル編集数・使用スキル/コネクタ**などのアウトプットが**コストと並べて**見える。SCIM グループでフィルタ可。Claude Code 専用タブでは開発者数・セッション指標に加え「**生産性向上の推計・コミット単価・年間価値**」も表示 |
+| **モデルレベル・エンタイトルメント** | 管理者が**新規会話の開始モデル（デフォルト）とアクセス可能モデル**を、chat / Cowork / Claude Code 横断でロール別・組織全体に設定可能。不要な最上位モデル利用の抑制に |
+| **支出アラート** | 組織レベル: 支出上限の **75% / 90%** でメール通知。ユーザーレベル: **75% / 95%** でアプリ内通知＋**Claude 内から管理者へ増額申請**できる導線 |
+| **FinOps ツール連携** | Analytics API 経由で **Datadog Cloud Cost Management・CloudZero** にエクスポートし、他のクラウド/AI支出と並べて管理。日付・チーム・プロダクト・モデルでフィルタ可 |
+| **Skills / Plugin のコスト計上** | 「**スキルが自身の利用とコストを報告**」し、**プラグイン採用状況・Artifact 作成数を追跡する新エンドポイント**を追加 |
+| **Analytics Chat（自然言語）** | 管理者が自然言語で質問（例:「今月 Claude 利用が2倍に増えたチームは？」）→ **エクスポート・共有可能なグラフで回答** |
+
+> **本記事の API 群との関係**: 従来の Analytics API（利用実績の取得）を土台に、「**見る（ダッシュボード/Chat）→ 制御する（エンタイトルメント）→ 守る（支出アラート）→ つなぐ（FinOps 連携）**」が一体化した形です。対象は Claude **Enterprise**（GA として提供）。新エンドポイント（Skills/Plugin/Artifact 系）の仕様は公式ドキュメントの更新を確認してください。
 
 ## まとめ — Rate Limits API との両輪で運用する
 

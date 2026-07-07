@@ -1,7 +1,7 @@
 ---
 title: "Claude Fable 5 徹底解剖③ — 「政府を不安にさせた技術」Fable 5 に、売り物のブレーキは効くのか"
 date: 2026-06-10
-updatedDate: 2026-07-05
+updatedDate: 2026-07-07
 category: "Claude技術解説"
 tags: ["Claude Fable 5", "Anthropic", "AI安全性", "Project Glasswing", "Mythos 5", "セキュリティ", "Fable 5", "refusal", "fallbacks"]
 excerpt: "最強クラスのモデルを、なぜ安全に一般公開できるのか。Claude Fable 5 は高リスク領域（サイバー・生物化学・蒸留）を検知すると応答を Claude Opus 4.8 にフォールバックする。本シリーズ最終話では、この安全設計の仕組み、30日データ保持ポリシー、ジェイルブレイク耐性をめぐる専門家の懸念、Mythos と政府・Project Glasswing の関係、そして評価額9,650億ドルでOpenAIを上回ったAnthropicのIPO文脈までを整理する。"
@@ -89,6 +89,21 @@ Fable 5 / Mythos 5 のような Mythos クラスのトラフィックには、**
 CJS が業界標準になれば、jailbreak 報告への対応は「緊急対応（アクセス遮断）一択」ではなく、**「緊急対応か・通常パッチか・対応不要か」を構造的に振り分けるトリアージ**へ移行し得ます。今回のような輸出管理レベルの介入は、本来 CJS-4 級に限定されるべき判断だった——という整理を可能にする共通言語です。ただし公式は**最終化のタイムラインは未設定・ラボ間でスコアが割れた場合の調停者も未定**としており、まだ「草案」段階です。
 
 なお、再開にあたり Fable 5 に追加された**新しいサイバー分類器**は、停止のトリガーとなった bypass 手法（Amazon 報告）を **99%超のケースでブロック**することが、NIST 傘下の **CAISI（Center for AI Standards and Innovation）** による独立検証で確認されています。
+
+### サイバー分類器の「4カテゴリ」— 何を止め、何を通すか
+
+同時に公開されたサイバーセーフガードの中核が、リクエストを**4カテゴリに分類**して扱いを変える仕組みです。「セキュリティ用途は通し、攻撃用途は止める」を機械的に切り分けます。
+
+| カテゴリ | 定義 | 扱い | 例 |
+|---|---|---|---|
+| **Prohibited Use（禁止）** | 重大な害をもたらし得る／大半の用途が有害で防御的価値がほぼない活動 | **常時ブロック** | ランサムウェア、ワイパー、防御回避、C2、データ持ち出し、マルウェア開発・配信 |
+| **High-Risk Dual Use（高リスク両用）** | 悪用者に広く使われるが正当な用途もある活動 | **より良いアクセス制御が整うまでブロック** | ペネトレーションテスト、エクスプロイト開発、権限昇格、既存能力を超える脆弱性発見 |
+| **Low-Risk Dual Use（低リスク両用）** | 主に防御目的だが悪用者にも価値がある活動 | **監視。安全マージンとして時にブロック** | OSINT、標準的な脆弱性特定、暗号プロトコルのテスト |
+| **Benign Use（無害）** | 害をもたらさない活動 | **監視つきで許可** | セキュアコーディング、デバッグ、パッチ管理、脅威ハンティング、マルウェアのリバースエンジニアリング、セキュリティ教育 |
+
+この設計により、SOC 分析やセキュアコーディングといった**正当なセキュリティ実務は通しつつ**、攻撃そのものに直結する用途を止めます。前掲のとおり、ブロック時は多くの場合 Opus 4.8 にフォールバックし、拒否は `stop_reason: "refusal"`（HTTP 200）で返ります。
+
+**HackerOne プログラム開始**: あわせて Anthropic は、セキュリティ研究者が Fable 5 のサイバー jailbreak を報告できる **HackerOne プログラム**（`hackerone.com/anthropic-cyber-jailbreak/`）を開始しました。報告された手法は前掲の CJS フレームワークで深刻度が採点される想定です（報酬体系の詳細は本記事執筆時点で未記載）。
 
 参考: [Anthropic: More details on Fable 5's cyber safeguards and our jailbreak framework](https://www.anthropic.com/news/fable-safeguards-jailbreak-framework) ／ [Anthropic: Redeploying Fable 5](https://www.anthropic.com/news/redeploying-fable-5) ／ [GBHackers（2026-07-03）](https://gbhackers.com/anthropic-unveils-cyber-jailbreak-severity-framework/)
 

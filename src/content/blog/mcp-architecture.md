@@ -109,6 +109,12 @@ USBデバイス（マウス等）    =    MCPサーバー（GitHub, Gmail等）
 
 参考: [Enterprise-Managed Authorization（MCP公式ブログ）](https://blog.modelcontextprotocol.io/posts/enterprise-managed-auth/) / [The New Stack 解説](https://www.techtimes.com/articles/318708/20260619/mcp-enterprise-authorization-goes-stable-zero-touch-sso-okta-anthropic-vs-code.htm)
 
+#### MCP tunnels（Research Preview）— 社内ネットワークの MCP サーバーへ安全に到達
+
+**MCP tunnels**（2026-05-19 リサーチプレビュー開始）は、**社内プライベートネットワーク上の MCP サーバーへ、パブリックエンドポイントを公開せずにアクセス**するための機能です。軽量ゲートウェイが**アウトバウンド1本の暗号化接続**を Anthropic 側へ確立するため、ファイアウォールのインバウンド開放が不要になります。EMA が「誰がどのコネクタを使えるか（認可）」を担うのに対し、tunnels は「内部サーバーへどう到達するか（経路）」を担う補完関係です。
+
+> **【2026-06-22】管理 API が Claude API へ移管**: tunnels の管理 API は **Admin API（`/v1/organizations/tunnels`）から Claude API（`/v1/tunnels`）へ移管**されました。新サーフェスは **`anthropic-beta: mcp-tunnels-2026-06-22`** ベータヘッダーと **`workspace:manage_tunnels`** WIF スコープを使用します。**旧 Admin API 側も移行期間中は利用可能**なので、既存実装は猶予期間内の切替でOKです（出典: [Claude Platform release notes](https://platform.claude.com/docs/en/release-notes/overview)）。
+
 #### 【2026-06-08】Connectors Directory（300+ コネクタ・アプリ内サブミット）
 
 MCP エコシステムの広がりを示す指標として、Anthropic は公開の **Connectors Directory** を提供しています。2026年6月8日のアップデート時点で、ディレクトリには **300 を超えるサードパーティ製コネクタ**が掲載され（いずれも MCP 上に構築・「毎日数百万人が利用」）、開発者は自分の MCP サーバーを **Claude 内から直接ディレクトリへサブミット**できるようになりました（in-app submission）。同時に、掲載コネクタの**アクティブユーザー数・総ツールコール数・ディレクトリ内ランク・ヘルススコア・エラー率・レイテンシ**を可視化するパフォーマンスダッシュボードも追加されています。MCP が「仕様」だけでなく**流通基盤（マーケットプレイス的レイヤー）**を備えつつあることを示す動きです。
