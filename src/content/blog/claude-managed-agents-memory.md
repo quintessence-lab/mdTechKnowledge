@@ -1,7 +1,7 @@
 ---
 title: "Claude Managed Agents Memory 完全ガイド — 永続記憶機能（Public Beta）の仕組みと活用"
 date: 2026-05-02
-updatedDate: 2026-05-08
+updatedDate: 2026-07-12
 category: "Claude技術解説"
 tags: ["Claude", "Managed Agents", "Memory", "永続記憶", "Public Beta", "Anthropic", "API", "監査ログ", "マルチエージェント", "Dreaming"]
 excerpt: "2026年4月23日にPublic Betaへ移行したClaude Managed AgentsのMemory機能を詳細に解説。memory storeのアーキテクチャ、必須ヘッダーmanaged-agents-2026-04-01、ファイルツール連携、バージョン管理（30日保持）、監査・redact、マルチエージェント共有パターン、長期プロジェクト・ユーザー嗜好・タスク継続といったユースケース、制限事項と運用上のヒント。2026年5月発表のDreaming（セッション間自己改善・Harvey社で完了率6倍）も解説。"
@@ -86,6 +86,22 @@ Managed Agentsの全体ガイドでは「3層アーキテクチャ（Session/Har
 ```
 anthropic-beta: managed-agents-2026-04-01
 ```
+
+> **【2026-07-02 追記】新ベータヘッダー `agent-memory-2026-07-22` で Memory 一覧の挙動が変更**
+>
+> 2026年7月2日、メモリ一覧（`GET /v1/memory_stores/{id}/memories`）の挙動を変える **`agent-memory-2026-07-22`** ベータヘッダーが追加されました。主な変更点:
+>
+> | 項目 | 変更内容 |
+> |:---|:---|
+> | **並び順** | 結果は**サーバー定義の安定した順序**で返る。**`order_by` / `order` は無視**される |
+> | **`depth`** | **`0` / `1` / 省略のみ**受付。それ以外の値は **`400` エラー** |
+> | **`path_prefix`** | **末尾 `/` が必須**になり、**部分一致（substring）→ パスセグメント一致**に変更 |
+> | **ページカーソル** | ヘッダー無しで発行したカーソルは無効。採用時は**先頭ページからやり直す** |
+>
+> - **メモリストア系エンドポイントでは `agent-memory-2026-07-22` が `managed-agents-2026-04-01` を置き換える**（両方同時送信は **`400`**）。
+> - **2026年7月22日以降は、旧ヘッダー `managed-agents-2026-04-01` でも同じ一覧挙動が適用**されます（＝実質的に移行期限）。
+> - 公式 SDK は **Python 0.116.0 / TypeScript 0.110.0 / Go 1.56.0 / Java 2.48.0 / Ruby 1.55.0 / PHP 0.36.0 / C# 12.35.0 / CLI 1.16.0** で、メモリストア呼び出し時に新ヘッダーへ切替済み。`betas` を明示指定している場合は、メモリストア呼び出しで `managed-agents-2026-04-01` を `agent-memory-2026-07-22` に**置き換える**（2つ目として追加しない）。
+> - 出典: [Claude Platform リリースノート（2026-07-02）](https://platform.claude.com/docs/en/release-notes/overview)
 
 ### Memory store のCRUD操作概要
 

@@ -1,7 +1,7 @@
 ---
 title: "Anthropic Rate Limits API 完全ガイド — 組織・ワークスペースのレート制限をプログラム照会"
 date: 2026-04-29
-updatedDate: 2026-07-03
+updatedDate: 2026-07-12
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Rate Limits", "Admin API", "エンタープライズ", "運用監視", "Agent SDK credits"]
 excerpt: "2026年4月25日リリースのAnthropic Rate Limits API（読み取り専用Admin API）を解説。組織・ワークスペース単位のレート制限をJSONで取得可能。2026年5月のSpaceX Colossus 1コンピュート契約によるレート制限大幅向上（Claude Code 5h制限2倍・Pro/Maxピーク廃止・Opus API上昇）、2026年6月15日施行のAgent SDK課金分離（Pro $20 / Max 5x $100 / Max 20x $200 月次credits、プログラム的利用を別プール化）まで収録。CI/Slackボット/ゲートウェイから自動照会できる構成例、認証、レスポンス、運用ユースケースまで網羅。"
@@ -439,6 +439,17 @@ Admin API キー（`sk-ant-admin-...`）は**通常の API キーよりも強力
 - **監査ログ**: Admin API の呼び出しログを SIEM（Splunk、Datadog、Sentinel 等）に集約
 
 公式ドキュメントは「キーは admin ロールを持つ組織メンバーが Console から発行する」旨を明記しているため、組織の承認フローを通じてだけ発行できる仕組みを徹底してください。
+
+#### 【2026-07-08】API キー・Admin API キーに有効期限を設定可能に
+
+2026年7月8日、[Claude Console](https://platform.claude.com/settings/keys) で **API キー／Admin API キーの作成時に有効期限（expiration）を設定**できるようになりました。前述の「ローテーション」を仕組みとして強制でき、キー管理のセキュリティが一段上がります。
+
+- **選べる期限**: プリセット期間・カスタム期間・**Never（無期限）** から選択。
+- **期限前の通知**: 有効期間が **7日以上のキーは、失効前に作成者へメール通知**が届く（うっかり失効による障害を防止）。
+- **確認方法**: Admin API の [`expires_at`](https://platform.claude.com/docs/en/api/admin/api_keys/list) フィールドで各キーの期限を取得可能。
+- **既存キーへの影響なし**: 既存キーは無期限のまま（明示的に作り直さない限り失効しない）。
+
+> Rate Limits API を叩く自動化（CI/ゲートウェイ/監視）では、**キーに期限を付けた場合は失効前のローテーション自動化**もセットで用意してください（`expires_at` を監視し、閾値日数で再発行）。出典: [Claude Platform リリースノート（2026-07-08）](https://platform.claude.com/docs/en/release-notes/overview) ／ [Authentication（Key expiration）](https://platform.claude.com/docs/en/manage-claude/authentication#key-expiration)。
 
 ## 2026年5月 レート制限大幅向上 — SpaceX Colossus 1 コンピュート契約を背景に
 
