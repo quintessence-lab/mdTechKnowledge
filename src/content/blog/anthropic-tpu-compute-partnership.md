@@ -1,10 +1,10 @@
 ---
 title: "Anthropic コンピュートインフラ & TPUパートナーシップ — Google・BroadcomとのマルチギガワットTPU契約（2027年稼働）"
 date: 2026-04-29
-updatedDate: 2026-07-09
+updatedDate: 2026-07-12
 category: "一般リサーチ"
 tags: ["Anthropic", "Google", "Broadcom", "TPU", "AIインフラ", "コンピュート", "パートナーシップ", "SpaceX", "xAI", "Colossus", "GPU", "Akamai", "Fluidstack", "データセンター", "米国インフラ投資"]
-excerpt: "2026年4月6日発表のGoogle・BroadcomとのマルチギガワットTPU契約（2027年稼働）に加え、2026年5月のSpaceX xAI Colossus 1データセンター全容量契約（300MW超・GPU22万台超）、Akamai Technologies $1.8B・7年間クラウドコンピュート契約を収録。Anthropicのマルチクラウド・マルチベンダーインフラ戦略を整理。あわせて2025年11月発表の$50B米国AIインフラ投資（Fluidstackと組みテキサス州・ニューヨーク州にデータセンターを建設、2026年中に順次稼働）も収録。"
+excerpt: "2026年4月6日発表のGoogle・BroadcomとのマルチギガワットTPU契約（2027年稼働）に加え、2026年5月のSpaceX xAI Colossus 1データセンター全容量契約（300MW超・GPU22万台超）、Akamai Technologies $1.8B・7年間クラウドコンピュート契約を収録。Anthropicのマルチクラウド・マルチベンダーインフラ戦略を整理。あわせて2025年11月発表の$50B米国AIインフラ投資（Fluidstackと組みテキサス州・ニューヨーク州にデータセンターを建設、2026年中に順次稼働）、2026年6月のMicron戦略協定（HBM/DRAM/SSD複数年供給）、2026年7月のTeraWulf 20年リース（$19B・ケンタッキー州Hawesville・最大401MW・2027年後半稼働）も収録。"
 draft: false
 ---
 
