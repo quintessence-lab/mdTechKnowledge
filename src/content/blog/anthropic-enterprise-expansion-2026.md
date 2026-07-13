@@ -1,7 +1,7 @@
 ---
 title: "Anthropic エンタープライズ攻勢2026 — PwC・KPMG・DXC・TCS と Big Four/SIer 連携、$1.5B FDE スタジオまで"
 date: 2026-06-20
-updatedDate: 2026-06-27
+updatedDate: 2026-07-14
 category: "一般リサーチ"
 tags: ["Anthropic", "Claude", "エンタープライズAI", "PwC", "KPMG", "DXC", "TCS", "Forward Deployed Engineer"]
 excerpt: "2026年5〜6月、Anthropic は PwC・KPMG・DXC・TCS という Big Four / 大手 SIer との大型連携を相次いで発表し、さらに Blackstone・Goldman Sachs・Hellman & Friedman と組んで FDE 型のエンタープライズ AI サービス会社（報道で総額 $1.5B 規模）を立ち上げた。コンサル・SIer・PE を「実装の通り道」として、規制業種・大企業・PE 保有の中堅市場へ Claude を一気に押し込む攻勢の全体像と、各社の認定規模・活用製品・狙う市場を比較整理する一般リサーチ。"
@@ -130,6 +130,14 @@ DXC が「製品基盤への組み込み」なら、TCS は **「自社従業員
 Anthropic CFO の Krishna Rao は「Claude へのエンタープライズ需要が、単一のデリバリーモデルでは到底追いつかないほど拡大している」と述べており、この合弁は **需要に対する"実装キャパシティ"の不足** を埋める手段として位置づけられています。Fortune は本件を **コンサル業界への対抗軸** と報じました。
 
 > 補足: 同日 OpenAI も同種の合弁（DeployCo）を発表しており、**AI 大手が揃って "実装会社" を別法人で立てる** 流れが鮮明になりました。FDE そのものの背景は当サイトの別記事「Forward Deployed Engineer（FDE）とは」も参照してください。
+
+## 【2026-07 追記】新規パートナーシップ2件（UST・LTM）
+
+**UST**（2026年7月8日発表）: グローバルIT/デジタルトランスフォーメーション企業 UST が Anthropic と戦略的提携を締結。Claude を UST のプラットフォーム・エンジニアリング・オペレーションに組み込み、**Global 1000 企業のAIネイティブ化を支援**する。**UST 従業員 20,000人を Claude 認定訓練**し、アーキテクト・エンジニア・コンサルタント・業界スペシャリスト・Forward Deployed Engineer（FDE）まで幅広い役割をカバー。UST 自身も Claude Partner Network の Global Premier Partner に位置づけられ、**自社内部のAIネイティブ化**にも着手する。
+
+**LTM**（2026年7月13日発表）: LTM が Claude・Claude Code・Claude Cowork のエンタープライズ規模導入を加速する提携を発表。**LTM BlueVerse AI Delivery Fabric**（AI主導のソフトウェアエンジニアリング・アプリケーションモダナイゼーション・エージェントオーケストレーション・SRE・可観測性・カオスエンジニアリングを横断する実装レイヤー）に Claude を統合。**AI1000 タレントプログラム**を拡張し、Claude 認定アーキテクト・FDE を大量育成。**Claude Center of Excellence（CoE）**を新設し、再利用可能なスキル・エージェント型MVP・リファレンスアーキテクチャ・プレイブックを整備。対象業界は **BFSI（金融）・Hi-Tech・Consumer・Production**。
+
+2社とも、上記「第3部」で整理した**FDE（実装専任エンジニア）を軸にした導入モデル**を踏襲しており、Anthropic のエンタープライズ展開戦略が業界横断で継続していることを裏づける。出典: [PR Newswire: UST-Anthropic](https://www.prnewswire.com/news-releases/ust-partners-with-anthropic-to-bring-claude-into-usts-platforms-engineering-and-operations-and-train-20-000-ust-employees-globally-302820669.html) ／ [Business Standard: LTM-Anthropic](https://www.business-standard.com/companies/news/ltm-anthropic-partnership-claude-enterprise-ai-transformation-126071300386_1.html)。
 
 ---
 

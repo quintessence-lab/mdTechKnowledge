@@ -1,7 +1,7 @@
 ---
 title: "Claude Code クラウドセッション構成図"
 date: 2026-04-26
-updatedDate: 2026-07-04
+updatedDate: 2026-07-14
 category: "Claude技術解説"
 tags: ["Claude Code", "クラウドアーキテクチャ", "サンドボックス", "GitHub", "AI開発ツール", "Desktop", "Routines"]
 excerpt: "claude.ai / code.claude.comからClaude Codeを利用する際のクラウドセッションアーキテクチャを図解。2026年4月14日のDesktopリデザインとRoutines統合情報を反映。"
@@ -153,3 +153,7 @@ claude.ai / code.claude.comからClaude Codeを利用する際のアーキテク
 | 支出上限 | 日次 / 週次 / 月次を組織・グループ・ユーザー単位で設定 |
 
 「クラウドセッション（Anthropic ホスト）」に対し、apps gateway は**自社が SSO・ポリシー・課金を握る自己ホスト型**という位置づけです。出典: [Claude apps gateway 公式](https://claude.com/blog/introducing-the-claude-apps-gateway)。
+
+## 【2026-07追記】Claude Desktop for Linux（ベータ）
+
+2026年6月30日、**Claude Desktop の Linux版が公式ベータ**として公開されました。**Ubuntu 22.04 以降・Debian 12 以降**（x86_64・arm64）が対象で、Anthropic 公式 apt リポジトリからインストールします。macOS/Windows と同じ Chat・Cowork・Claude Code 体験（並列セッション・ビジュアル diff レビュー・統合ターミナル/エディタ）を提供しますが、**Computer Use・音声入力は未対応**（Fedora/RHEL/Arch も現時点は非対応）。詳細は [Claude Codeの実行環境まとめ](/mdTechKnowledge/blog/claude-code-execution-environments/) を参照。出典: [Claude Desktop on Linux（公式）](https://code.claude.com/docs/en/desktop-linux)。

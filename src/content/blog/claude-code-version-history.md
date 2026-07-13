@@ -1,7 +1,7 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-07-12
+updatedDate: 2026-07-14
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
 excerpt: "Claude Code v2.0.59〜v2.1.207 のバージョン履歴。`/config key=value` でプロンプトから設定変更・auto モードでの破壊的 git コマンドのブロック・Bun 1.4 ランタイム・接続断時の部分レスポンス保持・WSL2/Windows Terminal スクロール修正・権限ルールのツールパラメータマッチング構文 `Agent(model:opus)`・ネスト `.claude/skills` の自動ロード・auto モードのサブエージェント起動前評価・会話言語でのセッションタイトル生成・`enforceAvailableModels` マネージド設定・`wheelScrollAccelerationEnabled`・サブエージェントが自身のサブエージェントを生成可能（最大5階層）・Claude Fable 5 へのアクセス追加・`--safe-mode` フラグ（カスタマイズ無効化でトラブルシュート）・`/cd` コマンド（プロンプトキャッシュを壊さない作業ディレクトリ変更）・`disableBundledSkills` 設定・fallbackModel 設定（最大3つのフォールバックモデル）・deny ルールの glob 対応・クロスセッションメッセージング堅牢化・既定思考モデルの thinking 無効化・requiredMinimumVersion/requiredMaximumVersion マネージド設定・/plugin list（--enabled/--disabled フィルタ）・バックグラウンドセッションの自動バージョン更新（コールドリスタート不要）・Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
@@ -14,6 +14,8 @@ draft: false
 ---
 
 ## 主要マイルストーン一覧
+
+> **【2026-07-19まで延長中】Claude Code 週間利用上限 +50% プロモーション**（バージョン非依存）: Pro / Max / Team・legacy 席課金型 Enterprise 対象、CLI・IDE・Desktop・Web すべての Claude Code 利用に適用。有効化操作不要、期限後は自動的に通常水準へ戻る。Claude（web/desktop/mobile）・Cowork の上限は対象外。詳細は [Rate Limits API 完全ガイド](/mdTechKnowledge/blog/anthropic-rate-limits-api-guide/) を参照。
 
 | バージョン | 主な機能追加 |
 |-----------|------------|

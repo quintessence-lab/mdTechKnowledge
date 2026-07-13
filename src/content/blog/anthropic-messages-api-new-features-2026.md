@@ -1,7 +1,7 @@
 ---
-title: "Anthropic Messages API 新機能まとめ（2026年5〜6月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ"
+title: "Anthropic Messages API 新機能まとめ（2026年5〜7月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・APIキー有効期限"
 date: 2026-06-20
-updatedDate: 2026-07-09
+updatedDate: 2026-07-14
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "プロンプトキャッシュ"]
 excerpt: "2026年5〜6月に Anthropic Messages API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details まで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
@@ -263,6 +263,19 @@ Claude Opus 4.7 の fast mode（`speed: "fast"`）が非推奨化され、**2026
 | 移行 | 既存 API キーと**並行利用可**（段階移行）。インタラクティブ用途は `ant auth login` |
 
 CI/CD やクラウド実行環境で「API キーをシークレットに焼き込む」運用が不要になり、**鍵の共有・漏洩リスクを構造的に排除**できます。出典: [Workload Identity Federation 公式](https://claude.com/blog/workload-identity-federation)。
+
+## 8. API キー有効期限設定（2026年7月）
+
+Claude Console で API キー / Admin API キーを作成する際、**有効期限を指定**できるようになりました。
+
+| 項目 | 内容 |
+|:---|:---|
+| 期限の選択肢 | プリセット（**3時間・1日・7日・30日**）／カスタム期間／**Never**（シークレットマネージャで自身がローテーションする鍵向け） |
+| メール通知 | 有効期限が**14日以上**の鍵は**期限7日前**に通知。**7日以上**の鍵は**期限1日前**に通知（作成者宛） |
+| Admin API での確認 | List API Keys / Get API Key の各エンドポイントが `expires_at` フィールドで期限を返す |
+| Console 表示 | API keys テーブルに各キーの有効期限を表示 |
+
+長寿命キーの放置は漏洩時の被害を広げる要因になりがちです。**「Never」を選べる余地を残しつつ、既定でローテーションを促す**設計になっており、Admin API で `expires_at` を監査すれば、組織内の期限切れ間近キーを一覧で把握できます。前述の Workload Identity Federation（短命トークン化）と合わせて、**長寿命の静的キー依存を段階的に減らす**という一連の流れの一部と位置づけられます。
 
 ## まとめ — どの機能をいつ使うか
 
