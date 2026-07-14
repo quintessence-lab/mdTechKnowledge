@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-07-14
+updatedDate: 2026-07-15
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code v2.0.59〜v2.1.207 のバージョン履歴。`/config key=value` でプロンプトから設定変更・auto モードでの破壊的 git コマンドのブロック・Bun 1.4 ランタイム・接続断時の部分レスポンス保持・WSL2/Windows Terminal スクロール修正・権限ルールのツールパラメータマッチング構文 `Agent(model:opus)`・ネスト `.claude/skills` の自動ロード・auto モードのサブエージェント起動前評価・会話言語でのセッションタイトル生成・`enforceAvailableModels` マネージド設定・`wheelScrollAccelerationEnabled`・サブエージェントが自身のサブエージェントを生成可能（最大5階層）・Claude Fable 5 へのアクセス追加・`--safe-mode` フラグ（カスタマイズ無効化でトラブルシュート）・`/cd` コマンド（プロンプトキャッシュを壊さない作業ディレクトリ変更）・`disableBundledSkills` 設定・fallbackModel 設定（最大3つのフォールバックモデル）・deny ルールの glob 対応・クロスセッションメッセージング堅牢化・既定思考モデルの thinking 無効化・requiredMinimumVersion/requiredMaximumVersion マネージド設定・/plugin list（--enabled/--disabled フィルタ）・バックグラウンドセッションの自動バージョン更新（コールドリスタート不要）・Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.209 のバージョン履歴。`/config key=value` でプロンプトから設定変更・auto モードでの破壊的 git コマンドのブロック・Bun 1.4 ランタイム・接続断時の部分レスポンス保持・WSL2/Windows Terminal スクロール修正・権限ルールのツールパラメータマッチング構文 `Agent(model:opus)`・ネスト `.claude/skills` の自動ロード・auto モードのサブエージェント起動前評価・会話言語でのセッションタイトル生成・`enforceAvailableModels` マネージド設定・`wheelScrollAccelerationEnabled`・サブエージェントが自身のサブエージェントを生成可能（最大5階層）・Claude Fable 5 へのアクセス追加・`--safe-mode` フラグ（カスタマイズ無効化でトラブルシュート）・`/cd` コマンド（プロンプトキャッシュを壊さない作業ディレクトリ変更）・`disableBundledSkills` 設定・fallbackModel 設定（最大3つのフォールバックモデル）・deny ルールの glob 対応・クロスセッションメッセージング堅牢化・既定思考モデルの thinking 無効化・requiredMinimumVersion/requiredMaximumVersion マネージド設定・/plugin list（--enabled/--disabled フィルタ）・バックグラウンドセッションの自動バージョン更新（コールドリスタート不要）・Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-07-12
-**現在の最新バージョン**: 2.1.207
+**最終更新**: 2026-07-15
+**現在の最新バージョン**: 2.1.209
 
 ---
 
@@ -19,6 +19,8 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.209** | **`/model` 等のダイアログが `claude agents` バックグラウンドセッションでブロックされる問題を修正**（過度に広範なガードを復元） |
+| **2.1.208** | **スクリーンリーダーモード追加**（`claude --ax-screen-reader` で有効化）、**`vimInsertModeRemaps` 設定追加**（vimモードで `jj`→Escape 等の2キーシーケンスをリマップ可能）、`CLAUDE_CODE_PROCESS_WRAPPER` 環境変数サポート追加、フルスクリーンモードのマルチセレクトメニュー・マウスクリック対応改善、fast mode 設定有効時にモデル切替後も自動復元されるよう修正、バックグラウンドエージェント宛メッセージが配信失敗時に保存・再配信されるよう修正、HTTP/2 接続・大規模markdownテーブル・MCPサーバー認証等の多数の修正 |
 | **2.1.207** | **Auto Mode が Bedrock / Vertex AI / Foundry で `CLAUDE_CODE_ENABLE_AUTO_MODE` オプトインなしで利用可能に**（無効化は settings の `disableAutoMode`）、**Bedrock / Vertex / Claude Platform on AWS の既定モデルを Opus 4.8 に変更**、auto mode が `.claude/settings.local.json`（repo同梱）から `autoMode` を読まなくなる（`~/.claude/settings.json` を使用）、プラグインのシェルインジェクション修正（`${user_config.*}` のシェル形コマンド拒否）、`/usage-credits` の金額入力の検証強化（$1,000超は明示確認）、長いリスト/表/コードのストリーミング中のフリーズ修正、`claude -p`/SDK の非対話実行がセキュリティ同意なしに consented 記録される問題を修正、多数の Remote Control/背景/worktree 修正 |
 | **2.1.206** | **`/cd` にディレクトリ候補補完を追加**（`/add-dir` と同挙動）、**`/doctor` に「チェックイン済み CLAUDE.md のトリミング提案」チェックを追加**（Claude が導出できる内容の削減）、`/commit-push-pr` が設定済み push リモートへの `git push` を自動許可、**`EnterWorktree` がプロジェクトの `.claude/worktrees/` 外の worktree 侵入時に確認プロンプトで保護**、**背景エージェントのバージョンアップが Claude Code 更新直後にバックグラウンドで完了**、期限切れログインが全モデルで誤解を招くエラーになる問題を修正 |
 | **2.1.205** | **auto mode にセッション・トランスクリプトファイルの改ざんをブロックするルールを追加**、`--json-schema` が不正スキーマ時に非構造化出力を黙って返す問題を修正、`--max-turns` 到達時に作業中に送られたメッセージが失われる問題を修正、**Windows の worktree 削除が NTFS ジャンクション/シンボリックリンク経由で worktree 外のファイルを消す問題を修正**、背景エージェント/agent list まわりの修正 |
