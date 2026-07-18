@@ -1,7 +1,7 @@
 ---
 title: "Anthropic エンタープライズ攻勢2026 — PwC・KPMG・DXC・TCS と Big Four/SIer 連携、$1.5B FDE スタジオまで"
 date: 2026-06-20
-updatedDate: 2026-07-14
+updatedDate: 2026-07-18
 category: "一般リサーチ"
 tags: ["Anthropic", "Claude", "エンタープライズAI", "PwC", "KPMG", "DXC", "TCS", "Forward Deployed Engineer"]
 excerpt: "2026年5〜6月、Anthropic は PwC・KPMG・DXC・TCS という Big Four / 大手 SIer との大型連携を相次いで発表し、さらに Blackstone・Goldman Sachs・Hellman & Friedman と組んで FDE 型のエンタープライズ AI サービス会社（報道で総額 $1.5B 規模）を立ち上げた。コンサル・SIer・PE を「実装の通り道」として、規制業種・大企業・PE 保有の中堅市場へ Claude を一気に押し込む攻勢の全体像と、各社の認定規模・活用製品・狙う市場を比較整理する一般リサーチ。"
@@ -130,6 +130,22 @@ DXC が「製品基盤への組み込み」なら、TCS は **「自社従業員
 Anthropic CFO の Krishna Rao は「Claude へのエンタープライズ需要が、単一のデリバリーモデルでは到底追いつかないほど拡大している」と述べており、この合弁は **需要に対する"実装キャパシティ"の不足** を埋める手段として位置づけられています。Fortune は本件を **コンサル業界への対抗軸** と報じました。
 
 > 補足: 同日 OpenAI も同種の合弁（DeployCo）を発表しており、**AI 大手が揃って "実装会社" を別法人で立てる** 流れが鮮明になりました。FDE そのものの背景は当サイトの別記事「Forward Deployed Engineer（FDE）とは」も参照してください。
+
+### 2-3.【2026-07-15 追記】正式ローンチ — 社名は「Ode with Anthropic」
+
+2026年7月15日、上記の合弁が**正式ローンチ**され、社名が **「Ode with Anthropic」** と判明しました（5月4日の発表時点では無名）。
+
+| 項目 | 内容 |
+|:---|:---|
+| 社名 | **Ode with Anthropic** |
+| ローンチ日 | 2026年7月15日 |
+| CEO | **Chris Taylor**（Fractional AI 共同創業者。同社が Ode の母体） |
+| Chief Technologist（CTO） | **Eddie Siegel**（Fractional AI 共同創業者） |
+| 規模 | 現時点で **約100名のエンジニア**（「エリートな汎用ソフトウェアエンジニア」で**半数超が元創業者**） |
+| 出資 | **$1.5B** の合弁（Blackstone / Hellman & Friedman / Goldman Sachs ほか） |
+| 運用原則 | **「Claude-first」**（Claude を優先しつつ技術非依存＝technology-agnostic） |
+
+**掲げる主張は「AI の次の巨大ビジネスはモデルではなく"実装"にある」**（the next trillion-dollar AI business is implementation, not models）。OpenAI の **The Deployment Company**、Deloitte、Accenture の FDE（forward-deployed engineer）実践と競合します。なお Anthropic 本体の Applied AI チームは、戦略的・ミッション適合性の高い案件に引き続き別途フォーカスします。出典: [TechCrunch（2026-07-15）](https://techcrunch.com/2026/07/15/anthropic-blackstone-bet-the-next-trillion-dollar-ai-business-is-implementation-not-models/) ／ [BusinessWire](https://www.businesswire.com/news/home/20260715205134/en/)。
 
 ## 【2026-07 追記】新規パートナーシップ2件（UST・LTM）
 

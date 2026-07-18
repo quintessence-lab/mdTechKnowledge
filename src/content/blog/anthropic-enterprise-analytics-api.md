@@ -1,7 +1,7 @@
 ---
 title: "Anthropic Enterprise Analytics API 完全ガイド — 組織別利用データの照会と活用"
 date: 2026-05-02
-updatedDate: 2026-07-07
+updatedDate: 2026-07-18
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Admin API", "Analytics", "エンタープライズ", "FinOps", "Slack連携", "Workload Identity Federation", "OIDC"]
 excerpt: "2026年4月、Anthropic は Claude / Claude Code Remote / Claude Cowork の組織別利用データをプログラム照会できる Enterprise Analytics API を拡張した。Rate Limits API との位置付けの違い、エンドポイント構造、認証、レスポンス、Python/curl 実装例、Slackボット連携、運用ユースケース、制限事項までをまとめて解説する。さらに2026年6月の Workload Identity Federation（WIF＝OIDCトークンによるAPIキー不要認証）対応と、Admin API に追加された issuers / service accounts / federation rules エンドポイントも解説する。"
@@ -460,6 +460,21 @@ WIF リソースはコンソールの「Connect workload」ウィザードに加
 | **Analytics Chat（自然言語）** | 管理者が自然言語で質問（例:「今月 Claude 利用が2倍に増えたチームは？」）→ **エクスポート・共有可能なグラフで回答** |
 
 > **本記事の API 群との関係**: 従来の Analytics API（利用実績の取得）を土台に、「**見る（ダッシュボード/Chat）→ 制御する（エンタイトルメント）→ 守る（支出アラート）→ つなぐ（FinOps 連携）**」が一体化した形です。対象は Claude **Enterprise**（GA として提供）。新エンドポイント（Skills/Plugin/Artifact 系）の仕様は公式ドキュメントの更新を確認してください。
+
+## 【2026-07-14】Admin API に「ユーザー管理」機能が追加（Beta）
+
+2026年7月14日、**Claude Enterprise 組織のメンバーを Admin API から管理**できるようになりました（Beta）。従来の「利用実績を読む」Analytics/Admin API に対し、こちらは**組織メンバーの構成そのものを操作**するプロビジョニング系 API です。SCIM や社内 IdP と組み合わせた**オンボーディング/オフボーディングの自動化（IaC 化）**に使えます。
+
+| 操作領域 | できること |
+|:---|:---|
+| **メンバー** | 一覧取得・**メールアドレスで検索**・**ロール変更**・**削除** |
+| **招待** | 招待の送付・取り消し |
+| **グループ** | グループ管理・メンバーシップ管理 |
+| **カスタムロール** | 参照 |
+
+- **beta ヘッダー**: **グループ・カスタムロール**操作には **`anthropic-beta: ce-user-management-2026-07-13`** が必要（メンバー/招待の基本操作は不要）。
+- **読み取りスコープ**: **`read:org_audit`** スコープを持つ Admin API キーでも、**全 GET エンドポイント**（一覧・検索など）を呼び出せます。
+- 出典: [User management — Anthropic 公式ドキュメント](https://platform.claude.com/docs/en/manage-claude/user-management) ／ [Claude Platform リリースノート（2026-07-14）](https://platform.claude.com/docs/en/release-notes/overview)。
 
 ## まとめ — Rate Limits API との両輪で運用する
 

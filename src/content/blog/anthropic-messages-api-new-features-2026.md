@@ -1,7 +1,7 @@
 ---
 title: "Anthropic Messages API 新機能まとめ（2026年5〜7月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・APIキー有効期限"
 date: 2026-06-20
-updatedDate: 2026-07-14
+updatedDate: 2026-07-18
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "プロンプトキャッシュ"]
 excerpt: "2026年5〜6月に Anthropic Messages API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details まで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
@@ -200,6 +200,8 @@ for i, user_message in enumerate(
 - **補足（Opus 4.8 のキャッシュ）**: Opus 4.8 ではプロンプトキャッシュの**最小キャッシュ可能長が 1,024 トークン**に引き下げられており（Opus 4.7 より低い）、短めのプレフィックスもキャッシュ対象にしやすくなっています。
 
 > Cache Diagnostics（第2章）と会話途中 system メッセージ（本章）は補完関係にあります。「指示変更をキャッシュを壊さず差し込む」手段（本章）と「壊れたときに原因を特定する」手段（第2章）を組み合わせると、長時間エージェントのキャッシュ運用が安定します。
+
+> **【2026-07-15 追記】会話途中 system メッセージが正式 GA（ベータヘッダー不要）**: 2026年7月15日、会話途中 system メッセージが **Claude Fable 5 / Mythos 5 / Opus 4.8** 上で、**Claude API・Amazon Bedrock・Google Cloud のすべてで正式 GA** になりました（**ベータヘッダー不要**）。当初の Opus 4.8 中心・beta 扱いの記載はこれに合わせて読み替えてください。対応モデルが **Fable 5 / Mythos 5** の最上位クラスにも広がったことで、長時間・大規模タスクでも「指示変更をキャッシュを壊さず差し込む」運用が正式サポートになりました。出典: [Claude Platform リリースノート（2026-07-15）](https://platform.claude.com/docs/en/release-notes/overview)。
 
 ## 4. Refusal categories（拒否種別）と `stop_details`
 
