@@ -1,6 +1,6 @@
 ---
 title: "Claude Code の Artifact と claude.ai チャットの Artifact は別物 — スマホアプリの一覧に出てこない理由"
-date: 2026-07-15
+date: 2026-07-18
 category: "Claude技術解説"
 tags: ["Claude Code", "Artifacts", "claude.ai", "モバイルアプリ", "共有", "トラブルシューティング"]
 excerpt: "PCのClaude Codeで作成したページ（Artifact）が、iPhoneのClaudeアプリの『アーティファクト』一覧に出てこない——実はこれは不具合ではなく仕様。claude.aiチャットのArtifactsとClaude CodeのArtifactsは名前は同じでも保存場所・一覧UIが別で、統合されていない。両者の違い・原因・見つからないときの対処法を公式ドキュメントに基づき整理する。"
