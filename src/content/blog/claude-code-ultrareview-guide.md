@@ -1,12 +1,16 @@
 ---
 title: "Claude Code /ultrareview 完全ガイド — クラウドマルチエージェントによる深掘りコードレビュー"
 date: 2026-05-02
-updatedDate: 2026-05-17
+updatedDate: 2026-07-19
 category: "Claude技術解説"
-tags: ["Claude Code", "ultrareview", "コードレビュー", "マルチエージェント", "CICD", "Anthropic"]
-excerpt: "2026年4月22日にClaude Code v2.1.111でリリースされた/ultrareviewは、リモートサンドボックス上でエージェントフリートを並列実行し、マージ前に深掘りバグハントを行うコードレビュー機能。基本操作から非対話型CI実行、料金体系、--jsonオプション、/reviewとの使い分けまで網羅的に整理する。"
+tags: ["Claude Code", "ultrareview", "code-review ultra", "コードレビュー", "マルチエージェント", "CICD", "Anthropic"]
+excerpt: "2026年4月17日にClaude Code v2.1.111でリリースされた/ultrareviewは、リモートサンドボックス上でエージェントフリートを並列実行し、マージ前に深掘りバグハントを行うコードレビュー機能。基本操作から非対話型CI実行、料金体系、--jsonオプション、/reviewとの使い分けまで網羅的に整理する。※現在この機能は /code-review ultra に統合され、/ultrareview は非推奨エイリアスとなっている（本文の /ultrareview は /code-review ultra に読み替え）。"
 draft: false
 ---
+
+> **【重要・2026年7月時点の更新】この記事が解説する `/ultrareview` は、現在 `/code-review ultra` に統合されています。**
+> Claude Code の現行版では、本記事の機能は **`/code-review ultra`**（現在のブランチをレビュー。GitHub PR をレビューする場合は **`/code-review ultra <PR#>`**）として提供されます。**`/ultrareview` は同じコマンドへの非推奨エイリアス**となりました（当面は動作しますが、いずれ削除される可能性があります）。
+> 以下の解説で `/ultrareview` / `/ultrareview <PR#>` と表記されている箇所は、**`/code-review ultra` / `/code-review ultra <PR#>`** に読み替えてください。クラウド上のマルチエージェント並列レビュー＋独立検証エージェントによる再現確認というアーキテクチャ・料金・使い分けの考え方は統合後も同一です。
 
 ## 1. リリース概要
 
