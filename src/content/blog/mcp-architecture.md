@@ -1,10 +1,10 @@
 ---
 title: "MCP (Model Context Protocol) アーキテクチャ詳細"
 date: 2026-04-26
-updatedDate: 2026-07-18
+updatedDate: 2026-07-19
 category: "Claude技術解説"
 tags: ["MCP", "Claude Code", "JSON-RPC", "GitHub", "OAuth", "プロトコル", "Claude for Legal", "Release Candidate", "ステートレス", "SEP-2577", "SEP-2663", "Sampling", "非推奨ポリシー", "MCP Apps", "Extensions", "JSON Schema 2020-12", "W3C Trace Context"]
-excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness/エンタープライズSSO・監査トレイル・Governance Working Group・新コアメンテナー）、MCP Apps（SEP-1865）、2026-05-21 Release Candidate ロック（プロトコルステートレス化＝Mcp-Session-Id 廃止、MCP Apps の HTML UI、Tasks Extension 再設計、最終仕様 2026-07-28 公開予定）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、Claude for Legal で公開された20+ MCPコネクタ、約20万サーバーに影響した重大脆弱性事案、さらに 2026-07-28 RC で制定された SEP-2577 の非推奨ポリシー（Active/Deprecated/Removed の3段階・最低12ヶ月）と Sampling/Roots/Logging の deprecated 化までの参照リンクを網羅"
+excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness/エンタープライズSSO・監査トレイル・ガバナンス成熟化（貢献者ラダー/委任モデル/憲章）・新コアメンテナー）、MCP Apps（SEP-1865）、2026-05-21 Release Candidate ロック（プロトコルステートレス化＝Mcp-Session-Id 廃止、MCP Apps の HTML UI、Tasks Extension 再設計、最終仕様 2026-07-28 公開予定）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、Claude for Legal で公開された20+ MCPコネクタ、約20万サーバーに影響した重大脆弱性事案、さらに 2026-07-28 RC で制定された SEP-2577 の非推奨ポリシー（Active/Deprecated/Removed の3段階・最低12ヶ月）と Sampling/Roots/Logging の deprecated 化までの参照リンクを網羅"
 draft: false
 ---
 
@@ -92,7 +92,7 @@ USBデバイス（マウス等）    =    MCPサーバー（GitHub, Gmail等）
 |---|---|
 | **エンタープライズ認証・SSO 対応** | SAML / OIDC ベースの SSO 連携、企業 IdP（Okta / Entra ID / Auth0 等）統合、サーバー横断のシングルセッション。Enterprise Readiness 柱の中核 |
 | **監査トレイル機能** | MCP サーバー側で全 tool call / resource access を構造化ログとして記録するための標準仕様。コンプライアンス（SOC 2 / ISO 27001 等）監査に必要な属性（actor / timestamp / parameters / result hash）を統一定義 |
-| **Governance Working Group 設立** | AAIF 配下に正式な Working Group を組成。仕様提案（SEP）の審議・承認フロー、メンテナー任命、エコシステム調整を担当 |
+| **ガバナンス体制の成熟化** | AAIF 配下で、貢献者ラダー（contributor ladder）の文書化、実績ある Working Group がコアメンテナのフルレビュー無しにドメイン内 SEP を受理・更新できる委任モデル（delegation model）、各 WG/Interest Group が公開・四半期レビューする憲章テンプレート（charter）を整備。※公式ロードマップは単一の「Governance WG」を名指しせず、実在するのは Transports / Auth / Registry 等のドメイン別 WG と SEP プロセス |
 | **メンテナー体制の強化** | **Clare Liguori（AWS）** がコアメンテナーとして**新規加入**し、**Den Delimarsky（Microsoft）** が **Lead Maintainer に確定**（詳細は後述「メンテナー体制の更新」節）。ハイパースケーラー2社のシニアエンジニアがプロトコル設計に関与する体制となり、エンタープライズ要求の反映スピードが向上 |
 
 参考: [2026 MCP Roadmap](https://blog.modelcontextprotocol.io/posts/2026-mcp-roadmap/) / [MCP公式ロードマップ](https://modelcontextprotocol.io/development/roadmap) / [The New Stack 解説](https://thenewstack.io/model-context-protocol-roadmap-2026/)
