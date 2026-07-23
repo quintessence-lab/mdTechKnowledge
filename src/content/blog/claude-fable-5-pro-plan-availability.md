@@ -1,30 +1,31 @@
 ---
 title: "Claude Fable 5 は Pro プランで使える？ — 再開後の利用条件と「週間50%枠はすぐ尽きる」評価"
 date: 2026-07-04
-updatedDate: 2026-07-18
+updatedDate: 2026-07-23
 category: "Claude技術解説"
 tags: ["Claude Fable 5", "Pro プラン", "利用上限", "クレジット", "従量課金", "Anthropic", "レート制限", "本人確認"]
-excerpt: "2026年7月1日に輸出管理解除で全世界再開した Claude Fable 5 は、Pro プランでも使える。ただし『当初7月7日→7月12日→7月19日まで週間利用上限の最大50%まで追加費用なし（2度の延長） → 7月20日以降は従量課金クレジットへ移行』という条件つきだ。本記事は Pro ユーザーの視点に絞り、プラン別の可否、そして『50%枠は既存週間上限からの切り出しで、Fable 5 が高コスト・重いモデルであるためすぐ尽きて課金圏に入りやすい』という点を仕組みから評価する。7月8日発効の本人確認（生体・政府ID）や再開時の新分類器も含め、Pro で使う際の注意点を整理する。"
+excerpt: "2026年7月1日に輸出管理解除で全世界再開した Claude Fable 5 は、Pro プランでも使える。2026年7月20日、Anthropic は最終方針を確定：Max/Team Premium は週間利用上限の50%として恒久的にプランへ組み込み、Pro/Team Standard は引き続き usage credits（従量課金）でアクセスし、$100の一時クレジットを受け取る。本記事は Pro ユーザーの視点に絞り、プラン別の可否、そして『50%枠は既存週間上限からの切り出しで、Fable 5 が高コスト・重いモデルであるためすぐ尽きて課金圏に入りやすい』という点を仕組みから評価する。7月8日発効の本人確認（生体・政府ID）や再開時の新分類器も含め、Pro で使う際の注意点を整理する。"
 draft: false
 ---
 
 > ## 要点
 >
 > - **Claude Fable 5 は 2026年7月1日、輸出管理解除で全世界再開**。**Pro プランでも使える**（Max / Team / 一部 Enterprise も）。**Free は対象外**とみられる。
-> - **〜7月19日（当初7/7→7/12→7/19と2度延長）**：Pro/Max/Team・一部 Enterprise で、**週間利用上限の最大50%まで追加費用なし**で Fable 5 を利用可（移行猶予。Anthropic は「一時的な容量措置・キャパ次第でサブスクに戻す」と表明）。
-> - **7月20日以降**：Fable 5 は **usage credits（従量課金）へ移行**。定額枠には含まれず、継続利用は別課金になる想定。
+> - **【最終方針・2026年7月20日確定】** Max / Team Premium は Fable 5 を**週間利用上限の50%として恒久的にプランへ組み込み**（締切なし・追加課金なし）。**Pro / Team Standard は usage credits（従量課金）でのアクセスを継続**し、**$100 の一時クレジット**を受け取る。
+> - 背景: Fable 5 は Anthropic で最も計算資源を要するモデルで、6月の需要急増が既存データセンター契約の容量を超えていた。**SpaceX Colossus 1 契約（300MW超・NVIDIA GPU 22万台超）**と推論効率の改善で容量問題が解消し、Max/Team Premium への恒久組み込みが実現した。
 > - **Pro では「50%枠」はすぐ尽きやすい**。50%は追加枠ではなく**既存の週間上限からの切り出し**で、Fable 5 は**入力$10/出力$50（Opus 4.8 の2倍）・トークン約30%増・長時間タスク向け**という高コストで重いモデルだから。ご懸念の「すぐ到達して課金」は**方向として妥当**。
 > - **7月8日発効のプライバシーポリシー**で、消費者プランは**本人確認（政府ID＋顔スキャン／Persona）**を求められ得る（API 顧客は対象外）。
 > - 具体的なクレジット同梱量・しきい値は**未公表** → **ダッシュボードでの実測が必須**。
 
-> ## 【2026-07 追記】猶予期間は**2度延長され 7月19日まで**（→ 7/20 からクレジット）
+> ## 【2026-07-20 追記・最終方針確定】Max/Team Premium は恒久組み込み、Pro は Usage Credits + $100
 >
-> 当初 **7月7日**だった「週間上限50%まで無料」の期限は、**7月12日 → さらに 7月19日（23:59:59 PT）へと2度延長**されました（Anthropic 公式）。**7月19日まで**は Pro/Max/Team・一部 Enterprise で従来どおりサブスク内（週間上限の最大50%）で Fable 5 を利用でき、**7月20日以降にプリペイドの Usage Credits（従量メーター課金）へ移行**します。**Claude Code の週間利用上限50%増**も同じ 7/19 まで延長されています。
-> - **延長の位置づけ**: Anthropic は「**一時的な容量（capacity）措置**であり、**キャパシティが許せば Fable 5 をサブスクリプションプランへ戻す意向**」と表明。恒久的な有料アドオン化を意図してはいないとされます。
-> - **7/20 以降の価格**: 入力 **$10 / 出力 $50**（per MTok）。**Opus 4.8（$5 / $25）のちょうど2倍**。プロンプトキャッシュで入力90%割引。コスト実例＝入力20万＋出力4万トークンで **約 $4.00**（同条件 Sonnet 5 は約 $0.80 ＝ 5倍差）。
-> - **クレジット未有効だと**: **Standard Enterprise 席はクレジット未有効だと Fable 5 が「そもそも起動しない」**。Pro/Max/Team も 7/20 以降は**クレジットが無ければ利用不可**の前提で見積もる（明示的フォールバック機構は未公表）。有効化は **Settings → Usage**（プリペイド・従量）。
+> 2度の延長（7/7→7/12→7/19）を経て、**2026年7月20日、Anthropic は最終的な着地点を発表**しました（公式 @claudeai）。**"Beginning July 20, Claude Fable 5 will be included in all Max and Team Premium plans, at 50% of limits. Pro and Team Standard users will continue to have access to Fable via usage credits, and will receive a one-time $100 credit."**
+> - **Max / Team Premium**：Fable 5 が**週間利用上限の50%として恒久的にプランへ組み込み**。クレジット不要・締切なし——「いったんプランに入っている」状態になりました。
+> - **Pro / Team Standard**（本記事の対象）：**Usage Credits（従量課金）でのアクセスを継続**しつつ、**$100 の一時クレジット**が付与されます。つまり Pro は「無料の週間枠」からは外れましたが、**$100分は無料で試せる**形になりました。
+> - **背景**：Fable 5 はAnthropicで最も計算資源を要するモデルで、6月の再開直後の需要急増が既存データセンター契約の容量を超えていました。**SpaceX Colossus 1 契約（300MW超・NVIDIA GPU 22万台超）**の追加確保と推論効率の改善によって容量問題が解消し、今回の恒久方針に至っています。
+> - **7/20 以降の価格**：入力 **$10 / 出力 $50**（per MTok）。**Opus 4.8（$5 / $25）のちょうど2倍**。プロンプトキャッシュで入力90%割引。コスト実例＝入力20万＋出力4万トークンで **約 $4.00**（同条件 Sonnet 5 は約 $0.80 ＝ 5倍差）。$100 クレジットなら、この試算で約25セッション分に相当します。
 >
-> 詳報は関連記事 [これがラストチャンスかも①（7/12まで延長）](/mdTechKnowledge/blog/claude-fable-5-credit-period-extended/) ／ [これがラストチャンスかも②（7/19まで再延長・GPT-5.6 Sol の影響）](/mdTechKnowledge/blog/claude-fable-5-credit-period-extended-2/) を参照。出典: [The New Stack（2026-07-07）](https://thenewstack.io/anthropic-extends-fable-5/) ／ [Android Authority（2度目の延長）](https://www.androidauthority.com/claude-fable-5-free-extension-3685103/)
+> 詳報は関連記事 [これがラストチャンスかも①（7/12まで延長）](/mdTechKnowledge/blog/claude-fable-5-credit-period-extended/) ／ [これがラストチャンスかも②（7/19まで再延長・GPT-5.6 Sol の影響）](/mdTechKnowledge/blog/claude-fable-5-credit-period-extended-2/) を参照。出典: [Claude 公式 @claudeai（7/18）](https://x.com/claudeai/status/2078302415804379218) ／ [TechTimes: Fable 5 Ends Subscription Limbo](https://www.techtimes.com/articles/320905/20260718/claude-fable-5-ends-subscription-limbo-permanent-max-credits-only-pro.htm)
 
 ## はじめに — 「Fable 5、Pro で使えるの？」
 
@@ -36,18 +37,19 @@ draft: false
 
 ---
 
-## 結論：Pro で使える。ただし「7/19 まで無料枠（2度延長）、以降は従量課金」
+## 結論：Pro で使える。ただし Max/Team Premium とは扱いが分かれた
 
-| プラン | 〜2026年7月19日（2度延長後） | 2026年7月20日以降 |
-|---|---|---|
-| **Pro / Max / Team / 一部 Enterprise** | **週間利用上限の最大50%まで、追加費用なし**で Fable 5 利用可（**当初7/7→7/12→7/19 と2度延長**） | **7/20 以降**：usage credits（従量メーター課金）へ移行。定額枠に含まれず、Fable 5 利用はクレジット消費 |
-| **Free** | 対象外とみられる（公式明言は未確認） | 同左 |
-| **API / Claude Platform** | 従量課金（入力$10/出力$50 per MTok）。フォールバック等は当初どおり | 同左 |
+| プラン | 2026年7月20日以降（最終方針） |
+|---|---|
+| **Max / Team Premium** | Fable 5 が**週間利用上限の50%として恒久的にプランへ組み込み**。クレジット不要・締切なし |
+| **Pro / Team Standard**（本記事の対象） | **Usage Credits（従量メーター課金）**でのアクセスを継続。**$100 の一時クレジット**が付与される |
+| **Free** | 対象外とみられる（公式明言は未確認） |
+| **API / Claude Platform** | 従量課金（入力$10/出力$50 per MTok）。フォールバック等は当初どおり |
 
 - 対象サーフェスは **Claude.ai / Claude Code / Cowork / API**、クラウド（Bedrock / Vertex AI / Foundry）も再有効化。
-- 7/1〜**7/19（当初7/7→7/12→7/19 と2度延長）**の「50%まで無料」は**一時的な移行猶予（grace period）**で、7/19 で終了します。
+- 7/1〜7/19（当初7/7→7/12→7/19 と2度延長）の「50%まで無料」の移行猶予は終了し、**7/20 から上記の恒久方針へ移行**しました。
 
-> つまり **Pro でも Fable 5 は使えます**。ただし「無条件で定額使い放題」ではなく、**7/19 までの限定無料枠 → 7/20 から従量課金**という2段構えです。
+> つまり **Pro でも Fable 5 は使えます**。ただし Max/Team Premium のような「プラン組み込み」ではなく、**$100 の一時クレジット＋以降は従量課金**という形です。同じ Fable 5 でも、プランによって着地点が分かれた点に注意してください。
 
 ---
 
@@ -65,10 +67,10 @@ draft: false
    - → **1回の利用あたりの消費が大きい**。
 3. その結果、**相対的に枠の小さい Pro では、Fable 5 を本格的に使うと週間上限の50%（＝Fable 5 割当）に短時間で到達しやすい**。数回の長めのエージェント作業で割当を使い切ることは十分あり得ます。
 
-### 「到達＝即課金」ではない（ただし7/20で状況が変わる）
+### 「到達＝即課金」ではない（ただし7/20で状況が変わった）
 
-- **7/19 までは、50%に到達しても自動課金はされません**。Fable 5 の無料利用が止まるだけで、週次リセットを待つか、Opus 4.8 等へ切り替えます（**追加利用〔extra usage / credits〕を自分でオプトインしている場合を除く**）。
-- **課金が本格的に効くのは 7/20 以降**。この日から Fable 5 は従量課金（クレジット）になるため、**割当を使い切った後も使い続ける＝そのまま実費**になります。
+- **7/19 までは、50%に到達しても自動課金はされませんでした**。Fable 5 の無料利用が止まるだけで、週次リセットを待つか、Opus 4.8 等へ切り替える運用でした。
+- **7/20 以降、Pro/Team Standard は Usage Credits が実質の枠**になっています。**$100 の一時クレジットを使い切った後も使い続ける＝そのまま実費**です。Max/Team Premium は恒久組み込みのためこの制約がありません。
 
 ### コスト要因の早見
 
@@ -103,23 +105,21 @@ draft: false
 
 ## Pro ユーザー向け・実務チェックリスト
 
-1. **〜7/19（2度延長）**：50%無料枠のうちに試す（コスト0で触れる猶予）。
-2. **7/19 直前**：ダッシュボードでクレジット残高・週間上限を確認。
-3. **7/8 以降**：本人確認（生体・政府ID）を求められるか確認。抵抗があれば方針判断。
-4. **本格運用はクレジット課金前提**で見積もる（枠が要るなら Max / API 直利用）。
-5. **高リスク題材は避ける**（誤検知・Opus 4.8 フォールバックが起きる）。
-6. **機密データは 30日データ保持（ZDR不可）**を前提に扱う。
-7. **API 連携なら** `stop_reason:"refusal"`（HTTP 200）ハンドリング＋fallback 設定を実装。
+1. **$100 の一時クレジットの消費ペースを把握する**：入力20万＋出力4万トークンで約$4.00の試算なら、$100は約25セッション分。ダッシュボードで残高を随時確認する。
+2. **本人確認（生体・政府ID）の要否を確認**：7/8以降、対象になっている場合は方針判断。
+3. **本格運用はクレジット課金前提**で見積もる（枠を厚く持ちたいなら Max/Team Premium への切替も選択肢）。
+4. **高リスク題材は避ける**（誤検知・Opus 4.8 フォールバックが起きる）。
+5. **機密データは 30日データ保持（ZDR不可）**を前提に扱う。
+6. **API 連携なら** `stop_reason:"refusal"`（HTTP 200）ハンドリング＋fallback 設定を実装。
 
 ---
 
 ## まとめ
 
-- **Fable 5 は Pro でも使える**が、**7/19 まで週間50%枠が無料（当初7/7→7/12→7/19 と2度延長） → 7/20 から従量課金クレジット**という2段構え。
-- **Pro の50%枠は「既存週間上限の切り出し」×「Fable 5 が高コスト・重い」ため、すぐ尽きやすい**。「すぐ到達して課金」の懸念は方向として妥当。ただし 7/19 まで到達＝即課金ではなく、本格課金は 7/20 から。
+- **Fable 5 は Pro でも使える**が、**2026年7月20日の最終方針で Max/Team Premium とは扱いが分かれた**。Max/Team Premium は週間50%として恒久組み込み、**Pro/Team Standard は Usage Credits＋$100の一時クレジット**という形。
+- **Pro の従来の50%枠は「既存週間上限の切り出し」×「Fable 5 が高コスト・重い」ため、すぐ尽きやすかった**——この評価自体は、Usage Credits へ移行した後の**消費ペースの速さ**として引き続き当てはまる。
 - **7/8 の本人確認（生体・政府ID）**と**新分類器のフォールバック/誤検知**にも注意。
-- **クレジット同梱量・しきい値は未公表** → ダッシュボードでの実測が前提。
-- 厚い枠が必要なら **Max / 上位プラン / API 直利用**を検討。
+- 厚い枠が必要・恒久的に使い続けたいなら **Max / Team Premium への切替**を検討するのが最も合理的（クレジット消費を気にせず使える）。
 
 ---
 
@@ -136,4 +136,6 @@ draft: false
 - [MarkTechPost: Anthropic redeploys Claude Fable 5（新分類器）](https://www.marktechpost.com/2026/07/01/anthropic-redeploys-claude-fable-5-on-july-1-after-us-export-controls-lift-adds-new-cybersecurity-classifier/)
 - [digitalapplied: Fable 5 usage credits July 7 pricing guide（7/7 クレジット移行）](https://www.digitalapplied.com/blog/claude-fable-5-usage-credits-july-7-pricing-guide-2026)
 - [explainx: Claude ID verification（7/8 本人確認）](https://explainx.ai/blog/anthropic-claude-id-verification-persona-fable-5-2026)
+- [Claude 公式 @claudeai（2026-07-18・7/20最終方針発表）](https://x.com/claudeai/status/2078302415804379218)
+- [TechTimes: Claude Fable 5 Ends Subscription Limbo — Permanent for Max, Credits-Only for Pro](https://www.techtimes.com/articles/320905/20260718/claude-fable-5-ends-subscription-limbo-permanent-max-credits-only-pro.htm)
 - [Anthropic 公式 Docs: Introducing Claude Fable 5 and Claude Mythos 5](https://platform.claude.com/docs/en/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5)

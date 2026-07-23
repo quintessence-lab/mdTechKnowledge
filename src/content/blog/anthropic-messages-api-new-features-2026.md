@@ -1,10 +1,10 @@
 ---
 title: "Anthropic Messages API 新機能まとめ（2026年5〜7月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・APIキー有効期限"
 date: 2026-06-20
-updatedDate: 2026-07-18
+updatedDate: 2026-07-23
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "プロンプトキャッシュ"]
-excerpt: "2026年5〜6月に Anthropic Messages API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details まで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
+excerpt: "2026年5〜7月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定に加え、7月の Admin API User Management ベータ・HIPAA セルフサービス設定まで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
 draft: false
 ---
 
@@ -278,6 +278,22 @@ Claude Console で API キー / Admin API キーを作成する際、**有効期
 | Console 表示 | API keys テーブルに各キーの有効期限を表示 |
 
 長寿命キーの放置は漏洩時の被害を広げる要因になりがちです。**「Never」を選べる余地を残しつつ、既定でローテーションを促す**設計になっており、Admin API で `expires_at` を監査すれば、組織内の期限切れ間近キーを一覧で把握できます。前述の Workload Identity Federation（短命トークン化）と合わせて、**長寿命の静的キー依存を段階的に減らす**という一連の流れの一部と位置づけられます。
+
+## 9. Admin API User Management ベータ（2026年7月14日）
+
+Claude Enterprise 組織向けに、**メンバー管理をダッシュボードではなく Admin API から行える**ベータ機能が公開されました。
+
+| 項目 | 内容 |
+|:---|:---|
+| できること | メンバー一覧・email によるメンバー検索・ロール変更・削除・招待管理・グループ管理・カスタムロールの読み取り |
+| beta ヘッダー | グループ／カスタムロール操作は `ce-user-management-2026-07-13` が必須 |
+| 必要な権限 | `read:org_audit` スコープの Admin API キーがあれば、user-management 系の GET エンドポイントをすべて呼び出し可能 |
+
+組織のメンバー管理を IdP（Entra ID / Okta 等）や社内ツールと同期させたい場合、これまでダッシュボード操作に限られていたメンバー変更をプログラムから自動化できるようになりました。
+
+## 10. HIPAA セルフサービス設定（2026年7月）
+
+Claude Enterprise と Claude Platform 両方で、**HIPAA 対応の有効化がセールス経由不要のセルフサービスフロー**になりました。対象組織の管理者は、①BAA（Business Associate Agreement）のレビュー、②実装ガイドのダウンロード、③HIPAA 設定の有効化を**1つのフローで完結**できます。医療・ヘルスケア系のワークロードを扱う組織にとって、導入までのリードタイム短縮に直結する変更です。
 
 ## まとめ — どの機能をいつ使うか
 
