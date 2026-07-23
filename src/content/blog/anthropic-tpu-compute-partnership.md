@@ -1,7 +1,7 @@
 ---
 title: "Anthropic コンピュートインフラ & TPUパートナーシップ — Google・BroadcomとのマルチギガワットTPU契約（2027年稼働）"
 date: 2026-04-29
-updatedDate: 2026-07-12
+updatedDate: 2026-07-24
 category: "一般リサーチ"
 tags: ["Anthropic", "Google", "Broadcom", "TPU", "AIインフラ", "コンピュート", "パートナーシップ", "SpaceX", "xAI", "Colossus", "GPU", "Akamai", "Fluidstack", "データセンター", "米国インフラ投資"]
 excerpt: "2026年4月6日発表のGoogle・BroadcomとのマルチギガワットTPU契約（2027年稼働）に加え、2026年5月のSpaceX xAI Colossus 1データセンター全容量契約（300MW超・GPU22万台超）、Akamai Technologies $1.8B・7年間クラウドコンピュート契約を収録。Anthropicのマルチクラウド・マルチベンダーインフラ戦略を整理。あわせて2025年11月発表の$50B米国AIインフラ投資（Fluidstackと組みテキサス州・ニューヨーク州にデータセンターを建設、2026年中に順次稼働）、2026年6月のMicron戦略協定（HBM/DRAM/SSD複数年供給）、2026年7月のTeraWulf 20年リース（$19B・ケンタッキー州Hawesville・最大401MW・2027年後半稼働）も収録。"
@@ -18,13 +18,16 @@ draft: false
 2. [Google CloudのTPU提供](#第2章-google-cloudのtpu提供)
 3. [Broadcomとの協業 — カスタムASIC実装層](#第3章-broadcomとの協業--カスタムasic実装層)
 4. [2027年稼働スケジュールと2031年までのロードマップ](#第4章-2027年稼働スケジュールと2031年までのロードマップ)
-5. [Amazon $5B/$100Bディールとの関係 — マルチクラウド3軸構造](#第5章-amazon-5b100bディールとの関係--マルチクラウド3軸構造)
+5. [Amazon $5B/$100Bディールとの関係 — マルチクラウド3軸構造](#第5章-amazon-5b5b5b100bディールとの関係--マルチクラウド3軸構造)
 6. [フロンティアモデルへの含意](#第6章-フロンティアモデルへの含意)
 7. [競合比較 — OpenAI / Google DeepMind](#第7章-競合比較--openai--google-deepmind)
-8. [SpaceX xAI Colossus 1 — GPU 300MW超・全容量契約（2026-05-07 JST）](#第8章-spacex-xai-colossus-1--gpu-300mw超全容量契約)
+8. [SpaceX xAI Colossus 1 — GPU 300MW超・全容量契約（2026-05-07 JST）](#第8章-spacex-xai-colossus-1--gpu-300mw超全容量契約2026-05-07-jst)
 9. [Akamai Technologies — $1.8Bクラウドコンピュート契約（2026-05-08）](#第9章-akamai-technologies--18bクラウドコンピュート契約2026-05-08)
-10. [$50B 米国AIインフラ投資 — Fluidstackと組むTX・NY州データセンター（2025-11-12）](#第10章-50b-米国aiインフラ投資--fluidstackと組むtxny州データセンター)
-11. [情報ソース一覧](#第11章-情報ソース一覧)
+    - [第9章補遺: Google Cloud $200B（約30兆円）コンピュート契約（2026-05-06 PT 報道）](#第9章補遺-google-cloud-200b約30兆円コンピュート契約2026-05-06-pt-報道)
+10. [$50B 米国AIインフラ投資 — Fluidstackと組むTX・NY州データセンター（2025-11-12）](#第10章-50b-米国aiインフラ投資--fluidstackと組むtxny州データセンター2025-11-12)
+11. [Micron 戦略協定 — メモリ/ストレージの確保（2026-06-22）](#第11章-micron-戦略協定--メモリストレージの確保2026-06-22)
+    - [第11章補遺: TeraWulf — $19B・20年リースで自社データセンターを直接確保（2026-07-06）](#第11章補遺-terawulf--19b20年リースで自社データセンターを直接確保2026-07-06)
+12. [情報ソース一覧](#第12章-情報ソース一覧)
 
 ---
 

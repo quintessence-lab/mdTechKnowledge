@@ -1,10 +1,10 @@
 ---
 title: "Git/GitHub入門 — Claude Code連携での認証の仕組みとGITHUB_TOKENが必要なケース"
 date: 2026-04-29
-updatedDate: 2026-04-29
+updatedDate: 2026-07-24
 category: "Claude技術解説"
 tags: ["Git", "GitHub", "Claude Code", "認証", "GITHUB_TOKEN", "MCP", "初心者向け"]
-excerpt: "Git/GitHubの基礎からClaude Code連携時の認証の仕組みまでをGitHub初心者にも分かるように解説。push/pull/cloneの意味、ローカル/リモートの3層構造、Personal Access Token・GITHUB_TOKEN・MCP経由・OAuth委譲の違い、認証情報がどこに保管されてどの操作で必要になるかを図解。Routineサンドボックスでトークンが不要なケースの背景まで。"
+excerpt: "Git/GitHubの基礎からClaude Code連携時の認証の仕組みまでをGitHub初心者にも分かるように解説。push/pull/cloneの意味、ローカル/リモートの2層構造、Personal Access Token・GITHUB_TOKEN・MCP経由・OAuth委譲の違い、認証情報がどこに保管されてどの操作で必要になるかを図解。Routineサンドボックスでトークンが不要なケースの背景まで。"
 draft: false
 ---
 

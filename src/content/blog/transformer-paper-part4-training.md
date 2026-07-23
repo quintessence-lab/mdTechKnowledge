@@ -1,6 +1,7 @@
 ---
 title: "Attention Is All You Need 徹底解説【第4回】Positional Encoding、学習テクニック、正規化 — 訓練を支える仕掛け"
 date: 2026-04-14
+updatedDate: 2026-07-24
 category: "AI論文解説"
 tags: ["Transformer", "Attention", "論文解説", "Positional Encoding", "学習率スケジューリング", "深層学習"]
 excerpt: "「Attention Is All You Need」論文解説シリーズ第4回。Positional Encodingの数学的設計、学習率warmup、ドロップアウト、Label Smoothingなど、Transformerの訓練を成功に導く技術要素を詳細に解説します。"
@@ -54,7 +55,7 @@ $$\text{input} = \text{Embedding}(x) \times \sqrt{d_{\text{model}}} + PE_{pos}$$
 各次元ペア $(2i, 2i+1)$ は、波長 $2\pi \cdot 10000^{2i/d_{\text{model}}}$ の正弦波/余弦波に対応します。
 
 - 次元0-1: 波長 $2\pi \approx 6.28$（最も短い周期）
-- 次元254-255: 波長 $2\pi \cdot 10000^{254/512} \approx 62,832$（最も長い周期）
+- 次元510-511: 波長 $2\pi \cdot 10000^{510/512} \approx 60{,}600$（最も長い周期。波長は $2\pi$ から $2\pi \cdot 10000 \approx 62{,}832$ までの幾何級数をなし、最終次元ペアはその上限にほぼ達する）
 
 この「マルチスケール」な設計により、モデルは近い位置の区別（高周波成分）から遠い位置の大まかな関係（低周波成分）まで、さまざまなスケールの位置情報を利用できます。これはフーリエ変換の考え方と通じるものがあります。
 
