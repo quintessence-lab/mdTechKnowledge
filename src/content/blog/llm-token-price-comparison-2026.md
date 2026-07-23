@@ -1,9 +1,10 @@
 ---
 title: "AIトークン単価の価格破壊が止まらない — Claude・Gemini・GPT-5.6・Copilot 単価総覧と「フロンティア×安価」のコスト設計 2026"
 date: 2026-07-18
+updatedDate: 2026-07-23
 category: "Claude技術解説"
-tags: ["トークン単価", "コスト比較", "Claude", "Gemini", "GitHub Copilot", "Azure OpenAI", "GPT-5.6", "トークンエコノミー", "モデル使い分け", "エンタープライズ", "FinOps"]
-excerpt: "Claude・Gemini・Microsoft（GitHub Copilot / M365 Copilot / Azure OpenAI）の主要モデルを per-MTok トークン単価で横断比較（2026年7月時点）。同じタスクでもモデル次第でコストは100倍以上変わる。『フロンティアモデルを使えばよい』時代は終わり、特に企業ではコスト経済性の設計が不可欠だ。本記事は各社の単価と課金構造（GitHub Copilot はトークン単価を持たない“ラッパー”）を整理したうえで、『正確なプロンプト/スキーマ設計はフロンティア、それに従う量産実行は安価モデル』というトークンエコノミーの役割分担を、ルーター・カスケード・オーケストレーション等の具体パターンで提案する。"
+tags: ["トークン単価", "コスト比較", "Claude", "Gemini", "Gemini 3.6 Flash", "GitHub Copilot", "Azure OpenAI", "GPT-5.6", "Kimi K3", "トークンエコノミー", "モデル使い分け", "エンタープライズ", "FinOps"]
+excerpt: "Claude・Gemini・Microsoft（GitHub Copilot / M365 Copilot / Azure OpenAI）の主要モデルを per-MTok トークン単価で横断比較（2026年7月時点）。同じタスクでもモデル次第でコストは100倍以上変わる。『フロンティアモデルを使えばよい』時代は終わり、特に企業ではコスト経済性の設計が不可欠だ。本記事は各社の単価と課金構造（GitHub Copilot はトークン単価を持たない“ラッパー”）を整理したうえで、『正確なプロンプト/スキーマ設計はフロンティア、それに従う量産実行は安価モデル』というトークンエコノミーの役割分担を、ルーター・カスケード・オーケストレーション等の具体パターンで提案する。2026-07-23 更新: 7/21 リリースの Gemini 3.6 Flash（$1.5/$7.5・3.5 Flash 後継の新主力）と、話題の Kimi K3（Moonshot AI・$3/$15・思考トークンも出力課金）を比較に追加。"
 draft: false
 ---
 
@@ -29,9 +30,11 @@ draft: false
 | **Claude Opus 4.8** | $25 | **約1.7倍** |
 | **GPT-5.6 Terra** | $15 | **1.0倍**（同等） |
 | **Claude Sonnet 5** | **$15** | **1.0倍（基準）**（導入価 $10 なら 0.67倍） |
+| **Kimi K3**（Moonshot AI） | $15 | **1.0倍**（同等。ただし思考トークンも出力課金＝実効は上振れ） |
 | **Gemini 3.1 Pro** | $12 | **0.8倍** |
 | **GPT-5** | $10 | **約0.67倍** |
 | **Gemini 3.5 Flash** | $9 | **0.6倍** |
+| **Gemini 3.6 Flash** | $7.5 | **0.5倍**（3.5 Flash 後継の新主力・2026-07-21） |
 | **GPT-5.6 Luna** | $6 | **0.4倍** |
 | **Claude Haiku 4.5** | $5 | **約0.33倍** |
 | **Gemini 3.1 Flash-Lite** | $1.5 | **0.1倍** |
@@ -70,7 +73,8 @@ draft: false
 | モデル | 入力 /1M | 出力 /1M | 備考 |
 |:---|:---:|:---:|:---|
 | **Gemini 3.1 Pro** | **$2** | **$12** | **200K超プロンプトは $4 / $18** に切替 |
-| **Gemini 3.5 Flash** | **$1.5** | **$9** | 主力 Flash |
+| **Gemini 3.6 Flash** | **$1.5** | **$7.5** | **新主力（2026-07-21 リリース）**。3.5 Flash 後継で**出力を $9→$7.5 に値下げ**（入力据え置き）。キャッシュ入力 $0.15（−90%）・Batch −50% |
+| **Gemini 3.5 Flash** | **$1.5** | **$9** | 旧主力（3.6 Flash が後継） |
 | **Gemini 3 Flash** | **$0.5** | **$3** | 音声入力は $1.0 |
 | **Gemini 3.1 Flash-Lite** | **$0.25** | **$1.5** | 軽量 |
 | **Gemini 2.5 Flash-Lite** | **$0.10** | **$0.40** | 最安。**2026-10-16 廃止予定** |
@@ -88,13 +92,23 @@ draft: false
 
 > **GPT-5.6 は Luna / Terra / Sol の3段階**（2026年7月9日 GA・6月25日プレビューから価格据え置き）。**出力単価は Sol $30・Terra $15・Luna $6 /MTok**。プロンプトキャッシュ読取は入力 −90%、キャッシュ書込は入力1.25倍。**Sol は Fable 5（$10/$50）比で入力50%・出力60%と割安**（ただし入力272K超で $10/$30 に切替）。詳細は [これがラストチャンスかも②（Fable 5 vs GPT-5.6 Sol）](/mdTechKnowledge/blog/claude-fable-5-credit-period-extended-2/) を参照。**Azure OpenAI 経由の提供時期・単価は別途** [Azure OpenAI 価格](https://azure.microsoft.com/en-us/pricing/details/azure-openai/) で確認してください。
 
+### Kimi K3（Moonshot AI）
+
+| モデル | 入力 /1M | 出力 /1M | 備考 |
+|:---|:---:|:---:|:---|
+| **Kimi K3** | **$3**（キャッシュヒット時 **$0.30**） | **$15** | 1M コンテキスト全帯で**単一料金**（長文超過の切替なし）。**思考（reasoning）トークンも出力として課金**され、常時推論型のため**表面単価より実効コストは上振れ**しやすい |
+
+> 単価クラスとしては **Sonnet 5 の標準価格（$3/$15）とちょうど同額**＝主力級の位置。比較時は上記の思考トークン課金分を織り込んで「単価×実トークン数」で見てください。
+
 ### クラス別の横断比較（同じ土俵で並べる）
 
 | クラス | Claude | Gemini | OpenAI |
 |:---|:---|:---|:---|
 | **フロンティア級**（難所・推論・計画） | Opus 4.8（$5/$25）・Fable 5（$10/$50） | 3.1 Pro（$2/$12） | **GPT-5.6 Sol（$5/$30）**・GPT-5.5（$5/$30） |
-| **主力級**（バランス） | Sonnet 5（$3/$15） | 3.5 Flash（$1.5/$9） | **GPT-5.6 Terra（$2.5/$15）**・GPT-5（$1.25/$10） |
+| **主力級**（バランス） | Sonnet 5（$3/$15） | **3.6 Flash（$1.5/$7.5）**・3.5 Flash（$1.5/$9） | **GPT-5.6 Terra（$2.5/$15）**・GPT-5（$1.25/$10） |
 | **軽量級**（定型・大量） | Haiku 4.5（$1/$5） | Flash-Lite（$0.25/$1.5・$0.10/$0.40） | **GPT-5.6 Luna（$1/$6）**・GPT-5-nano（$0.05/$0.40） |
+
+> 表は3社構成ですが、単価クラスで見ると **Kimi K3（$3/$15）は主力級**（Sonnet 5 標準と同額）に相当します。
 
 > **読み方**: 「賢さ」はフロンティア級が上ですが、**軽量級は出力単価が 1/10〜1/100**。タスクを軽量級で処理できるなら、コストは劇的に下がります。逆に Fable 5 のような最上位は、**単価が高いうえトークン消費も約30%増**なので、実効コストはさらに開きます（＝「単価×実トークン数」で見る必要）。
 
@@ -188,7 +202,8 @@ draft: false
 ## 出典
 
 - [Claude / Anthropic 公式価格](https://platform.claude.com/docs/en/about-claude/pricing)
-- [Gemini API 公式価格](https://ai.google.dev/gemini-api/docs/pricing)
+- [Gemini API 公式価格](https://ai.google.dev/gemini-api/docs/pricing)（Gemini 3.6 Flash $1.5/$7.5 も掲載）
+- [Kimi K3 公式価格（Moonshot AI / platform.kimi.ai）](https://platform.kimi.ai/docs/pricing/chat-k3)
 - [Azure OpenAI Service 価格](https://azure.microsoft.com/en-us/pricing/details/azure-openai/) ／ [GPT-5.6 Sol プレビュー（OpenAI 公式）](https://openai.com/index/previewing-gpt-5-6-sol/) ／ [GPT-5.6 family（Luna/Terra/Sol）解説](https://simonwillison.net/2026/Jul/9/gpt-5-6/)
 - [GitHub Copilot の使用量課金（GitHub Blog）](https://github.blog/news-insights/company-news/github-copilot-is-moving-to-usage-based-billing/) ／ [Copilot Billing（GitHub Docs）](https://docs.github.com/en/copilot/reference/copilot-billing)
 - [Microsoft 365 Copilot 価格](https://www.microsoft.com/en-us/microsoft-365-copilot/pricing)
