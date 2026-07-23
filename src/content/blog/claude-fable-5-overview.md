@@ -1,7 +1,7 @@
 ---
 title: "Claude Fable 5 徹底解剖① — 「危険すぎて封印」された Mythos は、なぜ Fable 5 として一般公開できたのか"
 date: 2026-06-10
-updatedDate: 2026-07-04
+updatedDate: 2026-07-23
 category: "Claude技術解説"
 tags: ["Claude Fable 5", "Anthropic", "Mythos", "Fable 5", "Mythos 5", "AIモデル", "Claude"]
 excerpt: "2026年6月9日、Anthropic は最強クラスのモデル群「Mythos」を初めて一般公開した。その公開版が Claude Fable 5 だ。Fable 5 と非公開の Mythos 5 は同じ基盤モデルで、違いは安全装置の有無だけ——高リスク領域では応答を Claude Opus 4.8 にフォールバックする。本シリーズ第1話では、Fable 5 とは何か、Mythos 5 との関係、モデルファミリーの系譜、「AIは危険になりすぎている」と警告した数日後に最強モデルを公開したリリースの文脈、価格、そして使える場所までを整理する。さらに API 利用者向けに、新トークナイザ（同一テキストで約30%トークン増）・`stop_reason: refusal`・opt-in `fallbacks`・30日データ保持必須（ZDR不可）・手動 thinking バジェット非対応（400エラー）といった破壊的 API 変更も解説する。"
@@ -117,6 +117,8 @@ Fable 5 の提供形態は以下の通りです。
 
 ### プラン別の可否と課金
 
+> **【2026-07-20 最終決着・追記】** 下表の「50%までサブスク内利用」の期限はその後 **7/12 → 7/19（PT）へと2度延長**され、**7月20日に最終方針が確定**しました。**Max / Team Premium は週間利用上限の50%として恒久的にプランへ組み込み**（追加費用・クレジット管理不要）、**Pro / Team Standard は Usage Credits（従量課金）継続＋一時 $100 クレジット付与**です。背景は SpaceX Colossus 1（300MW超・NVIDIA GPU 22万台超）の容量確保と推論効率の改善。**下表と下記の評価は再開当初（7/1時点）の記録**としてお読みください（Pro の「50%枠はすぐ尽きる」という構図は、Usage Credits 前提の現在も本質的に変わりません）。顛末は [これがラストチャンスかも③（完結編）](/mdTechKnowledge/blog/claude-fable-5-credit-period-final/) を参照。
+
 | プラン | 〜2026年7月7日 | 2026年7月8日以降 |
 |---|---|---|
 | **Pro / Max / Team / 一部 Enterprise** | **週間利用上限の最大50%まで、追加費用なし**で Fable 5 を利用可 | **usage credits（従量課金）へ移行**。定額枠には含まれず、Fable 5 利用は別課金の想定 |
@@ -124,7 +126,7 @@ Fable 5 の提供形態は以下の通りです。
 | **API / Claude Platform** | 従量課金（下記料金）。フォールバック等は当初どおり | 同左 |
 
 - 対象サーフェスは **Claude.ai / Claude Code / Cowork / API**、クラウド（Bedrock / Vertex AI / Foundry）も再有効化。
-- 7/1〜7/7 の「50%まで無料」は**一時的な移行猶予（grace period）**で、7/7 で終了します。
+- 7/1〜7/7 の「50%まで無料」は当初**一時的な移行猶予（grace period）**とされていました（→その後2度延長され、上記のとおり 7/20 に Max/Team Premium への恒久組み込みで決着）。
 - ⚠️ **クレジットのドル換算・Pro に同梱される量は未公表**です。実際の残高・上限は Claude の使用量ダッシュボードで確認してください。
 
 ### 評価：Pro では「50%枠」はすぐ尽き、実質すぐ課金圏に入りやすい

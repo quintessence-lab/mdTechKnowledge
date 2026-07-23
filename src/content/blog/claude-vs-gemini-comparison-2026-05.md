@@ -1,7 +1,7 @@
 ---
 title: "Claude vs Gemini 完全比較 — 有料プラン・NotebookLM・Gemini CLI・画像生成API料金（2026年5月版）"
 date: 2026-05-04
-updatedDate: 2026-07-03
+updatedDate: 2026-07-23
 category: "Claude技術解説"
 tags: ["Claude", "Gemini", "NotebookLM", "Gemini CLI", "画像生成", "プラン比較", "API料金"]
 excerpt: "Anthropic ClaudeとGoogle Geminiの有料プランを2026年5月時点で徹底比較。NotebookLM・Gemini CLI・Imagen 4の画像生成API単価まで網羅。"
@@ -172,6 +172,8 @@ Opus 4.8 では **コード欠陥の見落としが Opus 4.7 比で約 1/4**（A
 - Gemini 側の最上位（Gemini 3.x 系）との比較は、料金・提供形態が大きく異なるため単純比較は困難ですが、**Claude は"期間限定で最上位を開放→以降クレジット制"という独特の提供形態**を採った点が特徴です。
 
 > 詳細は別記事 [Claude Mythos Preview & Project Glasswing](/blog/claude-mythos-glasswing/) の Fable 5 / Mythos 5 追記、および [Claude Fable 5 徹底解剖](/blog/claude-fable-5-overview/) を参照。
+
+> **【2026-07-20 追記】** Fable 5 はその後、輸出管理停止（6/12〜7/1）を経て再開し、サブスク内50%枠の2度の延長（7/12→7/19）ののち、**7月20日から Max / Team Premium プランに週間上限50%として恒久組み込み**されました（Pro / Team Standard は Usage Credits＋一時$100クレジット）。本比較の観点では、**サブスク定額内で「最上位モデル」を常用できるのは Claude 側の Max / Team Premium** という状態になっています。経緯は [これがラストチャンスかも③（完結編）](/mdTechKnowledge/blog/claude-fable-5-credit-period-final/) を参照。
 
 ## 8. Claude Sonnet 5 でデフォルトモデルが交代（2026-07-01 追記）
 
