@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <style>
   :root {
     --paper: #FAF7F1;
@@ -180,6 +181,60 @@
   }
   .day-sub { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
 
+  /* ===== Area intro ===== */
+  .area-intro {
+    background: #F1F5F3;
+    border-left: 4px solid #3E6A6A;
+    border-radius: 0 4px 4px 0;
+    padding: 11px 15px;
+    font-size: 13.5px;
+    line-height: 1.85;
+    margin-bottom: 14px;
+    color: var(--ink);
+  }
+  .area-intro b.label {
+    font-family: "Shippori Mincho", serif;
+    color: #3E6A6A;
+    letter-spacing: 0.1em;
+    margin-right: 6px;
+  }
+
+  /* ===== Route map ===== */
+  .route-map-wrap { margin: 14px 0; }
+  .route-map {
+    width: 100%;
+    height: 320px;
+    border-radius: 4px;
+    border: 1px solid var(--line);
+    background: #E8E5DC;
+  }
+  .route-map-cap {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .route-map-cap .dot {
+    display: inline-block;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .leaflet-marker-num {
+    background: var(--ai-deep);
+    color: #fff;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Shippori Mincho", serif;
+    font-weight: 700;
+    font-size: 12px;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.35);
+  }
+
   /* ===== Timeline table ===== */
   table.timeline {
     width: 100%;
@@ -343,6 +398,11 @@
     <div class="day-body">
       <div class="day-title">移動 ＋ 二条城・金閣寺</div>
       <div class="day-sub">到着後すぐ洛中へ。初日から世界遺産2件を巡る</div>
+      <div class="area-intro"><b class="label">エリア</b>「洛中（らくちゅう）」は京都御所を中心とする旧市街の中心部で、二条城もこのエリア。「洛北」は市街地北側の山際で、金閣寺（鹿苑寺）が代表格。京都駅から見ると北西方向へ移動していく1日。</div>
+      <div class="route-map-wrap">
+        <div id="map-day1" class="route-map"></div>
+        <div class="route-map-cap"><span class="dot" style="background:var(--ai)"></span>Day1の動線（京都駅 → 二条城 → 金閣寺）</div>
+      </div>
       <table class="timeline">
         <tr><td class="time">午前</td><td>東京駅発 のぞみ → 京都着、ホテルに荷物を預ける</td></tr>
         <tr><td class="time">昼前</td><td><span class="spot">二条城</span>（国宝・二の丸御殿）<span class="note">2026年は寛永行幸四百年祭</span></td></tr>
@@ -359,6 +419,11 @@
     <div class="day-body">
       <div class="day-title">東山縦断 ── 清水寺から銀閣寺まで</div>
       <div class="day-sub">朝の清水寺に始まり、夜の川床で締める東山フルコース</div>
+      <div class="area-intro"><b class="label">エリア</b>「東山（ひがしやま）」は鴨川の東側、山際に寺社が連なる京都観光の王道エリア。清水寺・八坂神社（祇園）・南禅寺・銀閣寺までは南北に一直線で、徒歩やバスでつなげる一筆書きルートが組みやすい。</div>
+      <div class="route-map-wrap">
+        <div id="map-day2" class="route-map"></div>
+        <div class="route-map-cap"><span class="dot" style="background:#2C5878"></span>Day2の動線（清水寺 → 八坂神社周辺 → 南禅寺 → 銀閣寺）</div>
+      </div>
       <table class="timeline">
         <tr><td class="time">07:30</td><td><span class="spot">清水寺</span> 朝イチ参拝<span class="note">（開門6:00。8時台までは人が少なく涼しい）</span></td></tr>
         <tr><td class="time">09:00</td><td>二年坂・三年坂を散策</td></tr>
@@ -378,9 +443,14 @@
     <div class="day-body">
       <div class="day-title">伏見・宇治 ── 京阪沿線の一筆書き</div>
       <div class="day-sub">千本鳥居から宇治茶の本場へ。帰り道に三十三間堂を前倒し</div>
+      <div class="area-intro"><b class="label">エリア</b>「伏見」は市街地南部、千本鳥居の伏見稲荷大社が中心。「宇治」はさらに南、京都市街とは別の宇治市で、平等院や宇治茶で有名。「三十三間堂」は京都駅にほど近い東山南端。3エリアがすべて京阪本線でつながっているのがこの日の肝。</div>
+      <div class="route-map-wrap">
+        <div id="map-day3" class="route-map"></div>
+        <div class="route-map-cap"><span class="dot" style="background:#3E6A6A"></span>Day3の動線（伏見稲荷 → 宇治 → 三十三間堂）</div>
+      </div>
       <table class="timeline">
         <tr><td class="time">朝</td><td><span class="spot">伏見稲荷大社</span> 朝イチで千本鳥居へ<span class="note">（混雑と暑さを避けるなら8時前着が理想）</span></td></tr>
-        <tr><td class="time">午前</td><td>参道で土産＆名物：<span class="spot">ちいかわもぐもぐ本舗</span>、<span class="spot">日野家</span>のスズメの串焼き</td></tr>
+        <tr><td class="time">午前</td><td>参道で土産＆名物：<span class="spot">ちいかわもぐもぐ本舗</span>、<span class="spot">日野家</span>のスズメの串焼き・稲荷寿司</td></tr>
         <tr><td class="time">昼過ぎ</td><td>京阪で宇治へ → <span class="spot">平等院鳳凰堂</span></td></tr>
         <tr><td class="time">午後</td><td><span class="spot">増田茶舗</span>で宇治抹茶ラテ → <span class="spot">茶づな</span>（お茶と宇治のまち歴史公園）で涼む<span class="note">※抹茶挽きなどの体験は時間指定制のため、やりたい場合は事前予約推奨</span></td></tr>
         <tr><td class="time">15:40</td><td>京阪宇治駅から乗車 → 七条駅下車</td></tr>
@@ -396,6 +466,11 @@
     <div class="day-body">
       <div class="day-title">嵐山・太秦 ＋ 帰京</div>
       <div class="day-sub">朝の竹林から映画村まで。夜のぞみでゆとりの最終日</div>
+      <div class="area-intro"><b class="label">エリア</b>「嵐山（あらしやま）」は市街地西端、桂川沿いの景勝地で竹林・渡月橋が象徴。隣接する「太秦（うずまさ）」は東映太秦映画村がある撮影所の街。嵐電（京福電鉄）1本でつながっており、京都駅からは一番西に離れたエリア。</div>
+      <div class="route-map-wrap">
+        <div id="map-day4" class="route-map"></div>
+        <div class="route-map-cap"><span class="dot" style="background:#7A5230"></span>Day4の動線（竹林 → 天龍寺 → 渡月橋 → 太秦映画村）</div>
+      </div>
       <table class="timeline">
         <tr><td class="time">08:00</td><td>チェックアウト、荷物は京都駅コインロッカーへ</td></tr>
         <tr><td class="time">08:45</td><td><span class="spot">竹林の小径</span>（朝の涼しく空いているうちに）→ そのまま<span class="spot">天龍寺 北門</span>から入り曹源池庭園を拝観、正門から出る</td></tr>
@@ -417,7 +492,7 @@
     <tr><td>蕎麦たつ市</td><td>二条城近く</td><td>鴨蕎麦</td></tr>
     <tr><td>南禅寺 順正</td><td>南禅寺門前</td><td>湯豆腐・引き上げ湯葉</td></tr>
     <tr><td>京いざかや くぼ田</td><td>鴨川・川床</td><td>鱧の湯引き・鱧天ぷら</td></tr>
-    <tr><td>日野家</td><td>伏見稲荷参道</td><td>スズメの串焼き</td></tr>
+    <tr><td>日野家</td><td>伏見稲荷参道</td><td>スズメの串焼き・稲荷寿司</td></tr>
     <tr><td>増田茶舗</td><td>宇治</td><td>宇治抹茶ラテ</td></tr>
     <tr><td>峯嵐堂 渡月橋本店</td><td>嵐山</td><td>できたてわらび餅</td></tr>
     <tr><td>嵯峨とうふ 稲 本店</td><td>天龍寺正門前</td><td>湯葉うどん</td></tr>
@@ -441,6 +516,7 @@
 </footer>
 
 </div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
   document.querySelectorAll('nav.toc a[data-target]').forEach(function (el) {
     function go(e) {
@@ -452,6 +528,69 @@
     el.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' || e.key === ' ') go(e);
     });
+  });
+
+  function initRouteMap(elId, points, color) {
+    var el = document.getElementById(elId);
+    if (!el || typeof L === 'undefined') return;
+    var map = L.map(elId, { scrollWheelZoom: false, zoomControl: true });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    var latlngs = points.map(function (p) { return p.coords; });
+    var polyline = L.polyline(latlngs, { color: color, weight: 3, opacity: 0.85, dashArray: '7,7' }).addTo(map);
+
+    points.forEach(function (p, i) {
+      var icon = L.divIcon({
+        className: '',
+        html: '<div class="leaflet-marker-num">' + (i + 1) + '</div>',
+        iconSize: [22, 22],
+        iconAnchor: [11, 11]
+      });
+      L.marker(p.coords, { icon: icon }).addTo(map).bindPopup('<b>' + (i + 1) + '. ' + p.name + '</b>');
+    });
+
+    map.fitBounds(polyline.getBounds(), { padding: [26, 26] });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initRouteMap('map-day1', [
+      { name: '京都駅', coords: [34.9858, 135.7588] },
+      { name: '二条城', coords: [35.0142, 135.7481] },
+      { name: '蕎麦たつ市', coords: [35.0136, 135.7492] },
+      { name: '金閣寺', coords: [35.0394, 135.7292] }
+    ], '#1F3F63');
+
+    initRouteMap('map-day2', [
+      { name: '清水寺', coords: [34.9949, 135.7850] },
+      { name: '二年坂・三年坂', coords: [34.9975, 135.7800] },
+      { name: '八坂庚申堂・八坂神社', coords: [35.0033, 135.7787] },
+      { name: '漢字ミュージアム', coords: [35.0028, 135.7781] },
+      { name: '南禅寺 順正', coords: [35.0108, 135.7942] },
+      { name: '哲学の道', coords: [35.0190, 135.7950] },
+      { name: '銀閣寺', coords: [35.0270, 135.7982] },
+      { name: '京いざかや くぼ田（鴨川川床）', coords: [35.0037, 135.7710] }
+    ], '#2C5878');
+
+    initRouteMap('map-day3', [
+      { name: '伏見稲荷大社', coords: [34.9671, 135.7727] },
+      { name: '日野家（参道）', coords: [34.9690, 135.7727] },
+      { name: '平等院鳳凰堂', coords: [34.8893, 135.8083] },
+      { name: '増田茶舗・茶づな', coords: [34.8895, 135.8075] },
+      { name: '三十三間堂', coords: [34.9879, 135.7717] },
+      { name: '京都駅', coords: [34.9858, 135.7588] }
+    ], '#3E6A6A');
+
+    initRouteMap('map-day4', [
+      { name: '竹林の小径', coords: [35.0170, 135.6718] },
+      { name: '天龍寺（北門→庭園→正門）', coords: [35.0159, 135.6741] },
+      { name: '渡月橋・峯嵐堂', coords: [35.0125, 135.6777] },
+      { name: '嵯峨とうふ 稲本店', coords: [35.0155, 135.6745] },
+      { name: '東映太秦映画村', coords: [35.0163, 135.7086] },
+      { name: '京都駅', coords: [34.9858, 135.7588] }
+    ], '#7A5230');
   });
 </script>
 </body>
