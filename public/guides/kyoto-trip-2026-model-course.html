@@ -234,6 +234,32 @@
     border: 2px solid #fff;
     box-shadow: 0 1px 3px rgba(0,0,0,0.35);
   }
+  .leaflet-marker-station {
+    display: flex; align-items: center; gap: 5px;
+    white-space: nowrap;
+  }
+  .leaflet-marker-station .badge {
+    background: var(--shu);
+    color: #fff;
+    width: 26px; height: 26px;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    flex-shrink: 0;
+  }
+  .leaflet-marker-station .label {
+    background: #fff;
+    color: var(--shu);
+    font-family: "Shippori Mincho", serif;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    border: 1px solid var(--shu);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+  }
 
   /* ===== Timeline table ===== */
   table.timeline {
@@ -481,6 +507,10 @@
         <tr><td class="time">19:00頃</td><td>のぞみ乗車 → 21:15頃 東京着</td></tr>
       </table>
       <div class="lesson"><b class="label">ポイント</b>竹林 → 天龍寺北門 → 庭園 → 正門 → 渡月橋は、坂を戻らずに歩ける最効率ルート。嵐山と映画村は嵐電1本でつながる。最終日の新幹線を19時台にしたことで、映画村を駆け足にせず満喫できた。</div>
+      <div class="route-map-wrap">
+        <div id="map-day4-arashiyama" class="route-map"></div>
+        <div class="route-map-cap"><span class="dot" style="background:#A9812F"></span>嵐山エリア徒歩ルート拡大図（竹林の小径 → 天龍寺北門 → 正門出口 → 渡月橋 → 峯嵐堂）</div>
+      </div>
     </div>
   </div>
 </section>
@@ -530,7 +560,19 @@
     });
   });
 
-  function initRouteMap(elId, points, color) {
+  var KYOTO_STATION = [34.9858, 135.7588];
+
+  function stationIcon() {
+    return L.divIcon({
+      className: '',
+      html: '<div class="leaflet-marker-station"><div class="badge">&#128649;</div><div class="label">京都駅</div></div>',
+      iconSize: [92, 26],
+      iconAnchor: [13, 13]
+    });
+  }
+
+  function initRouteMap(elId, points, color, opts) {
+    opts = opts || {};
     var el = document.getElementById(elId);
     if (!el || typeof L === 'undefined') return;
     var map = L.map(elId, { scrollWheelZoom: false, zoomControl: true });
@@ -542,22 +584,34 @@
     var latlngs = points.map(function (p) { return p.coords; });
     var polyline = L.polyline(latlngs, { color: color, weight: 3, opacity: 0.85, dashArray: '7,7' }).addTo(map);
 
-    points.forEach(function (p, i) {
+    var boundsPoints = latlngs.slice();
+    var num = 0;
+    points.forEach(function (p) {
+      if (p.station) {
+        L.marker(p.coords, { icon: stationIcon(), zIndexOffset: 1000 }).addTo(map).bindPopup('<b>京都駅</b>');
+        return;
+      }
+      num++;
       var icon = L.divIcon({
         className: '',
-        html: '<div class="leaflet-marker-num">' + (i + 1) + '</div>',
+        html: '<div class="leaflet-marker-num">' + num + '</div>',
         iconSize: [22, 22],
         iconAnchor: [11, 11]
       });
-      L.marker(p.coords, { icon: icon }).addTo(map).bindPopup('<b>' + (i + 1) + '. ' + p.name + '</b>');
+      L.marker(p.coords, { icon: icon }).addTo(map).bindPopup('<b>' + num + '. ' + p.name + '</b>');
     });
 
-    map.fitBounds(polyline.getBounds(), { padding: [26, 26] });
+    if (opts.refStation) {
+      L.marker(opts.refStation, { icon: stationIcon(), zIndexOffset: 1000 }).addTo(map).bindPopup('<b>京都駅</b>（参考位置。この日の動線には含まれません）');
+      boundsPoints.push(opts.refStation);
+    }
+
+    map.fitBounds(L.latLngBounds(boundsPoints), { padding: [26, 26] });
   }
 
   document.addEventListener('DOMContentLoaded', function () {
     initRouteMap('map-day1', [
-      { name: '京都駅', coords: [34.9858, 135.7588] },
+      { name: '京都駅', coords: KYOTO_STATION, station: true },
       { name: '二条城', coords: [35.0142, 135.7481] },
       { name: '蕎麦たつ市', coords: [35.0136, 135.7492] },
       { name: '金閣寺', coords: [35.0394, 135.7292] }
@@ -572,7 +626,7 @@
       { name: '哲学の道', coords: [35.0190, 135.7950] },
       { name: '銀閣寺', coords: [35.0270, 135.7982] },
       { name: '京いざかや くぼ田（鴨川川床）', coords: [35.0037, 135.7710] }
-    ], '#2C5878');
+    ], '#2C5878', { refStation: KYOTO_STATION });
 
     initRouteMap('map-day3', [
       { name: '伏見稲荷大社', coords: [34.9671, 135.7727] },
@@ -580,7 +634,7 @@
       { name: '平等院鳳凰堂', coords: [34.8893, 135.8083] },
       { name: '増田茶舗・茶づな', coords: [34.8895, 135.8075] },
       { name: '三十三間堂', coords: [34.9879, 135.7717] },
-      { name: '京都駅', coords: [34.9858, 135.7588] }
+      { name: '京都駅', coords: KYOTO_STATION, station: true }
     ], '#3E6A6A');
 
     initRouteMap('map-day4', [
@@ -589,8 +643,16 @@
       { name: '渡月橋・峯嵐堂', coords: [35.0125, 135.6777] },
       { name: '嵯峨とうふ 稲本店', coords: [35.0155, 135.6745] },
       { name: '東映太秦映画村', coords: [35.0163, 135.7086] },
-      { name: '京都駅', coords: [34.9858, 135.7588] }
+      { name: '京都駅', coords: KYOTO_STATION, station: true }
     ], '#7A5230');
+
+    initRouteMap('map-day4-arashiyama', [
+      { name: '竹林の小径', coords: [35.0170, 135.6718] },
+      { name: '天龍寺 北門', coords: [35.0168, 135.6735] },
+      { name: '天龍寺 正門出口', coords: [35.0158, 135.6742] },
+      { name: '渡月橋', coords: [35.0127, 135.6777] },
+      { name: '峯嵐堂 渡月橋本店', coords: [35.0122, 135.6776] }
+    ], '#A9812F');
   });
 </script>
 </body>
