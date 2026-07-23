@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>京都3泊4日モデルコース（2026年夏・実践版）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FAF7F1;
+    --ink: #26251F;
+    --ai: #1F3F63;        /* 藍 */
+    --ai-deep: #16304D;
+    --shu: #C0392B;       /* 朱 */
+    --kin: #A9812F;       /* 金茶 */
+    --line: #DDD5C6;
+    --card: #FFFFFF;
+    --muted: #6E6A5E;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+    line-height: 1.75;
+    font-size: 15.5px;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 20px 80px; }
+
+  /* ===== Hero ===== */
+  header.hero {
+    background: linear-gradient(160deg, var(--ai-deep) 0%, var(--ai) 70%);
+    color: #F4F0E6;
+    padding: 56px 20px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  header.hero::after {
+    content: "洛";
+    position: absolute;
+    right: -30px; bottom: -70px;
+    font-family: "Shippori Mincho", serif;
+    font-size: 280px;
+    font-weight: 800;
+    color: rgba(255,255,255,0.05);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .hero-inner { max-width: 840px; margin: 0 auto; position: relative; z-index: 1; }
+  .hero .eyebrow {
+    display: inline-block;
+    font-size: 12.5px;
+    letter-spacing: 0.25em;
+    border: 1px solid rgba(244,240,230,0.5);
+    padding: 4px 14px;
+    border-radius: 2px;
+    margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-family: "Shippori Mincho", serif;
+    font-weight: 700;
+    font-size: clamp(26px, 5.5vw, 42px);
+    letter-spacing: 0.08em;
+    line-height: 1.45;
+  }
+  .hero h1 .shu { color: #E8A598; }
+  .hero p.sub { margin-top: 14px; font-size: 14px; opacity: 0.85; letter-spacing: 0.06em; line-height: 1.9; }
+
+  /* ===== Nav ===== */
+  nav.toc {
+    background: var(--card);
+    border-bottom: 1px solid var(--line);
+    position: sticky; top: 0; z-index: 10;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  nav.toc .toc-inner {
+    max-width: 880px; margin: 0 auto;
+    display: flex; gap: 4px; padding: 0 12px;
+    white-space: nowrap;
+  }
+  nav.toc a {
+    display: block; padding: 13px 14px;
+    color: var(--ai); text-decoration: none;
+    font-size: 13.5px; font-weight: 500;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+  }
+  nav.toc a:hover { border-bottom-color: var(--shu); }
+
+  /* ===== Sections ===== */
+  section { margin-top: 56px; }
+  section, .day { scroll-margin-top: 58px; }
+  h2 {
+    font-family: "Shippori Mincho", serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--ai-deep);
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 24px;
+  }
+  h2::before {
+    content: "";
+    width: 10px; height: 10px;
+    background: var(--shu);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  /* ===== Summary table ===== */
+  table.summary {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    font-size: 14px;
+  }
+  table.summary th {
+    background: var(--ai);
+    color: #F4F0E6;
+    font-weight: 700;
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+  }
+  table.summary td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  table.summary tr:last-child td { border-bottom: none; }
+  table.summary td.d {
+    width: 66px;
+    font-family: "Shippori Mincho", serif;
+    font-weight: 700;
+    color: var(--shu);
+    white-space: nowrap;
+  }
+  table.summary td.area { width: 92px; font-weight: 700; color: var(--ai-deep); white-space: nowrap; }
+
+  /* ===== Day blocks ===== */
+  .day {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    gap: 18px;
+    margin-bottom: 40px;
+  }
+  .day-marker {
+    writing-mode: vertical-rl;
+    font-family: "Shippori Mincho", serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    color: #fff;
+    background: var(--ai);
+    border-radius: 3px;
+    padding: 18px 0;
+    text-align: center;
+    align-self: start;
+    position: sticky;
+    top: 62px;
+  }
+  .day:nth-of-type(2) .day-marker { background: #2C5878; }
+  .day:nth-of-type(3) .day-marker { background: #3E6A6A; }
+  .day:nth-of-type(4) .day-marker { background: #7A5230; }
+  .day-body { min-width: 0; }
+  .day-title {
+    font-family: "Shippori Mincho", serif;
+    font-size: 19px; font-weight: 700;
+    color: var(--ai-deep);
+    margin-bottom: 4px;
+  }
+  .day-sub { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+
+  /* ===== Timeline table ===== */
+  table.timeline {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    font-size: 14px;
+  }
+  table.timeline td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  table.timeline tr:last-child td { border-bottom: none; }
+  td.time {
+    width: 74px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    color: var(--shu);
+    white-space: nowrap;
+    background: #FBF4EE;
+  }
+  .spot { font-weight: 700; color: var(--ai-deep); }
+  .note { color: var(--muted); font-size: 13px; }
+
+  /* ===== Lesson callout ===== */
+  .lesson {
+    margin-top: 12px;
+    background: #FDF8E9;
+    border-left: 4px solid var(--kin);
+    border-radius: 0 4px 4px 0;
+    padding: 12px 16px;
+    font-size: 13.5px;
+    line-height: 1.8;
+  }
+  .lesson b.label {
+    font-family: "Shippori Mincho", serif;
+    color: var(--kin);
+    letter-spacing: 0.1em;
+    margin-right: 6px;
+  }
+
+  /* ===== Shops table ===== */
+  table.shops {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    font-size: 14px;
+  }
+  table.shops th {
+    background: #FBF4EE;
+    color: var(--ai-deep);
+    font-weight: 700;
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 13px;
+    border-bottom: 1px solid var(--line);
+  }
+  table.shops td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  table.shops tr:last-child td { border-bottom: none; }
+  table.shops td:first-child { font-weight: 700; color: var(--ai-deep); white-space: nowrap; }
+
+  /* ===== Tips ===== */
+  ol.tips { list-style: none; counter-reset: tip; }
+  ol.tips li {
+    counter-increment: tip;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 14px 16px 14px 58px;
+    margin-bottom: 10px;
+    position: relative;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+  ol.tips li::before {
+    content: counter(tip, cjk-ideographic);
+    position: absolute;
+    left: 14px; top: 12px;
+    width: 30px; height: 30px;
+    background: var(--ai);
+    color: #F4F0E6;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Shippori Mincho", serif;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  ol.tips b { color: var(--ai-deep); }
+
+  footer {
+    margin-top: 64px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+
+  @media (max-width: 560px) {
+    .day { grid-template-columns: 40px 1fr; gap: 12px; }
+    .day-marker { font-size: 16px; padding: 14px 0; }
+    td.time { width: 62px; font-size: 12.5px; }
+    table.timeline td, table.shops td { padding: 9px 10px; }
+    table.summary td.area { width: auto; }
+  }
+  @media print {
+    nav.toc { display: none; }
+    .day-marker { position: static; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">TOKYO → KYOTO ｜ 3泊4日 ｜ 実践版</span>
+    <h1>夏の京都<span class="shu">、</span>歩いてわかった<br>3泊4日モデルコース</h1>
+    <p class="sub">2026年7月に実際に歩いた行程をもとにしたモデルケース ── 猛暑期の「朝イチ屋外・午後屋内」配分と、鉄道沿線の一筆書き動線が鍵。東京発・新幹線利用、京都駅周辺泊。</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-inner">
+    <a data-target="summary" role="button" tabindex="0">全体図</a>
+    <a data-target="day1" role="button" tabindex="0">Day 1</a>
+    <a data-target="day2" role="button" tabindex="0">Day 2</a>
+    <a data-target="day3" role="button" tabindex="0">Day 3</a>
+    <a data-target="day4" role="button" tabindex="0">Day 4</a>
+    <a data-target="shops" role="button" tabindex="0">立ち寄った店</a>
+    <a data-target="tips" role="button" tabindex="0">夏の京都Tips</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<section id="summary">
+  <h2>全体サマリー</h2>
+  <table class="summary">
+    <tr><th>日</th><th>エリア</th><th>主な行程</th></tr>
+    <tr><td class="d">Day 1</td><td class="area">洛中・北</td><td>移動 → 二条城 → 金閣寺</td></tr>
+    <tr><td class="d">Day 2</td><td class="area">東山</td><td>清水寺 → 祇園 → 漢字ミュージアム → 南禅寺 → 哲学の道 → 銀閣寺 → 鴨川川床</td></tr>
+    <tr><td class="d">Day 3</td><td class="area">伏見・宇治</td><td>伏見稲荷 → 宇治（平等院・茶づな）→ 三十三間堂</td></tr>
+    <tr><td class="d">Day 4</td><td class="area">嵐山・太秦</td><td>竹林 → 天龍寺 → 渡月橋 → 太秦映画村 → 帰京</td></tr>
+  </table>
+</section>
+
+<section id="itinerary">
+  <h2>4日間の行程</h2>
+
+  <div class="day" id="day1">
+    <div class="day-marker">一日目</div>
+    <div class="day-body">
+      <div class="day-title">移動 ＋ 二条城・金閣寺</div>
+      <div class="day-sub">到着後すぐ洛中へ。初日から世界遺産2件を巡る</div>
+      <table class="timeline">
+        <tr><td class="time">午前</td><td>東京駅発 のぞみ → 京都着、ホテルに荷物を預ける</td></tr>
+        <tr><td class="time">昼前</td><td><span class="spot">二条城</span>（国宝・二の丸御殿）<span class="note">2026年は寛永行幸四百年祭</span></td></tr>
+        <tr><td class="time">昼</td><td><span class="spot">蕎麦たつ市</span><span class="note">：二条城近くの町家蕎麦。鴨せいろ・鴨なんばんが絶品</span></td></tr>
+        <tr><td class="time">午後</td><td><span class="spot">金閣寺</span><span class="note">：金色の舎利殿は圧巻。拝観受付は16:30頃まで</span></td></tr>
+        <tr><td class="time">夕方</td><td>ホテルチェックイン。翌朝に備えて早めに休む</td></tr>
+      </table>
+      <div class="lesson"><b class="label">教訓</b>人気店の昼食は待ち時間で午後が押しやすい。この日も待ちが長引き、予定していた北野天満宮を断念。昼は開店直後を狙うか、押したら午後の行程を1つ削る判断を。</div>
+    </div>
+  </div>
+
+  <div class="day" id="day2">
+    <div class="day-marker">二日目</div>
+    <div class="day-body">
+      <div class="day-title">東山縦断 ── 清水寺から銀閣寺まで</div>
+      <div class="day-sub">朝の清水寺に始まり、夜の川床で締める東山フルコース</div>
+      <table class="timeline">
+        <tr><td class="time">07:30</td><td><span class="spot">清水寺</span> 朝イチ参拝<span class="note">（開門6:00。8時台までは人が少なく涼しい）</span></td></tr>
+        <tr><td class="time">09:00</td><td>二年坂・三年坂を散策</td></tr>
+        <tr><td class="time">10:00</td><td><span class="spot">八坂庚申堂</span>（くくり猿）→ <span class="spot">八坂神社</span></td></tr>
+        <tr><td class="time">11:00</td><td><span class="spot">漢字ミュージアム</span><span class="note">：八坂神社の目の前。冷房の効いた体験型施設で、暑い時間帯の避難先としても優秀</span></td></tr>
+        <tr><td class="time">13:00</td><td>昼食：<span class="spot">南禅寺 順正</span><span class="note">：名物の湯豆腐・引き上げ湯葉。庭園も見事</span></td></tr>
+        <tr><td class="time">14:30</td><td>南禅寺側から<span class="spot">哲学の道</span>を北上</td></tr>
+        <tr><td class="time">夕方</td><td><span class="spot">銀閣寺</span>（東山慈照寺）</td></tr>
+        <tr><td class="time">夜</td><td>バスで祇園へ戻り、鴨川沿いを散歩しながら店探し → <span class="spot">京いざかや くぼ田</span>の川床で夕食<span class="note">：夏の鱧の湯引き・天ぷらが絶品</span></td></tr>
+      </table>
+      <div class="lesson"><b class="label">ポイント</b>「朝の清水寺 → 昼の屋内（漢字ミュージアム・順正）→ 夕方の銀閣寺 → 夜の川床」と、暑さのピークをうまく外した理想的な配分になった。</div>
+    </div>
+  </div>
+
+  <div class="day" id="day3">
+    <div class="day-marker">三日目</div>
+    <div class="day-body">
+      <div class="day-title">伏見・宇治 ── 京阪沿線の一筆書き</div>
+      <div class="day-sub">千本鳥居から宇治茶の本場へ。帰り道に三十三間堂を前倒し</div>
+      <table class="timeline">
+        <tr><td class="time">朝</td><td><span class="spot">伏見稲荷大社</span> 朝イチで千本鳥居へ<span class="note">（混雑と暑さを避けるなら8時前着が理想）</span></td></tr>
+        <tr><td class="time">午前</td><td>参道で土産＆名物：<span class="spot">ちいかわもぐもぐ本舗</span>、<span class="spot">日野家</span>のスズメの串焼き</td></tr>
+        <tr><td class="time">昼過ぎ</td><td>京阪で宇治へ → <span class="spot">平等院鳳凰堂</span></td></tr>
+        <tr><td class="time">午後</td><td><span class="spot">増田茶舗</span>で宇治抹茶ラテ → <span class="spot">茶づな</span>（お茶と宇治のまち歴史公園）で涼む<span class="note">※抹茶挽きなどの体験は時間指定制のため、やりたい場合は事前予約推奨</span></td></tr>
+        <tr><td class="time">15:40</td><td>京阪宇治駅から乗車 → 七条駅下車</td></tr>
+        <tr><td class="time">16:15</td><td><span class="spot">三十三間堂</span><span class="note">（受付16:30まで。堂内は日差しがなく夕方でも快適）</span></td></tr>
+        <tr><td class="time">夕方</td><td>京都駅で土産購入 → 夕食</td></tr>
+      </table>
+      <div class="lesson"><b class="label">ポイント</b>伏見稲荷・宇治・三十三間堂はすべて京阪沿線。帰り道に七条で途中下車するだけで三十三間堂を消化でき、最終日の自由度が大きく上がった。猛暑日は午後を茶房・ミュージアムなど屋内で組むのが正解。</div>
+    </div>
+  </div>
+
+  <div class="day" id="day4">
+    <div class="day-marker">四日目</div>
+    <div class="day-body">
+      <div class="day-title">嵐山・太秦 ＋ 帰京</div>
+      <div class="day-sub">朝の竹林から映画村まで。夜のぞみでゆとりの最終日</div>
+      <table class="timeline">
+        <tr><td class="time">08:00</td><td>チェックアウト、荷物は京都駅コインロッカーへ</td></tr>
+        <tr><td class="time">08:45</td><td><span class="spot">竹林の小径</span>（朝の涼しく空いているうちに）→ そのまま<span class="spot">天龍寺 北門</span>から入り曹源池庭園を拝観、正門から出る</td></tr>
+        <tr><td class="time">昼前</td><td><span class="spot">渡月橋</span>を渡り、<span class="spot">峯嵐堂 渡月橋本店</span>でできたてわらび餅</td></tr>
+        <tr><td class="time">昼</td><td><span class="spot">嵯峨とうふ 稲 本店</span>（天龍寺正門前）で湯葉うどん</td></tr>
+        <tr><td class="time">午後</td><td>嵐電で<span class="spot">東映太秦映画村</span>へ<span class="note">（2026年3月リニューアル。屋内アトラクション多めで午後の暑さ対策にも◎）</span>。たっぷり遊ぶ</td></tr>
+        <tr><td class="time">夕方</td><td>京都駅へ → 駅弁を購入</td></tr>
+        <tr><td class="time">19:00頃</td><td>のぞみ乗車 → 21:15頃 東京着</td></tr>
+      </table>
+      <div class="lesson"><b class="label">ポイント</b>竹林 → 天龍寺北門 → 庭園 → 正門 → 渡月橋は、坂を戻らずに歩ける最効率ルート。嵐山と映画村は嵐電1本でつながる。最終日の新幹線を19時台にしたことで、映画村を駆け足にせず満喫できた。</div>
+    </div>
+  </div>
+</section>
+
+<section id="shops">
+  <h2>立ち寄った店リスト</h2>
+  <table class="shops">
+    <tr><th>店</th><th>場所</th><th>食べたもの</th></tr>
+    <tr><td>蕎麦たつ市</td><td>二条城近く</td><td>鴨蕎麦</td></tr>
+    <tr><td>南禅寺 順正</td><td>南禅寺門前</td><td>湯豆腐・引き上げ湯葉</td></tr>
+    <tr><td>京いざかや くぼ田</td><td>鴨川・川床</td><td>鱧の湯引き・鱧天ぷら</td></tr>
+    <tr><td>日野家</td><td>伏見稲荷参道</td><td>スズメの串焼き</td></tr>
+    <tr><td>増田茶舗</td><td>宇治</td><td>宇治抹茶ラテ</td></tr>
+    <tr><td>峯嵐堂 渡月橋本店</td><td>嵐山</td><td>できたてわらび餅</td></tr>
+    <tr><td>嵯峨とうふ 稲 本店</td><td>天龍寺正門前</td><td>湯葉うどん</td></tr>
+  </table>
+</section>
+
+<section id="tips">
+  <h2>この旅から得た夏の京都Tips</h2>
+  <ol class="tips">
+    <li><b>「朝イチ屋外・午後屋内」の配分</b>が夏の京都攻略の基本。漢字ミュージアム、茶づな、太秦映画村は冷房の効いた「避難先」としても機能する。</li>
+    <li><b>人気飲食店の待ち時間はスケジュールリスク</b>。開店直後を狙うか、押したら後続の行程を削る覚悟を。</li>
+    <li><b>京阪沿線（伏見稲荷〜宇治〜七条）は一筆書きの黄金ルート</b>。三十三間堂の「帰りに途中下車」は特におすすめ。</li>
+    <li><b>行けなかった場所は翌日以降に無理に押し込まない</b>。今回は北野天満宮・東寺を潔くスキップし、代わりに嵐山を回収して満足度が上がった。</li>
+    <li><b>帰りの新幹線は遅めに設定</b>しておくと最終日の自由度が段違い。駅弁で車内夕食にすれば時間を有効活用できる。</li>
+    <li>体験系施設（茶づなの抹茶挽きなど）は<b>時間指定制が多いので事前予約</b>を。</li>
+  </ol>
+</section>
+
+<footer>
+  2026年7月実施の実録ベース ── 営業時間・料金・開催日程は変更される場合があるため、訪問前に各公式サイトで最新情報の確認を推奨します。
+</footer>
+
+</div>
+<script>
+  document.querySelectorAll('nav.toc a[data-target]').forEach(function (el) {
+    function go(e) {
+      e.preventDefault();
+      var target = document.getElementById(el.dataset.target);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    el.addEventListener('click', go);
+    el.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') go(e);
+    });
+  });
+</script>
+</body>
+</html>
