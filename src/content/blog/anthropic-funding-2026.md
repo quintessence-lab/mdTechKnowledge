@@ -1,7 +1,7 @@
 ---
 title: "Anthropic 大型資本調達ラウンド — Amazon $5B/$100B AWSコミット・Google 最大$40B 投資・Series G $380B → Series H $965B評価額（OpenAI超）の戦略的意義"
 date: 2026-04-26
-updatedDate: 2026-07-18
+updatedDate: 2026-07-24
 category: "一般リサーチ"
 tags: ["Anthropic", "Amazon", "Google", "AWS", "GCP", "Trainium", "TPU", "投資", "クラウドインフラ", "Claude", "Series G", "Series H", "CoreWeave", "Blackstone", "Goldman Sachs", "合弁会社", "EPAM", "Dragoneer", "Greenoaks", "Sequoia", "Altimeter", "Gates Foundation", "公益", "IPO", "S-1", "SEC", "Micron", "Samsung", "SK hynix", "Fluidstack", "データセンター", "HBM", "半導体"]
 excerpt: "2026年4月にAnthropicが立て続けに発表したAmazon・Googleからの巨額投資ラウンドと、Series G $380B評価額調達・年間収益ランレート $30B 突破（OpenAI 逆転）・CoreWeave との計算インフラ個別契約を整理。2026年5月3日発表のBlackstone・H&F・Goldman Sachs との$1.5Bエンタープライズ AI サービス合弁会社、5月7日発表のEPAM Systems との戦略的多年契約、5月8日 Fortune 報道『単一四半期で80倍成長』、5月12日 Bloomberg 報道の$30B 調達ラウンド合意確定（評価額 $900B 超、ARR $45B）、5月14日 Gates Foundation との $200M／4年 grant partnership（医療・K-12教育・経済モビリティ）まで追補。さらに2026年5月28日発表の Series H — $65B 調達・post-money $965B 評価額（OpenAI を上回り AI スタートアップ史上最高）・年率 run-rate revenue $47B 到達・ハイパースケーラー既コミット $15B（Amazon $5B 含む）、さらに2026年6月1日（PT）に SEC へ機密ドラフト S-1 を提出した IPO 申請開始まで追補。"
@@ -124,6 +124,28 @@ Anthropicは今回の2件を経て、以下の3軸構造を完成させた。
 - 現行評価額: $350B〜$380B（2026年4月時点）
 - 一部VCの提示: 最大$800B規模
 - IPO申請: **2026年6月1日（PT）に SEC へ機密ドラフト S-1 を提出**し、IPO プロセスを開始（第5章で詳述）。当初の「2026年10月説」という観測段階から、現実の上場準備フェーズへ移行
+
+### 【2026-07-22追記】AMDが加わり4軸構造へ — $5B戦略投資＋2GW MI450 GPU契約
+
+2026年7月22日、**AMD が Anthropic への戦略的出資（最大 $5B）**と、**AMD Instinct MI450 シリーズ GPU を最大2ギガワット分デプロイする契約**を発表しました。これにより、上記の3軸構造（AWS Trainium / GCP TPU / NVIDIA-CoreWeave）に**4本目の柱**が加わります。
+
+```
+┌─────────────────────────────────────────────────┐
+│  Anthropic Claude スケーリング基盤（2026年7月〜） │
+├─────────────────────────────────────────────────┤
+│  ① AWS    : Trainium 5GW（10年で$100B+支出）    │
+│  ② GCP    : TPU 5GW（5年で最大$40B契約）        │
+│  ③ NVIDIA : CoreWeave経由GPU（既存契約）         │
+│  ④ AMD    : Instinct MI450 最大2GW（新規）      │
+└─────────────────────────────────────────────────┘
+```
+
+- **投資構造**: AMDの出資（最大$5B）は**デプロイのマイルストーン達成に応じて実行**される仕組みで、前払いの一括投資ではありません。
+- **ハードウェア**: **AMD Helios**（ラックスケール製品）に **Instinct MI455X GPU・EPUC「Venice」CPU・AMD Pensando ネットワーキング・ROCm ソフトウェア**を組み合わせた構成。最初の1GW分は**2027年上半期**からデプロイ開始予定。
+- **相互連携**: Anthropic は Claude を使って AMD Instinct GPU 向けのワークロード最適化・ROCm ソフトウェア開発を加速。AMD は自社のソフトウェア・製品開発全体に Claude を統合。
+- **意義**: NVIDIA 依存を一段と下げる動きで、**チップベンダーの分散が3社→4社**に拡大。AMDにとっては、Anthropicへの出資と引き換えに大型GPU受注を得る「投資と引き換えの受注確保」という構図です。
+
+出典: [AMD IR: Strategic Partnership press release](https://ir.amd.com/news-events/press-releases/detail/1292/amd-and-anthropic-announce-strategic-partnership-to-deploy-up-to-2-gigawatts-of-amd-instinct-mi450-series-gpus) ／ [CNBC: AMD to invest up to $5B in Anthropic](https://www.cnbc.com/2026/07/22/amd-anthropic-ai-chip-investment.html)
 
 ---
 

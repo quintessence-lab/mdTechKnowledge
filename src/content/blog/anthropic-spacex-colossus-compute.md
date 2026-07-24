@@ -1,6 +1,7 @@
 ---
 title: "Anthropic × SpaceX Colossus コンピュートディール — 競合xAIから全容量を借りる『月$1.25B』契約と宇宙コンピュート構想"
 date: 2026-05-31
+updatedDate: 2026-07-24
 category: "一般リサーチ"
 tags: ["Anthropic", "SpaceX", "xAI", "Colossus", "GPU", "AIインフラ", "コンピュート", "NVIDIA", "宇宙コンピュート"]
 excerpt: "2026年5月、Anthropicが競合xAIの運営するColossus 1データセンター（Memphis・GPU22万台超・300MW超）の全容量を借りる契約を発表。月$1.25B・年$15B・xAIへ$40B超、2029年まで。Claude Codeのレート制限緩和に即反映され、宇宙空間でのGW級コンピュート構想も表明。ライバル間取引の構造とTPU契約との位置づけを整理する。"
@@ -112,6 +113,19 @@ Anthropic と xAI は生成AI市場の直接競合です。それでもこの取
 TPU/Trainium の本命容量が立ち上がる2027年までの間、需要爆発（Anthropicは単一四半期で前年同期比80倍成長とも報じられる）に追いつくための緊急調達が、このSpaceX契約の本質です。**「ライバルからの全容量賃借」というアクロバティックな手段**を取ってでも、コンピュートを確保しなければならないほど、AI需要の伸びが急峻だということでもあります。
 
 > Google・Broadcom TPU 契約の詳細（3.5GW・2027年稼働・2031年まで、Broadcom の役割、$200B規模の Google Cloud 長期コミット、競合比較など）は、関連記事「[Anthropic コンピュートインフラ & TPUパートナーシップ](/mdTechKnowledge/blog/anthropic-tpu-compute-partnership/)」で詳しく扱っています。
+
+## 7. 【2026-07-17追記】次はMeta？ — $10B・2年のコンピュートリース交渉（報道ベース）
+
+SpaceX（競合xAI経由）に続き、**Anthropic は Meta とも大型のコンピュートリース契約を交渉中**と報じられています。**現時点ではまだ初期段階の交渉であり、正式契約ではありません**。
+
+- **規模**: 最大 **$10B・2年間**（月次分割払い）。SpaceX 契約（3年で約$45B）と並ぶ大型案件になり得ます。
+- **段階**: 「early talks（初期交渉）」の段階で、**両社とも早期に契約を打ち切れる**条件が想定されているとされます。
+- **異例の構図**: Meta は自社モデル「Llama」シリーズで Claude と直接競合する立場でありながら、**同時に Anthropic のインフラ供給者になる**という、SpaceX（xAI）契約と同様の「競合が計算資源の貸し手になる」構図が繰り返されています。
+- **Meta側の思惑**: Mark Zuckerberg CEO は2026年5月、自社の巨額AIインフラ投資を他社にも売って収益化する「クラウド事業への参入」を検討していると発言しており、今回の交渉はその一環と位置づけられます。
+
+もし成立すれば、Anthropicのコンピュート調達は **AWS・GCP・NVIDIA-CoreWeave・AMD・SpaceX(xAI)・Meta** という、競合企業まで巻き込んだ多面的な調達網に拡大することになります。現時点では交渉段階のため、続報が出次第、本記事または関連記事で更新します。
+
+出典: [CNBC: Meta, Anthropic in talks for potential $10 billion compute lease deal](https://finance.yahoo.com/technology/ai/articles/meta-talks-10-billion-anthropic-162927340.html) ／ [MLQ: Anthropic in Early Talks to Lease $10B in Compute From Meta](https://mlq.ai/news/anthropic-in-early-talks-to-lease-10b-in-compute-from-meta-over-two-years/)
 
 ---
 
