@@ -8,65 +8,136 @@
       "title": "Claudeのマルチエージェント4系統 — DW・Agent View・Managed Agents・Agent Teams",
       "emoji": "🧭",
       "type": "tech",
-      "topics": ["claude", "claudecode", "ai", "dynamicworkflows", "マルチエージェント"]
+      "topics": [
+        "claude",
+        "claudecode",
+        "ai",
+        "dynamicworkflows",
+        "マルチエージェント"
+      ]
     },
     {
       "slug": "dynamic-workflows-fable5-runaway",
       "emoji": "😱",
       "type": "tech",
-      "topics": ["claude", "claudecode", "ai", "dynamicworkflows"]
+      "topics": [
+        "claude",
+        "claudecode",
+        "ai",
+        "dynamicworkflows"
+      ]
     },
     {
       "slug": "claude-code-subagent-readonly-switch",
       "title": "Claude Code サブエージェントの歩き方 — Explore が read-only な理由と切替の仕組み",
       "emoji": "🤖",
       "type": "tech",
-      "topics": ["claude", "claudecode", "ai", "subagent"]
+      "topics": [
+        "claude",
+        "claudecode",
+        "ai",
+        "subagent"
+      ]
     },
     {
       "slug": "code-with-claude-tokyo-sessions",
       "emoji": "🗼",
       "type": "tech",
-      "topics": ["claude", "claudecode", "ai", "anthropic", "イベント"]
+      "topics": [
+        "claude",
+        "claudecode",
+        "ai",
+        "anthropic",
+        "イベント"
+      ]
     },
     {
       "slug": "agent-teams-vs-dynamic-workflows",
       "emoji": "⚖️",
       "type": "tech",
-      "topics": ["claude", "claudecode", "agentteams", "dynamicworkflows", "マルチエージェント"]
+      "topics": [
+        "claude",
+        "claudecode",
+        "agentteams",
+        "dynamicworkflows",
+        "マルチエージェント"
+      ]
     },
     {
       "slug": "claude-access-methods-overview",
       "title": "Claude Cowork / ブラウザ / Claude Code / Claude Code Web の使い分け早わかり",
       "emoji": "🚪",
       "type": "tech",
-      "topics": ["claude", "claudecode", "ai", "anthropic", "初心者向け"]
+      "topics": [
+        "claude",
+        "claudecode",
+        "ai",
+        "anthropic",
+        "初心者向け"
+      ]
     },
     {
       "slug": "claude-code-dynamic-workflows-guide",
       "zenn_slug": "claude-code-dynamic-workflows-guide-2",
       "emoji": "⚙️",
       "type": "tech",
-      "topics": ["claude", "claudecode", "ai", "dynamicworkflows", "マルチエージェント"]
+      "topics": [
+        "claude",
+        "claudecode",
+        "ai",
+        "dynamicworkflows",
+        "マルチエージェント"
+      ]
     },
     {
       "slug": "dynamic-workflows-token-cache-analysis",
       "emoji": "📊",
       "type": "tech",
-      "topics": ["claude", "claudecode", "dynamicworkflows", "プロンプトキャッシュ", "コスト最適化"]
+      "topics": [
+        "claude",
+        "claudecode",
+        "dynamicworkflows",
+        "プロンプトキャッシュ",
+        "コスト最適化"
+      ]
     },
     {
       "slug": "claude-max-web-direct-savings",
       "title": "Claude Max は Web契約が月3,800〜7,200円安い — iOS(App Store)を避けてclaude.com直接契約",
       "emoji": "💰",
       "type": "idea",
-      "topics": ["claude", "anthropic", "ai", "料金", "コスト最適化"]
+      "topics": [
+        "claude",
+        "anthropic",
+        "ai",
+        "料金",
+        "コスト最適化"
+      ]
     },
     {
       "slug": "claude-fable-5-pro-plan-availability",
       "emoji": "💸",
       "type": "idea",
-      "topics": ["claude", "anthropic", "fable5", "料金", "ai"]
+      "topics": [
+        "claude",
+        "anthropic",
+        "fable5",
+        "料金",
+        "ai"
+      ]
+    },
+    {
+      "slug": "claude-opus-5-pricing-and-model-selection",
+      "emoji": "💰",
+      "type": "tech",
+      "topics": [
+        "claude",
+        "claudecode",
+        "ai",
+        "opus5",
+        "生成ai"
+      ],
+      "title": "Claude Opus 5 の単価総覧と、Claude Code で旧モデル（Opus 4.8）を指定する方法"
     }
   ]
 }
