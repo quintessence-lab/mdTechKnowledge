@@ -1,10 +1,10 @@
 ---
-title: "Anthropic Messages API 新機能まとめ（2026年5〜7月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・APIキー有効期限"
+title: "Anthropic Messages API 新機能まとめ（2026年5〜7月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・APIキー有効期限・Opus5対応"
 date: 2026-06-20
-updatedDate: 2026-07-23
+updatedDate: 2026-07-25
 category: "Claude技術解説"
-tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "プロンプトキャッシュ"]
-excerpt: "2026年5〜7月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定に加え、7月の Admin API User Management ベータ・HIPAA セルフサービス設定まで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
+tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ"]
+excerpt: "2026年5〜7月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定に加え、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモードまで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
 draft: false
 ---
 
@@ -295,6 +295,18 @@ Claude Enterprise 組織向けに、**メンバー管理をダッシュボード
 
 Claude Enterprise と Claude Platform 両方で、**HIPAA 対応の有効化がセールス経由不要のセルフサービスフロー**になりました。対象組織の管理者は、①BAA（Business Associate Agreement）のレビュー、②実装ガイドのダウンロード、③HIPAA 設定の有効化を**1つのフローで完結**できます。医療・ヘルスケア系のワークロードを扱う組織にとって、導入までのリードタイム短縮に直結する変更です。
 
+## 11. Claude Opus 5 関連の API 新機能（2026年7月24日）
+
+**Claude Opus 5**（`claude-opus-5`）のリリースに合わせて、Messages API に以下の新機能・破壊的変更が加わりました。モデル本体の詳細は [Claude Opus 4.8 完全ガイド](/mdTechKnowledge/blog/claude-opus-4-8-guide/) の後継案内を参照してください。
+
+| 機能 | 内容 |
+|:---|:---|
+| **thinking disabled の制限（破壊的変更）** | `thinking: {"type": "disabled"}` は Opus 5 では **effort が `high` 以下の場合のみ**許容。`xhigh` / `max` と組み合わせると **400 エラー**（Opus 4.8 からの破壊的変更） |
+| **Mid-conversation tool changes（beta）** | betaヘッダー `mid-conversation-tool-changes-2026-07-01` を指定すると、**会話の途中でツールを追加・削除してもプロンプトキャッシュを維持**できる |
+| **`fallbacks` パラメータの `"default"` モード** | betaヘッダー `server-side-fallback-2026-07-01` が必須。拒否カテゴリ別に **Anthropic 推奨のフォールバックモデルを自動適用**（従来の `-2026-06-01` は明示リスト指定のみ対応） |
+
+Opus 5 は 1M トークンコンテキストが**デフォルト兼上限**（縮小版バリアントなし）、最大出力 128k トークン、thinking が**デフォルトでオン**という仕様のため、既存の Opus 4.8 向け実装（特に `xhigh`/`max` effort と thinking disabled を組み合わせているコード）は切替前に見直しが必要です。
+
 ## まとめ — どの機能をいつ使うか
 
 2026年5〜6月の Messages API 新機能は、「**品質を上げる**」「**コストを下げる**」「**運用を見通せるようにする**」の3方向に効きます。
@@ -307,6 +319,8 @@ Claude Enterprise と Claude Platform 両方で、**HIPAA 対応の有効化が�
 
 これらは独立機能ですが、特に **Cache Diagnostics × 会話途中 system メッセージ** はキャッシュ運用で補完し合うため、長時間エージェントを運用するチームは両方をセットで導入する価値があります。
 
+- **Opus 5 に切替予定/済みで `xhigh`/`max` effort を使っている** → thinking disabled の可否を確認（400 エラー回避）。**会話途中でツール構成を変えたい** → Mid-conversation tool changes beta。**拒否時のフォールバックを自動化したい** → `fallbacks` の `"default"` モード。
+
 ## 参考資料
 
 - [Claude Platform リリースノート（公式・一次ソース）](https://platform.claude.com/docs/en/release-notes/overview)
@@ -318,5 +332,7 @@ Claude Enterprise と Claude Platform 両方で、**HIPAA 対応の有効化が�
 - [Prompt caching（公式ドキュメント）](https://platform.claude.com/docs/en/build-with-claude/prompt-caching)
 - [Code execution tool（公式ドキュメント・併用無料の出典）](https://platform.claude.com/docs/en/agents-and-tools/tool-use/code-execution-tool)
 - [Advisor tool（公式ドキュメント）](https://platform.claude.com/docs/en/agents-and-tools/tool-use/advisor-tool)
+- [Anthropic 公式: Claude Opus 5 の変更点](https://platform.claude.com/docs/en/about-claude/models/whats-new-opus-5)
 - 関連記事: [Advisor Tool 完全ガイド](/mdTechKnowledge/blog/anthropic-advisor-tool-guide/)
+- 関連記事: [Claude Opus 4.8 完全ガイド](/mdTechKnowledge/blog/claude-opus-4-8-guide/)
 - 関連記事: [Anthropic Rate Limits API 完全ガイド](/mdTechKnowledge/blog/anthropic-rate-limits-api-guide/)

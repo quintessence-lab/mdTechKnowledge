@@ -1,10 +1,10 @@
 ---
 title: "Claude Opus 4.8 完全ガイド — System Card準拠ベンチ詳説・Effort 5段階の正準対応・4.7→4.8実務移行"
 date: 2026-05-30
-updatedDate: 2026-06-05
+updatedDate: 2026-07-25
 category: "Claude技術解説"
 tags: ["Claude", "Opus 4.8", "Anthropic", "Effort Control", "ベンチマーク", "API", "アライメント", "Fast mode"]
-excerpt: "2026-05-28（PT）リリースの新フラッグシップ Claude Opus 4.8 を System Card 準拠で徹底解説。SWE-bench Pro 69.2%・HLE・GDPval Elo の正確な読み方、Effort 5段階（low/medium/high/xhigh/max）と claude.ai/Claude Code/API の名称対応、Fast mode の経済性、near-Mythos アライメントの正確な意味、claude-opus-4-8 への実務移行（budget_tokens の罠）まで網羅。Fast mode は標準比2倍単価で約2.5倍速、かつ従来モデルのFast mode比で約3倍安（$10/$50・公式値）という2軸を整理。"
+excerpt: "2026-05-28（PT）リリースの新フラッグシップ Claude Opus 4.8 を System Card 準拠で徹底解説。SWE-bench Pro 69.2%・HLE・GDPval Elo の正確な読み方、Effort 5段階（low/medium/high/xhigh/max）と claude.ai/Claude Code/API の名称対応、Fast mode の経済性、near-Mythos アライメントの正確な意味、claude-opus-4-8 への実務移行（budget_tokens の罠）まで網羅。Fast mode は標準比2倍単価で約2.5倍速、かつ従来モデルのFast mode比で約3倍安（$10/$50・公式値）という2軸を整理。2026-07-24 に後継 Claude Opus 5（同価格・Max新デフォルト・thinking disabled×xhigh/maxで400エラーの破壊的変更）がリリースされた点も追記。"
 draft: false
 ---
 
@@ -276,6 +276,28 @@ Opus 4.8 を起点に、より深い話題は各専門記事へ:
 
 ---
 
+## 9.5. 後継モデル: Claude Opus 5（2026-07-24 PT リリース）
+
+Opus 4.8 GA から**約2ヶ月後**、後継となる **Claude Opus 5**（`claude-opus-5`）が一般提供開始されました。価格は Opus 4.8 と**同額据え置き**のまま、ベンチマーク・可用性・API 機能で前進しています。
+
+| 項目 | Opus 4.8 | **Opus 5** |
+|------|----------|-----------|
+| モデルID | `claude-opus-4-8` | **`claude-opus-5`** |
+| 価格（入力/出力・per MTok） | $5 / $25 | **$5 / $25（据え置き）** |
+| コンテキスト窓 | 1M（オプトイン） | **1M がデフォルト兼上限**（縮小版バリアントなし） |
+| 最大出力トークン | — | **128k** |
+| thinking | Adaptive（既定オフ） | **既定でオン** |
+| 提供プラットフォーム | API / Bedrock / Vertex / Foundry | **API / Bedrock / Vertex / Foundry（継続）** |
+| Claude Max / Pro 位置づけ | 上位モデル | **Max の新デフォルト、Pro では最上位モデル** |
+
+**Opus 4.8 からの破壊的変更**: `thinking: {"type": "disabled"}` は Opus 5 では **effort が `high` 以下の場合のみ許容**され、`xhigh` / `max` と組み合わせると **400 エラー**になります。Opus 4.8 で `xhigh`/`max` ＋ thinking disabled の組み合わせを使っている実装は、Opus 5 への切替時に個別調整が必要です。
+
+Messages API 側の新機能（`mid-conversation-tool-changes-2026-07-01` ベータヘッダー、`fallbacks` パラメータの `"default"` モード等）は [Anthropic Messages API 新機能まとめ](/mdTechKnowledge/blog/anthropic-messages-api-new-features-2026/) を参照してください。
+
+Opus 4.8 は全プラットフォームで**引き続き提供**されており、本記事は Opus 4.8 リファレンスとして有効です。Opus 5 の専用ガイドは今後の記事化を検討中です。
+
+---
+
 ## まとめ
 
 - Opus 4.8 は Opus 4.7 の**約6週間後**の新フラッグシップ。モデルID `claude-opus-4-8`、**標準価格は据え置き $5/$25**。
@@ -288,6 +310,8 @@ Opus 4.8 を起点に、より深い話題は各専門記事へ:
 
 ## 参考資料
 
+- [Anthropic 公式: Claude Opus 5](https://www.anthropic.com/news/claude-opus-5)
+- [Anthropic 公式: Claude Opus 5 の変更点](https://platform.claude.com/docs/en/about-claude/models/whats-new-opus-5)
 - [Anthropic 公式: Claude Opus 4.8](https://www.anthropic.com/news/claude-opus-4-8)
 - [Claude Opus 4.8 System Card](https://www.anthropic.com/claude-opus-4-8-system-card)
 - [Anthropic API: Effort（推論努力度）](https://platform.claude.com/docs/en/build-with-claude/effort)
