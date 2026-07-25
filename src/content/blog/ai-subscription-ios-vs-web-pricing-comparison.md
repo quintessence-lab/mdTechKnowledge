@@ -1,7 +1,7 @@
 ---
-title: "Claude / Gemini / ChatGPT — iOS と Web どちらで契約するのが本当に安いか（2026年5月版）"
+title: "Claude / Gemini / ChatGPT を契約するなら iOS と Web どちらが安いか — 2026年5月版コスト比較"
 date: 2026-05-06
-updatedDate: 2026-06-17
+updatedDate: 2026-07-25
 category: "一般リサーチ"
 tags: ["Claude", "Gemini", "ChatGPT", "サブスクリプション", "iOS", "App Store", "料金比較", "Apple", "Agent SDK credits"]
 excerpt: "主要AIサービス3社（Claude / Gemini / ChatGPT）について、iOS App Store経由とWeb直接契約の料金差を整理。Apple 30%コミッションの転嫁パターン（完全転嫁・部分転嫁・吸収）、日本円固定価格の為替逆転現象に加え、2026年6月15日施行予定だったClaude Agent SDK課金分離（施行当日に一時停止・現在は従来どおりサブスク枠）まで解説。"

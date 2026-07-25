@@ -1,7 +1,7 @@
 ---
-title: "【Claude Max は Web 契約が月2,100〜4,300円安い】iOS（App Store）を避け claude.com 直接契約が正解 — 2026年7月版"
+title: "Claude Max を契約するなら iOS と Web どちらが安いか — 2026年7月版コスト比較"
 date: 2026-06-19
-updatedDate: 2026-07-09
+updatedDate: 2026-07-25
 category: "Claude技術解説"
 tags: ["Claude", "Anthropic", "Claude Max", "サブスクリプション", "iOS", "App Store", "料金", "コスト比較", "claude.com", "節約"]
 excerpt: "Claude Max（5x / 20x）を契約するなら、iOS の App Store 経由ではなく claude.com から直接契約すべき。2026年7月・$1≈¥162.4 で実額を比べると、Web 契約は iOS より Max 5x で月 約¥2,100（年 約¥25,200）、Max 20x で月 約¥4,300（年 約¥51,600）安い。6月から Apple が日本の App Store 円価格を Max 5x ¥21,400→¥20,000・Max 20x ¥42,400→¥40,000 に引き下げ、円安も重なって差額は縮小したが、USD の +25% 構造（Apple 手数料の完全転嫁）は不変で Web が依然お得。差額の根拠、年間の損失、Web 契約手順、iOS からの乗り換え手順までまとめる。"
