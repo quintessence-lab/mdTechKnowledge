@@ -1,10 +1,10 @@
 ---
 title: "Anthropic Enterprise Analytics API 完全ガイド — 組織別利用データの照会と活用"
 date: 2026-05-02
-updatedDate: 2026-07-18
+updatedDate: 2026-07-25
 category: "Claude技術解説"
-tags: ["Anthropic", "Claude API", "Admin API", "Analytics", "エンタープライズ", "FinOps", "Slack連携", "Workload Identity Federation", "OIDC"]
-excerpt: "2026年4月、Anthropic は Claude / Claude Code Remote / Claude Cowork の組織別利用データをプログラム照会できる Enterprise Analytics API を拡張した。Rate Limits API との位置付けの違い、エンドポイント構造、認証、レスポンス、Python/curl 実装例、Slackボット連携、運用ユースケース、制限事項までをまとめて解説する。さらに2026年6月の Workload Identity Federation（WIF＝OIDCトークンによるAPIキー不要認証）対応と、Admin API に追加された issuers / service accounts / federation rules エンドポイントも解説する。"
+tags: ["Anthropic", "Claude API", "Admin API", "Analytics", "エンタープライズ", "FinOps", "Slack連携", "Workload Identity Federation", "OIDC", "Spend Limits API", "RBAC", "ユーザー管理"]
+excerpt: "2026年4月、Anthropic は Claude / Claude Code Remote / Claude Cowork の組織別利用データをプログラム照会できる Enterprise Analytics API を拡張した。Rate Limits API との位置付けの違い、エンドポイント構造、認証、レスポンス、Python/curl 実装例、Slackボット連携、運用ユースケース、制限事項までをまとめて解説する。さらに2026年6月の Workload Identity Federation（WIF＝OIDCトークンによるAPIキー不要認証）対応と、Admin API に追加された issuers / service accounts / federation rules エンドポイントも解説する。 さらに 2026-07-14 Beta のユーザー管理API（組織ロール5種・APIで割当可能なのは user/managed のみ・シート消費・SSO/SCIM併用時の制約）と、Enterprise 専用の Spend Limits API（上限の階層解決・ユーザー単位上書き・増額申請の承認/却下・金額は最小単位の文字列）も収録。"
 draft: false
 ---
 
@@ -465,16 +465,107 @@ WIF リソースはコンソールの「Connect workload」ウィザードに加
 
 2026年7月14日、**Claude Enterprise 組織のメンバーを Admin API から管理**できるようになりました（Beta）。従来の「利用実績を読む」Analytics/Admin API に対し、こちらは**組織メンバーの構成そのものを操作**するプロビジョニング系 API です。SCIM や社内 IdP と組み合わせた**オンボーディング/オフボーディングの自動化（IaC 化）**に使えます。
 
-| 操作領域 | できること |
-|:---|:---|
-| **メンバー** | 一覧取得・**メールアドレスで検索**・**ロール変更**・**削除** |
-| **招待** | 招待の送付・取り消し |
-| **グループ** | グループ管理・メンバーシップ管理 |
-| **カスタムロール** | 参照 |
+| 操作領域 | できること | エンドポイント |
+|:---|:---|:---|
+| **メンバー** | 一覧取得・**メールアドレスで検索**・**ロール変更**・**削除** | `/v1/organizations/users` |
+| **招待** | 招待の送付・状態確認・取り消し | `/v1/organizations/invites` |
+| **グループ** | 作成・改名・削除・メンバーシップ管理 | `/v1/organizations/rbac_groups` |
+| **カスタムロール** | **参照のみ**（権限一覧の取得を含む） | `/v1/organizations/rbac_roles` |
 
-- **beta ヘッダー**: **グループ・カスタムロール**操作には **`anthropic-beta: ce-user-management-2026-07-13`** が必要（メンバー/招待の基本操作は不要）。
-- **読み取りスコープ**: **`read:org_audit`** スコープを持つ Admin API キーでも、**全 GET エンドポイント**（一覧・検索など）を呼び出せます。
+- **beta ヘッダー**: **グループ・カスタムロール**操作には **`anthropic-beta: ce-user-management-2026-07-13`** が必要（**無いと 404**）。メンバー/招待の基本操作には不要ですが、逆に**メンバー/招待は `anthropic-version: 2023-06-01` が必要**で、グループ/カスタムロールには不要という**非対称**があります。
+- **スコープ**: `read:members` / `write:members`（メンバー・招待、およびカスタムロール参照）、`read:rbac_groups` / `write:rbac_groups`（グループ）。**`read:org_audit`** を持つキーは**本ページ全 GET と Compliance API の読み取り**を呼べます。
+
+#### 組織ロールは「5種」— API で割り当てられるのは2つだけ
+
+Claude Enterprise の組織ロールは**1メンバーにつき1つ**で、次の**5種**です。**Claude Console（Claude Platform）組織とはロール体系が異なる**点に注意してください。
+
+| ロール | 意味 | API で割当可否 |
+|:---|:---|:---:|
+| `user` | 標準メンバー | **可** |
+| `managed` | **所属グループに紐づくカスタムロール経由**で権限が付与されるメンバー | **可** |
+| `owner` | 組織オーナー | 不可 |
+| `membership_admin` | メンバー管理権限を持つメンバー | 不可 |
+| `primary_owner` | 組織のプライマリオーナー（**組織内に1名のみ**） | 不可 |
+
+**API が割り当てられるのは `user` と `managed` の2つだけ**です。管理系3ロール（`owner` / `membership_admin` / `primary_owner`）の付与は claude.ai の組織設定でのみ可能で、**これらを持つメンバーは API から変更も削除もできません**（400 が返る）。RBAC を効かせたい場合は「メンバーを `managed` にし、権限はグループに紐づくカスタムロールで与える」のが基本設計になります。
+
+#### 運用で刺さる制約（見落としやすい点）
+
+| 項目 | 挙動 |
+|:---|:---|
+| **シート消費** | 有限シートのプランでは、**pending の招待がシートを1つ占有**します。**空きが無いと 400 で失敗し、シートは自動購入されません**。招待の取り消し・期限切れ・メンバー削除でシートはプールへ戻ります |
+| **SSO / SCIM 併用時** | IdP が**ユーザーをプロビジョニング（JIT/SCIM）していると招待作成が 400**、**ロールを管理していればロール更新が 400**、**メンバーシップを管理していれば削除が 400**。**読み取りは常に可能** |
+| **SCIM グループ** | `source_type: "scim"` のグループは**参照のみ**。改名・削除・メンバー変更は 400（IdP 側で操作する） |
+| **グループの所有単位** | グループは**エンタープライズ全体**（親組織＋配下の全組織）が所有する一方、**カスタムロールのカタログは組織ごと**。別組織のロールIDを引くと 404 になります |
+| **`roles` フィールドが `null`** | 空配列 `[]` ではなく `null` の場合は「**ロール情報が一時的に取得不能**」の意味。**リトライして区別**します |
+| **レート上限** | Admin API 全体で**組織あたり 100 req/分**。ただし**招待作成のみ 1,200 req/時**の別枠 |
+| **⚠️ Admin API キーは作成者の退職後も生き続ける** | キーは**個人ではなく組織にスコープ**されるため、作成者を組織から削除しても**キーは有効なまま**です。オフボーディング時は claude.ai の組織設定 > API からキーを**明示的に削除**して再発行してください |
+
 - 出典: [User management — Anthropic 公式ドキュメント](https://platform.claude.com/docs/en/manage-claude/user-management) ／ [Claude Platform リリースノート（2026-07-14）](https://platform.claude.com/docs/en/release-notes/overview)。
+
+## Spend Limits API — 支出「上限」をAPIで制御する（Enterprise 専用）
+
+前節の**支出アラート**が「**通知**」だとすれば、こちらは「**上限そのものの設定と、増額申請の裁可**」を担う API です。**Claude Enterprise 組織のみ**が利用でき、**Claude Console（Claude Platform）組織では利用できません**。前提として、組織で **usage credits が有効化**されている必要があります。
+
+### 2リソース・8エンドポイント
+
+| リソース | 主なエンドポイント | 用途 |
+|:---|:---|:---|
+| **支出上限** | `GET /v1/organizations/spend_limits/effective`<br>`POST /v1/organizations/spend_limits`<br>`DELETE /v1/organizations/spend_limits/{id}` | 各メンバーの**実効上限・継承元・期間内消費**を取得／**ユーザー単位の上書き**を設定・解除 |
+| **増額申請** | `GET /v1/organizations/spend_limit_increase_requests`<br>`POST .../{id}/approve`<br>`POST .../{id}/deny` | メンバーからの増額申請を一覧・**承認/却下** |
+
+スコープは **`read:spend_limits`（GET）／`write:spend_limits`（POST・DELETE）**。全8エンドポイント共通で**組織あたり 60 req/分**です。
+
+### 上限は「階層」で決まる
+
+実効上限（effective spend limit）は次の優先順で解決されます。レスポンスの `source` フィールドが**どの階層から来たか**を示します。
+
+```
+user（ユーザー個別の上書き）  ← APIで設定できるのはココだけ
+  ↓ なければ
+rbac_group（グループ既定）      ┐
+seat_tier（シートティア既定）    ├ claude.ai の組織設定で構成
+organization（組織全体の既定）   ┘
+  ↓ どれも無ければ
+無制限
+```
+
+> **重要な誤解ポイント**: **グループの支出上限は「メンバー1人あたりの既定値」**であって、**グループで共有するプール予算ではありません**。各メンバーが自分の消費に対して個別に判定されます。
+>
+> また **API で書けるのは `scope.type: "user"` の上書きのみ**です。シートティア・グループ・組織全体の既定値は claude.ai の組織設定で構成します。
+
+### 金額表現の落とし穴
+
+- 金額は**すべて文字列**で、**課金通貨の最小単位**（USD ならセント）です。`"50000"` = **500.00 USD**。**10進として解析し100で割る**（大きな値で二進浮動小数点を使わない）。
+- `amount` は **nullable**。実効行での `null` は「**無制限**」、`"0"` は「**プラン同梱分を超えて使えない**」を意味します。設定行の `null` は「数値上限が未設定」の意味しかないため、**無制限かどうかは実効行で判断**します。
+- `period_to_date_spend` は小数を含むことがあり（例 `"41280.125"`）、**取得不能時は `"0"` と読める**ため、**参考値として扱い、課金処理の根拠にはしない**こと。
+
+### 増額申請のライフサイクル
+
+申請は**メンバーが claude.ai で「Request more usage」を押したときにのみ生成**され、**API からは作成できません**。
+
+| ステータス | 意味 |
+|:---|:---|
+| `pending` | 裁可待ち。**判断に必要な `spend_summary`（現在の実効上限と期間内消費）が同梱**されるため、別途参照する必要がない |
+| `approved` | 承認済み（終端）。管理者の明示的承認のほか、他の管理操作や Anthropic サポートによる引き上げでもこの状態になる |
+| `denied` | 却下（終端）。**claude.ai 側で当該メンバーの申請ボタンが 30日間非表示**になる（管理者は直接引き上げ可能） |
+
+- **承認時に金額を指定する**のがポイントです。申請自体は希望額を持たず、管理者が `amount` を与えて承認します。
+- **上限を直接設定しても pending の申請は解決されません**。申請を閉じるには `approve` / `deny` を明示的に呼ぶ必要があります。
+- `suppress_notification: true` で承認・却下メールを抑止できます（自社システムから通知する場合に使用）。
+
+### Analytics API との連携パターン
+
+「**Analytics で見つけて、Spend Limits で確認・調整する**」が基本の組み合わせです。
+
+1. Analytics の `user_cost_report` で**期間内消費の多い順**にメンバーを抽出
+2. その `user_id` を `GET /spend_limits/effective?user_ids[]=...` に渡して**実効上限を取得**
+3. `period_to_date_spend / amount` を計算し、**閾値（例: 80%）超のメンバーを検出**（**サーバー側にこの比率のフィルタは無い**ので自前計算）
+4. 上限引き上げ・pending 申請の承認・本人への連絡などのアクション
+
+> **カーソルの注意**: 両APIとも不透明カーソルでページングしますが、**カーソルは発行時のクエリ条件に紐づいています**。`user_ids[]` や `status[]` を途中で変えて古いカーソルを渡すと 400（*cursor does not match current query parameters*）になります。条件を変えるときは**先頭ページから取り直し**てください。
+
+出典: [Spend Limits API — Anthropic 公式ドキュメント](https://platform.claude.com/docs/en/manage-claude/spend-limits-api)
 
 ## まとめ — Rate Limits API との両輪で運用する
 
@@ -504,4 +595,6 @@ Rate Limits API ガイド（姉妹記事）と組み合わせ、自社のエン�
 - [Claude Code user base grows 300% as Anthropic launches enterprise analytics dashboard (The New Stack)](https://thenewstack.io/claude-code-user-base-grows-300-as-anthropic-launches-enterprise-analytics-dashboard/)
 - [AWS Weekly Roundup — Anthropic / Meta partnership, AWS Lambda, S3 Files, Bedrock AgentCore CLI (April 27, 2026)](https://aws.amazon.com/blogs/aws/aws-weekly-roundup-anthropic-meta-partnership-aws-lambda-s3-files-amazon-bedrock-agentcore-cli-and-more-april-27-2026/)
 - [Compliance API — Claude Docs（公式）](https://platform.claude.com/docs/en/manage-claude/compliance-api)
+- [User management — Claude Docs（公式）](https://platform.claude.com/docs/en/manage-claude/user-management)（組織ロール5種・グループ/カスタムロール・シート消費・SSO/SCIM制約）
+- [Spend Limits API — Claude Docs（公式）](https://platform.claude.com/docs/en/manage-claude/spend-limits-api)（上限階層・増額申請の裁可・金額表現）
 - [Get started with the Claude Enterprise Analytics API — Anthropic Support（公式）](https://support.claude.com/en/articles/13694757)
