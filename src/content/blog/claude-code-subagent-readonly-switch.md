@@ -1,7 +1,7 @@
 ---
 title: "Claude Code サブエージェントの歩き方 — Exploreがread-onlyだった理由と general-purpose 切替の仕組み（マルチエージェント編の続編）"
 date: 2026-05-17
-updatedDate: 2026-06-17
+updatedDate: 2026-07-26
 category: "Claude技術解説"
 tags: ["Claude Code", "サブエージェント", "Agent", "Explore", "general-purpose", "Plan", "権限分離", "read-only"]
 excerpt: "Claude Code のサブエージェントには Explore / general-purpose / Plan などタイプがあり、それぞれ使えるツール権限が異なる。Explore は読み取り専用のため、書き込みが必要になった瞬間にメインエージェントが general-purpose へ委任し直す。本記事では各タイプの権限差、切替が起きるトリガー、最初から正しいタイプを指名する方法、無駄な切替を防ぐコツを実例ベースで整理する。"
@@ -60,6 +60,26 @@ draft: false
 つまり「**横（並列数）× 縦（階層の深さ）**」の2軸で捉えると整理できます。深い階層で再帰的にタスクを分割しつつ、各段で並列に広げる、という構成が可能になりました。
 
 ただし注意も増えます。[メインを Fable 5 にしたら子サブエージェントが全部 Fable 5 で立ち上がった事例](/blog/dynamic-workflows-fable5-runaway/)のように、**階層が深く・並列が広いほど、トークンとレート上限の消費は急増**します。各サブエージェントのモデルを明示指定して一段下げる（機械的な大量処理は Sonnet など）といったコスト設計が、これまで以上に重要になります。
+
+## 【2026-07追記】v2.1.218 → v2.1.219: ネスト生成のデフォルトが「無効」→「深度3まで許可」に
+
+v2.1.172 で「サブエージェントが自身のサブエージェントを生成できる（最大5階層）」機能が入りましたが、その後2バージョンで**デフォルトの挙動が2段階で調整**されています。
+
+| バージョン | 変更内容 |
+|:---|:---|
+| **v2.1.172** | サブエージェントのネスト生成が可能に（**最大5階層**まで） |
+| **v2.1.218（2026-07-22 PT）** | **デフォルトでネスト生成を無効化**（暴走防止）。深いネストを使うには `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` で明示的に許可する必要があった |
+| **v2.1.219（2026-07-24 PT）** | **デフォルトを「深度3まで許可」に緩和**（旧: 実質1）。`CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1` を設定するとネスト生成を無効化できる |
+
+公式changelogの原文は以下の通りです。
+
+> *v2.1.218: Changed subagents to no longer spawn nested subagents by default; set `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` to allow deeper nesting*
+>
+> *v2.1.219: Subagents can now spawn nested subagents up to depth 3 by default (was 1); set `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1` to disable nesting*
+
+つまり「最大5階層まで生成できる」という**上限そのもの**は v2.1.172 から変わっていませんが、**何も設定しない場合にどこまで自動でネストするか**というデフォルト値が、v2.1.218 でいったん絞られ、v2.1.219 で「3階層までは自動OK」に戻された、という経緯です。5階層フルに使いたい場合は、引き続き `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` で明示的に上限を引き上げる必要があります。
+
+なお v2.1.219 では、これとは別に **stream-json 出力でのネストサブエージェントのフォワーディング**（`--forward-subagent-text` 指定時に depth-2 以降のサブエージェントのテキスト/thinkingも出力に含まれる）も追加されています。こちらは「生成できる深さ」ではなく「**出力に何が見えるか**」の話で、混同しないよう注意してください。
 
 ## 【2026-06追記】v2.1.178: auto モードがサブエージェントの起動を「起動前」に評価
 
