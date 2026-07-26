@@ -1,6 +1,7 @@
 ---
 title: "Claude Code の Artifact と claude.ai チャットの Artifact は別物 — スマホアプリの一覧に出てこない理由"
 date: 2026-07-18
+updatedDate: 2026-07-26
 category: "Claude技術解説"
 tags: ["Claude Code", "Artifacts", "claude.ai", "モバイルアプリ", "共有", "トラブルシューティング"]
 excerpt: "PCのClaude Codeで作成したページ（Artifact）が、iPhoneのClaudeアプリの『アーティファクト』一覧に出てこない——実はこれは不具合ではなく仕様。claude.aiチャットのArtifactsとClaude CodeのArtifactsは名前は同じでも保存場所・一覧UIが別で、統合されていない。両者の違い・原因・見つからないときの対処法を公式ドキュメントに基づき整理する。"
@@ -90,8 +91,12 @@ Pro/Max では「組織内だけに絞って共有する」という選択肢自
 - 探すときは、**発行時のURLを控える**か、**ブラウザで `claude.ai/code/artifacts` を直接開く**のが確実です。
 - Claude Code の Artifact は 2026年7月から Pro/Max プランでも使えるようになった比較的新しい機能で、今後スマホアプリ側の一覧統合が進む可能性はありますが、本記事執筆時点では未統合です。
 
+> **【2026-07-26 追記】実は「3種類目」があります。** 本記事は claude.ai チャットと Claude Code の**2種類**を比較したものですが、これに加えて **Claude Cowork の「ライブアーティファクト」**という第3の系統が存在します。こちらは**あなたのコンピュータ上に保存され（端末を移行しても移動しない）**、**デスクトップアプリ専用**で Web / モバイルの一覧には出ず、**Pro / Max では共有も公開もできない**という、さらに異なる性質を持ちます。3種類を横断して整理し直した記事はこちら → [Claude の「アーティファクト」は3種類ある](/mdTechKnowledge/blog/claude-three-artifact-types/)
+
 ## 参考資料
 
+- [Use live artifacts in Claude Cowork — Claude Help Center](https://support.claude.com/en/articles/14729249-use-live-artifacts-in-claude-cowork)
+- [Publish and share artifacts — Claude Help Center](https://support.claude.com/en/articles/9547008-publish-and-share-artifacts)
 - [Share session output as artifacts — Claude Code 公式ドキュメント](https://code.claude.com/docs/en/artifacts)
 - [What are artifacts and how do I use them? — Claude Help Center](https://support.claude.com/en/articles/9487310-what-are-artifacts-and-how-do-i-use-them)
 - [Claude Code now supports artifacts — Anthropic 公式ブログ](https://claude.com/blog/artifacts-in-claude-code)
