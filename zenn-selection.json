@@ -138,6 +138,19 @@
         "生成ai"
       ],
       "title": "Claude Opus 5 の単価総覧と、Claude Code で旧モデル（Opus 4.8）を指定する方法"
+    },
+    {
+      "slug": "claude-august-2026-migration-deadlines",
+      "title": "2026年8月に集中する Claude の移行期限まとめ — Workbench廃止・Opus 4.1リタイア",
+      "emoji": "⏰",
+      "type": "tech",
+      "topics": [
+        "claude",
+        "claudecode",
+        "ai",
+        "anthropic",
+        "生成ai"
+      ]
     }
   ]
 }
