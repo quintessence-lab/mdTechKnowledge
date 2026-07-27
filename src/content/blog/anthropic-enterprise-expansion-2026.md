@@ -1,7 +1,7 @@
 ---
 title: "Anthropic エンタープライズ攻勢2026 — PwC・KPMG・DXC・TCS と Big Four/SIer 連携、$1.5B FDE スタジオまで"
 date: 2026-06-20
-updatedDate: 2026-07-18
+updatedDate: 2026-07-28
 category: "一般リサーチ"
 tags: ["Anthropic", "Claude", "エンタープライズAI", "PwC", "KPMG", "DXC", "TCS", "Forward Deployed Engineer"]
 excerpt: "2026年5〜6月、Anthropic は PwC・KPMG・DXC・TCS という Big Four / 大手 SIer との大型連携を相次いで発表し、さらに Blackstone・Goldman Sachs・Hellman & Friedman と組んで FDE 型のエンタープライズ AI サービス会社（報道で総額 $1.5B 規模）を立ち上げた。コンサル・SIer・PE を「実装の通り道」として、規制業種・大企業・PE 保有の中堅市場へ Claude を一気に押し込む攻勢の全体像と、各社の認定規模・活用製品・狙う市場を比較整理する一般リサーチ。"
@@ -154,6 +154,12 @@ Anthropic CFO の Krishna Rao は「Claude へのエンタープライズ需要�
 **LTM**（2026年7月13日発表）: LTM が Claude・Claude Code・Claude Cowork のエンタープライズ規模導入を加速する提携を発表。**LTM BlueVerse AI Delivery Fabric**（AI主導のソフトウェアエンジニアリング・アプリケーションモダナイゼーション・エージェントオーケストレーション・SRE・可観測性・カオスエンジニアリングを横断する実装レイヤー）に Claude を統合。**AI1000 タレントプログラム**を拡張し、Claude 認定アーキテクト・FDE を大量育成。**Claude Center of Excellence（CoE）**を新設し、再利用可能なスキル・エージェント型MVP・リファレンスアーキテクチャ・プレイブックを整備。対象業界は **BFSI（金融）・Hi-Tech・Consumer・Production**。
 
 2社とも、上記「第3部」で整理した**FDE（実装専任エンジニア）を軸にした導入モデル**を踏襲しており、Anthropic のエンタープライズ展開戦略が業界横断で継続していることを裏づける。出典: [PR Newswire: UST-Anthropic](https://www.prnewswire.com/news-releases/ust-partners-with-anthropic-to-bring-claude-into-usts-platforms-engineering-and-operations-and-train-20-000-ust-employees-globally-302820669.html) ／ [Business Standard: LTM-Anthropic](https://www.business-standard.com/companies/news/ltm-anthropic-partnership-claude-enterprise-ai-transformation-126071300386_1.html)。
+
+### 【2026-07-27 追記】Cognizant 連携拡大 — Claude Partner Network の Global Premier Partner に
+
+**Cognizant**（2026年7月27日発表）: Cognizant が Anthropic との提携を拡大し、Claude を自社の中核プラットフォーム **Flowsource™（仕様駆動型開発。Claude Code が同モジュール内で機能）・Neuro® AI Engineering・Neuro® IT Ops** の3製品へ組み込み。Cognizant 自身も **Claude Partner Network の Global Premier Partner** に昇格した。**従業員30,000人以上を Claude 認定トレーニング**し「Frontier Certified workforce」モデルを構築。対象は製造業・ライフサイエンス・保険業など規制の厳しい業界で、実装例として製薬企業向け契約審査システムが審査時間を最大40%削減・抽出精度88%以上を達成したと報告されている。
+
+UST・LTM に続き Cognizant も加わったことで、大手SIer/コンサル各社が Claude Partner Network を軸にエンタープライズ実装体制を competitively 強化する動きが2026年7月に集中して顕在化した。出典: [The Cryptonomist（2026-07-27）](https://en.cryptonomist.ch/2026/07/27/cognizant-anthropic-partnership/)。
 
 ---
 

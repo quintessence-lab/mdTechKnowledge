@@ -1,7 +1,7 @@
 ---
 title: "Anthropic、SEC へ機密ドラフト S-1 提出 — 『公式発表に数字はない』IPOプロセスとPBC上場の論点"
 date: 2026-06-06
-updatedDate: 2026-07-23
+updatedDate: 2026-07-28
 category: "一般リサーチ"
 tags: ["Anthropic", "IPO", "S-1", "SEC", "Public Benefit Corporation", "Long-Term Benefit Trust", "上場", "資本市場", "OpenAI", "SpaceX", "メガIPO"]
 excerpt: "2026年6月1日、Anthropic は SEC へ Form S-1 の機密ドラフト登録届出書を提出し IPO 手続きを開始した。本記事は『公式発表は Rule 135 準拠の定型文で具体的な数値を一切含まない』という事実の確認から始め、機密提出（confidential filing）の仕組み、評価額$965B・年次ランレート$47Bの出典の切り分け、未定事項（株式数・価格・市場・ティッカー）、想定主幹事、2026メガIPO 3社（SpaceX/OpenAI/Anthropic）の横比較、そして PBC × Long-Term Benefit Trust という独特のガバナンスが上場でどう論点化するかを整理する。"
@@ -212,6 +212,20 @@ CEO の Daniela Amodei は IPO に先立つインタビュー（TechCrunch, 6/4�
 | **インド商標紛争** | **2017年創業の Anthropic Software Private Limited（カルナタカ州ベラガビ）** が、名称・商標の同一性を理由にベラガビの地裁で係争。**SEC に IPO 前の開示を要求**したとされる | Anthropic PBC の設立（2021年）より**4年早い**創業と主張 |
 
 > これら3件はいずれも**未確定**（提訴・主張の段階）ですが、S-1 の「Legal Proceedings / Risk Factors」に開示が必要になり得る論点です。特に **Claude Max の使用量表示**をめぐるクラスアクションは、プロダクトの広告表現に直結するため注視されています。出典: [The Agent Report（2026-07）](https://the-agent-report.com/2026/07/anthropic-ipo-update-july-2026-trademark-litigation/) ／ [explainx（Abnormal の反論）](https://explainx.ai/blog/abnormal-ai-anthropic-trademark-lawsuit-response-2026)。
+
+### 【2026-07-21 追記】著者集団訴訟（Bartz v. Anthropic）$1.5B 和解が連邦地裁で最終承認
+
+前項の3件とは別に、**IPO前から係属していた著作権侵害の集団訴訟「Bartz v. Anthropic」**が決着しました。2026年7月20日（PT）、北カリフォルニア連邦地裁の **Araceli Martínez-Olguín 判事**が、Anthropic が海賊版書籍を Claude の学習に使用したとして著者・出版社らが起こした集団訴訟について、**$1.5B の和解案を最終承認**しました。
+
+| 項目 | 内容 |
+|:---|:---|
+| 和解総額 | **$1.5B**（史上最大規模の著作権集団訴訟和解） |
+| 対象作品 | 約 **48万2,000冊**（うち91%は既に著者・出版社が請求済み） |
+| 支払い単価 | **1冊あたり約$3,000** |
+| 弁護士費用 | 和解総額に**$100M超**を含む |
+| 判事の評価 | 「新規性の高い請求内容に照らし、集団に実質的な便益をもたらす、公正かつ妥当な和解」 |
+
+**IPOへの含意**: この和解は既に**最終承認済み（確定）**のため、S-1 の開示上は「係争中の不確実なリスク」ではなく「**確定した既払い・引当済みの負債**」として整理されます。前項の3件（商標訴訟・Claude Maxクラスアクション・インド商標紛争）が依然**未確定**であるのとは対照的に、本件は**訴訟リスクの一つが解消した**事例として位置づけられます。出典: [The Authors Guild（2026-07-20）](https://authorsguild.org/news/court-grants-final-approval-anthropic-copyright-settlement/) ／ [TechCrunch（2026-07-20）](https://techcrunch.com/2026/07/20/anthropics-landmark-1-5b-copyright-settlement-is-approved/)。
 
 ### 【2026-07 追記】IPO 投資家ミーティング開始・調達額の観測
 
