@@ -3,12 +3,12 @@ title: "Claude Cowork アップデートまとめ"
 date: 2026-04-26
 category: "Claude技術解説"
 tags: ["Claude", "Cowork", "エージェント", "Claude Desktop", "Computer Use", "KPMG", "Claude for Legal", "Finance Agents"]
-excerpt: "AnthropicのデスクトップAIエージェント機能「Claude Cowork」のリリースから2026年4月GA移行・Live Artifacts・Amazon Bedrock対応・Claude for Small Business・PwC 拡大パートナーシップ・KPMG Digital Gateway（276,000人 / 138 か国 / 2026-05-19）・Claude for Legal（20+ MCPコネクタ・12 practice-area プラグイン、2026-05-12）・Finance Agents 10 テンプレート（2026年5月）・Cowork 5時間制限2倍キャンペーン（2026年6月）・エンタープライズ向けコネクタ一括認可EMA（Okta／2026-06-18ベータ）までのアップデートをリリース順に整理。"
-updatedDate: 2026-07-09
+excerpt: "AnthropicのデスクトップAIエージェント機能「Claude Cowork」のリリースから2026年4月GA移行・Live Artifacts・Amazon Bedrock対応・Claude for Small Business・PwC 拡大パートナーシップ・KPMG Digital Gateway（276,000人 / 138 か国 / 2026-05-19）・Claude for Legal（20+ MCPコネクタ・12 practice-area プラグイン、2026-05-12）・Finance Agents 10 テンプレート（2026年5月）・Cowork 5時間制限2倍キャンペーン（2026年6月）・エンタープライズ向けコネクタ一括認可EMA（Okta／2026-06-18ベータ）・Cowork の Web/iOS/Android 展開とリモートセッション（2026-07-07）・Claude for Teachers 米国K-12教育者向け無料プログラム（2026-07-14）までのアップデートをリリース順に整理。"
+updatedDate: 2026-07-27
 draft: false
 ---
 
-**最終更新**: 2026-07-09
+**最終更新**: 2026-07-27
 **注記**: Claude Coworkはバージョン番号が公開されておらず、日付ベースのリリースノート形式です。**2026年4月9日にGA（一般提供）へ移行**しました。
 
 ---
@@ -121,6 +121,20 @@ Claude CoworkはAnthropicが提供するデスクトップAIエージェント�
 > **意味**: リモートセッションにより、Cowork は「**PCの前にいなくても回り続けるクラウド常駐エージェント**」に近づきました。Claude の**自動起動・スケジュール実行**の選択肢としても新軸になります（詳細は [Claude の自動起動・スケジュール実行ガイド](/mdTechKnowledge/blog/claude-auto-start-methods/) を参照）。なお **Microsoft 365 連携の書き込み系ツール**（メール下書き・カレンダー管理・OneDrive/SharePoint ファイル操作等）の拡充も同時期に報じられていますが、対応アクションの詳細は公式ドキュメントでの確認を推奨します。
 
 **参考**: [9to5Mac（2026-07-07）](https://9to5mac.com/2026/07/07/anthropic-expanding-claude-cowork-to-mobile-and-web-details-here/) ／ [Help Net Security（2026-07-08）](https://www.helpnetsecurity.com/2026/07/08/claude-cowork-phone-mobile-web/)
+
+### 2026年7月14日：Claude for Teachers — 米国 K-12 教育者向け無料プログラム
+
+| 日付 | 内容 |
+|------|------|
+| 7月14日（PT）/ 7月15日（JST） | **Claude for Teachers 発表**。米国の検証済み K-12 教育者を対象に、**Claude Code と Cowork を含むプレミアムアクセスを1年間無料**（〜2027年6月30日）で提供。 |
+
+- **対象**: 米国の個人教育者（検証済み K-12 教員）限定。学校・学区単位の専用プランは別途開発中。
+- **提供内容**: プレミアム Claude へのフルアクセスに加え、**Teaching Skills ライブラリ**（レッスンプラン作成・学習者別の差別化対応・クラスデータ分析など学習科学ベースの機能）と、**Learning Commons コネクタ**経由でのカリキュラム接続（全50州の学習指導要領・OpenSciEd・Illustrative Mathematics 教材に対応）。
+- **Cowork/Claude Code の位置づけ**: 本プログラムには Claude Code と Cowork のアクセスが含まれており、教師は "Claude can carry work forward on its own" という自律実行機能（本記事で扱う Cowork のリモートセッション等）を教材準備・採点補助等に活用できる。
+
+> **意味**: ChatGPT for Teachers・Microsoft Elevate for Educators・Google AI Educator Series と並ぶ、教育市場向けの無料提供競争の一環。Cowork/Claude Code が「業務ツール」から「教育現場のワークフロー」にも広がっている事例。
+
+**参考**: [Anthropic 公式: Claude for Teachers](https://www.anthropic.com/news/claude-for-teachers) ／ [Chalkbeat（2026-07-14）](https://www.chalkbeat.org/2026/07/14/anthropic-launches-claude-for-teachers-as-ai-companies-battle-for-classrooms/)
 
 ---
 

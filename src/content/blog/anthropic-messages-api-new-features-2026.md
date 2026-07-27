@@ -1,7 +1,7 @@
 ---
 title: "Anthropic Messages API 新機能まとめ（2026年5〜7月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・APIキー有効期限・Opus5対応"
 date: 2026-06-20
-updatedDate: 2026-07-25
+updatedDate: 2026-07-27
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ"]
 excerpt: "2026年5〜7月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定に加え、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモードまで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
@@ -13,6 +13,7 @@ draft: false
 > - **Web検索ツールが GA**（betaヘッダー不要）。**動的フィルタリング**で検索結果をコード実行でその場フィルタし、精度を**平均 +11%**、入力トークンを**平均 −24%** 改善。`code_execution` は web search / web fetch 併用時に**無料**。
 > - **Cache Diagnostics（public beta）**: `diagnostics.previous_message_id` を渡すと、プロンプトキャッシュのプレフィックスが**どこで食い違ったか**を `cache_miss_reason`（6種）で返す。betaヘッダー `cache-diagnosis-2026-04-07`。
 > - **会話途中 system メッセージ（Opus 4.8）**: 会話の途中に `role: "system"` を差し込んでも**プロンプトキャッシュのヒットを維持**できる。betaヘッダー不要。
+> - **Mid-conversation tool changes（beta）**: `tool_addition` / `tool_removal` ブロックで**会話途中にツールを増減してもキャッシュを維持**できる。betaヘッダー `mid-conversation-tool-changes-2026-07-01`、対応は Fable 5 / Mythos 5 / Opus 4.8 / Opus 5（Sonnet 5 は非対応）。
 > - **Refusal categories**: 拒否レスポンスの `stop_details.category`（`cyber` / `bio` / `null`）でルーティングを分岐できる。betaヘッダー不要。
 > - **Advisor Tool** は本記事では概要のみ。詳細は [Advisor Tool ガイド](/mdTechKnowledge/blog/anthropic-advisor-tool-guide/) を参照。
 
@@ -302,10 +303,55 @@ Claude Enterprise と Claude Platform 両方で、**HIPAA 対応の有効化が�
 | 機能 | 内容 |
 |:---|:---|
 | **thinking disabled の制限（破壊的変更）** | `thinking: {"type": "disabled"}` は Opus 5 では **effort が `high` 以下の場合のみ**許容。`xhigh` / `max` と組み合わせると **400 エラー**（Opus 4.8 からの破壊的変更） |
-| **Mid-conversation tool changes（beta）** | betaヘッダー `mid-conversation-tool-changes-2026-07-01` を指定すると、**会話の途中でツールを追加・削除してもプロンプトキャッシュを維持**できる |
+| **Mid-conversation tool changes（beta）** | betaヘッダー `mid-conversation-tool-changes-2026-07-01` を指定すると、**会話の途中でツールを追加・削除してもプロンプトキャッシュを維持**できる（詳細は次項） |
 | **`fallbacks` パラメータの `"default"` モード** | betaヘッダー `server-side-fallback-2026-07-01` が必須。拒否カテゴリ別に **Anthropic 推奨のフォールバックモデルを自動適用**（従来の `-2026-06-01` は明示リスト指定のみ対応） |
 
 Opus 5 は 1M トークンコンテキストが**デフォルト兼上限**（縮小版バリアントなし）、最大出力 128k トークン、thinking が**デフォルトでオン**という仕様のため、既存の Opus 4.8 向け実装（特に `xhigh`/`max` effort と thinking disabled を組み合わせているコード）は切替前に見直しが必要です。
+
+### Mid-conversation tool changes の詳細
+
+`tools` 配列は、プロンプトキャッシュのハッシュ対象プレフィックスの中で **`system` フィールドよりもさらに先頭**に位置するため、`tools` を編集すると会話全体のキャッシュが無効化されます。Mid-conversation tool changes は、この問題を「会話途中 system メッセージ」と同じ発想で解決します。
+
+仕組みは以下の通りです。
+
+- `tools` 配列には**フルセットを最初に宣言**し、以降変更しない（＝キャッシュされるプレフィックスは不変のまま）
+- `role: "system"` メッセージの `content` 配列に、`tool_addition`（ツールを提示） / `tool_removal`（ツールを撤回）ブロックを差し込むことで、**その時点以降にモデルへ提示するツールを動的に増減**できる
+- 各ブロックの `tool` フィールドは**ツールの参照**であり、新規定義ではない: `{"type": "tool_reference", "name": "..."}` で `tools` 配列内の名前を参照。MCPコネクタのツールは `mcp_tool_reference`（`server_name`+`name`）または `mcp_toolset_reference`（`server_name`のみ、ツールセット丸ごと）で参照可能
+- `tools` に**未宣言の名前を参照すると 400 エラー**
+- `defer_loading: true` を付けて宣言したツールは会話冒頭では非表示になり、`tool_addition` で初めて提示される。`tool_removal` で撤回したツールも `tool_addition` で再提示可能
+
+**対応モデル**: Claude Fable 5・Claude Mythos 5・Claude Opus 4.8・Claude Opus 5（Claude Sonnet 5 は非対応）。**対応プラットフォーム**: Claude API・Amazon Bedrock・Google Cloud。
+
+```python
+response = client.beta.messages.create(
+    model="claude-opus-5",
+    max_tokens=1024,
+    betas=["mid-conversation-tool-changes-2026-07-01"],
+    tools=[{
+        "name": "get_weather",
+        "description": "Get the current weather for a location.",
+        "input_schema": {
+            "type": "object",
+            "properties": {"location": {"type": "string"}},
+            "required": ["location"],
+        },
+    }],
+    messages=[
+        {"role": "user", "content": "Say OK."},
+        # get_weather をこの時点以降のターンから撤回。tools 配列自体は
+        # 変更しないため、それ以前のターンのキャッシュはそのまま有効。
+        {
+            "role": "system",
+            "content": [{
+                "type": "tool_removal",
+                "tool": {"type": "tool_reference", "name": "get_weather"},
+            }],
+        },
+    ],
+)
+```
+
+出典: [Mid-conversation system messages and tool changes（公式ドキュメント）](https://platform.claude.com/docs/en/build-with-claude/mid-conversation-system-messages)
 
 ## まとめ — どの機能をいつ使うか
 
