@@ -1,7 +1,7 @@
 ---
 title: "Claude Managed Agents 簡易ガイド — アーキテクチャ・比較・ユースケース"
 date: 2026-04-08
-updatedDate: 2026-07-23
+updatedDate: 2026-07-30
 category: "Claude技術解説"
 tags: ["Claude", "Managed Agents", "Agent SDK", "Claude Code", "API", "マルチエージェント", "Memory", "Enterprise", "Self-hosted sandboxes", "MCP tunnels", "Cloudflare", "Modal", "Vercel", "Daytona", "Cloudflare Environments", "Webhooks", "microVM", "V8 Isolate", "Scheduled deployments", "Vault環境変数"]
 excerpt: "Claude Managed Agentsの3層アーキテクチャ（Session/Harness/Sandbox）、p50 TTFT 60%削減のパフォーマンス改善、Memory機能、Dreaming・Outcomes・Multi-agent orchestration、エンタープライズ向けRBAC・OpenTelemetry、2026年5月19日発表のSelf-hosted sandboxes（Cloudflare/Daytona/Modal/Vercel対応、Public Beta）とMCP tunnels（Research Preview、プライベートネットワーク内MCPサーバーへの outbound-only E2E接続）、料金体系（$0.08/session-hour）、さらに Cloudflare Environments（brain/hands 分離・Linux microVM と V8 Isolate を選択可能・ブラウザ/メール/アウトバウンドプロキシ/Cloudflare Mesh・Workers VPC）の概要までを1ページに整理。"
@@ -504,7 +504,9 @@ Outcomes と組み合わせれば「成功基準を満たすまで自律的に�
 |:---|:---|
 | Effort レベル設定 | エージェント作成時に **`model` オブジェクト内で `effort` を指定**可能に。エージェントの推論に投じる計算量をレベルで制御できる |
 | Webhook 拡張 | environment（**4種類**）・memory_store（**3種類**）のライフサイクルイベントが Webhook でカバー対象に追加。前述の agent／deployment／deployment run の拡張に続く追加分 |
-| Session initial_events | セッション作成時に **`initial_events` で最大50件の初期イベントを注入**可能に（セッション開始時点の文脈をあらかじめ与えられる） |
+| Session initial_events | セッション作成時に **`initial_events` で最大50件の初期イベントを注入**可能に（セッション開始時点の文脈をあらかじめ与えられる。対応イベント型は `user.message` / `user.define_outcome`） |
+| エージェント更新の `version` フィールド | エージェント更新時の `version` 指定が**オプション化**。指定すれば従来通り**楽観的排他制御**（バージョン不一致で衝突検知）、省略すれば**無条件更新**を選択できる |
+| スレッドレベル event deltas | `GET /v1/sessions/{id}/threads/{id}/stream` が **`event_deltas[]`** に対応。スレッド単位でイベントの差分ストリーミングを取得可能に |
 
 出典: [Anthropic Release notes（2026-07-22）](https://platform.claude.com/docs/en/release-notes/overview)。
 
@@ -529,4 +531,4 @@ Outcomes と組み合わせれば「成功基準を満たすまで自律的に�
 ---
 
 *Sources: Anthropic Blog, Claude API Docs（platform.claude.com/docs/en/managed-agents/overview, /tools, /webhooks, /self-hosted-sandboxes）, Cloudflare Blog（blog.cloudflare.com/claude-managed-agents）, InfoQ, SDTimes, TestingCatalog, 9to5Mac, WaveSpeed, The New Stack, The Decoder — May 2026*
-*本ガイドは2026年6月16日時点の情報に基づいています（2026-04-08 GA / 2026-04-09 Enterprise / 2026-04-23 Memory パブリックベータ移行 / 2026-05-07 Dreaming・Outcomes・Multi-agent orchestration・Webhooks 追加 / 2026-05-19 Self-hosted sandboxes（Cloudflare Environments 概要を含む） / 2026-06-09 スケジュールデプロイ・Vault 環境変数クレデンシャル・`session.thread_*` への `session_thread_id` 追加 を反映）*
+*本ガイドは2026年7月22日時点の情報に基づいています（2026-04-08 GA / 2026-04-09 Enterprise / 2026-04-23 Memory パブリックベータ移行 / 2026-05-07 Dreaming・Outcomes・Multi-agent orchestration・Webhooks 追加 / 2026-05-19 Self-hosted sandboxes（Cloudflare Environments 概要を含む） / 2026-06-09 スケジュールデプロイ・Vault 環境変数クレデンシャル・`session.thread_*` への `session_thread_id` 追加 / 2026-07-22 effort レベル設定・Webhook拡張・initial_events・version任意化・event deltas を反映）*

@@ -1,10 +1,10 @@
 ---
 title: "MCP (Model Context Protocol) アーキテクチャ詳細"
 date: 2026-04-26
-updatedDate: 2026-07-19
+updatedDate: 2026-07-30
 category: "Claude技術解説"
-tags: ["MCP", "Claude Code", "JSON-RPC", "GitHub", "OAuth", "プロトコル", "Claude for Legal", "Release Candidate", "ステートレス", "SEP-2577", "SEP-2663", "Sampling", "非推奨ポリシー", "MCP Apps", "Extensions", "JSON Schema 2020-12", "W3C Trace Context"]
-excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness/エンタープライズSSO・監査トレイル・ガバナンス成熟化（貢献者ラダー/委任モデル/憲章）・新コアメンテナー）、MCP Apps（SEP-1865）、2026-05-21 Release Candidate ロック（プロトコルステートレス化＝Mcp-Session-Id 廃止、MCP Apps の HTML UI、Tasks Extension 再設計、最終仕様 2026-07-28 公開予定）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、Claude for Legal で公開された20+ MCPコネクタ、約20万サーバーに影響した重大脆弱性事案、さらに 2026-07-28 RC で制定された SEP-2577 の非推奨ポリシー（Active/Deprecated/Removed の3段階・最低12ヶ月）と Sampling/Roots/Logging の deprecated 化までの参照リンクを網羅"
+tags: ["MCP", "Claude Code", "JSON-RPC", "GitHub", "OAuth", "プロトコル", "Claude for Legal", "ステートレス", "SEP-2577", "SEP-2663", "Sampling", "非推奨ポリシー", "MCP Apps", "Extensions", "JSON Schema 2020-12", "W3C Trace Context"]
+excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness/エンタープライズSSO・監査トレイル・ガバナンス成熟化（貢献者ラダー/委任モデル/憲章）・新コアメンテナー）、MCP Apps（SEP-1865）、**2026-07-28 に正式リリースされたMCP新仕様**（プロトコルステートレス化＝Mcp-Session-Id 廃止、MCP Apps の HTML UI、Tasks Extension 再設計）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、Claude for Legal で公開された20+ MCPコネクタ、約20万サーバーに影響した重大脆弱性事案、さらに新仕様で制定された SEP-2577 の非推奨ポリシー（Active/Deprecated/Removed の3段階・最低12ヶ月）と Sampling/Roots/Logging の deprecated 化までの参照リンクを網羅"
 draft: false
 ---
 
@@ -138,13 +138,15 @@ MCP エコシステムの広がりを示す指標として、Anthropic は公開
 
 参考: [MCP公式ブログ](https://blog.modelcontextprotocol.io/) / [4月メンテナー更新](https://blog.modelcontextprotocol.io/posts/2026-04-08-maintainer-update/)
 
-#### MCP 2026-07-28 Release Candidate の主要変更（2026-05-21 ロック／最終仕様 2026-07-28 公開予定）
+#### MCP 2026-07-28 仕様の主要変更（2026-05-21 RCロック → 2026-07-28 正式公開）
+
+> **【2026-07-28 追記】正式リリース確定**: MCP 2026-07-28 仕様は予定通り**2026年7月28日（PT）に正式公開**されました（[MCP公式ブログ: The 2026-07-28 Specification](https://blog.modelcontextprotocol.io/posts/2026-07-28/)）。公式発表には RC からの変更点の言及がなく、以下で解説する RC 時点の内容がそのまま最終仕様として確定しています。
 
 2026年5月21日（PT）、MCP の **次期 Release Candidate（RC）** がロックされた。Transport Scalability・Tasks Extension・MCP Apps に加え、**Sampling 等の非推奨化（SEP-2577）** が本 RC に含まれ、最終仕様は **2026-07-28 公開予定**。RC ロックから最終公開までの約 **10週間が検証期間（validation window）** として設けられており、SDK メンテナ・実装者がこの間に適合性を検証する。**RC は確定版ではなく**、検証期間中の指摘により細部が変わる可能性がある点に注意。実装者にとってのインパクトは大きく、特に**プロトコル層のステートレス化**は既存サーバー/クライアントの再設計を要する。
 
 ##### 0. RC 構成 SEP 一覧（2026-05-27補追）
 
-RC で確定した変更は以下の **SEP（Specification Enhancement Proposal）** が束ねる形で構成される。実装者は各 SEP を起点に詳細仕様を追える。
+正式仕様として確定した変更は以下の **SEP（Specification Enhancement Proposal）** が束ねる形で構成される。実装者は各 SEP を起点に詳細仕様を追える。
 
 | 領域 | SEP | 内容 |
 |---|---|---|
@@ -210,7 +212,7 @@ RC で確定した変更は以下の **SEP（Specification Enhancement Proposal�
 
 ##### 4. 非推奨ポリシーの制定（SEP-2577）と Sampling 等の deprecated 化
 
-2026-07-28 RC では、これまで暗黙だった機能の廃止手順が **正式な非推奨（deprecation）ポリシー**として SEP-2577 で制定された。プロトコルが「コア機能を壊さずに進化できる」ことを担保する枠組み。
+2026-07-28 仕様では、これまで暗黙だった機能の廃止手順が **正式な非推奨（deprecation）ポリシー**として SEP-2577 で制定された。プロトコルが「コア機能を壊さずに進化できる」ことを担保する枠組み。
 
 | 段階 | 意味 |
 |---|---|
@@ -218,7 +220,7 @@ RC で確定した変更は以下の **SEP（Specification Enhancement Proposal�
 | **Deprecated** | 廃止予告。代替手段への移行を促す（仕様上は引き続き機能） |
 | **Removal（Removed）** | 仕様から削除。**Deprecated から最低12ヶ月**の間隔を空けてから実施 |
 
-このポリシーに基づき、本 RC で以下の3機能が **Deprecated（廃止予告）** となった。いずれも12ヶ月ルールにより即時削除はされないが、新規実装は代替手段を採るべき。
+このポリシーに基づき、本仕様で以下の3機能が **Deprecated（廃止予告）** となった。いずれも12ヶ月ルールにより即時削除はされないが、新規実装は代替手段を採るべき。
 
 | 機能 | ステータス | 推奨される代替 |
 |---|---|---|
@@ -226,11 +228,11 @@ RC で確定した変更は以下の **SEP（Specification Enhancement Proposal�
 | **Roots** | Deprecated | tool parameters / resource URIs / サーバー設定（server config）で代替 |
 | **Logging** | Deprecated | **stderr** もしくは **OpenTelemetry** の利用を推奨 |
 
-→ とくに **Sampling** はサーバーがクライアント経由でモデル推論を依頼する仕組み（本記事「初期化ハンドシェイク」例の `capabilities.sampling` に対応）であり、これに依存するサーバー実装は移行計画が必要。ただし RC＝確定版ではないため、最終仕様（2026-07-28）で細部が変わる可能性がある。
+→ とくに **Sampling** はサーバーがクライアント経由でモデル推論を依頼する仕組み（本記事「初期化ハンドシェイク」例の `capabilities.sampling` に対応）であり、これに依存するサーバー実装は移行計画が必要。
 
 ##### 5. Extensions フレームワーク / JSON Schema 2020-12 / W3C Trace Context（RC追補）
 
-ステートレス化・認可・非推奨ポリシーに加え、本 RC では拡張ガバナンスとツール定義・可観測性の標準化も入った。
+ステートレス化・認可・非推奨ポリシーに加え、本仕様では拡張ガバナンスとツール定義・可観測性の標準化も入った。
 
 - **Extensions フレームワーク** — 拡張は **reverse-DNS 識別子**（例: `com.example.feature`）を持ち、**コア仕様から独立してバージョニング**される。capability map でネゴシエートし、**独立リポジトリ＋委任メンテナ**で管理。SEP プロセスに **Extensions Track** が設けられ、実験的 → 公式へと段階的に昇格する。現状の公式拡張は **MCP Apps（SEP-1865）** と **Tasks（SEP-2663）** の2つ。コアを肥大化させずに機能を足せる「増築の作法」が定義された形。
 - **JSON Schema 2020-12 サポート** — ツールスキーマが完全な**合成（`oneOf` / `anyOf` / `allOf`）・条件分岐・参照（`$ref`）** に対応。出力スキーマに制限はない。ただしセキュリティ上、**実装は外部 `$ref` URI を自動的にデリファレンス（解決）してはならない**。
@@ -245,7 +247,7 @@ RC で確定した変更は以下の **SEP（Specification Enhancement Proposal�
 | **インフラ運用** | スティッキー LB 設定解除、共有セッションストア撤去（コスト削減） |
 | **エンタープライズユーザー** | スケーリング容易化により水平展開コストが下がる |
 
-参考: [2026-07-28 Release Candidate（MCP公式ブログ）](https://blog.modelcontextprotocol.io/posts/2026-07-28-release-candidate/) / [The New Stack: Model Context Protocol Roadmap 2026](https://thenewstack.io/model-context-protocol-roadmap-2026/)
+参考: [2026-07-28 Release Candidate（MCP公式ブログ）](https://blog.modelcontextprotocol.io/posts/2026-07-28-release-candidate/) / [The 2026-07-28 Specification（正式リリース発表）](https://blog.modelcontextprotocol.io/posts/2026-07-28/) / [The New Stack: Model Context Protocol Roadmap 2026](https://thenewstack.io/model-context-protocol-roadmap-2026/)
 
 ---
 

@@ -1,10 +1,10 @@
 ---
 title: "Anthropic コンピュートインフラ & TPUパートナーシップ — Google・BroadcomとのマルチギガワットTPU契約（2027年稼働）"
 date: 2026-04-29
-updatedDate: 2026-07-24
+updatedDate: 2026-07-30
 category: "一般リサーチ"
-tags: ["Anthropic", "Google", "Broadcom", "TPU", "AIインフラ", "コンピュート", "パートナーシップ", "SpaceX", "xAI", "Colossus", "GPU", "Akamai", "Fluidstack", "データセンター", "米国インフラ投資"]
-excerpt: "2026年4月6日発表のGoogle・BroadcomとのマルチギガワットTPU契約（2027年稼働）に加え、2026年5月のSpaceX xAI Colossus 1データセンター全容量契約（300MW超・GPU22万台超）、Akamai Technologies $1.8B・7年間クラウドコンピュート契約を収録。Anthropicのマルチクラウド・マルチベンダーインフラ戦略を整理。あわせて2025年11月発表の$50B米国AIインフラ投資（Fluidstackと組みテキサス州・ニューヨーク州にデータセンターを建設、2026年中に順次稼働）、2026年6月のMicron戦略協定（HBM/DRAM/SSD複数年供給）、2026年7月のTeraWulf 20年リース（$19B・ケンタッキー州Hawesville・最大401MW・2027年後半稼働）も収録。"
+tags: ["Anthropic", "Google", "Broadcom", "TPU", "AIインフラ", "コンピュート", "パートナーシップ", "SpaceX", "xAI", "Colossus", "GPU", "Akamai", "Fluidstack", "データセンター", "米国インフラ投資", "AMD"]
+excerpt: "2026年4月6日発表のGoogle・BroadcomとのマルチギガワットTPU契約（2027年稼働）に加え、2026年5月のSpaceX xAI Colossus 1データセンター全容量契約（300MW超・GPU22万台超）、Akamai Technologies $1.8B・7年間クラウドコンピュート契約を収録。Anthropicのマルチクラウド・マルチベンダーインフラ戦略を整理。あわせて2025年11月発表の$50B米国AIインフラ投資（Fluidstackと組みテキサス州・ニューヨーク州にデータセンターを建設、2026年中に順次稼働）、2026年6月のMicron戦略協定（HBM/DRAM/SSD複数年供給）、2026年7月のTeraWulf 20年リース（$19B・ケンタッキー州Hawesville・最大401MW・2027年後半稼働）、2026年7月22日のAMD戦略提携（最大$5B投資・Instinct MI450 GPU最大2GW）も収録。"
 draft: false
 ---
 
@@ -118,7 +118,7 @@ Broadcomの8-K開示には条件文がある — *"The consumption of such expan
 
 つまり**4月6日のTPU契約が「インフラ層の確保」を先行宣言し、20日・24日の資本ラウンドが「その費用を払える資金体力」を裏打ちする**構造だ。
 
-### マルチクラウド5軸の最新像（2026年5月時点）
+### マルチクラウド6軸の最新像（2026年7月時点）
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -131,10 +131,12 @@ Broadcomの8-K開示には条件文がある — *"The consumption of such expan
 │  ④ SpaceX/xAI   : Colossus 1 GPU 300MW超（即時）    │
 │                   H100/H200/GB200 22万台超、Memphis  │
 │  ⑤ Akamai       : クラウドコンピュート $1.8B・7年   │
+│  ⑥ AMD          : Instinct MI450 最大2GW（新規）     │
+│                   Helios ラックスケール、2027上期〜  │
 └─────────────────────────────────────────────────────┘
 ```
 
-2026年5月の**SpaceX xAI Colossus 1契約**（第8章）と**Akamai契約**（第9章）を加え、合計**10GW超**のコンピュートポートフォリオを形成。5軸の意義は(1)チップ供給・アーキテクチャリスク分散、(2)ワークロード最適配置、(3)AWS・GCPからの戦略投資受領（クラウド消費契約とセット）、(4)規制・独禁リスク回避、に加え⑤ライバル（xAI）からの緊急キャパシティ調達というユニークな側面も持つ。
+2026年5月の**SpaceX xAI Colossus 1契約**（第8章）と**Akamai契約**（第9章）、そして2026年7月22日の**AMD戦略提携**（第11章補遺2）を加え、合計**12GW超**のコンピュートポートフォリオを形成。6軸の意義は(1)チップ供給・アーキテクチャリスク分散、(2)ワークロード最適配置、(3)AWS・GCP・AMDからの戦略投資受領（クラウド消費・GPU調達契約とセット）、(4)規制・独禁リスク回避、に加え⑤ライバル（xAI）からの緊急キャパシティ調達、⑥NVIDIA依存の一段の低減、というユニークな側面も持つ。
 
 ---
 
@@ -361,6 +363,29 @@ GPU/TPU の確保競争に注目が集まりがちだが、大規模 AI 推論�
 Anthropic はこれまで演算調達をクラウドプロバイダに依存してきたが、TeraWulf との直接リースは **Google（$200B 規模のコミット）・AWS（Trainium）・CoreWeave・Fluidstack（$50B）・SpaceX/xAI Colossus** といった既存の枠組みに**「自社が長期に占有するデータセンター」という新たな軸**を加えるものだ。401 MW という規模は本記事が扱ってきた GW 級の TPU/GPU 契約に比べれば中規模だが、**立地・電力・20年という期間を自ら押さえる**点に意味がある。なお同時に TeraWulf は、テキサスの Abernathy JV（168MW）の持分 50.1% を Fluidstack 主導の投資家グループへ売却し、**直接保有インフラへ資本を再配分**している（報道ベース）。
 
 参考: [DataCenterDynamics: Anthropic signs $19bn 20-year lease for Kentucky data center with TeraWulf（2026/7/6）](https://www.datacenterdynamics.com/en/news/anthropic-signs-19bn-20-year-lease-for-kentucky-data-center-with-terawulf/) / [CNBC（同契約）](https://www.cnbc.com/2026/07/06/anthropic-terawulf-data-center-ai.html)
+
+---
+
+## 第11章補遺2: AMD戦略提携 — 最大$5B投資・Instinct MI450 GPU最大2GW（2026-07-22）
+
+2026年7月22日（PT）/ 23日（JST）、Anthropic は **AMD との戦略的パートナーシップ**を発表した。これまでの NVIDIA・Google TPU・AWS Trainium に続く**4社目のチップベンダー**として AMD が加わり、GPU供給の分散がさらに進んだ。
+
+### 契約の概要
+
+| 項目 | 内容 |
+|---|---|
+| 発表日 | 2026年7月22日（PT）/ 23日（JST） |
+| AMD の投資 | Anthropic への戦略的出資**最大 $5B**（**デプロイのマイルストーン達成条件付き**、前払いの一括投資ではない） |
+| GPU 契約 | **AMD Instinct MI450 シリーズ GPU を最大2ギガワット分デプロイ**する多年間契約 |
+| ハードウェア構成 | **AMD Helios**（ラックスケール製品）に **Instinct MI455X GPU・AMD EPYC「Venice」CPU・AMD Pensando ネットワーキング・ROCm ソフトウェア**を組み合わせ |
+| タイムライン | 第1弾**1GW分は2027年上半期**から稼働開始予定 |
+| 相互連携 | Anthropic は Claude を使って AMD Instinct GPU 向けワークロード最適化・ROCm ソフトウェア開発を加速。AMD は自社のソフトウェア・製品開発全体に Claude を統合 |
+
+### 戦略的意義
+
+AMD の出資は「デプロイと引き換えの受注確保」という構図で、**投資契約とGPU調達契約がセット**になっている点は Google（$40B投資＋TPU契約）や Amazon（$5B追加投資＋AWS消費コミット）と同型のパターンです。Anthropic 側から見ると、**NVIDIA依存を一段と下げる**動きであり、チップベンダーの分散が3社（AWS Trainium／GCP TPU／NVIDIA-CoreWeave）から**4社構造**へ拡大しました。本章の「マルチクラウド6軸」（第5章）にも反映しています。
+
+参考: [AMD IR: Strategic Partnership press release（2026-07-22）](https://ir.amd.com/news-events/press-releases/detail/1292/amd-and-anthropic-announce-strategic-partnership-to-deploy-up-to-2-gigawatts-of-amd-instinct-mi450-series-gpus) / [AMD Newsroom](https://newsroom.amd.com/news/amd-anthropic-strategic-partnership/) / [CNBC: AMD to invest up to $5B in Anthropic（2026-07-22）](https://www.cnbc.com/2026/07/22/amd-anthropic-ai-chip-investment.html)
 
 ---
 
