@@ -1,10 +1,10 @@
 ---
 title: "Claude Managed Agents Memory 完全ガイド — 永続記憶機能（Public Beta）の仕組みと活用"
 date: 2026-05-02
-updatedDate: 2026-07-24
+updatedDate: 2026-07-31
 category: "Claude技術解説"
 tags: ["Claude", "Managed Agents", "Memory", "永続記憶", "Public Beta", "Anthropic", "API", "監査ログ", "マルチエージェント", "Dreaming"]
-excerpt: "2026年4月23日にPublic Betaへ移行したClaude Managed AgentsのMemory機能を詳細に解説。memory storeのアーキテクチャ、必須ヘッダーmanaged-agents-2026-04-01、ファイルツール連携、バージョン管理（30日保持）、監査・redact、マルチエージェント共有パターン、長期プロジェクト・ユーザー嗜好・タスク継続といったユースケース、制限事項と運用上のヒント。2026年5月発表のDreaming（セッション間自己改善・Harvey社で完了率6倍）も解説。"
+excerpt: "2026年4月23日にPublic Betaへ移行したClaude Managed AgentsのMemory機能を詳細に解説。memory storeのアーキテクチャ、必須ヘッダーmanaged-agents-2026-04-01（メモリストア系エンドポイントは2026-07-22以降agent-memory-2026-07-22に置換）、ファイルツール連携、バージョン管理（30日保持）、監査・redact、マルチエージェント共有パターン、長期プロジェクト・ユーザー嗜好・タスク継続といったユースケース、制限事項と運用上のヒント。2026年5月発表のDreaming（セッション間自己改善・Harvey社で完了率6倍）も解説。"
 draft: false
 ---
 
@@ -578,7 +578,7 @@ memoryのサイズが上限近くになる前にファイル分割を検討し�
 
 - 2026-04-23、Claude Managed AgentsのMemory機能が**Public Beta**化（全ユーザーに即時提供）
 - 2026-05-06（PT・JST 5/7）、**Dreaming**（Research Preview）が発表。セッション間の自動パターン抽出・メモリ最適化でエージェントを自己改善させる機能。Harvey社で完了率約6倍の実績。モデルのweight変更なし
-- 必須ヘッダー: **`managed-agents-2026-04-01`**（公式SDKは自動付与）
+- 必須ヘッダー: **`managed-agents-2026-04-01`**（公式SDKは自動付与）。**ただしメモリストア系エンドポイント（一覧取得等）は2026-07-22以降 `agent-memory-2026-07-22` に置き換わっている**（両方同時送信は400エラー。詳細は「新ベータヘッダー」節を参照）
 - Memory storeは**ワークスペーススコープのテキストドキュメント群**で、`/mnt/memory/<name>/`としてセッションコンテナにマウントされる
 - エージェントは**通常のファイルツール**（read/write/list/edit）で操作。専用APIの学習は不要
 - すべての変更は**memory_version**として記録され、ロールバック・redactが可能（30日保持基準）
