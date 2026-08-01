@@ -1,10 +1,10 @@
 ---
 title: "Claude Security Beta — Anthropic エンタープライズセキュリティ製品の全貌（2026年5月発表）"
 date: 2026-05-02
-updatedDate: 2026-06-09
+updatedDate: 2026-08-01
 category: "Claude技術解説"
-tags: ["Anthropic", "Claude Security", "Opus 4.7", "セキュリティ", "脆弱性スキャン", "エンタープライズ", "脅威インテリジェンス", "MITRE ATT&CK", "サイバー攻撃"]
-excerpt: "2026年5月1日、Anthropic は Claude Opus 4.7 を中核に据えたエンタープライズ向けセキュリティ製品 Claude Security のパブリックベータを発表した。コードベース脆弱性スキャン・パッチ生成、CrowdStrike / Microsoft Security / Palo Alto Networks / SentinelOne / TrendAI / Wiz などの技術パートナー、Accenture / BCG / Deloitte / Infosys / PwC などのサービスパートナー連携を含め、全体像を整理する。さらに2026年6月3日公開の脅威インテリジェンスレポート（禁止832アカウントの MITRE ATT&CK マッピング、マルウェア生成67.3%、中リスク以上が33%→56%へ）と、2025年11月に阻止された AI 主導サイバースパイ活動の事例も追補する。"
+tags: ["Anthropic", "Claude Security", "Opus 4.7", "セキュリティ", "脆弱性スキャン", "エンタープライズ", "脅威インテリジェンス", "MITRE ATT&CK", "サイバー攻撃", "サイバー評価インシデント"]
+excerpt: "2026年5月1日、Anthropic は Claude Opus 4.7 を中核に据えたエンタープライズ向けセキュリティ製品 Claude Security のパブリックベータを発表した。コードベース脆弱性スキャン・パッチ生成、CrowdStrike / Microsoft Security / Palo Alto Networks / SentinelOne / TrendAI / Wiz などの技術パートナー、Accenture / BCG / Deloitte / Infosys / PwC などのサービスパートナー連携を含め、全体像を整理する。さらに2026年6月3日公開の脅威インテリジェンスレポート（禁止832アカウントの MITRE ATT&CK マッピング、マルウェア生成67.3%、中リスク以上が33%→56%へ）、2025年11月に阻止された AI 主導サイバースパイ活動の事例、そして2026年7月30日発表のサイバー評価インシデント（評価環境の設定ミスでClaudeが実組織3社に不正アクセス）も追補する。"
 draft: false
 ---
 
@@ -305,8 +305,22 @@ Anthropic のセキュリティ系トピックは、過去半年でいくつか�
 - **Claude Code 関連の情報漏洩・誤操作リスク報道**: AI コーディングツールの自動性が高まるほど、シークレットや内部設計の流出経路も増える、という議論
 - **MCP（Model Context Protocol）の脆弱性議論**: ツール接続の自由度の高さが、攻撃面（attack surface）を広げるという指摘
 - **エンタープライズの AI 採用拡大**: 同じ生産性向上の波が、攻撃者側にも回り、社会全体としてセキュリティ投資の必要性が増した
+- **【2026-07-30追記】Anthropic自身のサイバー評価インシデント**: 詳細は次項
 
 Claude Security は、こうした「AI の生産性向上を実現しつつ、それが生むリスクを AI 自身に守らせる」という構図に応えるプロダクトと言えます。
+
+### 【2026-07-30追記】Anthropic自身のサイバー評価インシデント — 「守る側」の透明性が試された
+
+Claude Security が「AIでインフラを守る」プロダクトとして展開される一方、**Anthropic自身のサイバーセキュリティ評価プロセスで、Claudeが実組織3社に不正アクセスするインシデントが発生**しました。2026年7月30日、Anthropicは公式ブログ「Investigating three real-world incidents in our cybersecurity evaluations」でこれを公表しています。
+
+- **原因**: 評価パートナー Irregular の CTF（Capture-The-Flag）環境が「インターネット接続なしのシミュレーション」の想定だったが、**設定上の誤解**により実際にはインターネットに到達できる状態だった
+- **規模**: 141,006件の評価実行のうち、**3インシデント・6件**で実際に侵入が発生
+- **侵入手法**: 弱いパスワード・未認証エンドポイントの悪用、PyPIへの不正パッケージ公開、露出したデバッグページからの認証情報窃取＋SQLインジェクション（いずれもClaude Securityが検出対象とするような一般的な脆弱性クラス）
+- **Anthropicの分類・対応**: 「ハーネス・運用上の失敗」（モデルのアライメント失敗ではない）と整理。7/23に全サイバー評価を停止し原因調査、7/27に影響組織へ通知、その後公式ブログで詳細を公開するという透明性のある対応を取った
+
+**Claude Securityへの含意**: 本製品が「守る側」として売り込まれる中で、開発元自身が評価環境の隔離設計ミスにより実際の侵入を許した事実は、**AIエージェントを使った評価・防御ツールにおける環境分離の難しさ**を象徴する事例です。同時に、インシデント発生から1週間程度で原因特定・通知・公表まで進めた対応速度は、Claude Securityが謳う「インシデント対応支援」機能とも通じる実務プロセスの一例として読むこともできます。
+
+出典: [Anthropic公式: Investigating three real-world incidents in our cybersecurity evaluations](https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals) ／ [CNBC（2026-07-30）](https://www.cnbc.com/2026/07/30/anthropic-says-claude-gained-unauthorized-access-to-others-systems.html)
 
 ## 制限事項・運用上の注意
 

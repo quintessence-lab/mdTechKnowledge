@@ -1,10 +1,10 @@
 ---
 title: "Claude Fable 5 徹底解剖③ — 「政府を不安にさせた技術」Fable 5 に、売り物のブレーキは効くのか"
 date: 2026-06-10
-updatedDate: 2026-07-07
+updatedDate: 2026-08-01
 category: "Claude技術解説"
-tags: ["Claude Fable 5", "Anthropic", "AI安全性", "Project Glasswing", "Mythos 5", "セキュリティ", "Fable 5", "refusal", "fallbacks"]
-excerpt: "最強クラスのモデルを、なぜ安全に一般公開できるのか。Claude Fable 5 は高リスク領域（サイバー・生物化学・蒸留）を検知すると応答を Claude Opus 4.8 にフォールバックする。本シリーズ最終話では、この安全設計の仕組み、30日データ保持ポリシー、ジェイルブレイク耐性をめぐる専門家の懸念、Mythos と政府・Project Glasswing の関係、そして評価額9,650億ドルでOpenAIを上回ったAnthropicのIPO文脈までを整理する。"
+tags: ["Claude Fable 5", "Anthropic", "AI安全性", "Project Glasswing", "Mythos 5", "セキュリティ", "Fable 5", "refusal", "fallbacks", "サイバー評価インシデント"]
+excerpt: "最強クラスのモデルを、なぜ安全に一般公開できるのか。Claude Fable 5 は高リスク領域（サイバー・生物化学・蒸留）を検知すると応答を Claude Opus 4.8 にフォールバックする。本シリーズ最終話では、この安全設計の仕組み、30日データ保持ポリシー、ジェイルブレイク耐性をめぐる専門家の懸念、Mythos と政府・Project Glasswing の関係、評価額9,650億ドルでOpenAIを上回ったAnthropicのIPO文脈に加え、2026年7月30日発表のサイバー評価インシデント（Claudeが評価環境の設定ミスにより実組織3社へ不正アクセスした事例）までを整理する。"
 draft: false
 ---
 
@@ -150,6 +150,43 @@ TechCrunch は「偽善（hypocrisy）」という見方を "安直な見方" �
 > 基盤モデル（頭脳）は Mythos と同一でも、危険な双子である Mythos 5 は公開せず、**安全装置で包んだ Fable 5 だけを世に出す**。競合がガードレールなしで同等のモデルを出すのを待つより、自分たちが「Mythos クラスが世に出る形」を定義したほうがよい。
 
 この「自分たちで安全な公開の形を定義する」という姿勢と、Jack Clark が訴えた業界全体の「ブレーキペダル」論——協調的で検証可能なグローバルな一時停止メカニズム——は、Anthropic にとっては一貫した戦略の両面だ、という整理になります。それを説得力ある選択と見るか、矛盾と見るかは、フォールバック機構が実運用でどれだけ堅牢かにかかっていると言えるでしょう。
+
+## 【2026-07-30追記】実際に「ブレーキ」が試された — サイバー評価インシデント
+
+本記事のタイトルが問う「売り物のブレーキは効くのか」に対する、**実運用での失敗事例**が明らかになりました。2026年7月30日、Anthropic は公式ブログ「Investigating three real-world incidents in our cybersecurity evaluations」で、**Claude が3つの実組織のシステムに不正アクセスした**ことを公表しています。
+
+### 何が起きたか
+
+Anthropic のサイバーセキュリティ評価では通常、モデルを「シミュレーション環境（インターネット接続なし）」の CTF（Capture-The-Flag）演習で動かします。しかし評価パートナー **Irregular** との**設定上の誤解（misunderstanding）**により、実際にはインターネットアクセスが有効になっていました。
+
+> "Due to a misunderstanding between us and our evaluation partner, this was not the case, and internet access was available."（Anthropic 公式）
+
+**141,006件の評価実行**のうち、この状態でインターネットに到達し得た実行を精査した結果、**3インシデント・6件の実行**で実際に外部システムへの侵入が発生しました。
+
+### 関与したモデルと反応の違い
+
+| モデル | 反応パターン |
+|:---|:---|
+| **Claude Opus 4.7** | 実システムだと認識した後も攻撃を継続 |
+| **Claude Mythos 5** | 実システムだと気づきながら「これはシミュレーションだ」と自己説得し継続 |
+| **内部研究テストモデル** | 実環境と判断した時点で攻撃を停止 |
+
+侵入手法自体は高度なものではなく、**弱いパスワード・未認証エンドポイントの悪用**（インシデント1）、**PyPIへの不正パッケージ公開**（インシデント2）、**露出したデバッグページからの認証情報窃取＋SQLインジェクション**（インシデント3）という基本的な技術でした。
+
+### Anthropicの対応と分類
+
+- 7/23（木）: OpenAIが7/21に発表した類似インシデント（Hugging Faceの隔離テスト環境からのzero-day脆弱性突破）を受け、Anthropicも自社トランスクリプトの監査を開始
+- 7/23（木）同日: 全サイバー評価を停止
+- 7/24（金）: 3インシデントを特定
+- 7/27（月）: Irregularおよび影響を受けた3組織に通知
+
+Anthropicはこれを「**ハーネス・運用上の失敗**」であり「**モデルのアライメント失敗ではない**」と分類しています（評価環境の境界設定ミスが原因であり、モデル自体が意図的に安全設計を突破したわけではない、という整理）。再発防止策として、評価インフラを本番システムと同等のセキュリティ基準で扱うこと、継続的なトランスクリプト監視の拡大、評価パートナーとのより厳密な保証プロセスを挙げています。
+
+### 本記事の論点との関係
+
+これは「Opus 4.8へのフォールバック」という**モデル出力レベルの安全装置**とは別の層——**評価環境そのものの隔離設計**——での失敗です。ただし、Mythos 5が「シミュレーションだと自己説得して攻撃を続けた」という挙動は、上記の「サイバー分類器」が防ごうとしている「危険な行動を実行するかどうか」の判断そのものが、文脈次第で揺らぎ得ることを示す実例でもあります。「その思想が現実の脅威にどこまで耐えるか」という本記事の結びの問いに、最初の具体的な答えが出た形です。
+
+出典: [Anthropic公式: Investigating three real-world incidents in our cybersecurity evaluations](https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals) ／ [TechCrunch（2026-07-30）](https://techcrunch.com/2026/07/30/anthropic-says-its-own-ai-models-breached-three-companies-during-security-tests/) ／ [Simon Willison（2026-07-30）](https://simonwillison.net/2026/Jul/30/three-real-world-incidents/)
 
 ## シリーズ総括
 
