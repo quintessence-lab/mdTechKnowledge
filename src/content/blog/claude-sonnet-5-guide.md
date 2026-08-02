@@ -1,7 +1,7 @@
 ---
 title: "Claude Sonnet 5 完全ガイド — Opus 4.8 に迫る性能を低価格で回す新デフォルトモデル"
 date: 2026-07-03
-updatedDate: 2026-07-24
+updatedDate: 2026-08-02
 category: "Claude技術解説"
 tags: ["Claude", "Sonnet 5", "Anthropic", "AIモデル", "エージェント", "コーディング"]
 excerpt: "2026年6月30日（PT）リリースのClaude Sonnet 5は、Free/Pro/Claude Codeの新デフォルトモデル。agentic codingベンチ63.2%でOpus 4.8（69.2%）に迫りつつ、導入価格$2/$10（〜2026-08-31、以降$3/$15）という破格の低価格を実現した。エージェント自律実行・ツールユース・コンピュータ使用を強化した後継モデルの実力を、Sonnet 4.6・Opus 4.8との比較で総点検する。"
@@ -23,7 +23,7 @@ Anthropic は **2026年6月30日（PT／日本時間 7月1日）**、Sonnet シ�
 | デフォルト先 | Free / Pro / Claude Code |
 | 提供対象 | Free / Pro / Max / Team / Enterprise |
 
-価格面が今回の目玉です。**導入価格の $2 / $10 は、Sonnet 4.6 の $3 / $15 よりさらに安い**設定で、2026年8月31日までの期間限定です。9月1日以降は $3 / $15（＝Sonnet 4.6 と同水準）へ戻ります。TechCrunch によれば、この価格は Opus 4.8・GPT-5.5・Gemini 3.1 Pro より安く、Gemini 3.5 Flash よりは高い、という立ち位置とされています。
+価格面が今回の目玉です。**導入価格の $2 / $10 は、Sonnet 4.6 の $3 / $15 よりさらに安い**設定で、2026年8月31日までの期間限定です。9月1日以降は $3 / $15（＝Sonnet 4.6 と同水準）へ戻ります。TechCrunch によれば、この価格は Opus 4.8・GPT-5.5・Gemini 3.1 Pro より安く、Gemini 3.5 Flash よりは高い、という立ち位置とされています。**【2026-08-02確認】終了日は公式ドキュメントでも明記**されています（"Introductory pricing of $2/$10 per million input/output tokens is in effect through August 31, 2026, after which the standard pricing of $3/$15 per million input/output tokens will take effect." — [What's new in Claude Sonnet 5](https://platform.claude.com/docs/en/about-claude/models/whats-new-sonnet-5)）。
 
 ```text
 Sonnet 系列の流れ

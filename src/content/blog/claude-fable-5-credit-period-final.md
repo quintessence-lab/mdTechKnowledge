@@ -1,9 +1,10 @@
 ---
 title: "これがラストチャンスかも③（完結編）— Claude Fable 5 が7月20日に最終決着、Max/Team Premium は「恒久組み込み」で恵まれた"
 date: 2026-07-23
+updatedDate: 2026-08-02
 category: "Claude技術解説"
 tags: ["Claude Fable 5", "Anthropic", "Usage Credits", "Max", "Team Premium", "SpaceX", "Colossus", "サブスクリプション", "従量課金", "容量"]
-excerpt: "7月7日→12日→19日と2度延長された Claude Fable 5 の『サブスク内利用』は、2026年7月20日に最終決着した。Max / Team Premium は週間上限の50%として恒久的にプランへ組み込み（追加費用なし）、Pro / Team Standard は Usage Credits 継続＋一時$100クレジット。恒久化を可能にした背景は、SpaceX Colossus 1（300MW超・NVIDIA GPU 22万台超）の容量確保と推論効率の改善だ。プラン別の勝ち負け、なぜ Max/Team Premium が一番恵まれた結末になったのか、Pro 向けの実務を、ラストチャンス①②の続き・完結編として整理する。"
+excerpt: "7月7日→12日→19日と2度延長された Claude Fable 5 の『サブスク内利用』は、2026年7月20日に最終決着した。Max / Team Premium は週間上限の50%として恒久的にプランへ組み込み（追加費用なし）、Pro / Team Standard は Usage Credits 継続＋一時$100クレジット。恒久化を可能にした背景は、SpaceX Colossus 1（300MW超・NVIDIA GPU 22万台超）の容量確保と推論効率の改善だ。プラン別の勝ち負け、なぜ Max/Team Premium が一番恵まれた結末になったのか、Pro 向けの実務、$100クレジットの請求期限（2026-08-02）・有効期限（2026-09-17）を、ラストチャンス①②の続き・完結編として整理する。"
 draft: false
 ---
 
@@ -101,6 +102,7 @@ $100 の一時クレジットが実際どれくらい使えるのか、Fable 5 �
 - **プラン枠は温存**：プランに含まれる通常利用は従来どおり。クレジットはプラン上限を超えてから消費されます。Fable 5 以外（[Opus 4.8](/mdTechKnowledge/blog/claude-opus-4-8-guide/)・[Sonnet 5](/mdTechKnowledge/blog/claude-sonnet-5-guide/)・Haiku 4.5 等）は引き続きプラン枠で使えます。
 - **残高は単一プール**：usage bundle の残高は Claude / Desktop / モバイル / Claude Code / Cowork をまたぐ1プール（[Buy usage bundles — Claude Help Center](https://support.claude.com/en/articles/14246112-buy-usage-bundles)）。前払いバンドルなら最大30%割引。
 - **まず $100 を計画的に**：付与される一時クレジットは一度きり。ばらまき利用ですぐ消えるので、「Sonnet 5 / Opus 4.8 で足りるタスクはそちらへ、Fable 5 は最難関だけ」という振り分けが基本方針になります。
+- **【2026-08-02追記】請求期限と有効期限**：公式ヘルプ記事によると、**請求（claim）期限は2026年8月2日 23:59（PT）まで**（"you can claim your promotional credits through August 2, 2026 at 11:59 PM PT"）。請求後のクレジット**有効期限は2026年9月17日 23:59（PT）**（"These new promotional credits expire on September 17, 2026 at 11:59 PM PT, 60 days after the promotion begins"）——請求から60日間が有効期間という設計です。**未請求のまま8月2日を過ぎると受け取れなくなる**ため、対象プランの方は早めの請求を。出典: [Claude Help Center（記事ID: 15862783）](https://support.claude.com/en/articles/15862783)
 
 ## 5. シリーズ総括 — 「停止」から「常備」まで
 

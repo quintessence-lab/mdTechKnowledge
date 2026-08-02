@@ -1,7 +1,7 @@
 ---
 title: "MCP (Model Context Protocol) アーキテクチャ詳細"
 date: 2026-04-26
-updatedDate: 2026-07-30
+updatedDate: 2026-08-02
 category: "Claude技術解説"
 tags: ["MCP", "Claude Code", "JSON-RPC", "GitHub", "OAuth", "プロトコル", "Claude for Legal", "ステートレス", "SEP-2577", "SEP-2663", "Sampling", "非推奨ポリシー", "MCP Apps", "Extensions", "JSON Schema 2020-12", "W3C Trace Context"]
 excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness/エンタープライズSSO・監査トレイル・ガバナンス成熟化（貢献者ラダー/委任モデル/憲章）・新コアメンテナー）、MCP Apps（SEP-1865）、**2026-07-28 に正式リリースされたMCP新仕様**（プロトコルステートレス化＝Mcp-Session-Id 廃止、MCP Apps の HTML UI、Tasks Extension 再設計）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、Claude for Legal で公開された20+ MCPコネクタ、約20万サーバーに影響した重大脆弱性事案、さらに新仕様で制定された SEP-2577 の非推奨ポリシー（Active/Deprecated/Removed の3段階・最低12ヶ月）と Sampling/Roots/Logging の deprecated 化までの参照リンクを網羅"
@@ -1313,7 +1313,8 @@ AWS は 2026年5月6日（米時間）、**AWS MCP Server を Preview から GA�
 | 指標 | 数値 | 備考 |
 |---|---|---|
 | **公開MCPサーバー数** | **10,000以上** | GitHubおよび公式レジストリ上で公開されているサーバーの累計 |
-| **月間SDKダウンロード数** | **約9,700万件** | Python・TypeScript SDK合計（npm + PyPI） |
+| **月間SDKダウンロード数** | **【2026-07-28更新】月間ほぼ5億件**（"close to half-a-billion downloads a month"） | Python・TypeScript SDK合計。2026-07-28仕様発表時点の公式値（旧: 約9,700万件） |
+| **累計SDKダウンロード数** | **【2026-07-28追加】TypeScript・Python SDK各10億件突破** | 公式ブログ原文: "both TypeScript and Python SDKs crossing the 1 billion total downloads threshold" |
 | **SEP提案数** | **増加傾向** | 認証・トランスポート・新メッセージ型などの仕様拡張案が継続的に提出されている |
 
 ### SEP（Specification Enhancement Proposals）
@@ -1392,7 +1393,7 @@ MCPサーバーをプラグイン経由で利用する際、依存関係が未�
 - プロトコルはJSON-RPC 2.0ベースで、初期化→バージョンネゴシエーション→オペレーション→シャットダウンのライフサイクル
 - リモートサーバーはOAuth認証が必要で、初回アクセス時にブラウザで認可フローを実行
 - **ツール選択の判断はLLM（クラウド）** が行い、**実際のAPI呼び出しはMCPサーバー**が行う
-- **2026年4月時点でエコシステムは大幅拡大**: 公開MCPサーバー10,000以上、月間SDKダウンロード約9,700万件
+- **エコシステムは大幅拡大**: 公開MCPサーバー10,000以上、月間SDKダウンロードは2026年4月時点の約9,700万件から**2026年7月28日時点で月間ほぼ5億件・累計10億件突破**へ急拡大
 - **v2.1 仕様アップデート進行中**: Server Cards（`.well-known` メタデータ）、メディアサポート（画像・動画・音声）、Tasks primitive（SEP-1686、リトライ・TTLポリシー策定中）
 - **メンテナー体制刷新（2026-04-08）**: Lead Maintainer に Den Delimarsky、Core Maintainer に Clare Liguori が就任。AAIF ガバナンス移管後の運営体制が安定化
 - **NYC で MCP Dev Summit NA 開催（2026-04 中旬, 約1,200名参加）**
