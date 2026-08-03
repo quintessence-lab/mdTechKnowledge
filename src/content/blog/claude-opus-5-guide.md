@@ -1,6 +1,7 @@
 ---
 title: "Claude Opus 5 完全ガイド — ベンチ独立検証・2つの破壊的変更・Opus 4.8 からの実務移行"
 date: 2026-07-25
+updatedDate: 2026-08-04
 category: "Claude技術解説"
 tags: ["Claude", "Opus 5", "Anthropic", "ベンチマーク", "Effort Control", "API", "thinking", "移行ガイド", "Artificial Analysis"]
 excerpt: "2026-07-24（PT）リリースの新フラッグシップ Claude Opus 5 を、公式発表・公式API docs・独立検証（Artificial Analysis）の三点で徹底解説。Frontier-Bench v0.1 で Opus 4.8 の2倍超（43.3% vs 18.7%）、GDPval-AA v2 で 1861 Elo と Fable 5 を100点超引き離しつつ、価格は Opus 4.8 と同額の $5/$25。一方で AA-Omniscience の幻覚率が +14ポイント（50%）に上がる留保も明示する。API では『thinking が既定オン』『thinking disabled × effort xhigh/max で400エラー』という2つの破壊的変更があり、これは単なるモデルID差し替えでは済まない。効果が上がった Effort の使い分け、キャッシュ最小512トークン、mid-conversation tool changes、fallbacks default モード、そして4.8→5 移行チェックリスト（検証指示の削除・サブエージェント上限）までを実務目線でまとめる。"
@@ -237,6 +238,16 @@ else:
 | **Opus 5 / Opus 4.8** | $10 | $50 | **Claude API のみ**（Bedrock・Google Cloud・Foundry 非対応） |
 
 **標準の2倍単価で、出力トークン毎秒が約2.5倍**になります。リサーチプレビュー扱いで、**Batch API とは併用不可**、レート上限も標準 Opus とは別枠です。
+
+### 5-5. 【2026-08-01追記】Managed Agents Dreams が Opus 5 対応
+
+**2026年8月1日**、Claude Managed Agents の **Dreams**（Research Preview。セッション間の自動パターン抽出・メモリ最適化でエージェントを自己改善させる機能）が **Claude Opus 5 に対応**しました。公式リリースノートの記載はシンプルです。
+
+> "Dreams (research preview) now supports Claude Opus 5."
+
+Dreams自体の詳細（Harvey社での完了率6倍の実績等）は [Claude Managed Agents Memory 完全ガイド](/mdTechKnowledge/blog/claude-managed-agents-memory/) を参照してください。Opus 5 で Dreams を使う場合も、本記事で解説した2つの破壊的変更（thinking既定オン・thinking disabled × xhigh/maxで400エラー）は同様に適用されるため、既存のDreamsパイプラインをOpus 4.8からOpus 5へ切り替える際は移行チェックリストの確認が必要です。
+
+出典: [Claude Platform release notes（2026-08-01エントリ）](https://platform.claude.com/docs/en/release-notes/overview)
 
 ## 6. 挙動の変化とプロンプト調整
 

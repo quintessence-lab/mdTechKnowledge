@@ -1,14 +1,14 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-07-28
+updatedDate: 2026-08-04
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
 excerpt: "Claude Code v2.0.59〜v2.1.220 のバージョン履歴。Claude Opus 5 追加・デフォルト Opus モデル昇格・`sandbox.network.strictAllowlist`・`DirectoryAdded` hook・ネストサブエージェントフォワーディング・`workflowSizeGuideline` 設定キー・`/config key=value` でプロンプトから設定変更・auto モードでの破壊的 git コマンドのブロック・Bun 1.4 ランタイム・接続断時の部分レスポンス保持・WSL2/Windows Terminal スクロール修正・権限ルールのツールパラメータマッチング構文 `Agent(model:opus)`・ネスト `.claude/skills` の自動ロード・auto モードのサブエージェント起動前評価・会話言語でのセッションタイトル生成・`enforceAvailableModels` マネージド設定・`wheelScrollAccelerationEnabled`・サブエージェントが自身のサブエージェントを生成可能（最大5階層）・Claude Fable 5 へのアクセス追加・`--safe-mode` フラグ（カスタマイズ無効化でトラブルシュート）・`/cd` コマンド（プロンプトキャッシュを壊さない作業ディレクトリ変更）・`disableBundledSkills` 設定・fallbackModel 設定（最大3つのフォールバックモデル）・deny ルールの glob 対応・クロスセッションメッセージング堅牢化・既定思考モデルの thinking 無効化・requiredMinimumVersion/requiredMaximumVersion マネージド設定・/plugin list（--enabled/--disabled フィルタ）・バックグラウンドセッションの自動バージョン更新（コールドリスタート不要）・Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-07-28
+**最終更新**: 2026-08-04
 **現在の最新バージョン**: 2.1.220
 
 ---
@@ -21,7 +21,7 @@ draft: false
 |-----------|------------|
 | **2.1.220（2026-07-25 PT）** | バグ修正・信頼性改善（特筆すべき機能追加なし） |
 | **2.1.219（2026-07-24 PT）** | **Claude Opus 5（`claude-opus-5`）追加・デフォルト Opus モデルに昇格**（詳細は [Claude Opus 4.8 完全ガイド](/mdTechKnowledge/blog/claude-opus-4-8-guide/) の後継案内、[Anthropic Messages API 新機能まとめ](/mdTechKnowledge/blog/anthropic-messages-api-new-features-2026/) を参照）、**`sandbox.network.strictAllowlist` 設定追加**（許可リスト外のホストへの通信をプロンプトなしで拒否）、**`DirectoryAdded` hook 追加**、**サブエージェントのネスト生成デフォルトが深度3まで許可に緩和**（v2.1.218でデフォルト無効化されていたのが復活、`CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1`で再無効化可。詳細は[Claude Codeサブエージェントの歩き方](/mdTechKnowledge/blog/claude-code-subagent-readonly-switch/)）、stream-json出力でのネストサブエージェントフォワーディング追加（`--forward-subagent-text`指定時）、**Opus 4.7 の fast mode 削除**により `/fast` は Opus 5 / Opus 4.8 のみ対応に（詳細は [Claude Opus 4.7 完全ガイド](/mdTechKnowledge/blog/claude-opus-4-7-guide/)）、**`workflowSizeGuideline` 設定キー追加**（Dynamic Workflows の既定サイズガイドラインを設定ファイルから調整可能に。詳細は [Claude Code Dynamic Workflows 完全ガイド](/mdTechKnowledge/blog/claude-code-dynamic-workflows-guide/)） |
-| **2.1.218** | **`/code-review` がバックグラウンドサブエージェントとして実行**されるように変更、**サブエージェントのネスト生成をデフォルト無効化**（`CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`で明示的に許可する必要に。v2.1.219で深度3まで再許可、詳細は[Claude Codeサブエージェントの歩き方](/mdTechKnowledge/blog/claude-code-subagent-readonly-switch/)）、**同時実行サブエージェント数の上限追加**（既定20、`CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS`で調整可）、`--max-budget-usd`到達時にバックグラウンドサブエージェントが停止しない問題を修正、スクリーンリーダーモード改善（単語/行削除時のアナウンス追加）、Windows パスの `\u` プレフィックスセグメント文字化け修正、左矢印キーでの会話破棄に確認プロンプト追加（詳細は[Claude Code Tips①](/mdTechKnowledge/blog/claude-code-tips-1-left-arrow-agent-view/)）、Bedrock モデルの価格計算修正、MCP認証・接続系の複数修正など多数のバグ修正リリース |
+| **2.1.218** | **`/code-review` がバックグラウンドサブエージェントとして実行**されるように変更、**サブエージェントのネスト生成をデフォルト無効化**（`CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`で明示的に許可する必要に。v2.1.219で深度3まで再許可、詳細は[Claude Codeサブエージェントの歩き方](/mdTechKnowledge/blog/claude-code-subagent-readonly-switch/)）、**同時実行サブエージェント数の上限追加**（既定20、`CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS`で調整可）、`--max-budget-usd`到達時にバックグラウンドサブエージェントが停止しない問題を修正、**`/deep-research`が手動起動のみに変更**（Claudeが自律的に起動しなくなった）、**Plan Modeのautoが静的解析で読み取り専用と証明できないBashコマンドを無確認実行しなくなり、auto-mode分類器が判定するよう変更**、スクリーンリーダーモード改善（単語/行削除時のアナウンス追加）、Windows パスの `\u` プレフィックスセグメント文字化け修正、左矢印キーでの会話破棄に確認プロンプト追加（詳細は[Claude Code Tips①](/mdTechKnowledge/blog/claude-code-tips-1-left-arrow-agent-view/)）、Bedrock モデルの価格計算修正、MCP認証・接続系の複数修正など多数のバグ修正リリース |
 | **2.1.217** | **絵文字ショートコード自動補完追加**（`:heart:` 等）、Windows の自動更新失敗時の復旧機能追加、**Claude Opus 4.8 のオートコンパクト非動作を修正**、企業 mTLS・OAuth・プロキシ設定が Desktop で無視される問題修正、Remote Control セッションの権限プロンプト表示問題修正など |
 | **2.1.216** | **`sandbox.filesystem.disabled` 設定を追加**（ファイルシステム隔離をネットワーク制御と独立に制御可能に）、メッセージ正規化コストの二次関数的増加による遅延を修正、auto mode の 401 エラー後コマンド拒否修正、再開バックグラウンドエージェントのデフォルトエージェント喪失修正、worktree 分離サブエージェントの git リダイレクト回避修正など、**40件中75%がバグ修正**の安定化リリース |
 | **2.1.215（2026-07-19 PT）** | **`/verify`・`/code-review` スキルの自動実行を廃止**し、明示的にコマンドを呼んだときだけ実行されるよう変更（従来は特定の条件で自動起動していた） |
