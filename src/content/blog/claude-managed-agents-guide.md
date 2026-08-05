@@ -1,7 +1,7 @@
 ---
 title: "Claude Managed Agents 簡易ガイド — アーキテクチャ・比較・ユースケース"
 date: 2026-04-08
-updatedDate: 2026-07-30
+updatedDate: 2026-08-05
 category: "Claude技術解説"
 tags: ["Claude", "Managed Agents", "Agent SDK", "Claude Code", "API", "マルチエージェント", "Memory", "Enterprise", "Self-hosted sandboxes", "MCP tunnels", "Cloudflare", "Modal", "Vercel", "Daytona", "Cloudflare Environments", "Webhooks", "microVM", "V8 Isolate", "Scheduled deployments", "Vault環境変数"]
 excerpt: "Claude Managed Agentsの3層アーキテクチャ（Session/Harness/Sandbox）、p50 TTFT 60%削減のパフォーマンス改善、Memory機能、Dreaming・Outcomes・Multi-agent orchestration、エンタープライズ向けRBAC・OpenTelemetry、2026年5月19日発表のSelf-hosted sandboxes（Cloudflare/Daytona/Modal/Vercel対応、Public Beta）とMCP tunnels（Research Preview、プライベートネットワーク内MCPサーバーへの outbound-only E2E接続）、料金体系（$0.08/session-hour）、さらに Cloudflare Environments（brain/hands 分離・Linux microVM と V8 Isolate を選択可能・ブラウザ/メール/アウトバウンドプロキシ/Cloudflare Mesh・Workers VPC）の概要までを1ページに整理。"
@@ -400,6 +400,8 @@ SlackやTeamsから指示を送り、スプレッドシート・スライド・�
 個々のエージェントがセッション単位では気づけない、より大局的なパターンを Dreaming が抽出することで、繰り返し利用するほど精度が向上します。
 
 > **【2026-07-10追記】Dreaming が Claude Fable 5・Claude Sonnet 5 に対応**: 公式リリースノートによると、Dreaming（Research Preview）が **Claude Fable 5 と Claude Sonnet 5 をサポート**しました。これまでの対応モデルに両モデルが加わったことで、Fable 5 の高度な自律実行と Sonnet 5 の低コストなエージェント運用を、Dreaming のセッション間自己改善と組み合わせられます。出典: [Anthropic Release notes（2026-07-10）](https://platform.claude.com/docs/en/release-notes/overview)。
+>
+> **【2026-08-01追記】Dreaming が Claude Opus 5 にも対応**: 公式リリースノートによると、Dreaming（Research Preview）が **Claude Opus 5 をサポート**しました（"Dreams (research preview) now supports Claude Opus 5."）。対応モデルは Fable 5・Sonnet 5・Opus 5 の3モデルに拡大しています。Opus 5 の詳細は [Claude Opus 5 完全ガイド](/mdTechKnowledge/blog/claude-opus-5-guide/) を参照。出典: [Anthropic Release notes（2026-08-01）](https://platform.claude.com/docs/en/release-notes/overview)。
 
 ### Outcomes（Public Beta）
 
@@ -531,4 +533,4 @@ Outcomes と組み合わせれば「成功基準を満たすまで自律的に�
 ---
 
 *Sources: Anthropic Blog, Claude API Docs（platform.claude.com/docs/en/managed-agents/overview, /tools, /webhooks, /self-hosted-sandboxes）, Cloudflare Blog（blog.cloudflare.com/claude-managed-agents）, InfoQ, SDTimes, TestingCatalog, 9to5Mac, WaveSpeed, The New Stack, The Decoder — May 2026*
-*本ガイドは2026年7月22日時点の情報に基づいています（2026-04-08 GA / 2026-04-09 Enterprise / 2026-04-23 Memory パブリックベータ移行 / 2026-05-07 Dreaming・Outcomes・Multi-agent orchestration・Webhooks 追加 / 2026-05-19 Self-hosted sandboxes（Cloudflare Environments 概要を含む） / 2026-06-09 スケジュールデプロイ・Vault 環境変数クレデンシャル・`session.thread_*` への `session_thread_id` 追加 / 2026-07-22 effort レベル設定・Webhook拡張・initial_events・version任意化・event deltas を反映）*
+*本ガイドは2026年8月1日時点の情報に基づいています（2026-04-08 GA / 2026-04-09 Enterprise / 2026-04-23 Memory パブリックベータ移行 / 2026-05-07 Dreaming・Outcomes・Multi-agent orchestration・Webhooks 追加 / 2026-05-19 Self-hosted sandboxes（Cloudflare Environments 概要を含む） / 2026-06-09 スケジュールデプロイ・Vault 環境変数クレデンシャル・`session.thread_*` への `session_thread_id` 追加 / 2026-07-22 effort レベル設定・Webhook拡張・initial_events・version任意化・event deltas / 2026-08-01 Dreaming の Opus 5 対応 を反映）*
