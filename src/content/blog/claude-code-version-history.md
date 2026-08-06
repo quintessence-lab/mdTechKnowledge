@@ -1,15 +1,15 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-08-05
+updatedDate: 2026-08-07
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート"]
-excerpt: "Claude Code v2.0.59〜v2.1.222 のバージョン履歴。Focus view（ツール実行折り畳みUI）・sandbox credential masking・worktree隔離のgitコマンド修正・Remote Control自動起動制限・ultraplan機能削除・Claude Opus 5 追加・デフォルト Opus モデル昇格・`sandbox.network.strictAllowlist`・`DirectoryAdded` hook・ネストサブエージェントフォワーディング・`workflowSizeGuideline` 設定キー・`/config key=value` でプロンプトから設定変更・auto モードでの破壊的 git コマンドのブロック・Bun 1.4 ランタイム・接続断時の部分レスポンス保持・WSL2/Windows Terminal スクロール修正・権限ルールのツールパラメータマッチング構文 `Agent(model:opus)`・ネスト `.claude/skills` の自動ロード・auto モードのサブエージェント起動前評価・会話言語でのセッションタイトル生成・`enforceAvailableModels` マネージド設定・`wheelScrollAccelerationEnabled`・サブエージェントが自身のサブエージェントを生成可能（最大5階層）・Claude Fable 5 へのアクセス追加・`--safe-mode` フラグ（カスタマイズ無効化でトラブルシュート）・`/cd` コマンド（プロンプトキャッシュを壊さない作業ディレクトリ変更）・`disableBundledSkills` 設定・fallbackModel 設定（最大3つのフォールバックモデル）・deny ルールの glob 対応・クロスセッションメッセージング堅牢化・既定思考モデルの thinking 無効化・requiredMinimumVersion/requiredMaximumVersion マネージド設定・/plugin list（--enabled/--disabled フィルタ）・バックグラウンドセッションの自動バージョン更新（コールドリスタート不要）・Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.223 のバージョン履歴。v2.1.223のBashパーミッションバイパス・権限プロンプト隠蔽対策・workflowサンドボックス脱出の3件セキュリティ修正、`/review`の`/code-review`エイリアス化・Focus view（ツール実行折り畳みUI）・sandbox credential masking・worktree隔離のgitコマンド修正・Remote Control自動起動制限・ultraplan機能削除・Claude Opus 5 追加・デフォルト Opus モデル昇格・`sandbox.network.strictAllowlist`・`DirectoryAdded` hook・ネストサブエージェントフォワーディング・`workflowSizeGuideline` 設定キー・`/config key=value` でプロンプトから設定変更・auto モードでの破壊的 git コマンドのブロック・Bun 1.4 ランタイム・接続断時の部分レスポンス保持・WSL2/Windows Terminal スクロール修正・権限ルールのツールパラメータマッチング構文 `Agent(model:opus)`・ネスト `.claude/skills` の自動ロード・auto モードのサブエージェント起動前評価・会話言語でのセッションタイトル生成・`enforceAvailableModels` マネージド設定・`wheelScrollAccelerationEnabled`・サブエージェントが自身のサブエージェントを生成可能（最大5階層）・Claude Fable 5 へのアクセス追加・`--safe-mode` フラグ（カスタマイズ無効化でトラブルシュート）・`/cd` コマンド（プロンプトキャッシュを壊さない作業ディレクトリ変更）・`disableBundledSkills` 設定・fallbackModel 設定（最大3つのフォールバックモデル）・deny ルールの glob 対応・クロスセッションメッセージング堅牢化・既定思考モデルの thinking 無効化・requiredMinimumVersion/requiredMaximumVersion マネージド設定・/plugin list（--enabled/--disabled フィルタ）・バックグラウンドセッションの自動バージョン更新（コールドリスタート不要）・Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
 draft: false
 ---
 
-**最終更新**: 2026-08-05
-**現在の最新バージョン**: 2.1.222
+**最終更新**: 2026-08-07
+**現在の最新バージョン**: 2.1.223
 
 ---
 
@@ -19,6 +19,7 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.223（2026-08-06 PT）** | **重要なセキュリティ修正3件**：①**Bashパーミッションバイパス修正**（細工したコマンドで権限チェックの一部を隠せた問題）、②**権限プロンプトのタブ・不可視Unicode隠蔽対策**（コマンドの一部を承認ダイアログから隠せた問題）、③**workflowスクリプトが`dynamic import()`でサンドボックス外のコードを実行できた問題を修正**、エージェント定義の`bypassPermissions`モードが組織のbypass-permissions無効化ポリシーを無視していた権限の穴も修正。新機能：**owner wildcard（`owner/*`）**が`strictKnownMarketplaces`/`blockedMarketplaces`マネージド設定に対応（GitHub org配下の全マーケットプレイスリポジトリを一括許可/ブロック）、クラウドセッションで**`/teleport <session_id>`ヒント表示**、workflow エージェント等で要求サブエージェントモデルが制限され親モデルで代替実行される場合の警告追加。**`/review`が`/code-review`のエイリアスに変更**（`/code-review <level> <pr#>`で現在の差分またはPRをレビュー、`/code-review ultra`でクラウド深掘りレビュー。effort未指定なら前回指定値を再利用）、`CLAUDE_CODE_DISABLE_1M_CONTEXT`がネイティブ1M窓を持つ全モデルに適用されるよう変更（固定リストのみだったのを拡大） |
 | **2.1.222（2026-08-04 PT）** | **worktree隔離セッションの破壊的gitコマンド実行を修正**（隔離サブエージェントがメインチェックアウトへ破壊的gitコマンドを実行できた問題。ファイル編集・Bash双方に隔離を適用）、**PreToolUse auto-allowフックがバックグラウンドエージェントタスク（サマリー・圧縮・リネーム）でツール制限をバイパスする問題を修正**、`/usage-credits`のTeam/Enterprise向け表示不具合修正、HTTPSプロキシ経由の起動時接続確認がハングする問題を修正、`/usage`のMCPサーバー使用量帰属を実際にツール結果を消費したリクエストのみに限定するよう修正、**Remote Control自動起動の変更**（repo-local設定ではオンにできなくなり、無効化のみ可能。有効化はユーザースコープの`/config`経由に限定）、**`ultraplan`機能を削除** |
 | **2.1.221（2026-08-03 PT）** | **Focus view追加**（[VSCode]チャットメニューのトグルでツール実行ログを折り畳み、ターンごとの展開可能サマリー＋実行中インジケーターを表示。`Ctrl+Alt+F`または"Claude Code: Toggle Focus view"コマンドで切替）、**sandbox credential maskingに`mode: "mask"`追加**（Linux/WSL向け。サンドボックス内コマンドはセンチネル値を読み、egress時にプロキシが実値へ置換。macOSは`deny`にフォールバック）、**zsh `[[ ]]`正規表現条件式経由のBash権限チェックバイパスを修正**、`claude plugin validate`にmarketplace/plugin名がClaude Desktopのmanaged marketplace syncで拒否されるケースの警告追加、`claude-api`スキルに`prompt-audit`サブコマンド追加、WebSearchがeffort `xhigh`/`max`＋thinking無効時に400エラーになる問題を修正 |
 | **2.1.220（2026-07-25 PT）** | バグ修正・信頼性改善（特筆すべき機能追加なし） |

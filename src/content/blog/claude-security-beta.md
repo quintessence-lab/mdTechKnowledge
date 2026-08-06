@@ -1,10 +1,10 @@
 ---
 title: "Claude Security Beta — Anthropic エンタープライズセキュリティ製品の全貌（2026年5月発表）"
 date: 2026-05-02
-updatedDate: 2026-08-01
+updatedDate: 2026-08-07
 category: "Claude技術解説"
-tags: ["Anthropic", "Claude Security", "Opus 4.7", "セキュリティ", "脆弱性スキャン", "エンタープライズ", "脅威インテリジェンス", "MITRE ATT&CK", "サイバー攻撃", "サイバー評価インシデント"]
-excerpt: "2026年5月1日、Anthropic は Claude Opus 4.7 を中核に据えたエンタープライズ向けセキュリティ製品 Claude Security のパブリックベータを発表した。コードベース脆弱性スキャン・パッチ生成、CrowdStrike / Microsoft Security / Palo Alto Networks / SentinelOne / TrendAI / Wiz などの技術パートナー、Accenture / BCG / Deloitte / Infosys / PwC などのサービスパートナー連携を含め、全体像を整理する。さらに2026年6月3日公開の脅威インテリジェンスレポート（禁止832アカウントの MITRE ATT&CK マッピング、マルウェア生成67.3%、中リスク以上が33%→56%へ）、2025年11月に阻止された AI 主導サイバースパイ活動の事例、そして2026年7月30日発表のサイバー評価インシデント（評価環境の設定ミスでClaudeが実組織3社に不正アクセス）も追補する。"
+tags: ["Anthropic", "Claude Security", "Opus 4.7", "セキュリティ", "脆弱性スキャン", "エンタープライズ", "脅威インテリジェンス", "MITRE ATT&CK", "サイバー攻撃", "サイバー評価インシデント", "Inference hooks", "DLP"]
+excerpt: "2026年5月1日、Anthropic は Claude Opus 4.7 を中核に据えたエンタープライズ向けセキュリティ製品 Claude Security のパブリックベータを発表した。コードベース脆弱性スキャン・パッチ生成、CrowdStrike / Microsoft Security / Palo Alto Networks / SentinelOne / TrendAI / Wiz などの技術パートナー、Accenture / BCG / Deloitte / Infosys / PwC などのサービスパートナー連携を含め、全体像を整理する。さらに2026年6月3日公開の脅威インテリジェンスレポート（禁止832アカウントの MITRE ATT&CK マッピング、マルウェア生成67.3%、中リスク以上が33%→56%へ）、2025年11月に阻止された AI 主導サイバースパイ活動の事例、2026年7月30日発表のサイバー評価インシデント（評価環境の設定ミスでClaudeが実組織3社に不正アクセス）、そして2026年8月5日発表のInference hooks（Claude Enterprise beta。DLPサーバーへ推論前にプロンプトを問い合わせ、Netskope/Palo Alto/Proofpoint/Zscaler等と統合）も追補する。"
 draft: false
 ---
 
@@ -297,6 +297,44 @@ Claude Security が「AI で守る」プロダクトであるのと表裏一体�
 - **規模**: テック企業・金融機関・化学メーカー・政府機関など**約30の標的**。実際に成功したのは少数
 
 この事例は「AI が攻撃を自律実行する時代」を象徴し、6月のマッピングレポートが定量的に裏付けた格好です。Claude Security のような防御プロダクトの必要性も、こうした脅威の現実化を背景にしています。
+
+## 【2026-08-05追記】Inference hooks（Claude Enterprise beta）— 推論前にDLPサーバーへ問い合わせる仕組み
+
+2026年8月5日、**Claude Enterprise** 向けに **Inference hooks**（beta）が追加されました。Claude Security がコード・インフラの脆弱性を守る製品なのに対し、Inference hooksは**プロンプト自体の情報漏洩（DLP）をリアルタイムで防ぐ**、より上流の防御レイヤーです。
+
+### 仕組み
+
+| 項目 | 内容 |
+|:---|:---|
+| 通信方式 | Anthropicが組織の**AIセキュリティサーバー**（組織またはセキュリティベンダーが運用するHTTPSサービス）へ**HTTPS POST**でリクエスト送信 |
+| 送信内容 | 会話のトランスクリプト（プレーンテキスト・ツール呼び出しと結果・添付ファイルから抽出したテキスト）。**生ファイル・画像バイト、システムプロンプト、Anthropic内部コンテキストは送信されない** |
+| 署名検証 | **Standard Webhooks仕様**に準拠した署名（組織が署名シークレットを生成） |
+| 判定待ちタイムアウト | **デフォルト5秒**（組織側で設定変更可） |
+| 判定 | `{"action": "allow"}` で続行、denyの場合はサーバー提供の理由＋管理者設定の標準メッセージをユーザーへ表示 |
+| フェイルハンドリング | サーバー無応答・エラー・タイムアウト時は、組織設定で**ブロック**または**検査なしで許可**を選択 |
+| イベント | 現時点では `prompt`（推論開始前に1回発火）のみ。レスポンス側の制御は将来対応予定 |
+
+### 対象範囲と非対象
+
+- **対象**: claude.ai・Cowork・Claude Code の各セッション（Web・デスクトップアプリ・CLI）を横断して**1つのフックで統括**
+- **非対象**: Amazon Bedrock・Google Cloud経由の利用、Platform組織（API直接アクセス）、Voice mode、会話タイトル生成などの付随リクエスト
+- **画像のみのコンテンツ**（スクリーンショット等）は検査対象外（メタデータとテキスト抽出のみ送信されるため）
+
+### 段階導入とパートナー統合
+
+デプロイを急がずに済むよう3つの導入手段が用意されています：**shadow mode**（常時allowでログのみ収集）、**ロールベース除外**（特定ロールのメンバーを対象外に）、**段階ロールアウト**（割合を指定して一部リクエストのみ検査）。
+
+統合例として **Netskope・Palo Alto Networks・Proofpoint・Zscaler** が挙げられており、既存のDLPプログラムとの連携を想定しています。すべての拒否は組織の **Compliance Activity Feed** に記録されます。
+
+### Compliance APIとの違い
+
+| | Inference hooks | Compliance API |
+|:---|:---|:---|
+| 動作タイミング | **推論前**（インライン） | **事後** |
+| 機能 | 各リクエストをリアルタイムでallow/deny | 監査・エクスポート用にアクティビティ・チャット・ファイル等を取得 |
+| 通信方向 | Anthropicが組織のサーバーを呼ぶ | 組織がAnthropic APIを呼ぶ |
+
+出典: [Anthropic公式ブログ: Claude Enterprise Inference Hooks](https://claude.com/blog/claude-enterprise-inference-hooks) ／ [Inference hooks（公式ドキュメント）](https://platform.claude.com/docs/en/manage-claude/inference-hooks)
 
 ## 既存セキュリティ事案との関係性
 
