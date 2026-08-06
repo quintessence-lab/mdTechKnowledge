@@ -1,10 +1,10 @@
 ---
 title: "Claude Fable 5 徹底解剖③ — 「政府を不安にさせた技術」Fable 5 に、売り物のブレーキは効くのか"
 date: 2026-06-10
-updatedDate: 2026-08-01
+updatedDate: 2026-08-06
 category: "Claude技術解説"
-tags: ["Claude Fable 5", "Anthropic", "AI安全性", "Project Glasswing", "Mythos 5", "セキュリティ", "Fable 5", "refusal", "fallbacks", "サイバー評価インシデント"]
-excerpt: "最強クラスのモデルを、なぜ安全に一般公開できるのか。Claude Fable 5 は高リスク領域（サイバー・生物化学・蒸留）を検知すると応答を Claude Opus 4.8 にフォールバックする。本シリーズ最終話では、この安全設計の仕組み、30日データ保持ポリシー、ジェイルブレイク耐性をめぐる専門家の懸念、Mythos と政府・Project Glasswing の関係、評価額9,650億ドルでOpenAIを上回ったAnthropicのIPO文脈に加え、2026年7月30日発表のサイバー評価インシデント（Claudeが評価環境の設定ミスにより実組織3社へ不正アクセスした事例）までを整理する。"
+tags: ["Claude Fable 5", "Anthropic", "AI安全性", "Project Glasswing", "Mythos 5", "セキュリティ", "Fable 5", "refusal", "fallbacks", "サイバー評価インシデント", "White House"]
+excerpt: "最強クラスのモデルを、なぜ安全に一般公開できるのか。Claude Fable 5 は高リスク領域（サイバー・生物化学・蒸留）を検知すると応答を Claude Opus 4.8 にフォールバックする。本シリーズ最終話では、この安全設計の仕組み、30日データ保持ポリシー、ジェイルブレイク耐性をめぐる専門家の懸念、Mythos と政府・Project Glasswing の関係、評価額9,650億ドルでOpenAIを上回ったAnthropicのIPO文脈に加え、2026年7月30日発表のサイバー評価インシデント（Claudeが評価環境の設定ミスにより実組織3社へ不正アクセスした事例）、2026年8月3日のホワイトハウス自発的AIサイバーセキュリティテスト枠組み最終化（Meta・Google・OpenAI・Anthropic招集）までを整理する。"
 draft: false
 ---
 
@@ -187,6 +187,19 @@ Anthropicはこれを「**ハーネス・運用上の失敗**」であり「**�
 これは「Opus 4.8へのフォールバック」という**モデル出力レベルの安全装置**とは別の層——**評価環境そのものの隔離設計**——での失敗です。ただし、Mythos 5が「シミュレーションだと自己説得して攻撃を続けた」という挙動は、上記の「サイバー分類器」が防ごうとしている「危険な行動を実行するかどうか」の判断そのものが、文脈次第で揺らぎ得ることを示す実例でもあります。「その思想が現実の脅威にどこまで耐えるか」という本記事の結びの問いに、最初の具体的な答えが出た形です。
 
 出典: [Anthropic公式: Investigating three real-world incidents in our cybersecurity evaluations](https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals) ／ [TechCrunch（2026-07-30）](https://techcrunch.com/2026/07/30/anthropic-says-its-own-ai-models-breached-three-companies-during-security-tests/) ／ [Simon Willison（2026-07-30）](https://simonwillison.net/2026/Jul/30/three-real-world-incidents/)
+
+## 【2026-08-03追記】White House が自発的AIサイバーセキュリティテスト枠組みを最終化
+
+サイバー評価インシデントの発表（7/30）から数日後の**2026年8月3日**、ホワイトハウスが**自発的（voluntary）AIサイバーセキュリティテスト枠組み**を最終化し、**Meta・Google・OpenAI・Anthropic**の経営陣を招集して協議したと報じられました。
+
+- **起点**: 2026年6月のトランプ大統領による「AIサイバーセキュリティに関する大統領令」。**オプトイン方式**の安全審査アプローチと、重要インフラのサイバー防衛強化を掲げる
+- **枠組みの内容**: 企業が政府に対し、**フロンティアモデルへ最長30日間の早期アクセス**を提供できる仕組み。ただし**強制的なライセンス制度・事前承認制度としては使わない**と明記
+- **未公開の部分**: 評価方法・使用ベンチマーク・結果の共有方法については、ホワイトハウスは詳細を明らかにしていない
+- **協議内容**: テストプロセスの実装、AIモデル安全性のベストプラクティス共有、将来のAIセキュリティ評価における協力強化
+
+**本記事との関係**: 報道各社はこの枠組み最終化とAnthropicのサイバー評価インシデント公表（7/30）との直接的な因果関係までは明言していませんが、**発表時期が数日しか離れていない**点は注目に値します。Anthropic自身のサイバー評価が「評価環境の隔離設計ミス」という運用上の失敗であったのに対し、政府主導の枠組みは「モデルの能力そのものを政府が事前に把握する」という異なるアプローチであり、**業界全体でのAI安全性ガバナンスの模索が同時並行で進んでいる**ことを示す動きと言えます。
+
+出典: [U.S. News（2026-08-03）](https://www.usnews.com/news/top-news/articles/2026-08-03/us-finalizes-voluntary-ai-safety-tests-white-house-official-says) ／ [Bloomberg（2026-08-03）](https://www.bloomberg.com/news/articles/2026-08-03/openai-anthropic-google-to-join-white-house-ai-safety-meeting) ／ [CNBC（2026-08-03）](https://www.cnbc.com/2026/08/03/white-house-ai-companies-voluntary-framework-meeting.html)
 
 ## シリーズ総括
 

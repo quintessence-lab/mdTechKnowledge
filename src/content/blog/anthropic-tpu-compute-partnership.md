@@ -1,10 +1,10 @@
 ---
 title: "Anthropic コンピュートインフラ & TPUパートナーシップ — Google・BroadcomとのマルチギガワットTPU契約（2027年稼働）"
 date: 2026-04-29
-updatedDate: 2026-07-30
+updatedDate: 2026-08-06
 category: "一般リサーチ"
-tags: ["Anthropic", "Google", "Broadcom", "TPU", "AIインフラ", "コンピュート", "パートナーシップ", "SpaceX", "xAI", "Colossus", "GPU", "Akamai", "Fluidstack", "データセンター", "米国インフラ投資", "AMD"]
-excerpt: "2026年4月6日発表のGoogle・BroadcomとのマルチギガワットTPU契約（2027年稼働）に加え、2026年5月のSpaceX xAI Colossus 1データセンター全容量契約（300MW超・GPU22万台超）、Akamai Technologies $1.8B・7年間クラウドコンピュート契約を収録。Anthropicのマルチクラウド・マルチベンダーインフラ戦略を整理。あわせて2025年11月発表の$50B米国AIインフラ投資（Fluidstackと組みテキサス州・ニューヨーク州にデータセンターを建設、2026年中に順次稼働）、2026年6月のMicron戦略協定（HBM/DRAM/SSD複数年供給）、2026年7月のTeraWulf 20年リース（$19B・ケンタッキー州Hawesville・最大401MW・2027年後半稼働）、2026年7月22日のAMD戦略提携（最大$5B投資・Instinct MI450 GPU最大2GW）も収録。"
+tags: ["Anthropic", "Google", "Broadcom", "TPU", "AIインフラ", "コンピュート", "パートナーシップ", "SpaceX", "xAI", "Colossus", "GPU", "Akamai", "Fluidstack", "データセンター", "米国インフラ投資", "AMD", "Volta"]
+excerpt: "2026年4月6日発表のGoogle・BroadcomとのマルチギガワットTPU契約（2027年稼働）に加え、2026年5月のSpaceX xAI Colossus 1データセンター全容量契約（300MW超・GPU22万台超）、Akamai Technologies $1.8B・7年間クラウドコンピュート契約を収録。Anthropicのマルチクラウド・マルチベンダーインフラ戦略を整理。あわせて2025年11月発表の$50B米国AIインフラ投資（Fluidstackと組みテキサス州・ニューヨーク州にデータセンターを建設、2026年中に順次稼働）、2026年6月のMicron戦略協定（HBM/DRAM/SSD複数年供給）、2026年7月のTeraWulf 20年リース（$19B・ケンタッキー州Hawesville・最大401MW・2027年後半稼働）、2026年7月22日のAMD戦略提携（最大$5B投資・Instinct MI450 GPU最大2GW）、2026年8月4日のVolta Infra Holdings契約（$10B・6年間・ノルウェー133MW・Nvidia Vera Rubin）も収録。"
 draft: false
 ---
 
@@ -386,6 +386,30 @@ Anthropic はこれまで演算調達をクラウドプロバイダに依存し�
 AMD の出資は「デプロイと引き換えの受注確保」という構図で、**投資契約とGPU調達契約がセット**になっている点は Google（$40B投資＋TPU契約）や Amazon（$5B追加投資＋AWS消費コミット）と同型のパターンです。Anthropic 側から見ると、**NVIDIA依存を一段と下げる**動きであり、チップベンダーの分散が3社（AWS Trainium／GCP TPU／NVIDIA-CoreWeave）から**4社構造**へ拡大しました。本章の「マルチクラウド6軸」（第5章）にも反映しています。
 
 参考: [AMD IR: Strategic Partnership press release（2026-07-22）](https://ir.amd.com/news-events/press-releases/detail/1292/amd-and-anthropic-announce-strategic-partnership-to-deploy-up-to-2-gigawatts-of-amd-instinct-mi450-series-gpus) / [AMD Newsroom](https://newsroom.amd.com/news/amd-anthropic-strategic-partnership/) / [CNBC: AMD to invest up to $5B in Anthropic（2026-07-22）](https://www.cnbc.com/2026/07/22/amd-anthropic-ai-chip-investment.html)
+
+---
+
+## 第11章補遺3: Volta Infra Holdings — $10B・6年契約でノルウェーにNvidia次世代GPU拠点（2026-08-04）
+
+2026年8月4日、Anthropic は Nvidia出資の新興neocloudスタートアップ **Volta Infra Holdings** と、**6年間・総額$10B規模**のコンピュートディールを締結しました。SpaceX Colossus・Akamai に続く、新興クラウド事業者との大型契約の3例目です。
+
+### 契約の概要
+
+| 項目 | 内容 |
+|---|---|
+| 発表日 | 2026年8月4日 |
+| 契約規模・期間 | **$10B・6年間** |
+| 立地 | **ノルウェー** |
+| 容量 | **133 MW** |
+| 技術構成 | Nvidia の次世代 **Vera Rubin** アーキテクチャ。Volta は Nvidia Cloud Partner プログラムの一員 |
+| 建設パートナー | **Bitdeer**（暗号資産マイニング企業。データセンター開発を支援） |
+| Volta 創業 | **2026年設立**の新興企業 |
+
+### 戦略的意義
+
+Volta は本契約が公になるまで「AIラボと提携している」とだけ表明し、相手企業名を伏せていました（Bloombergの報道で Anthropic との契約と確認）。TechCrunch は本契約を、**SpaceXおよびAmazonとの類似取引と同時期に発表された**、Anthropic の積極的なコンピュート容量拡大戦略の一環と位置づけています。ノルウェーという立地は、Google TPU（複数リージョン）・AWS Trainium・AMD Instinct（米国中心）とは異なる**地理的分散**をもたらす点でも意味があります。
+
+参考: [TechCrunch（2026-08-04）](https://techcrunch.com/2026/08/04/anthropic-signs-10-billion-deal-with-ai-cloud-startup-volta/) / [Bloomberg（2026-08-04）](https://www.bloomberg.com/news/articles/2026-08-04/anthropic-inks-10-billion-computing-deal-with-new-cloud-startup)
 
 ---
 

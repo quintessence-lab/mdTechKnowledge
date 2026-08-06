@@ -1,10 +1,10 @@
 ---
 title: "Anthropic 大型資本調達ラウンド — Amazon $5B/$100B AWSコミット・Google 最大$40B 投資・Series G $380B → Series H $965B評価額（OpenAI超）の戦略的意義"
 date: 2026-04-26
-updatedDate: 2026-07-24
+updatedDate: 2026-08-06
 category: "一般リサーチ"
-tags: ["Anthropic", "Amazon", "Google", "AWS", "GCP", "Trainium", "TPU", "投資", "クラウドインフラ", "Claude", "Series G", "Series H", "CoreWeave", "Blackstone", "Goldman Sachs", "合弁会社", "EPAM", "Dragoneer", "Greenoaks", "Sequoia", "Altimeter", "Gates Foundation", "公益", "IPO", "S-1", "SEC", "Micron", "Samsung", "SK hynix", "Fluidstack", "データセンター", "HBM", "半導体"]
-excerpt: "2026年4月にAnthropicが立て続けに発表したAmazon・Googleからの巨額投資ラウンドと、Series G $380B評価額調達・年間収益ランレート $30B 突破（OpenAI 逆転）・CoreWeave との計算インフラ個別契約を整理。2026年5月3日発表のBlackstone・H&F・Goldman Sachs との$1.5Bエンタープライズ AI サービス合弁会社、5月7日発表のEPAM Systems との戦略的多年契約、5月8日 Fortune 報道『単一四半期で80倍成長』、5月12日 Bloomberg 報道の$30B 調達ラウンド合意確定（評価額 $900B 超、ARR $45B）、5月14日 Gates Foundation との $200M／4年 grant partnership（医療・K-12教育・経済モビリティ）まで追補。さらに2026年5月28日発表の Series H — $65B 調達・post-money $965B 評価額（OpenAI を上回り AI スタートアップ史上最高）・年率 run-rate revenue $47B 到達・ハイパースケーラー既コミット $15B（Amazon $5B 含む）、さらに2026年6月1日（PT）に SEC へ機密ドラフト S-1 を提出した IPO 申請開始まで追補。"
+tags: ["Anthropic", "Amazon", "Google", "AWS", "GCP", "Trainium", "TPU", "投資", "クラウドインフラ", "Claude", "Series G", "Series H", "CoreWeave", "Blackstone", "Goldman Sachs", "合弁会社", "EPAM", "Dragoneer", "Greenoaks", "Sequoia", "Altimeter", "Gates Foundation", "公益", "IPO", "S-1", "SEC", "Micron", "Samsung", "SK hynix", "Fluidstack", "データセンター", "HBM", "半導体", "Apollo", "プライベートクレジット"]
+excerpt: "2026年4月にAnthropicが立て続けに発表したAmazon・Googleからの巨額投資ラウンドと、Series G $380B評価額調達・年間収益ランレート $30B 突破（OpenAI 逆転）・CoreWeave との計算インフラ個別契約を整理。2026年5月3日発表のBlackstone・H&F・Goldman Sachs との$1.5Bエンタープライズ AI サービス合弁会社、5月7日発表のEPAM Systems との戦略的多年契約、5月8日 Fortune 報道『単一四半期で80倍成長』、5月12日 Bloomberg 報道の$30B 調達ラウンド合意確定（評価額 $900B 超、ARR $45B）、5月14日 Gates Foundation との $200M／4年 grant partnership（医療・K-12教育・経済モビリティ）まで追補。さらに2026年5月28日発表の Series H — $65B 調達・post-money $965B 評価額（OpenAI を上回り AI スタートアップ史上最高）・年率 run-rate revenue $47B 到達・ハイパースケーラー既コミット $15B（Amazon $5B 含む）、さらに2026年6月1日（PT）に SEC へ機密ドラフト S-1 を提出した IPO 申請開始、Google製カスタムTPUのリース資金を賄うApollo/Blackstoneのプライベートクレジット（第1弾$35B完了・2026年8月時点で第2弾最低$36B打診中）まで追補。"
 draft: false
 ---
 
@@ -418,6 +418,39 @@ GPU/TPU の確保（Amazon・Google・SpaceX）やメモリ供給（Micron・Sam
 | 連動協定 | Micron とのメモリ/ストレージ供給契約（HBM・DRAM・SSD・複数年） |
 
 参考: [Micron: Strategic Agreement with Anthropic（2026/6/22）](https://investors.micron.com/news-releases/news-release-details/micron-and-anthropic-announce-strategic-agreement-scale-next) / [CNBC: Anthropic revenue growth（2026/5）](https://www.cnbc.com/2026/05/20/anthropic-revenue-explosive-growth-ipo-profitable-quarter.html)
+
+---
+
+## 第5章補遺: Google製カスタムチップ向け大型プライベートクレジット — Apollo/Blackstone $35B（完了）＋ 第2弾$36B（打診中）
+
+Anthropic の資本調達には、資本市場からの直接調達（Series G/H、AWS・Google の戦略投資）とは別に、**「チップ購入資金を特別目的事業体（SPV）経由で調達し、Anthropicはリースで使う」**という**プライベートクレジット型の資金調達**も並走しています。
+
+### 第1弾: Apollo・Blackstoneが$35Bを完了（2026年6月5日）
+
+**Apollo Global Management** と **Blackstone** が、Google製カスタム **Tensor Processing Unit（TPU）** をAnthropic向けに調達するための**$35B（350億ドル）の債務ファイナンス**を完了しました。
+
+| 項目 | 内容 |
+|---|---|
+| 完了日 | 2026年6月5日 |
+| 規模 | **$35B** |
+| 仕組み | **SPV（特別目的事業体）**がGoogleカスタムTPUを購入し、**Anthropicへリース**（Anthropicのバランスシートに乗らない） |
+| 構造 | **3トランシェ**構成。最上位トランシェには**Broadcomが信用補完・残存価値保証**を提供 |
+| Broadcomの役割 | 最大**$30B分のトランシェ**に信用補完を提供。リース料未払い時、SPVがチップを売却して返済し、不足分はBroadcomがA1/A2トランシェ投資家に**100%補償** |
+| 出資構成 | 約半分は**外部投資家へシンジケート**。Apollo傘下のAtlas SP Partnersが$800Mの株式出資 |
+
+史上最大級のプライベートクレジットSPV案件の一つと報じられており、Broadcomの保証がついたことで、TPU自体の資産価値だけでなくBroadcomの信用力もリスク低減に寄与する構造になっています。
+
+### 第2弾: Blackstoneが最低$36Bの追加パッケージを打診中（2026年8月4日時点）
+
+2026年8月4日、Blackstoneが**第2弾の債務パッケージ**について投資家への初期打診を開始したとBloombergが報じました。
+
+- **規模**: 初期案では**最低$36B（360億ドル）**。第1弾の$35Bを上回る可能性
+- **ステータス**: 規模・構造・主幹事がBlackstoneになるかを含め**未確定**（早期の投資家打診段階）
+- **背景**: Anthropicは直近、**米国IPOに向けて機密裏にS-1を提出**しており、資金調達とIPO準備が並行して進んでいる
+
+> 本項目は「打診中・未確定」の報道ベース情報です。規模・条件は今後変わる可能性があるため、確定情報ではない点にご留意ください。
+
+出典: [Bloomberg: Apollo Shops $36 Billion Debt Deal to Buy Google Chips for Anthropic（2026-05-28）](https://www.bloomberg.com/news/articles/2026-05-28/apollo-shops-36-billion-debt-deal-to-buy-google-chips-for-anthropic) / [Investing.com: Apollo, Blackstone finalize $35 billion AI chip financing（2026-06-05）](https://www.investing.com/news/company-news/apollo-blackstone-finalize-35-billion-ai-chip-financing-for-anthropic-4729436) / [Bloomberg: Blackstone Has Pitched Mega Debt Package for Anthropic Chip Deal（2026-08-04）](https://www.bloomberg.com/news/articles/2026-08-04/blackstone-has-pitched-mega-debt-package-for-anthropic-chip-deal)
 
 ---
 
