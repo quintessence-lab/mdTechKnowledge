@@ -1,7 +1,7 @@
 ---
 title: "Anthropic Advisor Tool 完全ガイド — Opus を『助言役』にして安いモデルを賢くする"
 date: 2026-06-07
-updatedDate: 2026-06-16
+updatedDate: 2026-08-08
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude", "Advisor Tool", "API", "Opus", "Sonnet", "Haiku", "コスト最適化", "ツール"]
 excerpt: "Anthropic の Advisor Tool（advisor_20260301、2026年4月9日 Public Beta）は、Sonnet/Haiku を『エグゼキュータ（実行役）』、Opus を『アドバイザー（助言役）』として単一APIコール内でペアリングする新パターン。アドバイザーはツールも最終出力も生成せず助言だけを返すため、Opus の推論力を借りつつ、最終生成は安いモデルが担うことでコストを抑える。役割分担の仕組み・対応モデルの組み合わせ・課金（usage.iterations）・APIコード例・制約（Bedrock/Vertex 非対応）・ベンチマークまでを公式ドキュメント一次ソースで整理する。"
@@ -15,6 +15,7 @@ draft: false
 > - これにより、**Opus の推論力を要所だけ借りつつ、生成は安いモデルに任せてコストを抑える**。
 > - **2026年4月9日に Public Beta** 開始。**Claude API と Claude Platform on AWS のみ**対応（Bedrock / Vertex AI / Microsoft Foundry は非対応）。
 > - 有効化は `anthropic-beta: advisor-tool-2026-03-01` ヘッダー。
+> - **【2026-08-07追記・混同注意】** Claude Managed Agents にも同名の「アドバイザー」機能（`{"type": "advisor"}` をマルチエージェントrosterに追加する設定）が追加されましたが、**本記事のAdvisor Tool（`advisor_20260301`）とは別機能**です。本記事はMessages APIで単一コール内にエグゼキュータ/アドバイザーをペアリングする仕組み、Managed Agents版はセッションのプライマリスレッドがターン途中で外部モデルに相談できる仕組みです。詳細は [Claude Managed Agents 簡易ガイド](/mdTechKnowledge/blog/claude-managed-agents-guide/) を参照してください。
 
 ## はじめに — 「賢いモデルは高い、安いモデルは少し物足りない」を両取りする
 

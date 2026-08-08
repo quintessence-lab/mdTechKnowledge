@@ -1,7 +1,7 @@
 ---
 title: "Anthropic Messages API 新機能まとめ（2026年5〜7月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・APIキー有効期限・Opus5対応"
 date: 2026-06-20
-updatedDate: 2026-07-27
+updatedDate: 2026-08-08
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ"]
 excerpt: "2026年5〜7月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定に加え、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモードまで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
@@ -291,6 +291,8 @@ Claude Enterprise 組織向けに、**メンバー管理をダッシュボード
 | 必要な権限 | `read:org_audit` スコープの Admin API キーがあれば、user-management 系の GET エンドポイントをすべて呼び出し可能 |
 
 組織のメンバー管理を IdP（Entra ID / Okta 等）や社内ツールと同期させたい場合、これまでダッシュボード操作に限られていたメンバー変更をプログラムから自動化できるようになりました。
+
+> **【2026-08-05追記】関連: Inference hooks（Claude Enterprise beta）**: 同じくEnterprise向けに、**推論実行前に組織のDLPサーバーへプロンプトをHTTPS POSTしallow/deny判定を受ける**仕組みが追加されました。Admin API User Managementが「誰が使えるか」を管理するのに対し、Inference hooksは「何を送信していいか」をリアルタイムで制御する機能です。詳細は [Claude Security Beta](/mdTechKnowledge/blog/claude-security-beta/) の「Inference hooks」節を参照してください。
 
 ## 10. HIPAA セルフサービス設定（2026年7月）
 

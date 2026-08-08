@@ -1,7 +1,7 @@
 ---
 title: "Claude Managed Agents 簡易ガイド — アーキテクチャ・比較・ユースケース"
 date: 2026-04-08
-updatedDate: 2026-08-05
+updatedDate: 2026-08-08
 category: "Claude技術解説"
 tags: ["Claude", "Managed Agents", "Agent SDK", "Claude Code", "API", "マルチエージェント", "Memory", "Enterprise", "Self-hosted sandboxes", "MCP tunnels", "Cloudflare", "Modal", "Vercel", "Daytona", "Cloudflare Environments", "Webhooks", "microVM", "V8 Isolate", "Scheduled deployments", "Vault環境変数"]
 excerpt: "Claude Managed Agentsの3層アーキテクチャ（Session/Harness/Sandbox）、p50 TTFT 60%削減のパフォーマンス改善、Memory機能、Dreaming・Outcomes・Multi-agent orchestration、エンタープライズ向けRBAC・OpenTelemetry、2026年5月19日発表のSelf-hosted sandboxes（Cloudflare/Daytona/Modal/Vercel対応、Public Beta）とMCP tunnels（Research Preview、プライベートネットワーク内MCPサーバーへの outbound-only E2E接続）、料金体系（$0.08/session-hour）、さらに Cloudflare Environments（brain/hands 分離・Linux microVM と V8 Isolate を選択可能・ブラウザ/メール/アウトバウンドプロキシ/Cloudflare Mesh・Workers VPC）の概要までを1ページに整理。"
@@ -512,6 +512,17 @@ Outcomes と組み合わせれば「成功基準を満たすまで自律的に�
 
 出典: [Anthropic Release notes（2026-07-22）](https://platform.claude.com/docs/en/release-notes/overview)。
 
+## 【2026-08-07追記】セッション予算・アドバイザー追加・推論ジオ制御・GitHubスキルロード
+
+| 機能 | 内容 |
+|:---|:---|
+| セッション予算 | セッションの支出に**ハードキャップを設定**可能に（パブリックリスト価格で計算）。上限に達すると新規モデルリクエストを開始せず **`budget_reached`** stop reasonで一時停止。予算の変更・削除で再開可能。Deploymentも同じ予算設定を受け付け、起動する各セッションに適用 |
+| アドバイザー追加 | セッションのプライマリスレッドが**ターン途中で戦略的助言を求められるアドバイザーモデル**を設定可能に。エージェントのマルチエージェントroster内に **`{"type": "advisor"}`** エントリとして、相談先の`model`を指定して構成。エージェント自身と同等以上の能力を持つモデルを指定する想定 |
+| 推論ジオ制御 | エージェント作成時（`model`オブジェクト内）またはセッション単位で **`inference_geo`** を設定し、**モデル推論の実行地域を制御**可能に。データレジデンシー要件への対応 |
+| GitHubスキルロード | セッションが[リポジトリをマウント](https://platform.claude.com/docs/en/managed-agents/github)している場合、ルートの **`.claude/skills`** ディレクトリ内のスキルをセッション開始時に**自動検出**し、そのセッションのエージェントが利用可能に |
+
+出典: [Anthropic Release notes（2026-08-07）](https://platform.claude.com/docs/en/release-notes/overview)。
+
 ## APIアクセスとレート制限
 
 - **必須ベータヘッダー**: `anthropic-beta: managed-agents-2026-04-01`（Anthropic公式SDKでは自動付与）
@@ -533,4 +544,4 @@ Outcomes と組み合わせれば「成功基準を満たすまで自律的に�
 ---
 
 *Sources: Anthropic Blog, Claude API Docs（platform.claude.com/docs/en/managed-agents/overview, /tools, /webhooks, /self-hosted-sandboxes）, Cloudflare Blog（blog.cloudflare.com/claude-managed-agents）, InfoQ, SDTimes, TestingCatalog, 9to5Mac, WaveSpeed, The New Stack, The Decoder — May 2026*
-*本ガイドは2026年8月1日時点の情報に基づいています（2026-04-08 GA / 2026-04-09 Enterprise / 2026-04-23 Memory パブリックベータ移行 / 2026-05-07 Dreaming・Outcomes・Multi-agent orchestration・Webhooks 追加 / 2026-05-19 Self-hosted sandboxes（Cloudflare Environments 概要を含む） / 2026-06-09 スケジュールデプロイ・Vault 環境変数クレデンシャル・`session.thread_*` への `session_thread_id` 追加 / 2026-07-22 effort レベル設定・Webhook拡張・initial_events・version任意化・event deltas / 2026-08-01 Dreaming の Opus 5 対応 を反映）*
+*本ガイドは2026年8月7日時点の情報に基づいています（2026-04-08 GA / 2026-04-09 Enterprise / 2026-04-23 Memory パブリックベータ移行 / 2026-05-07 Dreaming・Outcomes・Multi-agent orchestration・Webhooks 追加 / 2026-05-19 Self-hosted sandboxes（Cloudflare Environments 概要を含む） / 2026-06-09 スケジュールデプロイ・Vault 環境変数クレデンシャル・`session.thread_*` への `session_thread_id` 追加 / 2026-07-22 effort レベル設定・Webhook拡張・initial_events・version任意化・event deltas / 2026-08-01 Dreaming の Opus 5 対応 / 2026-08-07 セッション予算・アドバイザー追加・推論ジオ制御・GitHubスキルロード を反映）*
