@@ -1,10 +1,10 @@
 ---
 title: "Claude Fable 5 徹底解剖③ — 「政府を不安にさせた技術」Fable 5 に、売り物のブレーキは効くのか"
 date: 2026-06-10
-updatedDate: 2026-08-06
+updatedDate: 2026-08-11
 category: "Claude技術解説"
-tags: ["Claude Fable 5", "Anthropic", "AI安全性", "Project Glasswing", "Mythos 5", "セキュリティ", "Fable 5", "refusal", "fallbacks", "サイバー評価インシデント", "White House"]
-excerpt: "最強クラスのモデルを、なぜ安全に一般公開できるのか。Claude Fable 5 は高リスク領域（サイバー・生物化学・蒸留）を検知すると応答を Claude Opus 4.8 にフォールバックする。本シリーズ最終話では、この安全設計の仕組み、30日データ保持ポリシー、ジェイルブレイク耐性をめぐる専門家の懸念、Mythos と政府・Project Glasswing の関係、評価額9,650億ドルでOpenAIを上回ったAnthropicのIPO文脈に加え、2026年7月30日発表のサイバー評価インシデント（Claudeが評価環境の設定ミスにより実組織3社へ不正アクセスした事例）、2026年8月3日のホワイトハウス自発的AIサイバーセキュリティテスト枠組み最終化（Meta・Google・OpenAI・Anthropic招集）までを整理する。"
+tags: ["Claude Fable 5", "Anthropic", "AI安全性", "Project Glasswing", "Mythos 5", "セキュリティ", "Fable 5", "refusal", "fallbacks", "サイバー評価インシデント", "White House", "生物学セーフガード"]
+excerpt: "最強クラスのモデルを、なぜ安全に一般公開できるのか。Claude Fable 5 は高リスク領域（サイバー・生物化学・蒸留）を検知すると応答を Claude Opus 4.8 にフォールバックする。本シリーズ最終話では、この安全設計の仕組み、30日データ保持ポリシー、ジェイルブレイク耐性をめぐる専門家の懸念、Mythos と政府・Project Glasswing の関係、評価額9,650億ドルでOpenAIを上回ったAnthropicのIPO文脈に加え、2026年7月30日発表のサイバー評価インシデント（Claudeが評価環境の設定ミスにより実組織3社へ不正アクセスした事例）、2026年8月3日のホワイトハウス自発的AIサイバーセキュリティテスト枠組み最終化（Meta・Google・OpenAI・Anthropic招集）、2026年8月7日の生物学系セーフガード更新（フォールバック約85%削減、日常的な健康・教育質問での改善とデュアルユース領域の継続制限）までを整理する。"
 draft: false
 ---
 
@@ -200,6 +200,18 @@ Anthropicはこれを「**ハーネス・運用上の失敗**」であり「**�
 **本記事との関係**: 報道各社はこの枠組み最終化とAnthropicのサイバー評価インシデント公表（7/30）との直接的な因果関係までは明言していませんが、**発表時期が数日しか離れていない**点は注目に値します。Anthropic自身のサイバー評価が「評価環境の隔離設計ミス」という運用上の失敗であったのに対し、政府主導の枠組みは「モデルの能力そのものを政府が事前に把握する」という異なるアプローチであり、**業界全体でのAI安全性ガバナンスの模索が同時並行で進んでいる**ことを示す動きと言えます。
 
 出典: [U.S. News（2026-08-03）](https://www.usnews.com/news/top-news/articles/2026-08-03/us-finalizes-voluntary-ai-safety-tests-white-house-official-says) ／ [Bloomberg（2026-08-03）](https://www.bloomberg.com/news/articles/2026-08-03/openai-anthropic-google-to-join-white-house-ai-safety-meeting) ／ [CNBC（2026-08-03）](https://www.cnbc.com/2026/08/03/white-house-ai-companies-voluntary-framework-meeting.html)
+
+## 【2026-08-07追記】生物学系セーフガードを更新 — フォールバック約85%削減
+
+2026年8月7日、Anthropicは**Fable 5の生物学関連フォールバック設計を更新**したと発表しました。本記事冒頭で解説した「フォールバック安全設計」（危ない質問はOpus 4.8/5へ）のうち、**生物学領域の判定基準がより精緻化**された形です。
+
+- **削減規模**: 生物学関連のフォールバックを**約85%削減**。プロダクト別では claude.ai で67%、Cowork で55%、Claude Code で17%、Claude Platform（API）で7%の総フォールバック削減が見込まれる
+- **改善される用途**: 「検査結果の解釈」「症状の理解」「教育的文脈での生物学学習」といった**日常的な健康・教育関連の質問**で、Fable 5が直接回答できるケースが大幅に増加。医療従事者向けのサポートも拡充
+- **引き続き制限される領域**: **ウイルス学・毒性学・分子設計**などデュアルユース（軍民両用）と判定される要求は、従来通り**Opus 5へフォールバック**し続ける
+
+**本記事との関係**: 「安全装置を能力の一部として組み込む」という設計思想（本記事「危険と警告しながら公開する論理」参照）の実践例です。7月30日のサイバー評価インシデントが「評価環境の失敗」だったのに対し、こちらは**フォールバック判定ロジック自体の継続的なチューニング**であり、「ブレーキの精度を上げる」方向の改善と言えます。
+
+出典: [Anthropic公式: Improving Fable 5's biology safeguards（2026-08-07）](https://www.anthropic.com/news/improving-fable-5-s-biology-safeguards)
 
 ## シリーズ総括
 

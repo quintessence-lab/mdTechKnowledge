@@ -1,10 +1,10 @@
 ---
 title: "Anthropic コンピュートインフラ & TPUパートナーシップ — Google・BroadcomとのマルチギガワットTPU契約（2027年稼働）"
 date: 2026-04-29
-updatedDate: 2026-08-06
+updatedDate: 2026-08-11
 category: "一般リサーチ"
-tags: ["Anthropic", "Google", "Broadcom", "TPU", "AIインフラ", "コンピュート", "パートナーシップ", "SpaceX", "xAI", "Colossus", "GPU", "Akamai", "Fluidstack", "データセンター", "米国インフラ投資", "AMD", "Volta"]
-excerpt: "2026年4月6日発表のGoogle・BroadcomとのマルチギガワットTPU契約（2027年稼働）に加え、2026年5月のSpaceX xAI Colossus 1データセンター全容量契約（300MW超・GPU22万台超）、Akamai Technologies $1.8B・7年間クラウドコンピュート契約を収録。Anthropicのマルチクラウド・マルチベンダーインフラ戦略を整理。あわせて2025年11月発表の$50B米国AIインフラ投資（Fluidstackと組みテキサス州・ニューヨーク州にデータセンターを建設、2026年中に順次稼働）、2026年6月のMicron戦略協定（HBM/DRAM/SSD複数年供給）、2026年7月のTeraWulf 20年リース（$19B・ケンタッキー州Hawesville・最大401MW・2027年後半稼働）、2026年7月22日のAMD戦略提携（最大$5B投資・Instinct MI450 GPU最大2GW）、2026年8月4日のVolta Infra Holdings契約（$10B・6年間・ノルウェー133MW・Nvidia Vera Rubin）も収録。"
+tags: ["Anthropic", "Google", "Broadcom", "TPU", "AIインフラ", "コンピュート", "パートナーシップ", "SpaceX", "xAI", "Colossus", "GPU", "Akamai", "Fluidstack", "データセンター", "米国インフラ投資", "AMD", "Volta", "カスタムシリコン"]
+excerpt: "2026年4月6日発表のGoogle・BroadcomとのマルチギガワットTPU契約（2027年稼働）に加え、2026年5月のSpaceX xAI Colossus 1データセンター全容量契約（300MW超・GPU22万台超）、Akamai Technologies $1.8B・7年間クラウドコンピュート契約を収録。Anthropicのマルチクラウド・マルチベンダーインフラ戦略を整理。あわせて2025年11月発表の$50B米国AIインフラ投資（Fluidstackと組みテキサス州・ニューヨーク州にデータセンターを建設、2026年中に順次稼働）、2026年6月のMicron戦略協定（HBM/DRAM/SSD複数年供給）、2026年7月のTeraWulf 20年リース（$19B・ケンタッキー州Hawesville・最大401MW・2027年後半稼働）、2026年7月22日のAMD戦略提携（最大$5B投資・Instinct MI450 GPU最大2GW）、2026年8月4日のVolta Infra Holdings契約（$10B・6年間・ノルウェー133MW・Nvidia Vera Rubin）、2026年8月5日のAnthropic自社カスタムシリコン設計チーム公式確認（元OpenAI Clive Chan主導、推論コスト50%削減目標）も収録。"
 draft: false
 ---
 
@@ -410,6 +410,30 @@ AMD の出資は「デプロイと引き換えの受注確保」という構図�
 Volta は本契約が公になるまで「AIラボと提携している」とだけ表明し、相手企業名を伏せていました（Bloombergの報道で Anthropic との契約と確認）。TechCrunch は本契約を、**SpaceXおよびAmazonとの類似取引と同時期に発表された**、Anthropic の積極的なコンピュート容量拡大戦略の一環と位置づけています。ノルウェーという立地は、Google TPU（複数リージョン）・AWS Trainium・AMD Instinct（米国中心）とは異なる**地理的分散**をもたらす点でも意味があります。
 
 参考: [TechCrunch（2026-08-04）](https://techcrunch.com/2026/08/04/anthropic-signs-10-billion-deal-with-ai-cloud-startup-volta/) / [Bloomberg（2026-08-04）](https://www.bloomberg.com/news/articles/2026-08-04/anthropic-inks-10-billion-computing-deal-with-new-cloud-startup)
+
+---
+
+## 第11章補遺4: Anthropic Custom Silicon Team — カスタムチップ設計チーム設立を公式確認（2026-08-05）
+
+2026年8月5日、Anthropicは**自社カスタムシリコン設計チームの存在を公式に確認**しました。これまで本記事で扱ってきたのはすべて「外部ベンダーのチップを調達する」契約でしたが、本件は**Anthropicが自らチップ設計に乗り出す**という質的に異なる動きです。
+
+### 概要
+
+| 項目 | 内容 |
+|---|---|
+| 公式確認日 | 2026年8月5日 |
+| 技術リーダー | **Clive Chan**（OpenAIのカスタムチップチームで2番目のハードウェア採用者。2024年1月にTesla Dojoスーパーコンピュータプログラムから移籍、2026年6月にAnthropicへ入社） |
+| Chan の経歴 | Tesla在籍時（約2.5年）はAutopilotのディープラーニングインフラチームでシニアソフトウェアエンジニア。機械学習トレーニング用ASIC・ソフトウェアフレームワーク開発・データセンターco-design・省電力数値フォーマットに従事 |
+| 採用条件 | チップエンジニアの募集要項は「シリコンを出荷した経験」を求め、年収レンジは**$320,000〜$485,000** |
+| 目標 | Claudeのアテンションメカニズムに最適化したシリコン+モデルのco-designにより、**トークンあたり推論コストを約50%削減** |
+| 製造パートナー候補 | **Samsung**との2nmプロセスに関する早期協議を開始（The Information報道） |
+| 既存パートナーシップ | Nvidia・AMD・AWS・Googleとの既存契約は**継続**（本記事の他章で扱ってきた契約群） |
+
+### 戦略的意義
+
+TechCrunchはこの動きを、**OpenAI（Broadcomと共同のJalapeñoチップ）・Google DeepMind（TPU）・Meta（MTIA）**による自社チップ開発競争への対応と位置づけています。AWS・Google・Nvidia・AMDとの既存契約だけでは需要を賄いきれない、という文脈です。ただし、これは既存の外部調達契約を置き換えるものではなく、**「外部調達で当面のキャパシティを確保しつつ、長期的にはモデルとシリコンのco-designでコスト構造を変える」という二正面戦略**として理解するのが適切です。
+
+参考: [TechCrunch（2026-08-05）](https://techcrunch.com/2026/08/05/anthropic-is-hiring-an-ai-chip-design-team/) / [Tech Times（2026-08-05）](https://www.techtimes.com/articles/323238/20260805/anthropic-confirms-house-chip-team-co-design-bet-could-cut-claude-inference-costs-half.htm)
 
 ---
 
