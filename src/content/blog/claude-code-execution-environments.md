@@ -1,9 +1,9 @@
 ---
 title: "【重要Tips】Claude Codeの実行場所はどこ？～端末上？クラウド上？"
 date: 2026-04-16
-updatedDate: 2026-07-14
+updatedDate: 2026-08-11
 category: "Claude技術解説"
-tags: ["Claude Code", "CCR", "Routines", "クラウド", "実行環境"]
+tags: ["Claude Code", "CCR", "Routines", "クラウド", "実行環境", "Self-hosted", "Enterprise"]
 excerpt: "Claude Codeには4つの実行環境があります。ローカルCLI・CCR・Cloud版Web UI・Routinesの違いをアクセスURL・実行場所・操作方法・用途・プラン要件で整理します。"
 draft: false
 ---
@@ -159,6 +159,45 @@ CCR・Cloud版・Routinesの3つは、いずれも**Anthropicが管理するク�
 | 未対応ディストリ | Fedora / RHEL / Arch は現時点で非対応（今後拡大予定） |
 
 これでローカルCLI・CCR・Cloud版・Routines・**Desktop アプリ**という主要な実行環境が、Linux でも macOS/Windows と同等に揃いつつあります。出典: [Claude Desktop on Linux（公式）](https://code.claude.com/docs/en/desktop-linux)。
+
+---
+
+## 【2026-08追記】Self-hosted environments（ベータ）— 自社インフラでクラウドセッションを実行
+
+2026年8月7日（Claude Code v2.1.224）、**Self-hosted environments**が Team / Enterprise プラン向けに**パブリックベータ**として追加されました。CCR・Cloud版 Web UI・Routinesは、これまで必ず**Anthropicが管理するクラウドサンドボックス**上で動作していましたが、この新機能により、同じ「クラウドセッション」（開発者自身のマシン以外で動くセッション全般の総称）を**自社が管理するインフラ上で実行**できるようになります。
+
+### 仕組み
+
+自社ホスティングは3つの要素で構成されます。
+
+| 要素 | 内容 |
+|:---|:---|
+| **Environment（環境）** | claude.ai の admin settings で作成する、ランナーをグループ化した名前付きの送信先 |
+| **Runner（ランナー）** | 自社ネットワーク内のホストで稼働させる長時間プロセス。セッションをキューから取得して実行する（自己ホスト型CIランナーと同じ発想） |
+| **Session（セッション）** | 開発者が開始した1つのClaude Codeタスク。ランナーが子プロセスとして起動する |
+
+開発者がクラウドセッションを開始する際、環境選択UIにAnthropicホスト型の環境と並んで自社作成の環境が表示されます。自社環境を選ぶと、Anthropicの制御プレーンがセッションを環境のキューに配置し、空き容量のあるランナーがそれを取得してリポジトリをクローンし、Claude Codeプロセスを自社ホスト上で起動します。
+
+### ネットワーク設計
+
+すべての通信は**自社ネットワークからの outbound HTTPS のみ**（`api.anthropic.com` 宛てのキューポーリング・イベントストリーム・モデル推論）で、**Anthropicから自社ネットワークへの inbound 接続は一切発生しません**。リポジトリのチェックアウト・ビルド成果物・シークレット・セッションが作成/変更したファイルはすべて自社が管理するマシン上に留まりますが、会話内容（プロンプト・応答・ツール結果）はモデル推論のため `api.anthropic.com` に送信され、セッション再開のためにAnthropic側でトランスクリプトが保存されます。
+
+### 主な制約
+
+- **対象プラン**: Team / Enterprise の**パブリックベータ**、既定は無効（admin が Cloud environments 管理ページで有効化）
+- **Zero Data Retention 組織では利用不可**
+- モデル推論は Anthropic API 経由のみ。**Amazon Bedrock / Google Cloud のAgent Platform / Microsoft Foundry / LLM gateway 経由のルーティングは不可**
+- 対応サーフェス: Web UI・モバイル/デスクトップアプリ・Routines・`claude --cloud`（ターミナルから）。**Claude Tag・Claude Security・Code Review のセッションは未対応**（今後個別対応予定）
+- リポジトリは GitHub のみ
+- 課金は通常のAnthropicホスト型クラウドセッションと同様、組織のClaude Code利用量として計上される
+
+### 向いているケース
+
+Anthropicホスト型のほうがインフラ運用不要で大半のチームに向きますが、自社ホスティングは**社内ネットワークのDB・レジストリへのアクセスが必要**、**コンパイラ・SDK・社内CLIを事前インストールした専用ランナーイメージを使いたい**、**リポジトリチェックアウトや成果物を自社管理インフラ内に留めたい**（コンプライアンス要件）といったチーム向けです。その代わり、ランナーイメージの構築・フリート運用・ネットワーク管理は自社の責任になります。
+
+これでローカルCLI・CCR・Cloud版・Routines・Desktop アプリに加え、**Self-hosted環境**という第6の選択肢が加わったことになります（CCR・Cloud版・Routinesの実行場所を、Anthropic管理か自社管理かで選べるようになった、という位置づけです）。
+
+出典: [Self-hosted environments（公式ドキュメント）](https://code.claude.com/docs/en/self-hosted-environments) / [Anthropic公式ブログ: Run Claude Code sessions on your own compute](https://claude.com/blog/run-claude-code-sessions-on-your-own-compute)
 
 ---
 
