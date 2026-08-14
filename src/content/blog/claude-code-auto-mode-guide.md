@@ -1,10 +1,10 @@
 ---
 title: "Claude Code Auto Mode 完全ガイド — --dangerously-skip-permissions を卒業する自律型権限管理"
 date: 2026-06-21
-updatedDate: 2026-07-18
+updatedDate: 2026-08-14
 category: "Claude技術解説"
 tags: ["Claude Code", "Auto Mode", "permission mode", "dangerously-skip-permissions", "分類器", "classifier", "claudeignore", "安全運用"]
-excerpt: "Claude Code の Auto Mode（自律型権限管理）は、すべてを無条件に許可する --dangerously-skip-permissions の安全な代替として 2026-03-24 に登場した。モデルベースの2段階トランスクリプト分類器（Sonnet 4.6 による高速フィルター＋思考連鎖による精査）で各アクションを起動前に評価し、連続3拒否・累計20拒否で自動停止する。本記事では権限モードの全体像、分類器の仕組み、エスカレーション停止、.claudeignore 連携、卒業の手順までを公式情報ベースで整理する。"
+excerpt: "Claude Code の Auto Mode（自律型権限管理）は、すべてを無条件に許可する --dangerously-skip-permissions の安全な代替として 2026-03-24 に登場した。モデルベースの2段階トランスクリプト分類器（Sonnet 4.6 による高速フィルター＋思考連鎖による精査）で各アクションを起動前に評価し、連続3拒否・累計20拒否で自動停止する。2026-08-14 からは Pro/Max/Team プランの新規セッションで Auto Mode が既定の権限モードになった（人間の目視13.6%に対し分類器89%の危険コマンド捕捉率が論拠。Enterprise/API/Bedrock/Vertex/Foundry はオプトイン継続）。本記事では権限モードの全体像、分類器の仕組み、エスカレーション停止、.claudeignore 連携、卒業の手順までを公式情報ベースで整理する。"
 draft: false
 ---
 
@@ -42,6 +42,14 @@ Claude Code が持つ主な権限モード（permission mode）を、安全性�
 | **dangerously-skip** | 無条件で自動許可 | **なし（全許可）** | 一切確認しない | （非推奨）隔離環境のみ |
 
 ポイントは、Plan Mode が「**変更を一切させないことで安全を確保する**」のに対し、Auto Mode は「**変更を許しつつ、危険な変更だけを分類器で止める**」という、真逆のアプローチで安全と自律を両立している点です。Plan Mode の詳細は [Plan Mode 完全ガイド](/mdTechKnowledge/blog/claude-code-plan-mode-guide/) を参照してください。
+
+> **【2026-08-14 施行】Auto Mode が Pro / Max / Team プランの既定モードになりました。** Anthropic は 2026年8月7日に公式ブログで発表し、**8月14日から、Pro・Max・Team プランの新規セッションでは Auto Mode が既定の権限モード**になりました。本記事の初版が前提としていた「Manual が既定・Auto はオプトイン」という関係が逆転しています。
+>
+> - **根拠として示されたデータ**: 1,053人の被験者による対照テストで、**危険なコマンドを人間の目視承認が捕捉できたのは 13.6%、Auto Mode 分類器は 89%** ——「人間が全部確認する」より分類器のほうが実測で安全だった、というのが既定化の論拠です。
+> - **既定化の対象外**: Enterprise・API 従量・Amazon Bedrock・Google Vertex AI・Microsoft Foundry の各デプロイは、管理者のレビューを想定して**引き続きオプトイン**です。
+> - **従来の挙動に戻すには**: これまでどおり権限モードは自由に切替できます。組織では **managed settings で別のモードを既定に固定、または Auto Mode 自体を無効化**（`disableAutoMode`）できます。
+>
+> 出典: [Auto mode is now the default in Claude Code — Anthropic 公式ブログ](https://claude.com/blog/auto-mode-default-in-claude-code)
 
 > **【2026-07 名称変更（v2.1.200）】**: 2026年7月3日（PT）の **Claude Code v2.1.200** で、これまで「**default**」と表示されていた通常の権限モードの名称が「**Manual**」に変更されました（CLI・`--help`・VS Code・JetBrains 拡張の横断）。都度確認するという**挙動自体の変更ではなく表示名の整理**で、「auto（自動承認）との対比で、手動承認であることを名前で明示する」趣旨とみられます。本記事の表記も「Manual（旧称 default）」に統一しました。あわせて同バージョンでは **`AskUserQuestion` ダイアログの自動継続（auto-continue）が既定で無効化**され、放置時に勝手に進まなくなりました（アイドルタイムアウトでの自動続行は `/config` からオプトイン）。また v2.1.199 では **plan mode が状態変更系のブラウザツール呼び出しに確認を要求**するようになっています（read-only の `browser_batch` は自動許可）。いずれも「**自動で進む範囲を明示的に選ばせる**」方向の変更で、Auto Mode を含む権限体系の考え方と整合しています。
 >
