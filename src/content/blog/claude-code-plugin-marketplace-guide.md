@@ -1,6 +1,7 @@
 ---
 title: "Claude Code Plugin Marketplace ガイド — slash/hooks/サブエージェント/skills を束ねて配布・導入する"
 date: 2026-06-21
+updatedDate: 2026-08-14
 category: "Claude技術解説"
 tags: ["Claude Code", "プラグイン", "Marketplace", "slash commands", "hooks", "サブエージェント", "skills", "MCP"]
 excerpt: "Claude Code のプラグインは、slash commands・hooks・サブエージェント・skills・MCP サーバーを1つのパッケージに束ねて配布・導入できる仕組みです（2025年10月 公開ベータ）。/plugin コマンドでの検索・インストール、公式マーケットプレイス claude-plugins-official とサードパーティ/自前マーケットプレイスの追加方法、plugin.json の構成、作成の流れまでを公式ドキュメントベースで整理します。"
@@ -125,8 +126,12 @@ UI を開かずにコマンドラインから直接操作することもでき�
 | 特定のブランチ/タグ | `/plugin marketplace add https://gitlab.com/company/plugins.git#v1.0.0` |
 | ローカルパス | `/plugin marketplace add ./my-marketplace` |
 | リモートの marketplace.json | `/plugin marketplace add https://example.com/marketplace.json` |
+| **`command` ソース（v2.1.229〜）** | ローカルコマンド（IDE 等）がプラグインディレクトリのパスを出力する方式 |
+| **GitLab の素の repo URL（v2.1.232〜）** | `gitlab.com` のリポジトリ URL（ネストしたサブグループ含む）が `github.com` と同様にクローン扱いに |
 
 GitHub やその他 Git ホストの場合、リポジトリのルート（正確には `.claude-plugin/marketplace.json`）にカタログ定義が必要です。Git URL を使うときは `.git` 接尾辞を付けると、URL を直接の JSON リンクではなくクローン対象として扱ってくれます。
+
+> **【2026-08-14 追記】`command` ソース（v2.1.229）**: ローカルのコマンドを登録しておくと、そのコマンドが**プラグインディレクトリのパスを出力**し、Claude Code が**セッションごとに再解決**します。IDE やビルドツールが動的に生成するプラグインを**再起動なし**で取り込める仕組みで、`mode: "link"` を指定すると出力先ディレクトリをコピーせずその場で使用します。あわせて v2.1.232 では設定キーに `additionalMarketplaces` / `allowedMarketplaces` という**別名（エイリアス）**が追加され、従来の `extraKnownMarketplaces` / `strictKnownMarketplaces` と同義で使えるようになりました。`/plugin install plugin@marketplace` は**インストール前にマーケットプレイスを自動更新**するため、公開直後のプラグインも手動更新なしで入ります。
 
 コミュニティマーケットプレイスを使う場合は次のように追加・インストールします。
 
