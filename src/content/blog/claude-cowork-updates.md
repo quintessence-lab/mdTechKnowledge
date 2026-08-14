@@ -3,8 +3,8 @@ title: "Claude Cowork アップデートまとめ"
 date: 2026-04-26
 category: "Claude技術解説"
 tags: ["Claude", "Cowork", "エージェント", "Claude Desktop", "Computer Use", "KPMG", "Claude for Legal", "Finance Agents"]
-excerpt: "AnthropicのデスクトップAIエージェント機能「Claude Cowork」のリリースから2026年4月GA移行・Live Artifacts・Amazon Bedrock対応・Claude for Small Business・PwC 拡大パートナーシップ・KPMG Digital Gateway（276,000人 / 138 か国 / 2026-05-19）・Claude for Legal（20+ MCPコネクタ・12 practice-area プラグイン、2026-05-12）・Finance Agents 10 テンプレート（2026年5月）・Cowork 5時間制限2倍キャンペーン（2026年6月）・エンタープライズ向けコネクタ一括認可EMA（Okta／2026-06-18ベータ）・Cowork の Web/iOS/Android 展開とリモートセッション（2026-07-07）・Claude for Teachers 米国K-12教育者向け無料プログラム（2026-07-14）までのアップデートをリリース順に整理。"
-updatedDate: 2026-07-27
+excerpt: "AnthropicのデスクトップAIエージェント機能「Claude Cowork」のリリースから2026年4月GA移行・Live Artifacts・Amazon Bedrock対応・Claude for Small Business・PwC 拡大パートナーシップ・KPMG Digital Gateway（276,000人 / 138 か国 / 2026-05-19）・Claude for Legal（20+ MCPコネクタ・12 practice-area プラグイン、2026-05-12）・Finance Agents 10 テンプレート（2026年5月）・Cowork 5時間制限2倍キャンペーン（2026年6月）・エンタープライズ向けコネクタ一括認可EMA（Okta／2026-06-18ベータ）・Cowork の Web/iOS/Android 展開とリモートセッション（2026-07-07）・Claude for Teachers 米国K-12教育者向け無料プログラム（2026-07-14）・Chrome サイドパネルの完全 Cowork セッション化（会話とスキル/コネクタを desktop/web/mobile と共有、ブラウザ内クリック・フォーム入力等の実アクション対応、Max/Team から展開、2026-08-12）までのアップデートをリリース順に整理。"
+updatedDate: 2026-08-14
 draft: false
 ---
 
@@ -135,6 +135,24 @@ Claude CoworkはAnthropicが提供するデスクトップAIエージェント�
 > **意味**: ChatGPT for Teachers・Microsoft Elevate for Educators・Google AI Educator Series と並ぶ、教育市場向けの無料提供競争の一環。Cowork/Claude Code が「業務ツール」から「教育現場のワークフロー」にも広がっている事例。
 
 **参考**: [Anthropic 公式: Claude for Teachers](https://www.anthropic.com/news/claude-for-teachers) ／ [Chalkbeat（2026-07-14）](https://www.chalkbeat.org/2026/07/14/anthropic-launches-claude-for-teachers-as-ai-companies-battle-for-classrooms/)
+
+### 2026年8月12日：Chrome サイドパネルが「完全な Cowork セッション」に
+
+| 日付 | 内容 |
+|------|------|
+| 8月12日（PT）/ 8月13日（JST） | **Claude in Chrome のサイドパネルが完全な Cowork セッションに昇格**。ブラウザで始めた会話・タスクが Claude の履歴に保存され、**デスクトップ・Web・モバイルの Claude アプリから同じセッションを再開**できるように。**Max / Team で提供開始、Pro へは数週間かけて展開**。 |
+
+記事最終更新（2026-07-27）以降で最大のアップデートです。ポイントは3つ:
+
+- **セッションの共有**: サイドパネルの会話が独立した「ブラウザ専用チャット」ではなくなり、**desktop / web / mobile と履歴・文脈を共有する Cowork セッション**そのものになった。
+- **スキル・コネクタがブラウザでも有効**: アカウントに設定済みの **Skills とコネクタが追加設定なしで Chrome からも動作**する。
+- **ブラウザ内の実アクション**: Claude が現在のページを見て、**既存のブラウザログインを使ってリンクのクリック・ページ遷移・テキスト入力・フォーム記入**まで実行できる。
+
+公式の例では「複数のベンダーポータルから請求書情報を収集してスプレッドシートを作成し、**同じセッションをデスクトップで続きから開いて**ローカルファイルを追加・過去予算と比較する」という、ブラウザ↔デスクトップをまたぐワークフローが示されています。
+
+> **意味**: 7月の「リモートセッション」（クラウド常駐化）に続き、**ブラウザが Cowork の第一級の実行面**になりました。「ブラウザ上の操作を伴う定型業務」（ポータル巡回・データ収集・フォーム入力）が Cowork の守備範囲に正式に入ったことになります。
+
+**参考**: [Anthropic 公式ブログ: Claude Cowork comes to the Chrome side panel](https://claude.com/blog/cowork-chrome-side-panel) ／ [9to5Mac（2026-08-12）](https://9to5mac.com/2026/08/12/claude-cowork-chrome/) ／ [Engadget](https://www.engadget.com/2235919/claude-cowork-can-now-run-in-a-chrome-sidebar/)
 
 ---
 
