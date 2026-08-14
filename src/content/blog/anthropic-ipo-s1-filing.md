@@ -1,10 +1,10 @@
 ---
 title: "Anthropic、SEC へ機密ドラフト S-1 提出 — 『公式発表に数字はない』IPOプロセスとPBC上場の論点"
 date: 2026-06-06
-updatedDate: 2026-07-28
+updatedDate: 2026-08-14
 category: "一般リサーチ"
 tags: ["Anthropic", "IPO", "S-1", "SEC", "Public Benefit Corporation", "Long-Term Benefit Trust", "上場", "資本市場", "OpenAI", "SpaceX", "メガIPO"]
-excerpt: "2026年6月1日、Anthropic は SEC へ Form S-1 の機密ドラフト登録届出書を提出し IPO 手続きを開始した。本記事は『公式発表は Rule 135 準拠の定型文で具体的な数値を一切含まない』という事実の確認から始め、機密提出（confidential filing）の仕組み、評価額$965B・年次ランレート$47Bの出典の切り分け、未定事項（株式数・価格・市場・ティッカー）、想定主幹事、2026メガIPO 3社（SpaceX/OpenAI/Anthropic）の横比較、そして PBC × Long-Term Benefit Trust という独特のガバナンスが上場でどう論点化するかを整理する。"
+excerpt: "2026年6月1日、Anthropic は SEC へ Form S-1 の機密ドラフト登録届出書を提出し IPO 手続きを開始した。本記事は『公式発表は Rule 135 準拠の定型文で具体的な数値を一切含まない』という事実の確認から始め、機密提出（confidential filing）の仕組み、評価額$965B・年次ランレート$47Bの出典の切り分け、未定事項（株式数・価格・市場・ティッカー）、想定主幹事、2026メガIPO 3社（SpaceX/OpenAI/Anthropic）の横比較、そして PBC × Long-Term Benefit Trust という独特のガバナンスが上場でどう論点化するかを整理する。2026-08追記: 主幹銀行による投資家ミーティングが始動（CNBC 7/15）し、8〜9月ロードショー・10月Nasdaq上場・$60B超調達という観測報道（いずれも公式未確認）を報道ベースと明記のうえ整理した。"
 draft: false
 ---
 
@@ -232,6 +232,22 @@ CEO の Daniela Amodei は IPO に先立つインタビュー（TechCrunch, 6/4�
 2026年7月15日（PT）、**Goldman Sachs・Morgan Stanley・JPMorgan が関与して IPO 投資家ミーティングが始動**し、**最速で2026年10月の Nasdaq 上場**を狙うとの観測が報じられました（CNBC / Bloomberg）。一部報道では **調達額 $60B 超**（$965B 評価額ベース）との見込みも示されています。いずれも**報道ベースの観測**で、Anthropic 公式のスケジュール・条件発表ではありません（時期・市場・ティッカーは引き続き「未定」）。出典: [CNBC（2026-07-15）](https://www.cnbc.com/2026/07/15/anthropic-ipo-banks-investor-meetings.html)。
 
 ---
+
+## 9.【2026-08-14 追記】プロセスの進展 — ロードショー始動と「10月 Nasdaq」観測
+
+S-1 機密提出（6/1）から2ヶ月あまりで、IPO プロセスは次の段階に進んでいます。**本章の内容はすべて報道ベース**であり、Anthropic の公式発表は依然として Rule 135 準拠の定型文のみ（株式数・価格・市場・ティッカーは未公表）である点は変わりません。
+
+| 項目 | 報道内容 | 出典の性質 |
+|:---|:---|:---|
+| **投資家ミーティングの開始** | 主幹銀行が経営陣と機関投資家のミーティング設定を開始（2026-07-15 報道）。**ロードショーの初期段階**で、通常は IPO の4〜8週間前に始まる | CNBC（大手・単独確認） |
+| ロードショー本格化 | **2026年8〜9月**に予定と報じられる | 複数の二次媒体 |
+| 想定主幹事 | **Goldman Sachs・JPMorgan・Morgan Stanley** が主導 | 複数の二次媒体（公式未確認） |
+| 上場先・時期 | **2026年10月の Nasdaq 上場**が目標と報じられる（確定日なし・市場環境次第） | 複数の二次媒体（公式未確認） |
+| 調達額 | **$60B 超**の観測 | 複数の二次媒体（公式未確認） |
+
+> **読み方の注意**: 「10月上場」「$60B 調達」はいずれも**観測報道**で、幅を持って見るべき数字です。確度が高いのは「ロードショーの初期プロセスが実際に始まった」という事実（CNBC）で、これは上場が数ヶ月圏内に入ったことを意味します。実現すれば、調達規模で史上最大級の IPO になります（従来最大は Saudi Aramco の約$29.4B）。
+
+出典: [CNBC: Anthropic moves closer to mega-IPO as bankers line up investor meetings（2026-07-15）](https://www.cnbc.com/2026/07/15/anthropic-ipo-banks-investor-meetings.html)
 
 ## まとめ
 
