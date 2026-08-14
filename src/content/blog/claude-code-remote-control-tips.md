@@ -1,10 +1,10 @@
 ---
 title: "【重要Tips】Claude Code リモートセッション起動"
 date: 2026-03-29
-updatedDate: 2026-04-04
+updatedDate: 2026-08-14
 category: "Claude技術解説"
 tags: ["Claude Code", "リモートセッション", "Remote Control", "OAuth認証", "PowerShell"]
-excerpt: "Cowork経由でClaude Codeを起動する際のOAuthトークン問題と、Remote Controlセッションを正しく起動するための手順を解説する。"
+excerpt: "Cowork経由でClaude Codeを起動する際のOAuthトークン問題と、Remote Controlセッションを正しく起動するための手順を解説する。2026年8月追記: v2.1.229の claude remote-control --continue（最新セッションを名前不要で再開）と、v2.1.232の安定化（ネットワーク断後約30分の自動再接続・セッション再アタッチ・別デバイス引き継ぎの明示）を反映。"
 draft: false
 ---
 
@@ -132,3 +132,29 @@ Anthropic base URL: https://api.anthropic.com
 ```powershell
 Start-Process powershell -ArgumentList '-NoExit', '-ExecutionPolicy', 'Bypass', '-Command', 'Remove-Item Env:CLAUDE_CODE_OAUTH_TOKEN -ErrorAction SilentlyContinue; Remove-Item Env:ANTHROPIC_API_KEY -ErrorAction SilentlyContinue; claude'
 ```
+
+---
+
+## 【2026-08-14 追記】`claude remote-control --continue` と Remote Control の安定化
+
+本記事の初版（2026年4月）以降、Remote Control まわりは大きく改善されています。特に **v2.1.229（2026-08-12 PT）で追加された `--continue`** は、本記事のテーマである「セッションの起動」を簡略化する 新フローです。
+
+### `claude remote-control --continue` — 最新セッションを名前不要で再開
+
+```powershell
+claude remote-control --continue
+```
+
+**最後に使った Remote Control セッションを、セッション名の指定なしで再開**できます。従来は再開対象を名前で特定する必要がありましたが、「さっきのセッションの続き」という最頻出ケースが1コマンドになりました。
+
+### v2.1.232（2026-08-14頃）での安定化
+
+| 改善 | 内容 |
+|------|------|
+| **自動再接続の強化** | ネットワーク断の後、**約30分間は再接続を試行**し続ける（従来は断続的な複数回の切断でドロップしていた） |
+| セッションの再アタッチ | Desktop / IDE から開始した Remote Control セッションが、ローカルセッションの resume ごとに新しい claude.ai セッションとして増殖する問題を修正（既存セッションへ再アタッチ） |
+| 状態の明示 | 別デバイスによる引き継ぎ・別アプリからの終了・削除を端末上で明示し、無効な再接続の提案をやめた |
+| 取り合いの防止 | 会話の resume が、同一マシン上で Remote Control を保持している別の Claude Code から黙って奪わなくなった（移すには相手側で `/remote-control` を実行） |
+| `ListAgents` の表示改善（v2.1.229） | 切断中の Remote Control セッションを `offline`、クラウドセッションを `cloud` と表示 |
+
+> **注記**: 本記事の主題である「Cowork 経由起動時の OAuth トークン問題」（`CLAUDE_CODE_OAUTH_TOKEN` の継承による Remote Control 不可）と、その回避策（環境変数を除去して起動）は、2026年8月時点でも有効な Tips として残しています。
