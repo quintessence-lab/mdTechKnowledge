@@ -1,10 +1,10 @@
 ---
 title: "Claude Code サブエージェントの歩き方 — Exploreがread-onlyだった理由と general-purpose 切替の仕組み（マルチエージェント編の続編）"
 date: 2026-05-17
-updatedDate: 2026-07-26
+updatedDate: 2026-08-15
 category: "Claude技術解説"
-tags: ["Claude Code", "サブエージェント", "Agent", "Explore", "general-purpose", "Plan", "権限分離", "read-only"]
-excerpt: "Claude Code のサブエージェントには Explore / general-purpose / Plan などタイプがあり、それぞれ使えるツール権限が異なる。Explore は読み取り専用のため、書き込みが必要になった瞬間にメインエージェントが general-purpose へ委任し直す。本記事では各タイプの権限差、切替が起きるトリガー、最初から正しいタイプを指名する方法、無駄な切替を防ぐコツを実例ベースで整理する。"
+tags: ["Claude Code", "サブエージェント", "Agent", "Explore", "general-purpose", "Plan", "権限分離", "read-only", "fork"]
+excerpt: "Claude Code のサブエージェントには Explore / general-purpose / Plan などタイプがあり、それぞれ使えるツール権限が異なる。Explore は読み取り専用のため、書き込みが必要になった瞬間にメインエージェントが general-purpose へ委任し直す。本記事では各タイプの権限差、切替が起きるトリガー、最初から正しいタイプを指名する方法、無駄な切替を防ぐコツを実例ベースで整理する。v2.1.232 で会話履歴とプロンプトキャッシュを継承するフォーク型サブエージェントがデフォルト有効化された点も追記。"
 draft: false
 ---
 
@@ -92,6 +92,20 @@ v2.1.172 で「サブエージェントが自身のサブエージェントを�
 それまで（auto モード）は、メインの判断を十分経ずに起動したサブエージェントが、結果的に許可されていないツール/アクションを要求できる余地がありました。v2.1.178 以降は起動前に評価が挟まるため、**「読み取り専用に絞ったつもりのサブエージェントが、いつの間にか書き込み系を実行する」といった事故を、起動段階で防ぎやすく**なります。本記事で扱う「サブエージェントを read-only に切り替える」運用とも相性がよく、auto モードでの安全性が一段強化された形です。
 
 あわせて v2.1.178 では、権限ルールに `Agent(model:opus)` のような**ツールパラメータマッチング構文**も追加され、サブエージェントの**モデル指定単位でのブロック**（例: Opus サブエージェントの起動を禁止）が可能になりました（→ [Claude Code バージョン履歴まとめ](/mdTechKnowledge/blog/claude-code-version-history/) 参照）。
+
+---
+
+## 【2026-08追記】v2.1.232: サブエージェントフォークがデフォルト有効化
+
+2026年8月13日（PT）の **Claude Code v2.1.232** で、本記事のテーマである「サブエージェントの種類と権限差」に、**フォーク型（`subagent_type: "fork"`）**という新しい選択肢が加わりました。
+
+> Subagent forking is now on by default: a `subagent_type: "fork"` subagent inherits the full conversation and prompt cache, and non-teammate agent spawns in interactive sessions now run in the background by default（公式 changelog）
+
+これまで解説してきた Explore / general-purpose / Plan は、いずれも**メインセッションの会話履歴を引き継がず、渡されたプロンプトだけを起点に動く**サブエージェントでした。これに対し **フォーク型サブエージェント**は、起動元セッションの**会話履歴とプロンプトキャッシュをまるごと継承**します。長い調査・議論を重ねたセッションの文脈をそのまま使わせたいが、メインの会話とは別スレッドで作業を進めさせたい、という場面に向いた第三の道です。
+
+あわせて、対話セッションでの**非チームメイトのエージェント起動**（`Agent` ツール呼び出し）が、**既定でバックグラウンド実行**になりました。従来はフォアグラウンドで起動し完了を待つことが多かった委任が、v2.1.232 以降はデフォルトで裏側に回るため、メインセッションを止めずに複数のサブエージェントを並行させやすくなっています。
+
+フォーク型は「read-only の Explore から general-purpose へ切り替わる」という本記事の主題そのものではありませんが、**タスクの性質に応じてサブエージェントのタイプを使い分ける**という文脈では地続きの変更です。会話の文脈を引き継がせたいだけなら、Explore/general-purpose/Plan の使い分けに悩む前に `subagent_type: "fork"` を検討する価値があります。
 
 ---
 

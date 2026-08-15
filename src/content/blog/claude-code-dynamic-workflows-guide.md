@@ -1,10 +1,10 @@
 ---
 title: "Claude Code Dynamic Workflows 完全ガイド — 最大1000サブエージェントを束ねる自動オーケストレーション"
 date: 2026-05-30
-updatedDate: 2026-08-02
+updatedDate: 2026-08-15
 category: "Claude技術解説"
-tags: ["Claude Code", "Dynamic Workflows", "マルチエージェント", "オーケストレーション", "並列処理", "ultracode", "v2.1.160", "v2.1.172", "v2.1.212", "v2.1.218", "ネストサブエージェント", "Research Preview"]
-excerpt: "Claude Code v2.1.154（2026-05-28 PT）で追加された Dynamic Workflows（Research Preview）を徹底解説。プロンプトに ultracode と書くだけで Claude が JavaScript スクリプトを自動生成し、同時最大16・総計最大1000サブエージェントをファンアウト実行する仕組み、3つの起動方法、/workflows での監視・停止、ultracode と effort レベルの正確な関係、コストと暴走防止、既存機能との棲み分けまで網羅。トリガー語が v2.1.160 で workflow から ultracode へ改称された点、v2.1.202 の `/config` サイズ設定、v2.1.212 のセッション全体サブエージェント上限（既定200・Dynamic Workflowsの1000/runとは別軸）と `/fork` の再設計、v2.1.218 でのデフォルトサイズガイドライン medium（15エージェント未満）化、v2.1.219 の `workflowSizeGuideline` 設定キー追加も反映。"
+tags: ["Claude Code", "Dynamic Workflows", "マルチエージェント", "オーケストレーション", "並列処理", "ultracode", "v2.1.160", "v2.1.172", "v2.1.212", "v2.1.218", "v2.1.228", "ネストサブエージェント", "Research Preview"]
+excerpt: "Claude Code v2.1.154（2026-05-28 PT）で追加された Dynamic Workflows（Research Preview）を徹底解説。プロンプトに ultracode と書くだけで Claude が JavaScript スクリプトを自動生成し、同時最大16・総計最大1000サブエージェントをファンアウト実行する仕組み、3つの起動方法、/workflows での監視・停止、ultracode と effort レベルの正確な関係、コストと暴走防止、既存機能との棲み分けまで網羅。トリガー語が v2.1.160 で workflow から ultracode へ改称された点、v2.1.202 の `/config` サイズ設定、v2.1.212 のセッション全体サブエージェント上限（既定200・Dynamic Workflowsの1000/runとは別軸）と `/fork` の再設計、v2.1.218 でのデフォルトサイズガイドライン medium（15エージェント未満）化、v2.1.219 の `workflowSizeGuideline` 設定キー追加、v2.1.228 での200件セッション上限の廃止（同時実行数・生成階層の上限は継続）も反映。"
 draft: false
 ---
 
@@ -119,18 +119,20 @@ Dynamic Workflows のランタイムは、会話とは**隔離された環境**�
 
 ただし注意点として、**同時最大16・総計最大1000 / run というリソース上限は引き続き全体に適用**されます。階層を深くしても**走る延べエージェント数の上限（1000）は変わらない**ため、各階層で子を増やしすぎると総計上限に早く到達します。深いツリーを組む場合は、階層×分岐数の掛け算で延べ数が膨らむ点を見込んでおく必要があります。
 
-### v2.1.212 — セッション全体のサブエージェント生成上限（Dynamic Workflows とは別軸）
+### v2.1.212 — セッション全体のサブエージェント生成上限（Dynamic Workflows とは別軸）→ v2.1.228 で廃止
 
 **v2.1.212（2026-07-14 PT）** で、Dynamic Workflows の「総計1000/run」とは**別に**、**セッション全体を通じたサブエージェント生成数の上限**（既定 **200**、`CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` で調整可、`/clear` でリセット）が追加されました。同時に**セッション全体の WebSearch 呼び出し上限**（既定200、`CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`）も導入されています。
 
-これは「1回のワークフロー実行あたり最大1000」というDynamic Workflows固有の制約とは異なる階層の上限です。
+これは「1回のワークフロー実行あたり最大1000」というDynamic Workflows固有の制約とは異なる階層の上限でした。
+
+> **【2026-08-15追記・廃止】この「セッション全体200件」の上限は、v2.1.228（2026-08-11 PT / 2026-08-12 JST）で撤廃されました**（公式changelog: *"Removed the 200-subagent-per-session spawn cap; long-running sessions no longer refuse new agents (concurrency and depth limits still apply)"*）。長時間の対話セッションで多数回ワークフローを実行しても、この200件上限による拒否は発生しなくなっています。ただし**同時実行数の上限（最大16）と生成階層の深さ上限（既定3階層）は引き続き適用**されます。WebSearch呼び出しのセッション全体上限（既定200、`CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`）は本バージョンの変更対象外で、従来通り有効です。
+
+以下は廃止前（v2.1.212〜v2.1.227）の制約構造です。参考として残します。
 
 | 制約 | 適用範囲 | 既定値 | 環境変数 |
 |:---|:---|:---|:---|
 | Dynamic Workflows 総計上限 | 1回の `agent()` 群の実行（1 run） | 1,000 | — |
-| セッション全体のサブエージェント生成上限 | セッション開始 〜 `/clear` まで | 200 | `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` |
-
-同一セッション内でDynamic Workflowsを複数回実行したり、Workflow実行と通常のサブエージェント委任を組み合わせたりする場合、**セッション全体の200件上限に先に到達する**ケースがあり得ます。長時間の対話セッションで複数回ワークフローを回す運用では、この上限も意識しておく必要があります。
+| ~~セッション全体のサブエージェント生成上限~~（v2.1.228で廃止） | セッション開始 〜 `/clear` まで | ~~200~~ 廃止 | `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` |
 
 同バージョンで **`/fork`** コマンドの挙動も変更されました。従来の `/fork`（会話をセッション内でサブタスクとして分岐する機能）は **`/subtask`** に改名され、新しい `/fork` は**会話を新しいバックグラウンドセッションとしてコピーする**機能（`claude agents` に別行として表示）に変わっています。Dynamic Workflows自体の起動方法（`ultracode`キーワード等）には影響しませんが、ワークフロー実行前後に会話を分岐・退避する目的で `/fork` を使っていた場合は、新しい挙動（バックグラウンドセッション化）を前提に運用を見直してください。
 
