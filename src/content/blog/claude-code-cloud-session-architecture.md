@@ -1,10 +1,10 @@
 ---
 title: "Claude Code クラウドセッション構成図"
 date: 2026-04-26
-updatedDate: 2026-07-14
+updatedDate: 2026-08-19
 category: "Claude技術解説"
-tags: ["Claude Code", "クラウドアーキテクチャ", "サンドボックス", "GitHub", "AI開発ツール", "Desktop", "Routines"]
-excerpt: "claude.ai / code.claude.comからClaude Codeを利用する際のクラウドセッションアーキテクチャを図解。2026年4月14日のDesktopリデザインとRoutines統合情報を反映。"
+tags: ["Claude Code", "クラウドアーキテクチャ", "サンドボックス", "GitHub", "AI開発ツール", "Desktop", "Routines", "Self-Hosted Environments"]
+excerpt: "claude.ai / code.claude.comからClaude Codeを利用する際のクラウドセッションアーキテクチャを図解。2026年4月14日のDesktopリデザインとRoutines統合情報を反映。2026年8月6日Public Beta公開のSelf-Hosted Environments（Team/Enterprise向け、Fixed/On-demandの2ランナーモードで自組織インフラ上にクラウドセッションを実行可能）も追記。"
 draft: false
 ---
 
@@ -157,3 +157,22 @@ claude.ai / code.claude.comからClaude Codeを利用する際のアーキテク
 ## 【2026-07追記】Claude Desktop for Linux（ベータ）
 
 2026年6月30日、**Claude Desktop の Linux版が公式ベータ**として公開されました。**Ubuntu 22.04 以降・Debian 12 以降**（x86_64・arm64）が対象で、Anthropic 公式 apt リポジトリからインストールします。macOS/Windows と同じ Chat・Cowork・Claude Code 体験（並列セッション・ビジュアル diff レビュー・統合ターミナル/エディタ）を提供しますが、**Computer Use・音声入力は未対応**（Fedora/RHEL/Arch も現時点は非対応）。詳細は [Claude Codeの実行環境まとめ](/mdTechKnowledge/blog/claude-code-execution-environments/) を参照。出典: [Claude Desktop on Linux（公式）](https://code.claude.com/docs/en/desktop-linux)。
+
+---
+
+## 【2026-08追記】Self-Hosted Environments — クラウドセッションを自組織インフラで実行（Public Beta）
+
+2026年8月6日（PT）/8月7日（JST）、**Team / Enterprise プラン向けに Self-Hosted Environments が Public Beta 公開**されました。これまで本記事で図解してきたクラウドセッションは Anthropic 管理のサンドボックスコンテナ上で実行されていましたが、本機能により**組織が用意した自前のインフラ（EC2 インスタンス・オンプレミスサーバー等）上でも同じクラウドセッション体験を動かせる**ようになります。
+
+### ランナーモードは2種類
+
+| モード | 動作 | 向いているケース |
+|---|---|---|
+| **Fixed mode** | 常時稼働する固定ランナーにセッションをディスパッチ | 社内ネットワーク・専用インフラへの常時アクセスが必要な運用 |
+| **On-demand mode** | セッション開始時に動的にランナーをプロビジョニング | スパイク的な利用・コスト最適化を優先する運用 |
+
+管理者は Admin コンソールでランナーを登録し、社内ネットワークのDB・レジストリへのアクセス、コンパイラ・SDK・社内CLIを事前インストールした専用イメージなど、**コンプライアンス要件やインフラ制約に応じたカスタマイズ**が可能です。これにより、本記事で扱ってきたクラウドセッションのアーキテクチャは、「Anthropic 管理 or 自組織管理」を選べる形に拡張されたことになります。
+
+より詳細なセットアップ手順・admin登録フローは [Claude Codeの実行環境まとめ](/mdTechKnowledge/blog/claude-code-execution-environments/) の「Self-hosted環境」セクションを参照してください。
+
+出典: [Self-hosted environments（公式ドキュメント）](https://code.claude.com/docs/en/self-hosted-environments) / [Anthropic公式ブログ: Run Claude Code sessions on your own compute](https://claude.com/blog/run-claude-code-sessions-on-your-own-compute)

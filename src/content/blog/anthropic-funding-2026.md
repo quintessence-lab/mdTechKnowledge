@@ -1,10 +1,10 @@
 ---
 title: "Anthropic 大型資本調達ラウンド — Amazon $5B/$100B AWSコミット・Google 最大$40B 投資・Series G $380B → Series H $965B評価額（OpenAI超）の戦略的意義"
 date: 2026-04-26
-updatedDate: 2026-08-06
+updatedDate: 2026-08-19
 category: "一般リサーチ"
-tags: ["Anthropic", "Amazon", "Google", "AWS", "GCP", "Trainium", "TPU", "投資", "クラウドインフラ", "Claude", "Series G", "Series H", "CoreWeave", "Blackstone", "Goldman Sachs", "合弁会社", "EPAM", "Dragoneer", "Greenoaks", "Sequoia", "Altimeter", "Gates Foundation", "公益", "IPO", "S-1", "SEC", "Micron", "Samsung", "SK hynix", "Fluidstack", "データセンター", "HBM", "半導体", "Apollo", "プライベートクレジット"]
-excerpt: "2026年4月にAnthropicが立て続けに発表したAmazon・Googleからの巨額投資ラウンドと、Series G $380B評価額調達・年間収益ランレート $30B 突破（OpenAI 逆転）・CoreWeave との計算インフラ個別契約を整理。2026年5月3日発表のBlackstone・H&F・Goldman Sachs との$1.5Bエンタープライズ AI サービス合弁会社、5月7日発表のEPAM Systems との戦略的多年契約、5月8日 Fortune 報道『単一四半期で80倍成長』、5月12日 Bloomberg 報道の$30B 調達ラウンド合意確定（評価額 $900B 超、ARR $45B）、5月14日 Gates Foundation との $200M／4年 grant partnership（医療・K-12教育・経済モビリティ）まで追補。さらに2026年5月28日発表の Series H — $65B 調達・post-money $965B 評価額（OpenAI を上回り AI スタートアップ史上最高）・年率 run-rate revenue $47B 到達・ハイパースケーラー既コミット $15B（Amazon $5B 含む）、さらに2026年6月1日（PT）に SEC へ機密ドラフト S-1 を提出した IPO 申請開始、Google製カスタムTPUのリース資金を賄うApollo/Blackstoneのプライベートクレジット（第1弾$35B完了・2026年8月時点で第2弾最低$36B打診中）まで追補。"
+tags: ["Anthropic", "Amazon", "Google", "AWS", "GCP", "Trainium", "TPU", "投資", "クラウドインフラ", "Claude", "Series G", "Series H", "CoreWeave", "Blackstone", "Goldman Sachs", "合弁会社", "EPAM", "Dragoneer", "Greenoaks", "Sequoia", "Altimeter", "Gates Foundation", "公益", "IPO", "S-1", "SEC", "Micron", "Samsung", "SK hynix", "Fluidstack", "データセンター", "HBM", "半導体", "Apollo", "プライベートクレジット", "Decart"]
+excerpt: "2026年4月にAnthropicが立て続けに発表したAmazon・Googleからの巨額投資ラウンドと、Series G $380B評価額調達・年間収益ランレート $30B 突破（OpenAI 逆転）・CoreWeave との計算インフラ個別契約を整理。2026年5月3日発表のBlackstone・H&F・Goldman Sachs との$1.5Bエンタープライズ AI サービス合弁会社、5月7日発表のEPAM Systems との戦略的多年契約、5月8日 Fortune 報道『単一四半期で80倍成長』、5月12日 Bloomberg 報道の$30B 調達ラウンド合意確定（評価額 $900B 超、ARR $45B）、5月14日 Gates Foundation との $200M／4年 grant partnership（医療・K-12教育・経済モビリティ）まで追補。さらに2026年5月28日発表の Series H — $65B 調達・post-money $965B 評価額（OpenAI を上回り AI スタートアップ史上最高）・年率 run-rate revenue $47B 到達・ハイパースケーラー既コミット $15B（Amazon $5B 含む）、6月1日（PT）に SEC へ機密ドラフト S-1 を提出した IPO 申請開始、Google製カスタムTPUのリース資金を賄うApollo/Blackstoneのプライベートクレジット（第1弾$35B完了・2026年8月時点で第2弾最低$36B打診中）に加え、2026年7月末のGoogle支援$15Bデット調達、8月13日のDecart AI買収交渉（$6B・未確定）、8月時点で収益ランレート$65B突破・Q2収益$11.5B（前年同期比約15倍）まで追補。"
 draft: false
 ---
 
@@ -451,6 +451,44 @@ Anthropic の資本調達には、資本市場からの直接調達（Series G/H
 > 本項目は「打診中・未確定」の報道ベース情報です。規模・条件は今後変わる可能性があるため、確定情報ではない点にご留意ください。
 
 出典: [Bloomberg: Apollo Shops $36 Billion Debt Deal to Buy Google Chips for Anthropic（2026-05-28）](https://www.bloomberg.com/news/articles/2026-05-28/apollo-shops-36-billion-debt-deal-to-buy-google-chips-for-anthropic) / [Investing.com: Apollo, Blackstone finalize $35 billion AI chip financing（2026-06-05）](https://www.investing.com/news/company-news/apollo-blackstone-finalize-35-billion-ai-chip-financing-for-anthropic-4729436) / [Bloomberg: Blackstone Has Pitched Mega Debt Package for Anthropic Chip Deal（2026-08-04）](https://www.bloomberg.com/news/articles/2026-08-04/blackstone-has-pitched-mega-debt-package-for-anthropic-chip-deal)
+
+---
+
+## 第5章補遺2: 収益急拡大 — ランレート$65B突破・Q2収益$11.5B・Decart AI買収交渉・$15Bデット調達（2026年7〜8月）
+
+IPO準備が進む中、2026年7〜8月にかけてAnthropicの**収益規模と資金調達の両面で立て続けに大型ニュース**が報じられました。
+
+### $15Bデット調達（2026年7月31日 PT / 8月1日 JST 報道）
+
+**Google支援のもと、銀行団がAnthropic向けに$15B（150億ドル）規模のデット（債務）調達を組成**していると報じられました。前述のApollo/Blackstoneのプライベートクレジット型SPV案件（チップ購入資金の調達）とは別枠の、Anthropic自身への与信枠に近い性質の調達とみられます。
+
+### Decart AI買収交渉 — $6B（2026年8月13日 PT / 8月14日 JST 報道）
+
+Bloombergは、Anthropicが**イスラエル発のAIスタートアップ Decart** の買収交渉を進めていると報じました。
+
+| 項目 | 内容 |
+|---|---|
+| 買収額（報道） | 約**$6B（60億ドル）** |
+| Decartの事業 | **GPU効率化ソフトウェア**、リアルタイム動画生成（Lucyモデル）、自動運転・eコマース向け**シミュレーション環境/世界モデル** |
+| 直近の資金調達 | 2026年5月、Radical Ventures主導で**$300M調達**（評価額**$4B**） |
+| ステータス | **交渉中・未確定**（破談の可能性あり） |
+| 意義 | 成立すればAnthropic**史上最大規模のM&A**（2026年に入り5件目の買収交渉） |
+
+Decartのチップ効率化・推論最適化技術は、Anthropic自身の推論コスト削減（→ [カスタムシリコン戦略](/mdTechKnowledge/blog/anthropic-tpu-compute-partnership/) 参照）とも重なる領域であり、急増する推論需要を既存インフラでどう吸収するかという文脈での買収検討とみられています。
+
+### 収益ランレート$65B突破・Q2収益$11.5B（2026年8月）
+
+| 指標 | 数値 | 出典・時期 |
+|---|---|---|
+| 収益ランレート | **$65B超**（2026年7月末時点） | Bloomberg、2026-08-17 PT / 8-18 JST |
+| Q2 2026収益 | **$11.5B超** | CNBC、2026-08-15 PT / 8-16 JST 報道。**前年同期比約15倍** |
+| 投資家試算（年末見通し） | ランレート**$100〜120B**に到達するとの見方 | 複数投資家の試算（報道ベース） |
+
+前回更新時点（Series H・run-rate $47B、2026年6月時点報道）から、わずか1〜2ヶ月で**ランレートが$47B→$65B超**へと急拡大しています。この成長ペースが続けば、投資家の間では**評価額$3T（3兆ドル）到達も視野**に入るとの見方も出ています（第7章のIPO評価額観測と合わせて参照）。
+
+> 本項目の数値はすべて報道ベース（Bloomberg・CNBC）であり、Anthropicの公式発表・監査済み財務諸表による確定値ではありません。「年末$100〜120B」「評価額$3T視野」はいずれも投資家・報道の推計・観測であることにご留意ください。
+
+出典: [Bloomberg: Anthropic revenue run rate surpasses $65 billion ahead of IPO（2026-08-17）](https://www.bloomberg.com/news/articles/2026-08-17/anthropic-revenue-run-rate-surpasses-65-billion-ahead-of-ipo) / [Bloomberg: Anthropic revenue ahead of IPO surges over 14-fold in second quarter（2026-08-14）](https://www.bloomberg.com/news/articles/2026-08-14/anthropic-revenue-ahead-of-ipo-surges-over-14-fold-in-second-quarter) / [CNBC: Anthropic revenue jumps to over $11.5 billion in Q2 report（2026-08-15）](https://www.cnbc.com/2026/08/15/anthropic-revenue-jumps-to-over-11point5-billion-in-q2-report.html) / [Bloomberg: Anthropic said in talks to buy AI startup Decart for $6 billion（2026-08-13）](https://www.bloomberg.com/news/articles/2026-08-13/anthropic-said-in-talks-to-buy-ai-startup-decart-for-6-billion)
 
 ---
 

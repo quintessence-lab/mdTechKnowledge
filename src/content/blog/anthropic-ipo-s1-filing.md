@@ -1,10 +1,10 @@
 ---
 title: "Anthropic、SEC へ機密ドラフト S-1 提出 — 『公式発表に数字はない』IPOプロセスとPBC上場の論点"
 date: 2026-06-06
-updatedDate: 2026-08-14
+updatedDate: 2026-08-19
 category: "一般リサーチ"
 tags: ["Anthropic", "IPO", "S-1", "SEC", "Public Benefit Corporation", "Long-Term Benefit Trust", "上場", "資本市場", "OpenAI", "SpaceX", "メガIPO"]
-excerpt: "2026年6月1日、Anthropic は SEC へ Form S-1 の機密ドラフト登録届出書を提出し IPO 手続きを開始した。本記事は『公式発表は Rule 135 準拠の定型文で具体的な数値を一切含まない』という事実の確認から始め、機密提出（confidential filing）の仕組み、評価額$965B・年次ランレート$47Bの出典の切り分け、未定事項（株式数・価格・市場・ティッカー）、想定主幹事、2026メガIPO 3社（SpaceX/OpenAI/Anthropic）の横比較、そして PBC × Long-Term Benefit Trust という独特のガバナンスが上場でどう論点化するかを整理する。2026-08追記: 8〜9月のロードショー本格化・10月Nasdaq上場・$60B超調達という観測報道（いずれも公式未確認）を追記した。"
+excerpt: "2026年6月1日、Anthropic は SEC へ Form S-1 の機密ドラフト登録届出書を提出し IPO 手続きを開始した。本記事は『公式発表は Rule 135 準拠の定型文で具体的な数値を一切含まない』という事実の確認から始め、機密提出（confidential filing）の仕組み、評価額$965B・年次ランレート$47Bの出典の切り分け、未定事項（株式数・価格・市場・ティッカー）、想定主幹事、2026メガIPO 3社（SpaceX/OpenAI/Anthropic）の横比較、そして PBC × Long-Term Benefit Trust という独特のガバナンスが上場でどう論点化するかを整理する。2026-08追記: 8〜9月のロードショー本格化・10月Nasdaq上場・$60B超調達という観測報道、評価額ターゲット$2兆観測・収益ランレート$65B突破・Q2収益$11.5B（いずれも報道・投資家推計ベース、公式未確認）を追記した。"
 draft: false
 ---
 
@@ -149,6 +149,19 @@ S-1 本体は依然非公開ですが、提出前後の報道で収益性と主�
 参考: [CNBC: Anthropic moves closer to mega-IPO as bankers line up investor meetings（2026-07-15）](https://www.cnbc.com/2026/07/15/anthropic-ipo-banks-investor-meetings.html) ／ [MLQ: Anthropic Lines Up Investor Meetings for Potential October IPO](https://mlq.ai/news/anthropic-lines-up-investor-meetings-for-potential-october-ipo-at-nearly-1-trillion-valuation/)
 
 **【2026-08-14 追記】その後の観測**: 複数の二次媒体は、**ロードショーの本格化を2026年8〜9月**、**調達額を $60B 超**と報じています（いずれも公式未確認の観測報道）。実現すれば調達規模で史上最大級の IPO になります（従来最大は Saudi Aramco の約 $29.4B）。確度が高い事実は「事前説明会という初期プロセスが実際に始まった」こと（上記 CNBC）までで、10月という時期・$60B という規模は幅を持って読む必要があります。
+
+### 評価額ターゲット $2兆観測・収益ランレート $65B 突破（2026-08-19 追記・報道ベース）
+
+8月に入り、評価額・収益の両面でさらに大きな観測・報道が続いています。**依然として S-1 開示ではなく、報道・投資家推計の域を出ない**点は変わりません。
+
+- **評価額ターゲット $2兆（トリリオン）観測**: Fortune（2026-08-13 PT / 8-14 JST）は、Anthropic のIPO評価額ターゲットが**$2兆規模へ大幅上昇**しているとの観測を報じました。10月上場の観測時期自体は従来報道（8-7-15 追記部分）と大きくは変わっていません。
+- **収益ランレート $65B 突破**: Bloomberg（2026-08-17 PT / 8-18 JST）は、Anthropic の収益ランレートが**$65B を超えた**と報道しました（前掲の $47B から約1〜2ヶ月での急拡大。詳細は [Anthropic 大型資本調達ラウンド](/mdTechKnowledge/blog/anthropic-funding-2026/) 第5章補遺2を参照）。
+- **Q2 2026 収益 $11.5B 超**: CNBC（2026-08-15 PT / 8-16 JST）は、Q2収益が**$11.5B を突破**し、**前年同期比約15倍**の成長だったと報じました。
+- **投資家試算**: 複数の投資家が**年末までにランレート $100〜120B** へ到達するとの試算を示しており、これが実現すれば評価額 **$3T（3兆ドル）も視野**に入るとの見方が出ています。
+
+> これらはいずれも Bloomberg・CNBC・Fortune 等の報道、および投資家の非公式な試算に基づくものです。Anthropic 公式の S-1・監査済み財務諸表による確定数値ではない点にご留意ください。前掲の FutureSearch 推計（初日メジアン時価総額 $1.10T）とも整合しない可能性があり、評価額観測は情報源によって大きく振れています。
+
+参考: [Fortune: Anthropic targets $2 trillion valuation for October IPO](https://fortune.com/2026/08/13/anthropic-ipo-2-trillion-october-largest-ever-spacex/) ／ [Bloomberg: Anthropic revenue run rate surpasses $65 billion ahead of IPO（2026-08-17）](https://www.bloomberg.com/news/articles/2026-08-17/anthropic-revenue-run-rate-surpasses-65-billion-ahead-of-ipo) ／ [CNBC: Anthropic revenue jumps to over $11.5 billion in Q2 report（2026-08-15）](https://www.cnbc.com/2026/08/15/anthropic-revenue-jumps-to-over-11point5-billion-in-q2-report.html)
 
 ---
 

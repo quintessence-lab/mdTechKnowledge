@@ -1,10 +1,10 @@
 ---
 title: "Anthropic コンピュートインフラ & TPUパートナーシップ — Google・BroadcomとのマルチギガワットTPU契約（2027年稼働）"
 date: 2026-04-29
-updatedDate: 2026-08-11
+updatedDate: 2026-08-19
 category: "一般リサーチ"
-tags: ["Anthropic", "Google", "Broadcom", "TPU", "AIインフラ", "コンピュート", "パートナーシップ", "SpaceX", "xAI", "Colossus", "GPU", "Akamai", "Fluidstack", "データセンター", "米国インフラ投資", "AMD", "Volta", "カスタムシリコン"]
-excerpt: "2026年4月6日発表のGoogle・BroadcomとのマルチギガワットTPU契約（2027年稼働）に加え、2026年5月のSpaceX xAI Colossus 1データセンター全容量契約（300MW超・GPU22万台超）、Akamai Technologies $1.8B・7年間クラウドコンピュート契約を収録。Anthropicのマルチクラウド・マルチベンダーインフラ戦略を整理。あわせて2025年11月発表の$50B米国AIインフラ投資（Fluidstackと組みテキサス州・ニューヨーク州にデータセンターを建設、2026年中に順次稼働）、2026年6月のMicron戦略協定（HBM/DRAM/SSD複数年供給）、2026年7月のTeraWulf 20年リース（$19B・ケンタッキー州Hawesville・最大401MW・2027年後半稼働）、2026年7月22日のAMD戦略提携（最大$5B投資・Instinct MI450 GPU最大2GW）、2026年8月4日のVolta Infra Holdings契約（$10B・6年間・ノルウェー133MW・Nvidia Vera Rubin）、2026年8月5日のAnthropic自社カスタムシリコン設計チーム公式確認（元OpenAI Clive Chan主導、推論コスト50%削減目標）も収録。"
+tags: ["Anthropic", "Google", "Broadcom", "TPU", "AIインフラ", "コンピュート", "パートナーシップ", "SpaceX", "xAI", "Colossus", "GPU", "Akamai", "Fluidstack", "データセンター", "米国インフラ投資", "AMD", "Volta", "カスタムシリコン", "Riot Platforms"]
+excerpt: "2026年4月6日発表のGoogle・BroadcomとのマルチギガワットTPU契約（2027年稼働）に加え、2026年5月のSpaceX xAI Colossus 1データセンター全容量契約（300MW超・GPU22万台超）、Akamai Technologies $1.8B・7年間クラウドコンピュート契約を収録。Anthropicのマルチクラウド・マルチベンダーインフラ戦略を整理。あわせて2025年11月発表の$50B米国AIインフラ投資（Fluidstackと組みテキサス州・ニューヨーク州にデータセンターを建設、2026年中に順次稼働）、2026年6月のMicron戦略協定（HBM/DRAM/SSD複数年供給）、2026年7月のTeraWulf 20年リース（$19B・ケンタッキー州Hawesville・最大401MW・2027年後半稼働）、2026年7月22日のAMD戦略提携（最大$5B投資・Instinct MI450 GPU最大2GW）、2026年8月4日のVolta Infra Holdings契約（$10B・6年間・ノルウェー133MW・Nvidia Vera Rubin）、2026年8月5日のAnthropic自社カスタムシリコン設計チーム公式確認（元OpenAI Clive Chan主導、推論コスト50%削減目標）、2026年8月10日のRiot Platforms契約（$9.1B・20年・テキサス州Rockdale 191MW・ビットコイン採掘業者からの転換）も収録。"
 draft: false
 ---
 
@@ -434,6 +434,28 @@ Volta は本契約が公になるまで「AIラボと提携している」とだ
 TechCrunchはこの動きを、**OpenAI（Broadcomと共同のJalapeñoチップ）・Google DeepMind（TPU）・Meta（MTIA）**による自社チップ開発競争への対応と位置づけています。AWS・Google・Nvidia・AMDとの既存契約だけでは需要を賄いきれない、という文脈です。ただし、これは既存の外部調達契約を置き換えるものではなく、**「外部調達で当面のキャパシティを確保しつつ、長期的にはモデルとシリコンのco-designでコスト構造を変える」という二正面戦略**として理解するのが適切です。
 
 参考: [TechCrunch（2026-08-05）](https://techcrunch.com/2026/08/05/anthropic-is-hiring-an-ai-chip-design-team/) / [Tech Times（2026-08-05）](https://www.techtimes.com/articles/323238/20260805/anthropic-confirms-house-chip-team-co-design-bet-could-cut-claude-inference-costs-half.htm)
+
+---
+
+## 第11章補遺5: Riot Platforms — $9.1B・20年コンピュートディール、ビットコイン採掘業者からの転換（2026-08-10）
+
+2026年8月10日、Anthropicは**ビットコインマイニング企業 Riot Platforms**と、**$9.1B規模・20年間**のコンピュート契約を締結しました。仮想通貨マイニング事業者がAIインフラ事業者へ転換する事例として、Volta Infra（補遺3）に続く動きです。
+
+### 契約の概要
+
+| 項目 | 内容 |
+|---|---|
+| 契約規模 | **$9.1B**（延長オプション行使込みで最大**$16.1B**） |
+| 契約期間 | **20年間**、**2048年6月まで**Anthropicが施設を使用 |
+| 拠点 | **Rockdale, Texas**（Riot Platformsの既存ビットコインマイニング施設） |
+| 容量 | **191MW** |
+| 発表日 | 2026年8月10日（PT）/ 8月11日（JST） |
+
+### 戦略的意義
+
+Riot Platformsは元来ビットコインマイニング企業で、既存の電力インフラ・冷却設備をAI向けデータセンターに転用する形の契約です。**SpaceX Colossus・Akamai・Volta Infra**に続く、新興・異業種インフラ事業者との大型契約という点で共通しており、Anthropicが**電力確保をボトルネックとするAIインフラ調達において、従来型データセンター事業者以外にも調達先を多様化している**ことを示しています。仮想通貨マイニング業界全体で見ても、規制環境の変化や採掘難易度の上昇を背景に、AI向けインフラへの転換は業界的なトレンドとなりつつあります。
+
+参考: [CNBC（2026-08-11）](https://www.cnbc.com/2026/08/11/riot-platforms-signs-anthropic-deal-as-miners-shift-to-ai-infrastructure-.html) / [Bloomberg（2026-08-11）](https://www.bloomberg.com/news/articles/2026-08-11/anthropic-strikes-9-billion-deal-with-cloud-computing-firm-riot)
 
 ---
 
