@@ -1,10 +1,10 @@
 ---
 title: "Anthropic Messages API 新機能まとめ（2026年5〜7月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・APIキー有効期限・Opus5対応"
 date: 2026-06-20
-updatedDate: 2026-08-14
+updatedDate: 2026-08-21
 category: "Claude技術解説"
-tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ"]
-excerpt: "2026年5〜7月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定に加え、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月の拒否時課金廃止の明確化（refusalで出力ゼロなら課金なし）・Advisor Tool max_tokensパラメータまで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
+tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ", "Compliance API", "EU AI Act"]
+excerpt: "2026年5〜7月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定に加え、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月の拒否時課金廃止の明確化（refusalで出力ゼロなら課金なし）・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングまで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
 draft: false
 ---
 
@@ -355,12 +355,14 @@ response = client.beta.messages.create(
 
 出典: [Mid-conversation system messages and tool changes（公式ドキュメント）](https://platform.claude.com/docs/en/build-with-claude/mid-conversation-system-messages)
 
-## 12. 2026年8月の小規模アップデート（refusal 課金の明確化・Advisor Tool `max_tokens`）
+## 12. 2026年8月の小規模アップデート（refusal 課金の明確化・Advisor Tool `max_tokens`・Compliance API拡張・EU AI Actウォーターマーキング）
 
-2026年8月のリリースノートで、次の2点が追加・明確化されました。
+2026年8月のリリースノートで、次の4点が追加・明確化されました。
 
 - **拒否時の課金廃止の一般化**: `stop_reason: "refusal"` で **Claude が出力を一切生成せずに終了したリクエストは課金されない**ことが明記されました。第5章の脚注で触れた6月2日の記述（「出力が生成される前に refusal で返った場合は課金されない」）を**追認・一般化**するもので、安全性分類器による拒否のコストリスクを気にせずリトライ/ルーティング設計ができます。
 - **Advisor Tool に `max_tokens` パラメータ追加**: アドバイザーモデル（助言役）の**呼び出し単位で出力量に上限**を設定できるようになりました。助言が長くなりがちなケースでの**レイテンシとコストの削減**が狙いです。Advisor Tool 自体の解説は [Advisor Tool ガイド](/mdTechKnowledge/blog/anthropic-advisor-tool-guide/) を参照してください。
+- **Compliance API が Cowork・Claude Code を統合カバー**: 従来 claude.ai チャットが中心だった Compliance API の対象範囲が、**Cowork と Claude Code（デスクトップ／Web／モバイル／CLI）にも拡大**されました。監査・eDiscovery の実務で、セッション内容とメタデータを**一元的に取得**できるようになり、エンタープライズのガバナンス要件（第9章の Admin API User Management とあわせて、組織のメンバー管理・利用状況把握の両輪）に応える形です。
+- **EU AI Act 対応のウォーターマーキング実装**: AI が生成したテキストに対する**ウォーターマーキング（電子透かし）**が実装されました。EU AI Act が求める AI生成コンテンツの識別可能性要件への対応で、EU域内でのエンタープライズ利用における規制対応の一環です。
 
 ## まとめ — どの機能をいつ使うか
 

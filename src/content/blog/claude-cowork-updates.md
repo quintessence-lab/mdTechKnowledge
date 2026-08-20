@@ -3,8 +3,8 @@ title: "Claude Cowork アップデートまとめ"
 date: 2026-04-26
 category: "Claude技術解説"
 tags: ["Claude", "Cowork", "エージェント", "Claude Desktop", "Computer Use", "KPMG", "Claude for Legal", "Finance Agents"]
-excerpt: "AnthropicのデスクトップAIエージェント機能「Claude Cowork」のリリースから2026年4月GA移行・Live Artifacts・Amazon Bedrock対応・Claude for Small Business・PwC 拡大パートナーシップ・KPMG Digital Gateway（276,000人 / 138 か国 / 2026-05-19）・Claude for Legal（20+ MCPコネクタ・12 practice-area プラグイン、2026-05-12）・Finance Agents 10 テンプレート（2026年5月）・Cowork 5時間制限2倍キャンペーン（2026年6月）・エンタープライズ向けコネクタ一括認可EMA（Okta／2026-06-18ベータ）・Cowork の Web/iOS/Android 展開とリモートセッション（2026-07-07）・Claude for Teachers 米国K-12教育者向け無料プログラム（2026-07-14）・Chrome サイドパネルの完全 Cowork セッション化（会話とスキル/コネクタを desktop/web/mobile と共有、ブラウザ内クリック・フォーム入力等の実アクション対応、Max/Team から展開、2026-08-12）までのアップデートをリリース順に整理。"
-updatedDate: 2026-08-14
+excerpt: "AnthropicのデスクトップAIエージェント機能「Claude Cowork」のリリースから2026年4月GA移行・Live Artifacts・Amazon Bedrock対応・Claude for Small Business・PwC 拡大パートナーシップ・KPMG Digital Gateway（276,000人 / 138 か国 / 2026-05-19）・Claude for Legal（20+ MCPコネクタ・12 practice-area プラグイン、2026-05-12）・Finance Agents 10 テンプレート（2026年5月）・Cowork 5時間制限2倍キャンペーン（2026年6月）・エンタープライズ向けコネクタ一括認可EMA（Okta／2026-06-18ベータ）・Cowork の Web/iOS/Android 展開とリモートセッション（2026-07-07）・Claude for Teachers 米国K-12教育者向け無料プログラム（2026-07-14）・Chrome サイドパネルの完全 Cowork セッション化（会話とスキル/コネクタを desktop/web/mobile と共有、ブラウザ内クリック・フォーム入力等の実アクション対応、Max/Team から展開、2026-08-12）・Claude Tag が新体験へ完全移行（チャンネルメモリ・スタンディングインストラクション・ambient mode、2026-08-03）までのアップデートをリリース順に整理。"
+updatedDate: 2026-08-21
 draft: false
 ---
 
@@ -384,6 +384,23 @@ Claude for Legal と組み合わせて、**専門サービス（コンサル／�
 | 4月17日 | **Claude Design** リサーチプレビュー公開（プロトタイプ・スライド・ワンページャーのビジュアル生成） |
 | 4月18日 | **Project Glasswing** 発表（Claude Mythos Previewによるセキュリティ強化イニシアチブ） |
 | 4月19日 | **Claude Haiku 3 廃止** ― CoworkでHaiku 3を利用していた場合は後継モデル（Haiku 4.5など）への移行が必要 |
+
+---
+
+## 【2026-08追記】Claude Tag が新体験へ完全移行（2026年8月3日）
+
+2026年8月3日、**Claude in Slack（Claude Tag）が新体験へ完全移行**しました。従来の「メンションに応答するだけのbot」的な使い方から、**チャンネルに常駐してコンテキストを蓄積するエージェント**へと性質が変わっています。
+
+| 機能 | 内容 |
+|---|---|
+| **チャンネルメモリ** | 過去のやり取りをチャンネル単位で記憶し、以降の応答に活用 |
+| **スタンディングインストラクション（routines）** | スケジュールやトリガーに基づき**定期実行**する指示を設定可能 |
+| **Ambient mode** | **`@`メンションなしでも会話に参加するか自律的に判断**する動作モード |
+| **全チャンネルコンテキスト利用** | チャンネル全体の文脈を踏まえた応答が可能に |
+
+これは本記事で扱ってきたCoworkの「リモートセッション」「クロスデバイス継続」といった**PC外での自律実行**の流れと軌を一にする変更です。Slack上のClaude Tagも、単発の質問応答ツールから、**継続的にコンテキストを保持し能動的に動くエージェント**へと位置づけが変化しています。
+
+出典: [What is Claude Tag（公式サポート）](https://support.claude.com/en/articles/15594475-what-is-claude-tag)
 
 ---
 
