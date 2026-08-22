@@ -1,10 +1,10 @@
 ---
 title: "Claude Managed Agents Memory 完全ガイド — 永続記憶機能（Public Beta）の仕組みと活用"
 date: 2026-05-02
-updatedDate: 2026-07-31
+updatedDate: 2026-08-22
 category: "Claude技術解説"
-tags: ["Claude", "Managed Agents", "Memory", "永続記憶", "Public Beta", "Anthropic", "API", "監査ログ", "マルチエージェント", "Dreaming"]
-excerpt: "2026年4月23日にPublic Betaへ移行したClaude Managed AgentsのMemory機能を詳細に解説。memory storeのアーキテクチャ、必須ヘッダーmanaged-agents-2026-04-01（メモリストア系エンドポイントは2026-07-22以降agent-memory-2026-07-22に置換）、ファイルツール連携、バージョン管理（30日保持）、監査・redact、マルチエージェント共有パターン、長期プロジェクト・ユーザー嗜好・タスク継続といったユースケース、制限事項と運用上のヒント。2026年5月発表のDreaming（セッション間自己改善・Harvey社で完了率6倍）も解説。"
+tags: ["Claude", "Managed Agents", "Memory", "永続記憶", "Public Beta", "Anthropic", "API", "監査ログ", "マルチエージェント", "Dreaming", "Self-hosted sandboxes"]
+excerpt: "2026年4月23日にPublic Betaへ移行したClaude Managed AgentsのMemory機能を詳細に解説。memory storeのアーキテクチャ、必須ヘッダーmanaged-agents-2026-04-01（メモリストア系エンドポイントは2026-07-22以降agent-memory-2026-07-22に置換）、ファイルツール連携、バージョン管理（30日保持）、監査・redact、マルチエージェント共有パターン、長期プロジェクト・ユーザー嗜好・タスク継続といったユースケース、制限事項と運用上のヒント。2026年5月発表のDreaming（セッション間自己改善・Harvey社で完了率6倍）、2026年8月19日のSelf-hosted sandboxesへのmemory store接続対応も解説。"
 draft: false
 ---
 
@@ -514,6 +514,18 @@ Managed Agents全体のコスト体系（基本料金: $0.08 / session-hour 等�
 - 既定の`read_write`は**プロンプトインジェクションリスクあり** → 信頼できない入力を処理するエージェントでは参照系を`read_only`に
 - 機密情報はredactで履歴から除去可能だが、**書き込まないのが第一の防衛線**
 - 監査ログ（`created_by_session_id`）を活用して定期的にレビュー
+
+---
+
+## 【2026-08-19追記】Self-hosted sandboxへのmemory store接続
+
+これまでmemory storeは Anthropic ホスト型サンドボックス限定の機能でしたが、2026年8月19日、**Self-hosted sandboxes（自組織インフラ上のサンドボックス）でもmemory storeが利用可能**になりました。
+
+Python / TypeScript / Go の各SDKで動くワーカーが、**サンドボックス起動時にmemory storeを`mount_path`へダウンロード**し、セッション中の変更内容を元のstoreへ同期する仕組みです。Self-hosted sandboxesの詳細（アーキテクチャ・対応プロバイダ）は [Claude Code クラウドセッション構成図](/mdTechKnowledge/blog/claude-code-cloud-session-architecture/) を参照してください。
+
+これにより、コンプライアンス要件で自組織インフラ上でのセッション実行が必須なチームでも、本記事で解説してきたMemory機能（永続ナレッジベース・redact・監査ログ等）を同様に利用できるようになりました。
+
+出典: [Self-hosted sandboxes（公式ドキュメント）](https://platform.claude.com/docs/en/managed-agents/self-hosted-sandboxes#use-memory-stores)
 
 ---
 

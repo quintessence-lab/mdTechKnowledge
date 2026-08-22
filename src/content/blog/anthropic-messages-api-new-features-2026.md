@@ -1,10 +1,10 @@
 ---
-title: "Anthropic Messages API 新機能まとめ（2026年5〜7月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・APIキー有効期限・Opus5対応"
+title: "Anthropic Messages API 新機能まとめ（2026年5〜8月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・Opus5対応・Browser use tool"
 date: 2026-06-20
-updatedDate: 2026-08-21
+updatedDate: 2026-08-22
 category: "Claude技術解説"
-tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ", "Compliance API", "EU AI Act"]
-excerpt: "2026年5〜7月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定に加え、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月の拒否時課金廃止の明確化（refusalで出力ゼロなら課金なし）・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングまで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
+tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ", "Compliance API", "EU AI Act", "Browser use tool", "Python SDK"]
+excerpt: "2026年5〜8月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）まで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
 draft: false
 ---
 
@@ -364,6 +364,52 @@ response = client.beta.messages.create(
 - **Compliance API が Cowork・Claude Code を統合カバー**: 従来 claude.ai チャットが中心だった Compliance API の対象範囲が、**Cowork と Claude Code（デスクトップ／Web／モバイル／CLI）にも拡大**されました。監査・eDiscovery の実務で、セッション内容とメタデータを**一元的に取得**できるようになり、エンタープライズのガバナンス要件（第9章の Admin API User Management とあわせて、組織のメンバー管理・利用状況把握の両輪）に応える形です。
 - **EU AI Act 対応のウォーターマーキング実装**: AI が生成したテキストに対する**ウォーターマーキング（電子透かし）**が実装されました。EU AI Act が求める AI生成コンテンツの識別可能性要件への対応で、EU域内でのエンタープライズ利用における規制対応の一環です。
 
+## 13. 2026年8月19〜20日の大型アップデート — Computer/Browser use tool GA・Files/Skills/Admin API GA・Python SDK v1.0
+
+2026年8月19〜20日にかけて、Anthropic Platformのツール群・API群で大型リリースが集中しました。ベータヘッダーが不要になる「GA昇格」が複数同時に起きた点が特徴です。
+
+### Computer use tool が GA（2026-08-19）
+
+`computer_toolset_20260801` として**正式GA**、betaヘッダーが不要になりました。**1ターンに複数アクションをまとめるバッチアクション**、既定で有効になった**`zoom`**、`configs`での**per-member（メンバー単位）設定**が追加されています。
+
+### Browser use tool が新登場（2026-08-19）
+
+`browser_toolset_20260801` として**新規ツール**が公開されました。Computer use tool（デスクトップ画面全体をスクリーンショット+クリックで操作）とは異なり、**アクセシビリティツリーでページを読み取り、要素を直接参照して操作**します。フォーム入力・タブ管理・ダウンロード報告などがサポートされます。対応モデルは Claude Fable 5 / Mythos 5 / Opus 5 / Sonnet 5 / Opus 4.8。詳細は公式ドキュメントを参照してください。
+
+### Files API が GA（2026-08-19）
+
+`files-api-2025-04-14` の**betaヘッダーが不要**になりました。ファイルの有効期限を `expires_in_seconds` / `expires_at` で設定でき、一覧取得は `page` / `next_page` によるページネーションと `ids[]` フィルタが標準仕様になっています。
+
+### Agent Skills（Skills API）が GA（2026-08-19）
+
+`skills-2025-10-02` の**betaヘッダーが不要**になりました。
+
+### Admin API user-management が GA（2026-08-19）
+
+第9章で紹介した Admin API User Management ベータの `anthropic-beta: ce-user-management-2026-07-13` ヘッダーが**不要**になり、Enterprise（claude.ai）組織のメンバー管理エンドポイントが正式GAとなりました。
+
+### `anthropic-workspace-id` レスポンスヘッダー追加
+
+APIレスポンスに **`anthropic-workspace-id`** ヘッダーが追加され、リクエストがどのワークスペースに属するかをレスポンス側からも確認できるようになりました。
+
+### Python SDK v1.0（2026-08-20）— 重大な破壊的変更に注意
+
+Anthropic 公式 Python SDK のメジャーバージョン **v1.0** がリリースされました。**既存コードの動作に直結する破壊的変更が多数**含まれるため、アップグレード前に必ずマイグレーションガイドを確認してください。
+
+| 変更 | 内容 |
+|:---|:---|
+| HTTPクライアント | `httpx` → **`httpx2`**（API互換フォーク）へ移行 |
+| Text Completions API | **削除** |
+| Messages APIパラメータ | `temperature` / `top_p` / `top_k` パラメータが**削除** |
+| Tool runner | client-side **`compaction_control`** が削除 |
+| Python バージョン | **3.10以上が必須**に |
+| 非同期クライアント | `.with_raw_response` が **`await response.parse()`** 必須化 |
+| `AnthropicBedrock` | AWSリージョン未設定時に**エラー化**（従来はデフォルトリージョンにフォールバック） |
+
+破壊的変更が広範囲にわたるため、本記事の対象範囲（Messages API機能）を超える詳細な移行手順は、SDKリポジトリの [MIGRATION.md](https://github.com/anthropics/anthropic-sdk-python/blob/main/MIGRATION.md) を参照してください。
+
+出典: [Anthropic Platform リリースノート（2026-08-19/20）](https://platform.claude.com/docs/en/release-notes/overview)
+
 ## まとめ — どの機能をいつ使うか
 
 2026年5〜6月の Messages API 新機能は、「**品質を上げる**」「**コストを下げる**」「**運用を見通せるようにする**」の3方向に効きます。
@@ -377,6 +423,7 @@ response = client.beta.messages.create(
 これらは独立機能ですが、特に **Cache Diagnostics × 会話途中 system メッセージ** はキャッシュ運用で補完し合うため、長時間エージェントを運用するチームは両方をセットで導入する価値があります。
 
 - **Opus 5 に切替予定/済みで `xhigh`/`max` effort を使っている** → thinking disabled の可否を確認（400 エラー回避）。**会話途中でツール構成を変えたい** → Mid-conversation tool changes beta。**拒否時のフォールバックを自動化したい** → `fallbacks` の `"default"` モード。
+- **ブラウザ操作を自動化したい** → Browser use tool（`browser_toolset_20260801`）。**PC画面全体の操作が必要** → Computer use tool（GA済み、betaヘッダー不要）。**Files/Skills/Admin APIをbetaヘッダーなしで使いたい** → いずれも2026-08-19にGA昇格済み。**Python SDKをこれから更新する** → v1.0の破壊的変更（`httpx2`移行・サンプリングパラメータ削除等）を事前確認。
 
 ## 参考資料
 
@@ -393,3 +440,6 @@ response = client.beta.messages.create(
 - 関連記事: [Advisor Tool 完全ガイド](/mdTechKnowledge/blog/anthropic-advisor-tool-guide/)
 - 関連記事: [Claude Opus 4.8 完全ガイド](/mdTechKnowledge/blog/claude-opus-4-8-guide/)
 - 関連記事: [Anthropic Rate Limits API 完全ガイド](/mdTechKnowledge/blog/anthropic-rate-limits-api-guide/)
+- [Browser use tool（公式ドキュメント）](https://platform.claude.com/docs/en/agents-and-tools/tool-use/browser-use-tool)
+- [Anthropic Python SDK（公式ドキュメント）](https://platform.claude.com/docs/en/cli-sdks-libraries/sdks/python)
+- [Python SDK v1.0 移行ガイド（公式GitHub）](https://github.com/anthropics/anthropic-sdk-python/blob/main/MIGRATION.md)

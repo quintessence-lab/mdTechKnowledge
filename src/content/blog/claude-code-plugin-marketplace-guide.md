@@ -1,10 +1,10 @@
 ---
 title: "Claude Code Plugin Marketplace ガイド — slash/hooks/サブエージェント/skills を束ねて配布・導入する"
 date: 2026-06-21
-updatedDate: 2026-08-14
+updatedDate: 2026-08-22
 category: "Claude技術解説"
-tags: ["Claude Code", "プラグイン", "Marketplace", "slash commands", "hooks", "サブエージェント", "skills", "MCP"]
-excerpt: "Claude Code のプラグインは、slash commands・hooks・サブエージェント・skills・MCP サーバーを1つのパッケージに束ねて配布・導入できる仕組みです（2025年10月 公開ベータ）。/plugin コマンドでの検索・インストール、公式マーケットプレイス claude-plugins-official とサードパーティ/自前マーケットプレイスの追加方法、plugin.json の構成、作成の流れまでを公式ドキュメントベースで整理します。"
+tags: ["Claude Code", "プラグイン", "Marketplace", "slash commands", "hooks", "サブエージェント", "skills", "MCP", "design"]
+excerpt: "Claude Code のプラグインは、slash commands・hooks・サブエージェント・skills・MCP サーバーを1つのパッケージに束ねて配布・導入できる仕組みです（2025年10月 公開ベータ）。/plugin コマンドでの検索・インストール、公式マーケットプレイス claude-plugins-official とサードパーティ/自前マーケットプレイスの追加方法、plugin.json の構成、作成の流れまでを公式ドキュメントベースで整理します。2026-08-17（v2.1.234）追加のバンドルスキル`/design`（Research Preview）も追記。"
 draft: false
 ---
 
@@ -196,6 +196,14 @@ my-plugin/
 ## セキュリティ上の注意
 
 プラグインとマーケットプレイスは**高い信頼を前提とするコンポーネント**で、あなたのユーザー権限で任意のコードを実行できます。MCP サーバーや同梱ファイルの中身を Anthropic が管理・検証しているわけではない（公式・コミュニティ以外は特に）ため、**信頼できるソースからのみ**インストールしてください。組織では、追加可能なマーケットプレイスを管理設定で制限することもできます。
+
+---
+
+## 【2026-08追記】バンドルスキル `/design`（Research Preview）が追加
+
+**Claude Code v2.1.234（2026-08-17 PT）**で、バンドルスキルの一つとして **`/design`（Research Preview）**が追加されました。プラグインが束ねる「skills」の一種として、本記事のスキル管理の話とも関係する変更です。
+
+`/design` は artifact-design 等の設計原則をスキルとして組み込んだもので、他のバンドルスキルと同様に `disableBundledSkills` 設定でモデルから隠すことも、プロジェクト固有のスキルで名前衝突時に上書きすることも可能です。詳細は [Claude Code バージョン履歴まとめ](/mdTechKnowledge/blog/claude-code-version-history/) の v2.1.234 の項を参照してください。
 
 ---
 
