@@ -1,14 +1,14 @@
 ---
-title: "Anthropic Academy & 認定資格ガイド（2026年6月更新）"
+title: "Anthropic Academy & 認定資格ガイド（2026年8月更新）"
 date: 2026-04-04
-updatedDate: 2026-06-07
+updatedDate: 2026-08-25
 category: "Claude技術解説"
-tags: ["Anthropic Academy", "認定資格", "CCA", "Claude Certified Architect", "学習"]
-excerpt: "Anthropic公式の無料学習プラットフォーム「Anthropic Academy」と技術認定資格「Claude Certified Architect (CCA-F)」の全体像を整理。Claude Opus 4.7・Claude Design・Mythos Preview対応の最新動向も追記。"
+tags: ["Anthropic Academy", "認定資格", "CCA", "Claude Certified Architect", "学習", "Claude Academy"]
+excerpt: "Anthropic公式の無料学習プラットフォーム「Anthropic Academy」と技術認定資格「Claude Certified Architect (CCA-F)」の全体像を整理。Claude Opus 4.7・Claude Design・Mythos Preview対応の最新動向に加え、2026年8月に新規ローンチした別プラットフォーム「Claude Academy」（academy.claude.com・無料学習ハブ）との違いも解説。"
 draft: false
 ---
 
-**最終更新**: 2026-04-29
+**最終更新**: 2026-08-25
 
 ---
 
@@ -170,8 +170,39 @@ Anthropicは以下の追加認定資格を2026年中にリリース予定と発�
 
 ---
 
+## 2026年8月の最新動向（追記：2026-08-25）— 新プラットフォーム「Claude Academy」ローンチ
+
+2026年8月20日（PT）、Anthropic は **Claude Academy**（`academy.claude.com`）を新規ローンチしました。**本ガイドで扱ってきた Anthropic Academy（Skilljar）とは別のプラットフォーム**であり、混同しやすいため関係を整理します。
+
+### Claude Academy とは
+
+- **誰でも使える無料の学習ハブ**。Claude のプロフィールメニュー「Learn more」からもアクセスできる
+- 学習形式は3本立て:
+  1. **コース** — 修了トラッキングと修了バッジ付き。製品別（Claude.ai / Claude Cowork / Claude Code / Claude Tag / Claude Platform）と基礎（「AI Fluency: Framework & Foundations」等）
+  2. **チュートリアル** — 手を動かしながら進めるステップバイステップ形式
+  3. **ユースケース集** — 法務・セキュリティなど**部門別**に整理されたコレクション
+- 興味・修了履歴に基づく**おすすめ学習パス**を提示。GitHub で公開されている「Claude Academy Skill」を使うと、Claude 自身がパーソナライズしたコース推薦を行う
+- Anthropic が**自社社員のオンボーディングで使っている手法**（「4D AI Fluency Framework」、継続教育 “ever-boarding”）を土台に設計されている
+- 設計原則は5つ: 人間の主体性（human agency）を高める／「リスクに比例して検証する」等の**持続するマインドセット**の育成／直接対話以外の AI 利用も扱う／アクティブラーニング重視／学習者自身の学習能力を高める
+
+### Anthropic Academy（Skilljar）との違い
+
+| | **Anthropic Academy（Skilljar）** | **Claude Academy（academy.claude.com）** |
+|---|---|---|
+| 位置づけ | 従来からの学習プラットフォーム（本ガイド前半） | 2026-08-20 ローンチの一般向け学習ハブ |
+| 主対象 | 開発者・パートナー・認定資格の受験者 | AI を使い始める人から実務者まで幅広く |
+| 認定資格 | **CCA-F などの認定資格はこちら** | 認定資格の提供は現時点で記載なし（コース修了バッジはある） |
+| 内容 | 3学習トラック・認定シラバス・Services Track | 製品別コース・チュートリアル・部門別ユースケース |
+
+> **使い分けの目安**: 「Claude を業務でうまく使えるようになりたい」なら Claude Academy、「認定資格（CCA-F）を取りたい・パートナー要件を満たしたい」なら従来どおり Anthropic Academy（Skilljar）が入口になります。
+
+参考: [Claude Academy](https://academy.claude.com/) / [Anthropic's approach to teaching and learning with AI（公式ブログ）](https://claude.com/blog/anthropics-approach-to-teaching-and-learning-ai)
+
+---
+
 ## 参考リンク
 
+- Claude Academy（2026-08新設・無料学習ハブ）: https://academy.claude.com/
 - Anthropic Academy: https://anthropic.skilljar.com/
 - Anthropic Newsroom（Opus 4.7 / Claude Design）: https://www.anthropic.com/news
 - Coursera Anthropicコース: https://www.coursera.org/partners/anthropic

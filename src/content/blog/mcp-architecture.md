@@ -1,10 +1,10 @@
 ---
 title: "MCP (Model Context Protocol) アーキテクチャ詳細"
 date: 2026-04-26
-updatedDate: 2026-08-02
+updatedDate: 2026-08-25
 category: "Claude技術解説"
 tags: ["MCP", "Claude Code", "JSON-RPC", "GitHub", "OAuth", "プロトコル", "Claude for Legal", "ステートレス", "SEP-2577", "SEP-2663", "Sampling", "非推奨ポリシー", "MCP Apps", "Extensions", "JSON Schema 2020-12", "W3C Trace Context"]
-excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness/エンタープライズSSO・監査トレイル・ガバナンス成熟化（貢献者ラダー/委任モデル/憲章）・新コアメンテナー）、MCP Apps（SEP-1865）、**2026-07-28 に正式リリースされたMCP新仕様**（プロトコルステートレス化＝Mcp-Session-Id 廃止、MCP Apps の HTML UI、Tasks Extension 再設計）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、Claude for Legal で公開された20+ MCPコネクタ、約20万サーバーに影響した重大脆弱性事案、さらに新仕様で制定された SEP-2577 の非推奨ポリシー（Active/Deprecated/Removed の3段階・最低12ヶ月）と Sampling/Roots/Logging の deprecated 化までの参照リンクを網羅"
+excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness/エンタープライズSSO・監査トレイル・ガバナンス成熟化（貢献者ラダー/委任モデル/憲章）・新コアメンテナー）、MCP Apps（SEP-1865）、**2026-07-28 に正式リリースされたMCP新仕様**（プロトコルステートレス化＝Mcp-Session-Id 廃止、MCP Apps の HTML UI、Tasks Extension 再設計）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、Claude for Legal で公開された20+ MCPコネクタ、約20万サーバーに影響した重大脆弱性事案、さらに新仕様で制定された SEP-2577 の非推奨ポリシー（Active/Deprecated/Removed の3段階・最低12ヶ月）と Sampling/Roots/Logging の deprecated 化、**2026-08-22 公開の新ロードマップ**（Agentic Messaging・HTTP-native transport 全面化・Agent Identity/DPoP/WIF・ツールプリミティブ改善・SDK DX の5優先領域と SEP 加速レビュー）までの参照リンクを網羅"
 draft: false
 ---
 
@@ -248,6 +248,25 @@ MCP エコシステムの広がりを示す指標として、Anthropic は公開
 | **エンタープライズユーザー** | スケーリング容易化により水平展開コストが下がる |
 
 参考: [2026-07-28 Release Candidate（MCP公式ブログ）](https://blog.modelcontextprotocol.io/posts/2026-07-28-release-candidate/) / [The 2026-07-28 Specification（正式リリース発表）](https://blog.modelcontextprotocol.io/posts/2026-07-28/) / [The New Stack: Model Context Protocol Roadmap 2026](https://thenewstack.io/model-context-protocol-roadmap-2026/)
+
+#### 2026-08 新ロードマップ（2026-08-22 公開）
+
+2026-07-28 仕様の正式リリースを受け、公式ブログで**新しいロードマップ**が公開された（前回2026年3月版から約5ヶ月ぶりの更新）。今後の**5つの優先領域**と、ガバナンス運用の強化が示されている。
+
+| 優先領域 | 内容 |
+|---|---|
+| **Agentic Messaging Primitives** | リクエスト／レスポンス型を超えるエージェント向け通信。サーバー発信イベント（webhook・channel）、Tasks 拡張の成熟化、購読・進捗通知の統合 |
+| **HTTP-native transport の全面化** | 2026-07-28 仕様で実現したリモートの標準 HTTP ワークロード化を、ローカルサーバーを含む全展開モードへ拡張 |
+| **Agent Identity / エンタープライズセキュリティ** | 「人が承認する」前提の現行認可モデルを超える。**DPoP**（所持証明）の採用、**Workload Identity Federation** の定義、IETF（OAuth 標準団体）との連携強化 |
+| **ツールプリミティブの改善** | `tools/call` レスポンスの結果処理標準化、大規模化に対応する**段階的発見（progressive discovery）** |
+| **SDK 開発者体験（DX）** | 仕様準拠性テスト・API 人間工学・ドキュメント精度への投資 |
+
+運用面のポイント:
+
+- **SEP プロセスの正式化** — 優先領域に該当する SEP は**加速レビュー**の対象となる。機能ライフサイクルと廃止ポリシー（前節の SEP-2577・最低12ヶ月ルール）を含むガバナンスの成熟が明文化された
+- 実装済みの主要 SEP として、ステートレス化（SEP-2575/2567）・Multi Round-Trip Requests（SEP-2322）・Tasks 拡張（SEP-2663）が挙げられている
+
+参考: [MCP Roadmap（公式ブログ・2026-08-22）](https://blog.modelcontextprotocol.io/posts/mcp-roadmap/) / [VentureBeat 解説](https://venturebeat.com/orchestration/mcp-just-got-its-biggest-update-ever-heres-what-changes-for-ai-agents)
 
 ---
 

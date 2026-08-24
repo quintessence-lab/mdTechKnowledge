@@ -1,10 +1,10 @@
 ---
 title: "【重要Tips】Claude Code リモートセッション起動"
 date: 2026-03-29
-updatedDate: 2026-08-14
+updatedDate: 2026-08-25
 category: "Claude技術解説"
 tags: ["Claude Code", "リモートセッション", "Remote Control", "OAuth認証", "PowerShell"]
-excerpt: "Cowork経由でClaude Codeを起動する際のOAuthトークン問題と、Remote Controlセッションを正しく起動するための手順を解説する。2026年8月追記: v2.1.229の claude remote-control --continue（最新セッションを名前不要で再開）と、v2.1.232の安定化（ネットワーク断後約30分の自動再接続・セッション再アタッチ・別デバイス引き継ぎの明示）を反映。"
+excerpt: "Cowork経由でClaude Codeを起動する際のOAuthトークン問題と、Remote Controlセッションを正しく起動するための手順を解説する。2026年8月追記: v2.1.229の claude remote-control --continue（最新セッションを名前不要で再開）と、v2.1.232の安定化（ネットワーク断後約30分の自動再接続・セッション再アタッチ・別デバイス引き継ぎの明示）、Week 34でのRemote Control正式版化とスマホの「デバイスカード」からのセッション開始を反映。"
 draft: false
 ---
 
@@ -158,3 +158,28 @@ claude remote-control --continue
 | `ListAgents` の表示改善（v2.1.229） | 切断中の Remote Control セッションを `offline`、クラウドセッションを `cloud` と表示 |
 
 > **注記**: 本記事の主題である「Cowork 経由起動時の OAuth トークン問題」（`CLAUDE_CODE_OAUTH_TOKEN` の継承による Remote Control 不可）と、その回避策（環境変数を除去して起動）は、2026年8月時点でも有効な Tips として残しています。
+
+## 【2026-08-25 追記】Remote Control が正式版に — スマホの「デバイスカード」からセッション開始
+
+Week 34（2026-08-17〜21 PT）のアップデートで、**Remote Control が research preview を卒業して正式版**になりました。同時に、起動フローが「マシン側で起動 → スマホで探す」から「**スマホから直接始める**」方向へ進化しています。
+
+### デバイスカード — スマホからそのマシンでセッションを開始
+
+`claude remote-control` を実行中のマシンは、**Claude モバイルアプリの Code タブ最上部に「デバイスカード」として表示**されるようになりました。
+
+```bash
+claude remote-control
+```
+
+1. 到達したいマシンで Remote Control を起動しておく
+2. スマホで Claude アプリの Code タブを開くと、そのマシンがデバイスカードとして現れる
+3. カードをタップ → **ディレクトリを選択** → そのマシン上で新しいセッションを開始
+
+従来の「PC 側で開始済みのセッションにスマホから合流する」使い方に加えて、**外出先からスマホだけで自宅 PC 上の新規セッションを立ち上げる**運用が可能になりました。
+
+### あわせて入った関連改善（Week 34）
+
+- スマホや claude.ai/code から **effort レベルを変更すると、マシン上のセッションに反映**される
+- Desktop / VS Code がホストする Remote Control セッションでは、接続中のデバイスに**現在の permission mode が表示**される
+
+参考: [What's new in Claude Code — Week 34（公式）](https://code.claude.com/docs/en/whats-new/2026-w34) / [Remote Control ドキュメント](https://code.claude.com/docs/en/remote-control)

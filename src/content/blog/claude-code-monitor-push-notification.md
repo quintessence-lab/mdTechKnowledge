@@ -1,10 +1,10 @@
 ---
 title: "Claude Code Monitorツール & Push通知 完全ガイド — Routines・自動化との組み合わせ"
 date: 2026-04-29
-updatedDate: 2026-05-30
+updatedDate: 2026-08-25
 category: "Claude技術解説"
-tags: ["Claude Code", "Monitor", "Push通知", "Remote Control", "Routines", "自動化"]
-excerpt: "Claude Code v2.1.xで追加されたMonitorツール（バックグラウンドスクリプトのイベントストリーミング）とPush通知ツール（Remote Control経由のモバイル通知）を解説。Routines連携・自動化ワークフローでの活用例を含む。"
+tags: ["Claude Code", "Monitor", "Push通知", "Remote Control", "Routines", "自動化", "クロスセッションメッセージング", "SendMessage"]
+excerpt: "Claude Code v2.1.xで追加されたMonitorツール（バックグラウンドスクリプトのイベントストリーミング）とPush通知ツール（Remote Control経由のモバイル通知）を解説。Routines連携・自動化ワークフローでの活用例を含む。2026年8月追記: クロスセッションメッセージング（ListAgents/SendMessage・@メンション・notify_when_idle・Windows対応）を反映。"
 draft: false
 ---
 
@@ -274,8 +274,34 @@ v2.1.142 以降、**Fast mode のデフォルトモデルが Opus 4.7** にな�
 | **`claude agents`** | アプリ全体 | 全セッション一覧管理 |
 | **Dynamic Workflows** | エージェント群 | 数百〜1000並列ファンアウト |
 | **Fast mode (Opus 4.8 デフォルト)** | モデル選択 | 速度・コスト最適化 |
+| **SendMessage / ListAgents**（2026-08 追加） | セッション間 | セッション同士の連絡・アイドル通知（次節） |
 
-これら6機能の組み合わせで、**「PCの前にいなくても、AI が条件達成まで自律的にタスクを進め、要所だけ Push で人間に伝える」** という運用が現実的になりました。
+これら7機能の組み合わせで、**「PCの前にいなくても、AI が条件達成まで自律的にタスクを進め、要所だけ Push で人間に伝える」** という運用が現実的になりました。
+
+---
+
+## クロスセッションメッセージング（v2.1.224〜、2026-08 追記）
+
+Week 32（2026-08-03〜07 PT）で、**同一マシン上の Claude Code セッション同士がメッセージを送り合える**ようになりました。Monitor / Push 通知が「プロセス→人間」の通知だったのに対し、こちらは**「セッション→セッション」の横の連絡**を担います。
+
+### 基本の仕組み（v2.1.224、macOS / Linux）
+
+- Claude が **`ListAgents`** ツールで同一マシン上の他セッションを発見し、**`SendMessage`** で送信する。ユーザーが依頼したときだけでなく、「あるセッションでの変更が別セッションの作業に影響する」と Claude が判断した場合は自発的に送ることもある
+- 送られるのは **Claude が相手セッション向けに書いたテキストのみ**。会話履歴やファイルが渡ることはない
+- 受信側には `Message from` 行が表示され、`Ctrl+O` で展開できる。到達可能なセッションは `/list-agents` で確認できる
+
+```text
+決済APIを担当しているセッションに users.name が users.display_name に変わったと伝えて
+```
+
+### その後の強化（Week 33〜34）
+
+| 時期 | 強化内容 |
+|------|---------|
+| Week 33（2026-08-10〜14 PT） | プロンプトで **`@` を打つとセッション名で他セッションをメンション**でき、Claude が直接 SendMessage する。名前が一意に一致すれば確認ステップなしで届く。同一マシン上のセッション名は**自動で一意化**される（重複時は `name-word-word` 形式の別名を付与） |
+| Week 34（2026-08-17〜21 PT） | **`notify_when_idle`** — SendMessage の入力で、**相手セッションが次にアイドルになった時点で一度だけ通知**を受け取れる（one-shot）。「相手の作業が一段落したら知りたい」を Monitor なしで実現。また**ネイティブ Windows でも SendMessage / ListAgents が利用可能**になった（macOS / Linux と同等） |
+
+参考: [Cross-session messaging（公式ドキュメント）](https://code.claude.com/docs/en/cross-session-messaging) / [What's new Week 32](https://code.claude.com/docs/en/whats-new/2026-w32)
 
 ---
 

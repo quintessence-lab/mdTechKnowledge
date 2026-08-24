@@ -1,10 +1,10 @@
 ---
 title: "Claude Design 解説 — Opus 4.7搭載のビジュアル生成新プロダクト"
 date: 2026-04-26
-updatedDate: 2026-06-26
+updatedDate: 2026-08-25
 category: "Claude技術解説"
-tags: ["Claude", "Claude Design", "Anthropic Labs", "デザイン", "Opus 4.7"]
-excerpt: "2026年4月17日リサーチプレビュー開始のClaude Design。Opus 4.7の高解像度ビジョンで、プレーン英語からプロトタイプ・スライド・ワンページャー・デザインシステムを生成。Pro/Max/Team/Enterprise向け。Figma株7%下落の市場インパクトも整理。"
+tags: ["Claude", "Claude Design", "Anthropic Labs", "デザイン", "Opus 4.7", "Claude Code", "/design"]
+excerpt: "2026年4月17日リサーチプレビュー開始のClaude Design。Opus 4.7の高解像度ビジョンで、プレーン英語からプロトタイプ・スライド・ワンページャー・デザインシステムを生成。Pro/Max/Team/Enterprise向け。Figma株7%下落の市場インパクトも整理。2026年8月には/designコマンドとしてClaude Code CLI/Desktopに統合（research preview）。"
 draft: false
 ---
 
@@ -71,6 +71,26 @@ Claude Designは、Anthropicの社内インキュベーター組織である**An
 > この改訂で Claude Design は「プロトタイプを速く作る」段階から、**社内デザインシステムに準拠した成果物を、実装（Claude Code）と往復しながら仕上げる**実務ツールへと一歩進みました。
 
 参考: [Anthropic: Claude Design stays on brand for daily work](https://claude.com/blog/claude-design-stays-on-brand-for-daily-work) ／ [VentureBeat（Claude Design overhaul）](https://venturebeat.com/technology/anthropic-ships-major-claude-design-overhaul-with-design-system-imports-code-round-trips-and-a-fix-for-its-token-burning-problem)
+
+---
+
+## 【2026年8月】/design コマンドで Claude Code に統合（research preview）
+
+Week 34（2026-08-17〜21 PT）のアップデートで、**`/design` スキル**が Claude Code CLI / Claude Code Desktop に **research preview** として追加されました。Claude Design のアートボードワークフローを、Artifacts 基盤の上で **CLI から直接起動**できます。
+
+使い方はブリーフ（要件）を添えて実行するだけです。
+
+```text
+> /design 実際の使われ方に合わせてコンポーザーを再設計して
+```
+
+- Claude が**編集可能なアートボードを並べたキャンバス**を発行し、リンクを表示する
+- キャンバスを開いて案を選び、微調整したうえで実装を指示すれば、**UI ドラフト作成 → 選択 → 実装**のフローが Claude Code 内で一本化される
+- 対象プラン: **Pro / Max / Team / Enterprise**。**v2.1.233 以降**が必要
+
+従来の `/design-sync`（Claude Code ↔ Claude Design の双方向同期、上表参照）が「別プロダクト間の往復」だったのに対し、`/design` は**起点そのものを Claude Code に置く**統合です。
+
+参考: [What's new in Claude Code — Week 34（公式）](https://code.claude.com/docs/en/whats-new/2026-w34)
 
 ---
 
