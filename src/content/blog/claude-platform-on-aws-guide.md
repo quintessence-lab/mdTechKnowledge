@@ -1,9 +1,10 @@
 ---
 title: "Claude Platform on AWS 完全ガイド — Bedrock との違い・3系統の使い分け・移行の落とし穴"
 date: 2026-07-26
+updatedDate: 2026-08-26
 category: "Claude技術解説"
 tags: ["Claude", "AWS", "Amazon Bedrock", "Claude Platform on AWS", "SigV4", "IAM", "AWS Marketplace", "CCU", "データ所在", "移行ガイド"]
-excerpt: "2026年5月11日（PT）GAの Claude Platform on AWS を、Amazon Bedrock との違いを軸に徹底解説。最大の違いは『誰がスタックを運用するか』で、Bedrock は AWS が運用（AWSがデータプロセッサ）、Claude Platform on AWS は Anthropic が運用し推論は AWS セキュリティ境界の外で処理される。AWS 経由の Claude には実は3系統（Platform on AWS / Bedrock Mantle / Bedrock レガシー InvokeModel）があり、ベースURL・API形式・モデルID・SDKクライアントがすべて異なる。同日提供の機能パリティ・Agent Skills・anthropic-beta ヘッダーという利点と、HIPAA非対応・fast mode非対応・Admin API制限・ZDRがオプトインという制約、CCU課金の仕組み、16リージョン、outbound web identity federation の有効化忘れという移行の落とし穴まで、公式ドキュメントに基づいて整理する。"
+excerpt: "2026年5月11日（PT）GAの Claude Platform on AWS を、Amazon Bedrock との違いを軸に徹底解説。最大の違いは『誰がスタックを運用するか』で、Bedrock は AWS が運用（AWSがデータプロセッサ）、Claude Platform on AWS は Anthropic が運用し推論は AWS セキュリティ境界の外で処理される。AWS 経由の Claude には実は3系統（Platform on AWS / Bedrock Mantle / Bedrock レガシー InvokeModel）があり、ベースURL・API形式・モデルID・SDKクライアントがすべて異なる。同日提供の機能パリティ・Agent Skills・anthropic-beta ヘッダーという利点と、HIPAA非対応・fast mode非対応・Admin API制限・ZDRがオプトインという制約、CCU課金の仕組み、16リージョン、outbound web identity federation の有効化忘れという移行の落とし穴まで、公式ドキュメントに基づいて整理する。2026年8月追記: Claude Managed AgentsのWebhooks・マルチエージェントオーケストレーション・セルフホストサンドボックスのAWS対応と、Lambda MicroVMsをサンドボックスに使う新構成（Firecracker隔離・Secrets Manager経由の認証・Webhook署名検証）を追加。"
 draft: false
 ---
 
@@ -254,6 +255,43 @@ AWS Marketplace 経由で課金されます。
 - **CloudTrail**: ワークスペース操作を**既定で管理イベントとして記録**。推論アクティビティは**データイベントログ**として有効化可能
 - **IAM ポリシー**: ワークスペース ARN 単位でアクセス制御。バッチ推論だけを拒否するといった**アクション単位の制御**も可能。マネージドポリシーも提供
 - **Claude Console**: AWS コンソール経由でサインインし、使用量・コスト・クォータを確認
+
+## 9.5 【2026-08-26 追記】Managed Agents の本格運用が AWS 内で完結 — Webhooks・マルチエージェント・セルフホストサンドボックス
+
+本記事の初版（2026-07）では Claude Managed Agents を「利用できる機能」として挙げるに留めていましたが、Claude Platform on AWS では **Managed Agents の運用系機能が一通り利用可能**になっています（API リリースノート 2026-05-29 ほか）。
+
+### 利用可能になった機能と IAM
+
+| 機能 | 内容 | IAM 上の対応 |
+|---|---|---|
+| **Webhooks** | セッション・vault に加え、agent／deployment／環境／memory store のライフサイクルイベントを受信（ポーリング不要） | 新しい IAM アクションが追加 |
+| **マルチエージェントオーケストレーション** | エージェントのロスター定義・サブエージェントスレッド | 同上 |
+| **セルフホストサンドボックス** | ツール実行を自社管理のインフラ内で行う構成 | マネージドポリシー **`AnthropicSelfHostedEnvironmentAccess`** が提供 |
+| **`GET /v1/environments/{id}/work`** | セルフホストサンドボックスの保留ワーク一覧（2026-06-10 追加） | `GetEnvironment` アクションで認可 |
+
+さらに 2026-08-19 には、セルフホストサンドボックスで実行するセッションが **memory store をアタッチ**できるようになりました（SDK ワーカーが各ストアを `mount_path` へダウンロードし、エージェントの変更をストアへ同期）。
+
+### 新構成: AWS Lambda MicroVMs をサンドボックスにする
+
+AWS 公式ドキュメントに、**Lambda MicroVMs を Managed Agents のセルフホストサンドボックスとして使うリファレンス構成**が公開されています。Anthropic 側がエージェントループとモデルをホストし、**ツール呼び出し（bash / read / write / edit / glob / grep）の実行環境だけを自社 AWS アカウント内の MicroVM に置く**分担です。
+
+動作フロー:
+
+1. セッションが running になると、Anthropic が `session.status_run_started` **Webhook** を自社アカウントのエンドポイントへ送信
+2. ランチャー Lambda 関数が **Webhook 署名を検証**し、`RunMicroVM` を呼び出す
+3. MicroVM 上のワーカーがセッションを claim し、`/workspace` でツール呼び出しを実行して結果を Anthropic へ返す
+4. セッション終了で MicroVM を suspend / terminate（課金も終了）
+
+セキュリティ・運用上のポイント:
+
+- **組織の API キーは AWS 側に渡らない**。ランチャーは **AWS Secrets Manager の参照**だけを渡し、MicroVM の実行ロールが実行時に環境キーを読む
+- **Firecracker によるセッション単位のハードウェア仮想化隔離**。スナップショットからサブ秒〜数秒で起動し、最長8時間・セッション間で状態を共有しない
+- 既定でパブリックインターネットに到達可能（`api.anthropic.com` への追加設定不要）。私設リソース（Aurora 等）へは **VPC egress コネクタ**をアタッチ
+- CloudFormation スタック（API Gateway・ランチャー Lambda・Secrets Manager・S3・IAM ロール）と MicroVM イメージの**リファレンス実装**が [aws-samples リポジトリ](https://github.com/aws-samples/sample-lambda-microvm-claude-managed-agents) で公開
+
+> **位置づけ**: 「推論データは AWS のセキュリティ境界の外」という本記事第1章の構図は変わりませんが、**ツール実行・機密ファイル・パッケージ・内部サービスへのアクセスは自社 AWS 境界内に保てる**ようになりました。「Anthropic 運用のプラットフォーム＋自社運用の実行環境」というハイブリッドが、Bedrock との比較軸に加わった形です。
+
+参考: [Claude Platform release notes（2026-05-29 / 06-10 / 08-19）](https://platform.claude.com/docs/en/release-notes/api) ／ [AWS: Using Lambda MicroVMs as a sandbox for Claude Managed Agents](https://docs.aws.amazon.com/lambda/latest/dg/microvms-integrations-claude-managed-agents.html)
 
 ## 10. 選定ガイド — どれを選ぶべきか
 

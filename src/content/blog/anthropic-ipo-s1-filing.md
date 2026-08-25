@@ -1,7 +1,7 @@
 ---
 title: "Anthropic、SEC へ機密ドラフト S-1 提出 — 『公式発表に数字はない』IPOプロセスとPBC上場の論点"
 date: 2026-06-06
-updatedDate: 2026-08-19
+updatedDate: 2026-08-26
 category: "一般リサーチ"
 tags: ["Anthropic", "IPO", "S-1", "SEC", "Public Benefit Corporation", "Long-Term Benefit Trust", "上場", "資本市場", "OpenAI", "SpaceX", "メガIPO"]
 excerpt: "2026年6月1日、Anthropic は SEC へ Form S-1 の機密ドラフト登録届出書を提出し IPO 手続きを開始した。本記事は『公式発表は Rule 135 準拠の定型文で具体的な数値を一切含まない』という事実の確認から始め、機密提出（confidential filing）の仕組み、評価額$965B・年次ランレート$47Bの出典の切り分け、未定事項（株式数・価格・市場・ティッカー）、想定主幹事、2026メガIPO 3社（SpaceX/OpenAI/Anthropic）の横比較、そして PBC × Long-Term Benefit Trust という独特のガバナンスが上場でどう論点化するかを整理する。2026-08追記: 8〜9月のロードショー本格化・10月Nasdaq上場・$60B超調達という観測報道、評価額ターゲット$2兆観測・収益ランレート$65B突破・Q2収益$11.5B（いずれも報道・投資家推計ベース、公式未確認）を追記した。"
@@ -162,6 +162,18 @@ S-1 本体は依然非公開ですが、提出前後の報道で収益性と主�
 > これらはいずれも Bloomberg・CNBC・Fortune 等の報道、および投資家の非公式な試算に基づくものです。Anthropic 公式の S-1・監査済み財務諸表による確定数値ではない点にご留意ください。前掲の FutureSearch 推計（初日メジアン時価総額 $1.10T）とも整合しない可能性があり、評価額観測は情報源によって大きく振れています。
 
 参考: [Fortune: Anthropic targets $2 trillion valuation for October IPO](https://fortune.com/2026/08/13/anthropic-ipo-2-trillion-october-largest-ever-spacex/) ／ [Bloomberg: Anthropic revenue run rate surpasses $65 billion ahead of IPO（2026-08-17）](https://www.bloomberg.com/news/articles/2026-08-17/anthropic-revenue-run-rate-surpasses-65-billion-ahead-of-ipo) ／ [CNBC: Anthropic revenue jumps to over $11.5 billion in Q2 report（2026-08-15）](https://www.cnbc.com/2026/08/15/anthropic-revenue-jumps-to-over-11point5-billion-in-q2-report.html)
+
+### 目論見書は「AI バックラッシュ」をリスク要因に明記へ（2026-08-21 追記・報道ベース）
+
+CNBC（2026-08-21 PT / 8-22 JST）は関係者の話として、**数週間以内に公開見込みの S-1（目論見書）に、AI への否定的な世論（AI バックラッシュ）とデータセンター建設への反発がリスク要因として明記される**と報じました。
+
+- **背景にある世論**: 5月公表の Gallup 調査では、**米国人の7割が自分の居住地域での AI データセンター建設に反対**（うち約半数は「強く反対」）。AI による雇用への影響を懸念する声も強まっている
+- **事業リスクとしての論理**: Anthropic を含む主要ラボはモデルの学習・提供に大規模な計算能力を必要とするため、**データセンター建設の遅延は計算資源の制約・製品提供の制限・運用コストの上昇に直結**する
+- **上場準備の進行**: サンフランシスコで銀行・投資家との予備的な "test-the-waters" ミーティングを継続中。私募市場での評価額は**$1兆に接近**しており、一部投資家は**$2兆規模**を見込む（前節の Fortune 観測と整合）
+
+> フロンティア AI 企業が**自社の目論見書で「AI への社会的反発」を公式リスクとして扱う**のは初のケースとなる見込みです。「なぜ今、公開市場なのか」（第7章）で触れた社会との関係という論点が、開示書類のレベルで現実化した形と言えます。なお本追記も**報道ベース（S-1 本文は未公開）**です。
+
+参考: [CNBC: Anthropic IPO filing will show AI backlash as a risk factor, sources say（2026-08-21）](https://www.cnbc.com/2026/08/21/-anthropic-ipo-filing-will-show-ai-backlash-as-risk-sources-say.html)
 
 ---
 
