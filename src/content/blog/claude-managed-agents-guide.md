@@ -1,10 +1,10 @@
 ---
 title: "Claude Managed Agents 簡易ガイド — アーキテクチャ・比較・ユースケース"
 date: 2026-04-08
-updatedDate: 2026-08-22
+updatedDate: 2026-08-27
 category: "Claude技術解説"
 tags: ["Claude", "Managed Agents", "Agent SDK", "Claude Code", "API", "マルチエージェント", "Memory", "Enterprise", "Self-hosted sandboxes", "MCP tunnels", "Cloudflare", "Modal", "Vercel", "Daytona", "Cloudflare Environments", "Webhooks", "microVM", "V8 Isolate", "Scheduled deployments", "Vault環境変数"]
-excerpt: "Claude Managed Agentsの3層アーキテクチャ（Session/Harness/Sandbox）、p50 TTFT 60%削減のパフォーマンス改善、Memory機能、Dreaming・Outcomes・Multi-agent orchestration、エンタープライズ向けRBAC・OpenTelemetry、2026年5月19日発表のSelf-hosted sandboxes（Cloudflare/Daytona/Modal/Vercel対応、Public Beta）とMCP tunnels（Research Preview、プライベートネットワーク内MCPサーバーへの outbound-only E2E接続）、料金体系（$0.08/session-hour）、Cloudflare Environments（brain/hands 分離・Linux microVM と V8 Isolate を選択可能・ブラウザ/メール/アウトバウンドプロキシ/Cloudflare Mesh・Workers VPC）に加え、2026年8月1日のDreaming Opus 5対応、8月7日のセッション予算（budget_reached）・マルチエージェントrosterへのアドバイザー追加・推論ジオ制御（inference_geo）・GitHubリポジトリからのスキル自動ロード、8月19日のweb検索/取得ドメイン制限・self-hosted sandboxへのmemory store接続・Console session viewer再設計までを1ページに整理。"
+excerpt: "Claude Managed Agentsの3層アーキテクチャ（Session/Harness/Sandbox）、p50 TTFT 60%削減のパフォーマンス改善、Memory機能、Dreaming・Outcomes・Multi-agent orchestration、エンタープライズ向けRBAC・OpenTelemetry、2026年5月19日発表のSelf-hosted sandboxes（Cloudflare/Daytona/Modal/Vercel対応、Public Beta）とMCP tunnels（Research Preview、プライベートネットワーク内MCPサーバーへの outbound-only E2E接続）、料金体系（$0.08/session-hour）、Cloudflare Environments（brain/hands 分離・Linux microVM と V8 Isolate を選択可能・ブラウザ/メール/アウトバウンドプロキシ/Cloudflare Mesh・Workers VPC）に加え、2026年8月1日のDreaming Opus 5対応、8月7日のセッション予算（budget_reached）・マルチエージェントrosterへのアドバイザー追加・推論ジオ制御（inference_geo）・GitHubリポジトリからのスキル自動ロード、8月19日のweb検索/取得ドメイン制限・self-hosted sandboxへのmemory store接続・Console session viewer再設計、8月26日のAdmin APIが全主要SDKで`client.beta.organization`として利用可能になった件までを1ページに整理。"
 draft: false
 ---
 
@@ -533,6 +533,12 @@ Outcomes と組み合わせれば「成功基準を満たすまで自律的に�
 
 出典: [Anthropic Release notes（2026-08-19）](https://platform.claude.com/docs/en/release-notes/overview) / [Self-hosted sandboxes（公式ドキュメント）](https://platform.claude.com/docs/en/managed-agents/self-hosted-sandboxes#use-memory-stores)
 
+## 【2026-08-26追記】Admin APIが全主要SDKで`client.beta.organization`として利用可能に
+
+Admin API（組織情報・メンバー・招待・ワークスペース・APIキー・レート制限レポート・Workload Identity Federation・CMEKをカバー）が、**ant CLI** に加えて **Python／TypeScript／C#／Go／Java／PHP／Ruby** の各公式SDKで `client.beta.organization` 名前空間から直接呼び出せるようになりました。Managed Agentsを運用する組織のエージェント数・利用状況を、エージェント自体と同じ言語のSDKで一元的に管理できます。
+
+出典: [Anthropic Release notes（2026-08-26）](https://platform.claude.com/docs/en/release-notes/overview)
+
 ## APIアクセスとレート制限
 
 - **必須ベータヘッダー**: `anthropic-beta: managed-agents-2026-04-01`（Anthropic公式SDKでは自動付与）
@@ -554,4 +560,4 @@ Outcomes と組み合わせれば「成功基準を満たすまで自律的に�
 ---
 
 *Sources: Anthropic Blog, Claude API Docs（platform.claude.com/docs/en/managed-agents/overview, /tools, /webhooks, /self-hosted-sandboxes）, Cloudflare Blog（blog.cloudflare.com/claude-managed-agents）, InfoQ, SDTimes, TestingCatalog, 9to5Mac, WaveSpeed, The New Stack, The Decoder — May 2026*
-*本ガイドは2026年8月19日時点の情報に基づいています（2026-04-08 GA / 2026-04-09 Enterprise / 2026-04-23 Memory パブリックベータ移行 / 2026-05-07 Dreaming・Outcomes・Multi-agent orchestration・Webhooks 追加 / 2026-05-19 Self-hosted sandboxes（Cloudflare Environments 概要を含む） / 2026-06-09 スケジュールデプロイ・Vault 環境変数クレデンシャル・`session.thread_*` への `session_thread_id` 追加 / 2026-07-22 effort レベル設定・Webhook拡張・initial_events・version任意化・event deltas / 2026-08-01 Dreaming の Opus 5 対応 / 2026-08-07 セッション予算・アドバイザー追加・推論ジオ制御・GitHubスキルロード / 2026-08-19 ドメイン制限・self-hosted sandboxのmemory store対応・Console session viewer再設計 を反映）*
+*本ガイドは2026年8月26日時点の情報に基づいています（2026-04-08 GA / 2026-04-09 Enterprise / 2026-04-23 Memory パブリックベータ移行 / 2026-05-07 Dreaming・Outcomes・Multi-agent orchestration・Webhooks 追加 / 2026-05-19 Self-hosted sandboxes（Cloudflare Environments 概要を含む） / 2026-06-09 スケジュールデプロイ・Vault 環境変数クレデンシャル・`session.thread_*` への `session_thread_id` 追加 / 2026-07-22 effort レベル設定・Webhook拡張・initial_events・version任意化・event deltas / 2026-08-01 Dreaming の Opus 5 対応 / 2026-08-07 セッション予算・アドバイザー追加・推論ジオ制御・GitHubスキルロード / 2026-08-19 ドメイン制限・self-hosted sandboxのmemory store対応・Console session viewer再設計 / 2026-08-26 Admin APIの`client.beta.organization`全主要SDK対応 を反映）*
