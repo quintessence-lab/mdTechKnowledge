@@ -1,10 +1,10 @@
 ---
 title: "Claude Code Auto Mode 完全ガイド — --dangerously-skip-permissions を卒業する自律型権限管理"
 date: 2026-06-21
-updatedDate: 2026-08-14
+updatedDate: 2026-08-27
 category: "Claude技術解説"
 tags: ["Claude Code", "Auto Mode", "permission mode", "dangerously-skip-permissions", "分類器", "classifier", "claudeignore", "安全運用"]
-excerpt: "Claude Code の Auto Mode（自律型権限管理）は、すべてを無条件に許可する --dangerously-skip-permissions の安全な代替として 2026-03-24 に登場した。モデルベースの2段階トランスクリプト分類器（Sonnet 4.6 による高速フィルター＋思考連鎖による精査）で各アクションを起動前に評価し、連続3拒否・累計20拒否で自動停止する。2026-08-14 からは Pro/Max/Team プランの新規セッションで Auto Mode が既定の権限モードになった（人間の目視13.6%に対し分類器89%の危険コマンド捕捉率が論拠。Enterprise/API/Bedrock/Vertex/Foundry はオプトイン継続）。本記事では権限モードの全体像、分類器の仕組み、エスカレーション停止、.claudeignore 連携、卒業の手順までを公式情報ベースで整理する。"
+excerpt: "Claude Code の Auto Mode（自律型権限管理）は、すべてを無条件に許可する --dangerously-skip-permissions の安全な代替として 2026-03-24 に登場した。モデルベースの2段階トランスクリプト分類器（Sonnet 4.6 による高速フィルター＋思考連鎖による精査）で各アクションを起動前に評価し、連続3拒否・累計20拒否で自動停止する。2026-08-14 からは Pro/Max/Team プランの新規セッションで Auto Mode が既定の権限モードになった（人間の目視13.6%に対し分類器89%の危険コマンド捕捉率が論拠。Enterprise/API/Bedrock/Vertex/Foundry はオプトイン継続）。2026-08-25のv2.1.246では`/permissions`にAuto modeタブが追加され、分類器ルールをGUIから閲覧・編集可能になった。本記事では権限モードの全体像、分類器の仕組み、エスカレーション停止、.claudeignore 連携、卒業の手順までを公式情報ベースで整理する。"
 draft: false
 ---
 
@@ -145,6 +145,16 @@ Auto Mode の安全性は、その後のバージョンアップでさらに強�
 `classifyAllShell` は「中核の仕組み（2段階分類器）」をシェル全般へ拡張するオプションで、**より厳密に倒したい運用**向けです。拒否理由の表示は、「なぜブロックされたのか」を後から追跡しやすくし、Auto Mode の挙動をチューニングする際のデバッグ性を高めます。
 
 参考: [Claude Code v2.1.193 リリースノート](https://github.com/anthropics/claude-code/releases/tag/v2.1.193) ／ [Anthropic Engineering: Claude Code Auto Mode](https://www.anthropic.com/engineering/claude-code-auto-mode)
+
+---
+
+## 5.6. 【2026-08-25】v2.1.246 — `/permissions` に Auto mode タブ追加
+
+**Claude Code v2.1.246** で、`/permissions` コマンドに **Auto mode タブ**が追加されました。これまで Auto Mode の分類挙動（何を自動許可し、何を拒否するか）はドキュメントや設定ファイルを介してしか把握できませんでしたが、このタブから**auto mode classifier rules を GUI 上で直接閲覧・編集**できるようになりました。
+
+`.claudeignore` や `classifyAllShell` といった個別設定と併せて、**分類器のルール自体を可視化・調整する入口**が `/permissions` に統一されたことで、Auto Mode の挙動をチューニングする際に設定ファイルを行き来する手間が減ります。
+
+参考: [Claude Code CHANGELOG（v2.1.246）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 ---
 
