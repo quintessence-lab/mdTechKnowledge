@@ -1,10 +1,10 @@
 ---
 title: "MCP (Model Context Protocol) アーキテクチャ詳細"
 date: 2026-04-26
-updatedDate: 2026-08-25
+updatedDate: 2026-08-27
 category: "Claude技術解説"
 tags: ["MCP", "Claude Code", "JSON-RPC", "GitHub", "OAuth", "プロトコル", "Claude for Legal", "ステートレス", "SEP-2577", "SEP-2663", "Sampling", "非推奨ポリシー", "MCP Apps", "Extensions", "JSON Schema 2020-12", "W3C Trace Context"]
-excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness/エンタープライズSSO・監査トレイル・ガバナンス成熟化（貢献者ラダー/委任モデル/憲章）・新コアメンテナー）、MCP Apps（SEP-1865）、**2026-07-28 に正式リリースされたMCP新仕様**（プロトコルステートレス化＝Mcp-Session-Id 廃止、MCP Apps の HTML UI、Tasks Extension 再設計）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、Claude for Legal で公開された20+ MCPコネクタ、約20万サーバーに影響した重大脆弱性事案、さらに新仕様で制定された SEP-2577 の非推奨ポリシー（Active/Deprecated/Removed の3段階・最低12ヶ月）と Sampling/Roots/Logging の deprecated 化、**2026-08-22 公開の新ロードマップ**（Agentic Messaging・HTTP-native transport 全面化・Agent Identity/DPoP/WIF・ツールプリミティブ改善・SDK DX の5優先領域と SEP 加速レビュー）までの参照リンクを網羅"
+excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness/エンタープライズSSO・監査トレイル・ガバナンス成熟化（貢献者ラダー/委任モデル/憲章）・新コアメンテナー）、MCP Apps（SEP-1865）、**2026-07-28 に正式リリースされたMCP新仕様**（プロトコルステートレス化＝Mcp-Session-Id 廃止、MCP Apps の HTML UI、Tasks Extension 再設計）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、Claude for Legal で公開された20+ MCPコネクタ、約20万サーバーに影響した重大脆弱性事案、さらに新仕様で制定された SEP-2577 の非推奨ポリシー（Active/Deprecated/Removed の3段階・最低12ヶ月）と Sampling/Roots/Logging の deprecated 化、**2026-08-22 公開の新ロードマップ**（Agentic Messaging・HTTP-native transport 全面化・Agent Identity/DPoP/WIF・ツールプリミティブ改善・SDK DX の5優先領域と SEP 加速レビュー）、**2026-08-24 に GA となった Enterprise-managed authorization for MCP connectors**（Datadog・Notion・Slackが新規対応、公開MCPサーバー950以上）までの参照リンクを網羅"
 draft: false
 ---
 
@@ -1352,6 +1352,20 @@ SEPはMCP仕様への変更を議論・追跡するための公式提案プロ�
 - **オープンソース貢献**: モデル提供事業者だけでなく、サードパーティ開発者によるサーバー実装が活発化
 
 参考: [Model Context Protocol Roadmap 2026 (The New Stack)](https://thenewstack.io/model-context-protocol-roadmap-2026/)
+
+### Enterprise-managed authorization for MCP connectors が GA（2026-08-24）
+
+2026年8月24日、**Enterprise-managed authorization for MCP connectors** が一般提供（GA）となりました。組織管理者が**MCPコネクタの認可（OAuth接続の許可・失効・スコープ）を一元管理**できる機能で、これまでユーザー個人に委ねられていた接続許可をエンタープライズのガバナンス範囲に取り込みます。
+
+対応コネクタは以下の通りです（**太字**は今回GAで新規対応）:
+
+- 既存対応: Asana・Atlassian・Canva・Figma・Granola・Linear・Supabase
+- **新規対応**: **Datadog・Notion・Slack**
+- 近日対応予定: Exa・Miro・Zoom
+
+公式ブログによれば、MCPサーバーディレクトリは**950以上**に到達し、**毎日数百万人のユーザー**が利用しているとされています（前掲のエコシステム規模指標と合わせて、企業導入フェーズへの移行が進んでいることを示しています）。
+
+出典: [Anthropic Enterprise-managed MCP Connectors（Cybersecurity News）](https://cybersecuritynews.com/anthropic-enterprise-managed-mcp-connectors/)
 
 ---
 
