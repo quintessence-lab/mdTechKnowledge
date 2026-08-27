@@ -1,7 +1,7 @@
 ---
 title: "Anthropic Messages API 新機能まとめ（2026年5〜8月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・Opus5対応・Browser use tool"
 date: 2026-06-20
-updatedDate: 2026-08-22
+updatedDate: 2026-08-27
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ", "Compliance API", "EU AI Act", "Browser use tool", "Python SDK"]
 excerpt: "2026年5〜8月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）まで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
@@ -410,6 +410,15 @@ Anthropic 公式 Python SDK のメジャーバージョン **v1.0** がリリー
 
 出典: [Anthropic Platform リリースノート（2026-08-19/20）](https://platform.claude.com/docs/en/release-notes/overview)
 
+## 14. 2026年8月26日のアップデート — Compliance API対象セッション拡大・Admin APIが全主要SDKで`client.beta.organization`化
+
+2026年8月26日（JST: 8月27日）のリリースノートで、コンプライアンス・組織管理まわりに2件の更新がありました。
+
+- **Compliance API の Cowork・Claude Code 対応がベータ卒業**: 第12章で紹介した Cowork・Claude Code セッションへの対象拡大が正式GAとなりました。加えて、**Claude Science**（[専門記事](/mdTechKnowledge/blog/claude-science-ai-workbench/)参照）と **Microsoft 365 統合**（Excel／PowerPoint／Word／Outlook）のセッションも Compliance API のカバー対象に加わりました（こちらはベータ）。監査・eDiscovery で取得できるセッション種別がさらに広がっています。
+- **Admin API が全主要SDKで `client.beta.organization` として利用可能に**: 第9章で紹介した Admin API（組織メンバー・招待・ワークスペース・APIキー・レート制限レポート・Workload Identity Federation・CMEK）が、**ant CLI** に加えて Python／TypeScript／C#／Go／Java／PHP／Ruby の各公式SDKで `client.beta.organization` 名前空間から直接呼び出せるようになりました。従来は素のHTTPリクエストや限定的なSDKサポートに頼る必要がありましたが、主要言語で統一的なクライアントコードが書けます。
+
+出典: [Anthropic Platform リリースノート（2026-08-26）](https://platform.claude.com/docs/en/release-notes/overview)
+
 ## まとめ — どの機能をいつ使うか
 
 2026年5〜6月の Messages API 新機能は、「**品質を上げる**」「**コストを下げる**」「**運用を見通せるようにする**」の3方向に効きます。
@@ -424,6 +433,7 @@ Anthropic 公式 Python SDK のメジャーバージョン **v1.0** がリリー
 
 - **Opus 5 に切替予定/済みで `xhigh`/`max` effort を使っている** → thinking disabled の可否を確認（400 エラー回避）。**会話途中でツール構成を変えたい** → Mid-conversation tool changes beta。**拒否時のフォールバックを自動化したい** → `fallbacks` の `"default"` モード。
 - **ブラウザ操作を自動化したい** → Browser use tool（`browser_toolset_20260801`）。**PC画面全体の操作が必要** → Computer use tool（GA済み、betaヘッダー不要）。**Files/Skills/Admin APIをbetaヘッダーなしで使いたい** → いずれも2026-08-19にGA昇格済み。**Python SDKをこれから更新する** → v1.0の破壊的変更（`httpx2`移行・サンプリングパラメータ削除等）を事前確認。
+- **Cowork・Claude Code・Claude Science・M365セッションを監査対象にしたい** → Compliance API（Cowork/Claude CodeはGA、Claude Science/M365はベータ）。**Admin APIを自社言語のSDKから直接呼びたい** → `client.beta.organization`（ant CLI・Python/TypeScript/C#/Go/Java/PHP/Ruby対応）。
 
 ## 参考資料
 
