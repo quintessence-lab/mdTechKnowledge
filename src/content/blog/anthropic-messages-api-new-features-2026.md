@@ -1,7 +1,7 @@
 ---
 title: "Anthropic Messages API 新機能まとめ（2026年5〜8月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・Opus5対応・Browser use tool"
 date: 2026-06-20
-updatedDate: 2026-08-27
+updatedDate: 2026-08-29
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ", "Compliance API", "EU AI Act", "Browser use tool", "Python SDK"]
 excerpt: "2026年5〜8月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）まで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
@@ -419,6 +419,15 @@ Anthropic 公式 Python SDK のメジャーバージョン **v1.0** がリリー
 
 出典: [Anthropic Platform リリースノート（2026-08-26）](https://platform.claude.com/docs/en/release-notes/overview)
 
+## 15. 2026年8月27日のアップデート — Files/Skills APIがGA・Console個人/サービスアカウントキー追加
+
+2026年8月27日（JST）のリリースノートで、開発者体験まわりに2件の更新がありました。
+
+- **`client.beta.files` / `client.beta.skills` がbetaヘッダー不要に**: Python 1.2.0・TypeScript 0.122.0・Go 1.68.0など各公式SDKで、Files APIとAgent Skills APIがbetaヘッダーなしで呼び出せるようになりました（第13章で紹介したAPI自体のGAに続く、SDK側の追従）。あわせて `BetaSkill`（コンテナ内Skill参照の型）が **`BetaContainerSkill`** にリネームされています。既存コードでこの型名を参照している場合は更新が必要です。
+- **Claude ConsoleにPersonal keysとService account keysを追加**: 従来のワークスペースAPIキーに加え、**個人に紐づくキー**と**サービスアカウントに紐づくキー**を発行できるようになりました。組織アカウントにリンクされ、**アカウント削除時に自動的に無効化**される点が特徴です。スコープは**ワークスペース単位**または**Admin API横断**で選択可能で、「誰が発行したキーか」の追跡性が向上します。
+
+出典: [Anthropic Platform リリースノート（2026-08-27）](https://platform.claude.com/docs/en/release-notes/overview)
+
 ## まとめ — どの機能をいつ使うか
 
 2026年5〜6月の Messages API 新機能は、「**品質を上げる**」「**コストを下げる**」「**運用を見通せるようにする**」の3方向に効きます。
@@ -434,6 +443,7 @@ Anthropic 公式 Python SDK のメジャーバージョン **v1.0** がリリー
 - **Opus 5 に切替予定/済みで `xhigh`/`max` effort を使っている** → thinking disabled の可否を確認（400 エラー回避）。**会話途中でツール構成を変えたい** → Mid-conversation tool changes beta。**拒否時のフォールバックを自動化したい** → `fallbacks` の `"default"` モード。
 - **ブラウザ操作を自動化したい** → Browser use tool（`browser_toolset_20260801`）。**PC画面全体の操作が必要** → Computer use tool（GA済み、betaヘッダー不要）。**Files/Skills/Admin APIをbetaヘッダーなしで使いたい** → いずれも2026-08-19にGA昇格済み。**Python SDKをこれから更新する** → v1.0の破壊的変更（`httpx2`移行・サンプリングパラメータ削除等）を事前確認。
 - **Cowork・Claude Code・Claude Science・M365セッションを監査対象にしたい** → Compliance API（Cowork/Claude CodeはGA、Claude Science/M365はベータ）。**Admin APIを自社言語のSDKから直接呼びたい** → `client.beta.organization`（ant CLI・Python/TypeScript/C#/Go/Java/PHP/Ruby対応）。
+- **Files/Skills APIをSDKからbetaヘッダーなしで呼びたい** → 各SDK最新版（Python 1.2.0以降等）に更新（`BetaSkill`→`BetaContainerSkill`のリネームに注意）。**キー発行者を個人/サービスアカウント単位で追跡したい** → Console の Personal keys / Service account keys。
 
 ## 参考資料
 
