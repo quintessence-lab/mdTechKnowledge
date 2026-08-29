@@ -3,8 +3,8 @@ title: "Claude Cowork アップデートまとめ"
 date: 2026-04-26
 category: "Claude技術解説"
 tags: ["Claude", "Cowork", "エージェント", "Claude Desktop", "Computer Use", "KPMG", "Claude for Legal", "Finance Agents"]
-excerpt: "AnthropicのデスクトップAIエージェント機能「Claude Cowork」のリリースから2026年4月GA移行・Live Artifacts・Amazon Bedrock対応・Claude for Small Business・PwC 拡大パートナーシップ・KPMG Digital Gateway（276,000人 / 138 か国 / 2026-05-19）・Claude for Legal（20+ MCPコネクタ・12 practice-area プラグイン、2026-05-12）・Finance Agents 10 テンプレート（2026年5月）・Cowork 5時間制限2倍キャンペーン（2026年6月）・エンタープライズ向けコネクタ一括認可EMA（Okta／2026-06-18ベータ）・Cowork の Web/iOS/Android 展開とリモートセッション（2026-07-07）・Claude for Teachers 米国K-12教育者向け無料プログラム（2026-07-14）・Chrome サイドパネルの完全 Cowork セッション化（会話とスキル/コネクタを desktop/web/mobile と共有、ブラウザ内クリック・フォーム入力等の実アクション対応、Max/Team から展開、2026-08-12）・Claude Tag が新体験へ完全移行（チャンネルメモリ・スタンディングインストラクション・ambient mode、2026-08-03）までのアップデートをリリース順に整理。"
-updatedDate: 2026-08-21
+excerpt: "AnthropicのデスクトップAIエージェント機能「Claude Cowork」のリリースから2026年4月GA移行・Live Artifacts・Amazon Bedrock対応・Claude for Small Business・PwC 拡大パートナーシップ・KPMG Digital Gateway（276,000人 / 138 か国 / 2026-05-19）・Claude for Legal（20+ MCPコネクタ・12 practice-area プラグイン、2026-05-12）・Finance Agents 10 テンプレート（2026年5月）・Cowork 5時間制限2倍キャンペーン（2026年6月）・エンタープライズ向けコネクタ一括認可EMA（Okta／2026-06-18ベータ）・Cowork の Web/iOS/Android 展開とリモートセッション（2026-07-07）・Claude for Teachers 米国K-12教育者向け無料プログラム（2026-07-14）・Chrome サイドパネルの完全 Cowork セッション化（会話とスキル/コネクタを desktop/web/mobile と共有、ブラウザ内クリック・フォーム入力等の実アクション対応、Max/Team から展開、2026-08-12）・Claude Tag が新体験へ完全移行（チャンネルメモリ・スタンディングインストラクション・ambient mode、2026-08-03）・Cowork Built-in Browser（デスクトップアプリ専用の隔離ブラウザでナビゲート・クリック・入力、ユーザーのタブ/パスワードは非共有、2026-08-26）までのアップデートをリリース順に整理。"
+updatedDate: 2026-08-29
 draft: false
 ---
 
@@ -153,6 +153,23 @@ Claude CoworkはAnthropicが提供するデスクトップAIエージェント�
 > **意味**: 7月の「リモートセッション」（クラウド常駐化）に続き、**ブラウザが Cowork の第一級の実行面**になりました。「ブラウザ上の操作を伴う定型業務」（ポータル巡回・データ収集・フォーム入力）が Cowork の守備範囲に正式に入ったことになります。
 
 **参考**: [Anthropic 公式ブログ: Claude Cowork comes to the Chrome side panel](https://claude.com/blog/cowork-chrome-side-panel) ／ [9to5Mac（2026-08-12）](https://9to5mac.com/2026/08/12/claude-cowork-chrome/) ／ [Engadget](https://www.engadget.com/2235919/claude-cowork-can-now-run-in-a-chrome-sidebar/)
+
+---
+
+### 2026年8月26日：Cowork Built-in Browser — デスクトップアプリ内蔵ブラウザ
+
+| 日付 | 内容 |
+|------|------|
+| 8月26日（PT）/ 8月27日（JST） | **Cowork デスクトップアプリにビルトインブラウザを追加**。サイドパネルで Claude 専用の独立したブラウザを開き、Claude 自身がウェブサイトを**ナビゲート・読み込み・クリック・入力**できる。ユーザーは並行して別作業を継続可能。**Pro / Max / Team は今週中に段階展開、Enterprise は即日利用可（管理者が組織設定から有効化）**。 |
+
+8月12日の「Chrome サイドパネルの完全 Cowork セッション化」がブラウザ拡張機能側の統合だったのに対し、本機能は**デスクトップアプリ内に Claude 専用ブラウザを組み込む**別アプローチです。ポイントは分離設計:
+
+- **ユーザーのブラウザとは完全分離**: Claude のビルトインブラウザは独立しており、ユーザーの**タブ・ブックマーク・パスワードを一切参照しない**。Chrome / Edge / Firefox からサイトごとにログイン情報を持ち込むかはユーザーが選択する。
+- **機微サイトは既定で除外**: 銀行・メール・シングルサインオン（SSO）サイトは**既定で除外**され、含めるかどうかはユーザーが個別に選択する。
+
+> **意味**: Chrome サイドパネル版（拡張機能・ユーザーの既存ブラウザ内で動作）と、今回のビルトインブラウザ（デスクトップアプリ内・Claude専用の隔離環境）で、**用途に応じて2つのブラウザ操作手段**が揃ったことになります。機密性の高い操作はビルトインブラウザの分離環境、既存のログイン状態を使い回したい操作は Chrome サイドパネルという使い分けが可能です。
+
+**参考**: [Anthropic 公式ブログ: Cowork Built-in Browser](https://claude.com/blog/cowork-built-in-browser) ／ [The New Stack（2026-08-26）](https://thenewstack.io/claude-built-in-browser-cowork/)
 
 ---
 
