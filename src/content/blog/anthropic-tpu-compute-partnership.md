@@ -1,10 +1,10 @@
 ---
 title: "Anthropic コンピュートインフラ & TPUパートナーシップ — Google・BroadcomとのマルチギガワットTPU契約（2027年稼働）"
 date: 2026-04-29
-updatedDate: 2026-08-19
+updatedDate: 2026-08-29
 category: "一般リサーチ"
 tags: ["Anthropic", "Google", "Broadcom", "TPU", "AIインフラ", "コンピュート", "パートナーシップ", "SpaceX", "xAI", "Colossus", "GPU", "Akamai", "Fluidstack", "データセンター", "米国インフラ投資", "AMD", "Volta", "カスタムシリコン", "Riot Platforms"]
-excerpt: "2026年4月6日発表のGoogle・BroadcomとのマルチギガワットTPU契約（2027年稼働）に加え、2026年5月のSpaceX xAI Colossus 1データセンター全容量契約（300MW超・GPU22万台超）、Akamai Technologies $1.8B・7年間クラウドコンピュート契約を収録。Anthropicのマルチクラウド・マルチベンダーインフラ戦略を整理。あわせて2025年11月発表の$50B米国AIインフラ投資（Fluidstackと組みテキサス州・ニューヨーク州にデータセンターを建設、2026年中に順次稼働）、2026年6月のMicron戦略協定（HBM/DRAM/SSD複数年供給）、2026年7月のTeraWulf 20年リース（$19B・ケンタッキー州Hawesville・最大401MW・2027年後半稼働）、2026年7月22日のAMD戦略提携（最大$5B投資・Instinct MI450 GPU最大2GW）、2026年8月4日のVolta Infra Holdings契約（$10B・6年間・ノルウェー133MW・Nvidia Vera Rubin）、2026年8月5日のAnthropic自社カスタムシリコン設計チーム公式確認（元OpenAI Clive Chan主導、推論コスト50%削減目標）、2026年8月10日のRiot Platforms契約（$9.1B・20年・テキサス州Rockdale 191MW・ビットコイン採掘業者からの転換）も収録。"
+excerpt: "2026年4月6日発表のGoogle・BroadcomとのマルチギガワットTPU契約（2027年稼働）に加え、2026年5月のSpaceX xAI Colossus 1データセンター全容量契約（300MW超・GPU22万台超）、Akamai Technologies $1.8B・7年間クラウドコンピュート契約を収録。Anthropicのマルチクラウド・マルチベンダーインフラ戦略を整理。あわせて2025年11月発表の$50B米国AIインフラ投資（Fluidstackと組みテキサス州・ニューヨーク州にデータセンターを建設、2026年中に順次稼働）、2026年6月のMicron戦略協定（HBM/DRAM/SSD複数年供給）、2026年7月のTeraWulf 20年リース（$19B・ケンタッキー州Hawesville・最大401MW・2027年後半稼働）、2026年7月22日のAMD戦略提携（最大$5B投資・Instinct MI450 GPU最大2GW）、2026年8月4日のVolta Infra Holdings契約（$10B・6年間・ノルウェー133MW・Nvidia Vera Rubin）、2026年8月5日のAnthropic自社カスタムシリコン設計チーム公式確認（元OpenAI Clive Chan主導、推論コスト50%削減目標）、2026年8月10日のRiot Platforms契約（$9.1B・20年・テキサス州Rockdale 191MW・ビットコイン採掘業者からの転換）、2026年8月21日の元Google TPUチーフ Amir Salek氏のコンピュートチーム参加（Google第1〜7世代TPUを主導、James Bradbury配下）も収録。"
 draft: false
 ---
 
@@ -456,6 +456,28 @@ TechCrunchはこの動きを、**OpenAI（Broadcomと共同のJalapeñoチップ
 Riot Platformsは元来ビットコインマイニング企業で、既存の電力インフラ・冷却設備をAI向けデータセンターに転用する形の契約です。**SpaceX Colossus・Akamai・Volta Infra**に続く、新興・異業種インフラ事業者との大型契約という点で共通しており、Anthropicが**電力確保をボトルネックとするAIインフラ調達において、従来型データセンター事業者以外にも調達先を多様化している**ことを示しています。仮想通貨マイニング業界全体で見ても、規制環境の変化や採掘難易度の上昇を背景に、AI向けインフラへの転換は業界的なトレンドとなりつつあります。
 
 参考: [CNBC（2026-08-11）](https://www.cnbc.com/2026/08/11/riot-platforms-signs-anthropic-deal-as-miners-shift-to-ai-infrastructure-.html) / [Bloomberg（2026-08-11）](https://www.bloomberg.com/news/articles/2026-08-11/anthropic-strikes-9-billion-deal-with-cloud-computing-firm-riot)
+
+---
+
+## 第11章補遺6: 元Google TPUチーフ Amir Salek氏がコンピュートチームに参加（2026-08-21）
+
+2026年8月21日、Anthropicが**元Google TPUチーフの Amir Salek氏**を採用したと報じられました。補遺4のカスタムシリコンチーム（技術リーダー Clive Chan）とは別に、**コンピュート調達・インフラ戦略側の強化**という位置づけです。
+
+### 経歴と役割
+
+| 項目 | 内容 |
+|---|---|
+| 発表 | 2026年8月21日（PT）/ 8月22日（JST）、Bloomberg報道 |
+| Google在籍時の実績 | **GoogleのTPUプログラムを主導し、第1〜7世代のTPUチップをGoogleデータセンターに届けた** |
+| Anthropicでの所属 | コンピュートチーム。**James Bradbury**（Anthropicのコンピュート責任者）にレポート |
+| 直前の職歴 | **Cerberus Capital Management**でシニア・マネージング・ディレクター |
+| それ以前の経歴 | **Nvidia**でSystem-on-a-chip（SoC）組織を設立・拡大、**PMC-Sierra**でチップリードを担当 |
+
+### 戦略的意義
+
+補遺4（Clive Chan率いるカスタムシリコン設計チーム）が**チップそのものの設計**を担うのに対し、Salek氏の役割は**Google出身のTPU大量生産・データセンター展開の経験を、Anthropicのコンピュート調達・インフラ戦略に持ち込む**ことにあります。Nvidia・Google・AWS・AMD等の複数サプライヤーから調達しつつ自社チップ開発も進める、という**二正面戦略（補遺4参照）の両輪に有力な人材を配置した**形です。
+
+参考: [Bloomberg（2026-08-21）](https://www.bloomberg.com/news/articles/2026-08-21/anthropic-taps-google-chip-veteran-as-part-of-push-into-hardware)
 
 ---
 
