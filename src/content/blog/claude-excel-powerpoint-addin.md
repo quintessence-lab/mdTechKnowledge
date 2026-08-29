@@ -1,10 +1,10 @@
 ---
 title: "Claude for Microsoft 365 アドイン解説 — Excel / PowerPoint / Word / Outlook の4アプリ横断とCopilotとの違い"
 date: 2026-04-29
-updatedDate: 2026-07-24
+updatedDate: 2026-08-29
 category: "Claude技術解説"
 tags: ["Claude", "Microsoft Excel", "Microsoft PowerPoint", "Microsoft Word", "Outlook", "Microsoft 365", "アドイン", "Copilot", "比較"]
-excerpt: "Claude for Microsoft 365 アドイン（Excel / PowerPoint / Word / Outlook の4アプリ）の包括解説。4アプリ横断の会話コンテキスト共有、Word GA・Outlookパブリックベータ（2026年5月7-12日）、金融サービス向け10エージェントテンプレート、13社の業界データMCPコネクタ、Claude for Small Business（Cowork連携）、Microsoft Copilotとの使い分けを整理。"
+excerpt: "Claude for Microsoft 365 アドイン（Excel / PowerPoint / Word / Outlook の4アプリ）の包括解説。4アプリ横断の会話コンテキスト共有、Word GA・Outlookパブリックベータ（2026年5月7-12日）、金融サービス向け10エージェントテンプレート、13社の業界データMCPコネクタ、Claude for Small Business（Cowork連携）、2026年8月26日のCompliance API対象拡大（M365セッションもコンプライアンス監査対象に、`product_surface: office_agents`）、Microsoft Copilotとの使い分けを整理。"
 draft: false
 ---
 
@@ -175,6 +175,18 @@ Claude for Small Business については [Claude Cowork アップデートま�
 2. **Claude Enterprise の組織管理者**が、組織に対して**書き込みツールを明示的に有効化**する（**既定はオフ**）。
 
 > つまり「メールを勝手に送る」ような挙動は、管理者が二重に許可しない限り起きません。導入時は**送信・削除系アクションの権限範囲**を組織ポリシーで明確化するのが安全です。出典: [Claude Apps リリースノート（2026-07）](https://releasebot.io/updates/anthropic/claude) ／ [beri.net 解説](https://www.beri.net/article/claude-m365-write-tools-email-sharepoint-2026)
+
+---
+
+## 2026年8月のアップデート（Compliance API が M365 セッションもカバー）
+
+2026年8月26日（PT）、**Compliance API のセッション取得対象が Excel・PowerPoint・Word・Outlook の M365 アドインセッションにも拡大**されました（Claude Enterprise 向けベータ）。
+
+- **対象**: Compliance API の local session エンドポイントが、4アプリすべての**M365セッショントランスクリプト**を返すようになりました。
+- **`product_surface` 値**: M365アドインのセッションは `office_agents` で始まる値で識別されます。
+- **意義**: 監査・eDiscovery の対象範囲が、Cowork・Claude Code（[Anthropic Messages API 新機能まとめ 第14章](/mdTechKnowledge/blog/anthropic-messages-api-new-features-2026/)参照）に続いて **M365アドインにも拡大**したことで、Excel/PowerPoint/Word/Outlook上でのClaude操作もコンプライアンス要件下で一元的に取得できるようになります。前述の「書き込みツール」（メール送信・OneDrive/SharePointファイル更新等）を有効化している組織にとっては、**実行された操作の証跡確保**という観点でも重要な拡張です。
+
+出典: [Anthropic Platform リリースノート（2026-08-26）](https://platform.claude.com/docs/en/release-notes/overview)
 
 ---
 
