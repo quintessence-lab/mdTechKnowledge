@@ -1,9 +1,10 @@
 ---
 title: "Claude Code Safe Mode 入門 — カスタマイズを全無効化して「素のClaude」で不具合を切り分ける"
 date: 2026-06-21
+updatedDate: 2026-08-30
 category: "Claude技術解説"
 tags: ["Claude Code", "Safe Mode", "セーフモード", "--safe-mode", "CLAUDE_CODE_SAFE_MODE", "トラブルシューティング", "hooks", "MCP"]
-excerpt: "Claude Code の Safe Mode は、CLAUDE.md・スキル・プラグイン・hooks・MCP サーバー・カスタムコマンド・エージェント・テーマ・キーバインドなどのカスタマイズを一括で無効化し、認証とモデル選択だけが効く「素のインストール状態」で起動するモード。--safe-mode フラグや CLAUDE_CODE_SAFE_MODE 環境変数で起動でき、設定起因の不具合切り分けに使う。起動方法・無効化される対象・維持されるもの・トラブル別の切り分け手順を体系的に解説する。"
+excerpt: "Claude Code の Safe Mode は、CLAUDE.md・スキル・プラグイン・hooks・MCP サーバー・カスタムコマンド・エージェント・テーマ・キーバインドなどのカスタマイズを一括で無効化し、認証とモデル選択だけが効く「素のインストール状態」で起動するモード。--safe-mode フラグや CLAUDE_CODE_SAFE_MODE 環境変数で起動でき、設定起因の不具合切り分けに使う。起動方法・無効化される対象・維持されるもの・トラブル別の切り分け手順に加え、2026-08-27のv2.1.248で追加された`--restricted`フラグ（実行系ツール自体を除去する別系統の制限モード）との違いも体系的に解説する。"
 draft: false
 ---
 
@@ -114,6 +115,22 @@ Claude Code には、似て非なる「最小起動」フラグとして `--bare
 | 主な用途 | **設定起因の不具合切り分け** | さらに素に近い最小起動 |
 
 `--safe-mode` は「認証・モデル選択・権限・組み込みツールは生かしたまま、カスタマイズだけ外す」という**実務的な切り分けに最適化**されたモードです。「Fable 5 から自動フォールバックが起きるのはカスタマイズのせいか？」といった、本体機能を動かしながらカスタマイズの影響を見たいケースで真価を発揮します。一方 `--bare` はより素に近い最小起動で、目的が異なります（推測：`--bare` の詳細仕様はバージョン依存。最新の正確な差分は公式 CLI リファレンスでご確認ください）。
+
+### 【2026-08-27追記】`--restricted`（v2.1.248）とも混同注意
+
+**Claude Code v2.1.248** で追加された **`--restricted` フラグ**（`CLAUDE_CODE_RESTRICTED=1`）は、名前が似ていますが `--safe-mode` とは**狙いが異なる**モードです。
+
+| 観点 | `--safe-mode` | `--restricted` |
+|:---|:---|:---|
+| 何を止めるか | **カスタマイズ**（CLAUDE.md・hooks・MCP・プラグイン等） | **実行系ツール自体**（Bash等のコマンド実行ツール・WebFetch） |
+| ファイルツール | 通常どおり | 作業ディレクトリ**外への操作を禁止** |
+| `bypassPermissions` | 選択可 | **拒否** |
+| 設定ファイルの読み込み | Safe Modeの対象として無効化 | user/project/localのsettingsファイルを**無視** |
+| 典型用途 | 設定起因の不具合切り分け | **信頼できない入力・自動実行文脈での封じ込め** |
+
+一言でいえば、`--safe-mode` は「**何が原因か切り分けたい時**」、`--restricted` は「**危険な手段そのものを持たせたくない時**」に使うモードです。両者は併用も可能で、切り分け目的と封じ込め目的が同時に必要な場面（例: 信頼できない設定を含むリポジトリでのデバッグ）では組み合わせる価値があります。`--restricted` と Auto Mode の関係は [Claude Code Auto Mode 完全ガイド](/mdTechKnowledge/blog/claude-code-auto-mode-guide/) も参照してください。
+
+出典: [Claude Code CHANGELOG（v2.1.248）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 ---
 
