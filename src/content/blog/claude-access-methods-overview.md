@@ -1,10 +1,10 @@
 ---
 title: "【重要Tips】Claude Cowork / ブラウザ / Claude Code（端末） / Claude Code Web の使い分け早わかり"
 date: 2026-05-03
-updatedDate: 2026-06-17
+updatedDate: 2026-08-30
 category: "Claude技術解説"
 tags: ["Claude", "Claude Cowork", "Claude Code", "初心者向け", "アクセス方法", "使い分け", "課金", "Agent SDK"]
-excerpt: "Claude を使う4つの主要な入り口（Claude Cowork / ブラウザ / Claude Code 端末 / Claude Code Web）について、アクセスURL・実行場所・対象ユーザー・適した用途を初心者向けに整理。2026/6/15予定だったインタラクティブ利用／プログラマティック利用の課金プール分離（施行当日に一時停止・現在は従来どおりサブスク枠）も解説。"
+excerpt: "Claude を使う4つの主要な入り口（Claude Cowork / ブラウザ / Claude Code 端末 / Claude Code Web）について、アクセスURL・実行場所・対象ユーザー・適した用途を初心者向けに整理。2026/6/15予定だったインタラクティブ利用／プログラマティック利用の課金プール分離（施行当日に一時停止・現在は従来どおりサブスク枠）に加え、2026年7月7日のCowork Web/モバイル展開とリモートセッション（PCを閉じてもクラウド側で継続実行）、2026年8月26日のCowork Built-in Browser（デスクトップアプリ専用の隔離ブラウザ）も解説。"
 draft: false
 ---
 
@@ -22,9 +22,9 @@ draft: false
 
 | 項目 | Claude Cowork | ブラウザ（claude.ai） | Claude Code（端末） | Claude Code Web |
 |:---|:---|:---|:---|:---|
-| **アクセスURL／入り口** | **Claude Desktop の Cowork タブ**（補助: Slackコネクタ／モバイルアプリ） | [claude.ai](https://claude.ai/) | ターミナルで `claude` コマンド | [claude.ai/code](https://claude.ai/code) |
-| **インストール** | [claude.com/download](https://claude.com/download) からClaude Desktopを取得 | 不要（ブラウザだけ） | `npm install -g @anthropic-ai/claude-code` | 不要（ブラウザだけ） |
-| **実行場所** | **自分のPC（Desktopアプリ）** + Anthropicクラウド | Anthropicクラウド | **自分のPC（端末）** | Anthropic管理の隔離VM |
+| **アクセスURL／入り口** | **Claude Desktop の Cowork タブ**（**2026-07-07以降は claude.ai（Web）・モバイルアプリからもフル機能で利用可**、補助: Slackコネクタ） | [claude.ai](https://claude.ai/) | ターミナルで `claude` コマンド | [claude.ai/code](https://claude.ai/code) |
+| **インストール** | [claude.com/download](https://claude.com/download) からClaude Desktopを取得、または claude.ai / モバイルアプリからそのまま利用 | 不要（ブラウザだけ） | `npm install -g @anthropic-ai/claude-code` | 不要（ブラウザだけ） |
+| **実行場所** | **自分のPC（Desktopアプリ）または Anthropicクラウド（Web/モバイル利用時の「リモートセッション」）** | Anthropicクラウド | **自分のPC（端末）** | Anthropic管理の隔離VM |
 | **主な用途** | チーム業務の自動化（Slack/Drive/Notion連携・定期実行） | 個人の質問・調べもの | コーディング・ローカル開発 | ブラウザでコード作業（PR作成等） |
 | **ローカルファイル操作** | **できる**（Desktop経由） | できない | **できる** | クローンしたリポジトリのみ |
 | **対象ユーザー** | チーム（Team以上のプラン） | 個人ユーザー全般 | 開発者 | 開発者（PCを離れているとき等） |
@@ -53,12 +53,12 @@ draft: false
 
 ---
 
-## 1. Claude Cowork — Desktopアプリで動くチーム業務向けエージェント
+## 1. Claude Cowork — チーム業務向けエージェント（Desktop / Web / モバイル）
 
-**入り口（本体）**: Claude Desktop アプリの **Cowork タブ**（macOS / Windows）
-**補助入口**: Slackコネクタ（Cowork内からSlackを参照／投稿）、モバイルアプリ（iOS/Android、タスク投入・進捗確認）
+**入り口（本体）**: Claude Desktop アプリの **Cowork タブ**（macOS / Windows）、**claude.ai（Web）**、**モバイルアプリ（iOS/Android）**（2026-07-07以降、後述の「リモートセッション」経由でWeb/モバイルもフル機能に）
+**補助入口**: Slackコネクタ（Cowork内からSlackを参照／投稿）
 
-Cowork は **Claude Desktop アプリに内蔵された3つのモード（Chat / Cowork / Code）の1つ**で、ローカルファイル操作や Computer Use、Routines（定期実行）などを含むエージェント機能を備えます。Team 以上のプラン契約者が利用可能。
+Cowork は **Claude Desktop アプリに内蔵された3つのモード（Chat / Cowork / Code）の1つ**として登場し、ローカルファイル操作や Computer Use、Routines（定期実行）などを含むエージェント機能を備えます。Team 以上のプラン契約者が利用可能。当初はDesktop限定でしたが、2026年7月7日以降はWeb・モバイルからもアクセスできます（後述）。
 
 ```
 [ あなたのPC (Claude Desktop) ]
@@ -71,8 +71,8 @@ Cowork は **Claude Desktop アプリに内蔵された3つのモード（Chat /
          └─→ Computer Use（画面操作の自動化）
 ```
 
-> **「Slack版Cowork」という独立アプリは存在しない**。Slackは Cowork の入口の1つ（コネクタ）で、本体は Desktop。Slack側からClaudeをメンションする `Claude for Slack` (Interactive App) は別アプリで、Coworkのフル機能（ローカルFS操作・Routines等）は持たない。
-> なお claude.ai（ブラウザ）は Cowork 非対応で、Chat のみ。
+> **「Slack版Cowork」という独立アプリは存在しない**。Slackは Cowork の入口の1つ（コネクタ）で、本体は Desktop/Web/モバイル。Slack側からClaudeをメンションする `Claude for Slack` (Interactive App) は別アプリで、Coworkのフル機能（ローカルFS操作・Routines等）は持たない。
+> **【2026-06-17時点の情報】** 当時は claude.ai（ブラウザ）は Cowork 非対応で Chat のみでしたが、**2026年7月7日以降は Web からも Cowork を利用可能**になっています（詳細は次項）。
 
 ### Coworkでチームで利用する例
 
@@ -100,6 +100,26 @@ Cowork は「チームの会話をその場で全員で見る」形ではなく�
 ### 向かない使い方
 - メンバー全員が同じ会話セッションをリアルタイム共有して議論する用途（個人セッションが基本）
 - Team未満（Free/Pro個人）プランでの利用（Coworkは Team 以上）
+
+### 【2026-07-07追記】Web・モバイルへの展開とリモートセッション
+
+**Cowork が Web（claude.ai）/ iOS / Android へ展開**されました（Max プランからベータで数週間かけて順次ロールアウト、以降のプランへ拡大予定）。アクセスはモバイルの場合 Claude アプリのサイドバー、Web の場合 claude.ai から。
+
+これに伴い、**「リモートセッション（Remote sessions）」**が導入されました。従来 Cowork はローカルPC上でのエージェント実行が前提でしたが、**セッションがクラウド側で継続**するようになり、次のことが可能になっています。
+
+- **PCを閉じても作業が継続**: デスクで始めたタスクをスマホから進捗確認し、完成物をどのデバイスからでも受け取れる（クロスデバイス継続）
+- **デバイス不要のスケジュール実行**: 端末がオンラインでなくても、指定時刻のタスクをクラウドで自律実行できる
+- **承認が必要な場面はスマホに通知**: 判断が必要な場面でプッシュ通知が届き、応答後にセッションが再開する
+
+> **旧記述との関係**: 上の早見表・本文で「入り口（本体）＝Desktop」としていたのは2026年6月時点の情報です。現在は**Web/モバイルもフル機能の入り口**であり、実行場所も「自分のPC」に限らず**Anthropicクラウド上（リモートセッション時）**になり得ます。
+
+参考: [9to5Mac（2026-07-07）](https://9to5mac.com/2026/07/07/anthropic-expanding-claude-cowork-to-mobile-and-web-details-here/) ／ [Help Net Security（2026-07-08）](https://www.helpnetsecurity.com/2026/07/08/claude-cowork-phone-mobile-web/)
+
+### 【2026-08-26追記】Cowork Built-in Browser（デスクトップアプリ専用の隔離ブラウザ）
+
+**Cowork デスクトップアプリにビルトインブラウザが追加**されました。サイドパネルで Claude 専用の独立したブラウザを開き、Claude 自身がウェブサイトを**ナビゲート・読み込み・クリック・入力**できます。ユーザーのタブ・ブックマーク・パスワードは一切参照せず、銀行・メール・SSOサイトは既定で除外されます（Pro/Max/Teamは順次展開、Enterpriseは即日利用可）。
+
+これは上記のWeb/モバイル展開（ブラウザからCoworkにアクセスする話）とは別の機能で、**Coworkデスクトップアプリの中にClaude専用ブラウザが組み込まれた**という違いです。詳細は [Claude Cowork アップデートまとめ](/mdTechKnowledge/blog/claude-cowork-updates/) を参照してください。
 
 ---
 
@@ -182,10 +202,11 @@ GitHub と連携し、リポジトリをクローンしてコード編集や PR 
 
 | 入り口 | URL／コマンド |
 |:---|:---|
-| Claude Cowork（本体） | Claude Desktop を [https://claude.com/download](https://claude.com/download) から取得 → 起動後 **Cowork タブ**を選択（Team以上） |
-| Claude Cowork（補助：モバイル） | App Store / Google Play の Claude 公式アプリ |
+| Claude Cowork（Desktop） | Claude Desktop を [https://claude.com/download](https://claude.com/download) から取得 → 起動後 **Cowork タブ**を選択（Team以上） |
+| Claude Cowork（Web、2026-07-07〜） | [https://claude.ai/](https://claude.ai/) からCoworkにアクセス（Max先行ロールアウト） |
+| Claude Cowork（モバイル、2026-07-07〜） | App Store / Google Play の Claude 公式アプリ（フル機能のリモートセッション対応） |
 | Claude for Slack（別アプリ） | [https://claude.com/claude-for-slack](https://claude.com/claude-for-slack) — Coworkのフル機能ではない |
-| ブラウザ（Cowork非対応） | [https://claude.ai/](https://claude.ai/) |
+| ブラウザ（Chatのみの利用） | [https://claude.ai/](https://claude.ai/)（同じURLからCoworkにも遷移可能、2026-07-07以降） |
 | Claude Code（端末） | `npm install -g @anthropic-ai/claude-code` → `claude` コマンド |
 | Claude Code Web | [https://claude.ai/code](https://claude.ai/code) または [https://code.claude.com/](https://code.claude.com/) |
 | Anthropic Console（API管理） | [https://console.anthropic.com/](https://console.anthropic.com/) |
@@ -233,8 +254,10 @@ GitHub と連携し、リポジトリをクローンしてコード編集や PR 
             ├─→ Slack/Drive/Notion等
             └─→ Computer Use     │
                                  │
-[ ブラウザ ]                     │
-  ├─ claude.ai（Chatのみ）───────┤
+[ ブラウザ／モバイル ]           │
+  ├─ claude.ai（Chat）───────────┤
+  ├─ claude.ai（Cowork・2026-07〜）┤　← クラウド側で継続実行（リモートセッション）
+  ├─ モバイルアプリ（Cowork）─────┤
   │                              │
   └─ claude.ai/code ──→ [Anthropic管理 隔離VM]
                                  │
@@ -243,7 +266,7 @@ GitHub と連携し、リポジトリをクローンしてコード編集や PR 
 
 ポイント:
 - **Claude Code（端末）と Claude Cowork（Desktop）は「あなたのPC」上で動く**。ローカルファイルや社内ネットワークに自然にアクセスできる理由はこれ。
-- **ブラウザ系（claude.ai / claude.ai/code）は Anthropic 側のサーバー上で動く**。便利だが、ローカル資源や社内ネットワークには直接届かない。
+- **ブラウザ系（claude.ai Chat / claude.ai/code）と Cowork のリモートセッション（Web/モバイル利用時）は Anthropic 側のサーバー上で動く**。便利だが、ローカル資源や社内ネットワークには直接届かない。
 
 ---
 
@@ -251,8 +274,8 @@ GitHub と連携し、リポジトリをクローンしてコード編集や PR 
 
 | 入り口 | 一言で言うと |
 |:---|:---|
-| **Claude Cowork** | 「Desktopアプリで動く、チーム業務自動化エージェント」（Slackは入口の1つ） |
-| **ブラウザ** | 「最も手軽な、個人用 Claude」（Coworkは非対応） |
+| **Claude Cowork** | 「Desktop / Web / モバイルで動く、チーム業務自動化エージェント」（2026-07-07以降Web/モバイルもフル対応、Slackは入口の1つ） |
+| **ブラウザ** | 「最も手軽な、個人用 Claude」（Chat中心だが、Coworkへのアクセスも可能に） |
 | **Claude Code（端末）** | 「自分のPC上で動く、開発者向け Claude」 |
 | **Claude Code Web** | 「ブラウザで動かす、サンドボックス版 Claude Code」 |
 
