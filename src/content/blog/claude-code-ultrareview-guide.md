@@ -1,10 +1,10 @@
 ---
 title: "Claude Code /ultrareview 完全ガイド — クラウドマルチエージェントによる深掘りコードレビュー"
 date: 2026-05-02
-updatedDate: 2026-07-19
+updatedDate: 2026-08-30
 category: "Claude技術解説"
 tags: ["Claude Code", "ultrareview", "code-review ultra", "コードレビュー", "マルチエージェント", "CICD", "Anthropic"]
-excerpt: "2026年4月17日にClaude Code v2.1.111でリリースされた/ultrareviewは、リモートサンドボックス上でエージェントフリートを並列実行し、マージ前に深掘りバグハントを行うコードレビュー機能。基本操作から非対話型CI実行、料金体系、--jsonオプション、/reviewとの使い分けまで網羅的に整理する。※現在この機能は /code-review ultra に統合され、/ultrareview は非推奨エイリアスとなっている（本文の /ultrareview は /code-review ultra に読み替え）。"
+excerpt: "2026年4月17日にClaude Code v2.1.111でリリースされた/ultrareviewは、リモートサンドボックス上でエージェントフリートを並列実行し、マージ前に深掘りバグハントを行うコードレビュー機能。基本操作から非対話型CI実行、料金体系、--jsonオプション、/reviewとの使い分けまで網羅的に整理する。2026-08-27のv2.1.248では、クラウドセッション起動失敗時に従来の最大30分待機から早期報告へ改善された。※現在この機能は /code-review ultra に統合され、/ultrareview は非推奨エイリアスとなっている（本文の /ultrareview は /code-review ultra に読み替え）。"
 draft: false
 ---
 
@@ -391,6 +391,21 @@ fi
 - **両方を併用**: 全 PR は Code Review で自動カバー、特に重要な PR（認証 / 課金 / マイグレーション）にはマージ前に手動で `/ultrareview` を追加発火させる二段ゲート
 
 Code Review が PR 自動監視という「面」を押さえるのに対し、`/ultrareview` は「点」での深掘りに強みがあります。組織レビュー基盤としては Code Review、開発者個人の最終確認ツールとしては `/ultrareview` という分業が最も自然です。
+
+---
+
+## 10.7 【2026-08-27追記】v2.1.248 — クラウドセッション起動失敗時の待機を短縮
+
+**Claude Code v2.1.248** で、`claude ultrareview` / `/ultrareview` が**クラウドセッションの起動に失敗した際の挙動**が改善されました。
+
+- **従来**: セッションが起動できない場合でも、最大**30分間待ち続けてから**エラーを報告していました。
+- **v2.1.248以降**: 起動失敗を**早期に検知して報告を打ち切る**ため、待機時間が大幅に短縮されます。
+
+前述の「制限事項」表にある認証経路・クラウド経路の非対応構成（Bedrock/Vertex/Foundry等）で誤って実行してしまった場合や、ネットワーク起因でセッションが立ち上がらない場合に、無駄な待ち時間を抱えずに原因調査へ移れるようになった改善です。
+
+> 参考: 同時期のv2.1.247では、コスト最適化コマンド `/claude-api cost-optimize`（既存プロジェクトのAPI支出をキャッシュ・トークン節約・モデル選択の観点でプロファイルする機能）が追加されています。`/ultrareview`自体とは別コマンドですが、レビュー運用のコストを見直したい場合の関連ツールとして押さえておくと良いでしょう。
+
+出典: [Claude Code CHANGELOG（v2.1.247, v2.1.248）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 ---
 
