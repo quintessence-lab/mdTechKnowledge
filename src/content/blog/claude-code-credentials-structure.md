@@ -1,10 +1,10 @@
 ---
 title: "Claude Code 認証情報ファイル (.credentials.json) の構造変更"
 date: 2026-04-11
-updatedDate: 2026-04-29
+updatedDate: 2026-08-30
 category: "Claude技術解説"
 tags: ["Claude Code", "OAuth認証", "セキュリティ", "Tips"]
-excerpt: ".credentials.json がフラット形式から認証方式別ネスト形式に変更。外部スクリプトの修正方法、レート制限データ取得方法、およびv2.1.69〜v2.1.121までの認証フロー関連の主要変更を解説。"
+excerpt: ".credentials.json がフラット形式から認証方式別ネスト形式に変更。外部スクリプトの修正方法、レート制限データ取得方法、v2.1.69〜v2.1.121までの認証フロー関連の主要変更に加え、v2.1.243の`/login`キーレスサインイン（Anthropic Console経由、APIキー不要）と2026-08-27のClaude Console Personal keys/Service account keys追加までを解説。"
 draft: false
 ---
 
@@ -239,6 +239,30 @@ export CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1
 ```
 
 v2.1.83 で追加された設定で、Bash ツール、hooks、MCP stdio サーバなどのサブプロセス環境から `ANTHROPIC_API_KEY` や AWS/GCP 系の認証情報を取り除けます。サブプロセスがクレデンシャルを意図せず参照することを避けたい運用では有効化を検討してください。
+
+## v2.1.243〜: キーレスサインインとConsole新キー種別
+
+### `/login` のキーレスサインイン（v2.1.243、2026-08-24頃）
+
+**Claude Code v2.1.243** で、`/login` に **Anthropic Console 経由のキーレスサインイン**が追加されました。「Sign in with your Console account」（推奨）を選ぶと、**APIキーを作成せずに** Console アカウントでのサインインだけで認証を完了できます。従来のAPIキー作成フローも引き続き選択可能です。
+
+この方式は、**組織がAPIキーの発行自体を許可していない**（Console経由のユーザー単位認証のみ許容する）ケースを主な対象としています。従来は「APIキーを作れない組織のユーザーはClaude Codeにサインインできない」という制約がありましたが、この変更でConsoleアカウントさえあれば認証できるようになりました。
+
+出典: [Claude Code CHANGELOG（v2.1.243）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
+
+### Claude Console — Personal keysとService account keys追加（2026-08-27）
+
+2026年8月27日、Claude Console に**2種類の新しいAPIキー**が追加されました。本記事で扱う `.credentials.json`（Claude Code CLIのローカル認証情報）とは別の、**Console側で発行・管理するAPIキー**の話です。
+
+| キー種別 | 内容 |
+|:---|:---|
+| **Personal keys** | **個人アカウントに紐づく**APIキー。アカウントが削除されると**自動的に無効化**される |
+| **Service account keys** | **サービスアカウントに紐づく**APIキー。同様にアカウント削除で自動無効化 |
+| スコープ | **ワークスペース単位**、または**Admin API横断**のいずれかを選択可能 |
+
+従来のワークスペースAPIキー（誰が作成したか追跡しにくい共有キー）と異なり、**発行者個人・サービスアカウント単位でキーのライフサイクルが紐づく**ため、退職者・廃止済みサービスのキーが残留するリスクを抑えられます。エンタープライズでのキー管理（[Anthropic Enterprise Analytics API 完全ガイド](/mdTechKnowledge/blog/anthropic-enterprise-analytics-api/)も参照）における追跡性向上の一環です。
+
+出典: [Anthropic Platform リリースノート（2026-08-27）](https://platform.claude.com/docs/en/release-notes/overview)
 
 ## まとめ
 
