@@ -1,10 +1,10 @@
 ---
 title: "Claude Code Auto Mode 完全ガイド — --dangerously-skip-permissions を卒業する自律型権限管理"
 date: 2026-06-21
-updatedDate: 2026-08-27
+updatedDate: 2026-08-30
 category: "Claude技術解説"
 tags: ["Claude Code", "Auto Mode", "permission mode", "dangerously-skip-permissions", "分類器", "classifier", "claudeignore", "安全運用"]
-excerpt: "Claude Code の Auto Mode（自律型権限管理）は、すべてを無条件に許可する --dangerously-skip-permissions の安全な代替として 2026-03-24 に登場した。モデルベースの2段階トランスクリプト分類器（Sonnet 4.6 による高速フィルター＋思考連鎖による精査）で各アクションを起動前に評価し、連続3拒否・累計20拒否で自動停止する。2026-08-14 からは Pro/Max/Team プランの新規セッションで Auto Mode が既定の権限モードになった（人間の目視13.6%に対し分類器89%の危険コマンド捕捉率が論拠。Enterprise/API/Bedrock/Vertex/Foundry はオプトイン継続）。2026-08-25のv2.1.246では`/permissions`にAuto modeタブが追加され、分類器ルールをGUIから閲覧・編集可能になった。本記事では権限モードの全体像、分類器の仕組み、エスカレーション停止、.claudeignore 連携、卒業の手順までを公式情報ベースで整理する。"
+excerpt: "Claude Code の Auto Mode（自律型権限管理）は、すべてを無条件に許可する --dangerously-skip-permissions の安全な代替として 2026-03-24 に登場した。モデルベースの2段階トランスクリプト分類器（Sonnet 4.6 による高速フィルター＋思考連鎖による精査）で各アクションを起動前に評価し、連続3拒否・累計20拒否で自動停止する。2026-08-14 からは Pro/Max/Team プランの新規セッションで Auto Mode が既定の権限モードになった（人間の目視13.6%に対し分類器89%の危険コマンド捕捉率が論拠。Enterprise/API/Bedrock/Vertex/Foundry はオプトイン継続）。2026-08-25のv2.1.246では`/permissions`にAuto modeタブが追加され、分類器ルールをGUIから閲覧・編集可能になった。2026-08-27のv2.1.248では`--restricted`フラグが追加され、実行系ツール・WebFetchをそもそも起動時から除去する、Auto Modeとは別系統の静的な制限モードが利用可能に。本記事では権限モードの全体像、分類器の仕組み、エスカレーション停止、.claudeignore 連携、卒業の手順までを公式情報ベースで整理する。"
 draft: false
 ---
 
@@ -155,6 +155,32 @@ Auto Mode の安全性は、その後のバージョンアップでさらに強�
 `.claudeignore` や `classifyAllShell` といった個別設定と併せて、**分類器のルール自体を可視化・調整する入口**が `/permissions` に統一されたことで、Auto Mode の挙動をチューニングする際に設定ファイルを行き来する手間が減ります。
 
 参考: [Claude Code CHANGELOG（v2.1.246）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
+
+---
+
+## 5.7. 【2026-08-27】v2.1.248 — `--restricted` フラグ追加（Auto Modeとは別系統の制限モード）
+
+**Claude Code v2.1.248** で、**`--restricted` フラグ**（環境変数 `CLAUDE_CODE_RESTRICTED=1` でも可）が追加されました。Auto Mode が「分類器がリスクを判定してから実行させる」仕組みなのに対し、`--restricted` は**特定のツール自体を起動時から使えなくする**、より単純で強い制限です。
+
+| 項目 | `--restricted` の挙動 |
+|---|---|
+| コマンド実行ツール | **組み込みのBash等の実行ツールを除去**（起動不可） |
+| WebFetch | **除去**（`--tools` で明示的に名指しした場合を除く） |
+| ファイルツール | 作業ディレクトリの**外に出られないよう制限** |
+| `bypassPermissions` | **拒否**（このモードでは選択不可） |
+| 設定ファイル | user／project／local の各settingsファイルを**無視** |
+
+### Auto Mode・Safe Mode との違い
+
+| モード | 制御方式 | 主な用途 |
+|---|---|---|
+| **Auto Mode**（本記事） | 分類器がアクション単位でリスク判定し、危険なものだけ止める | 自律実行の常用モード。承認疲れを減らしつつ危険操作は止める |
+| **`--restricted`**（本項） | 実行系ツール・WebFetchを**そもそも起動時から除去**、設定ファイルも無視 | **信頼できないコード・プロンプトを扱う場面**での機械的な封じ込め。分類器の判定を待たず物理的に手段を奪う |
+| **Safe Mode**（`--safe-mode`） | CLAUDE.md・hooks・MCP・プラグイン等の**カスタマイズを全無効化**（[詳細](/mdTechKnowledge/blog/claude-code-safe-mode-guide/)参照） | 設定起因の不具合切り分け。ツール自体は制限しない |
+
+`--restricted` は「何が危険か」を分類器に判定させるAuto Modeとは思想が異なり、**「そもそも危険な手段を持たせない」**という静的な制限です。信頼できない外部入力（第三者提供のプロンプト・スクリプト経由の自動実行等）を扱う場面では、Auto Modeより`--restricted`のほうが安全側に倒せます。
+
+参考: [Claude Code CHANGELOG（v2.1.248）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 ---
 
