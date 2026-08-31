@@ -1,10 +1,10 @@
 ---
 title: "Anthropic、SEC へ機密ドラフト S-1 提出 — 『公式発表に数字はない』IPOプロセスとPBC上場の論点"
 date: 2026-06-06
-updatedDate: 2026-08-26
+updatedDate: 2026-09-01
 category: "一般リサーチ"
 tags: ["Anthropic", "IPO", "S-1", "SEC", "Public Benefit Corporation", "Long-Term Benefit Trust", "上場", "資本市場", "OpenAI", "SpaceX", "メガIPO"]
-excerpt: "2026年6月1日、Anthropic は SEC へ Form S-1 の機密ドラフト登録届出書を提出し IPO 手続きを開始した。本記事は『公式発表は Rule 135 準拠の定型文で具体的な数値を一切含まない』という事実の確認から始め、機密提出（confidential filing）の仕組み、評価額$965B・年次ランレート$47Bの出典の切り分け、未定事項（株式数・価格・市場・ティッカー）、想定主幹事、2026メガIPO 3社（SpaceX/OpenAI/Anthropic）の横比較、そして PBC × Long-Term Benefit Trust という独特のガバナンスが上場でどう論点化するかを整理する。2026-08追記: 8〜9月のロードショー本格化・10月Nasdaq上場・$60B超調達という観測報道、評価額ターゲット$2兆観測・収益ランレート$65B突破・Q2収益$11.5B（いずれも報道・投資家推計ベース、公式未確認）を追記した。"
+excerpt: "2026年6月1日、Anthropic は SEC へ Form S-1 の機密ドラフト登録届出書を提出し IPO 手続きを開始した。本記事は『公式発表は Rule 135 準拠の定型文で具体的な数値を一切含まない』という事実の確認から始め、機密提出（confidential filing）の仕組み、評価額$965B・年次ランレート$47Bの出典の切り分け、未定事項（株式数・価格・市場・ティッカー）、想定主幹事、2026メガIPO 3社（SpaceX/OpenAI/Anthropic）の横比較、そして PBC × Long-Term Benefit Trust という独特のガバナンスが上場でどう論点化するかを整理する。2026-08追記: 8〜9月のロードショー本格化・10月Nasdaq上場・$60B超調達という観測報道、評価額ターゲット$2兆観測・収益ランレート$65B突破・Q2収益$11.5B（いずれも報道・投資家推計ベース、公式未確認）を追記。公開S-1提出は2026年8月末見込みだが8月26日時点でSEC EDGAR未掲載という状況も追記した。"
 draft: false
 ---
 
@@ -257,6 +257,14 @@ CEO の Daniela Amodei は IPO に先立つインタビュー（TechCrunch, 6/4�
 ### 【2026-07 追記】IPO 投資家ミーティング開始・調達額の観測
 
 2026年7月15日（PT）、**Goldman Sachs・Morgan Stanley・JPMorgan が関与して IPO 投資家ミーティングが始動**し、**最速で2026年10月の Nasdaq 上場**を狙うとの観測が報じられました（CNBC / Bloomberg）。一部報道では **調達額 $60B 超**（$965B 評価額ベース）との見込みも示されています。いずれも**報道ベースの観測**で、Anthropic 公式のスケジュール・条件発表ではありません（時期・市場・ティッカーは引き続き「未定」）。出典: [CNBC（2026-07-15）](https://www.cnbc.com/2026/07/15/anthropic-ipo-banks-investor-meetings.html)。
+
+### 【2026-08 追記】公開S-1提出は8月末見込み — SEC EDGARには8月26日時点で未掲載
+
+2026年6月1日に**機密ドラフトS-1**をSECへ提出したことは前述の通りですが、SECの通常審査期間（機密提出から公開版提出までの標準的なリードタイム）から逆算すると、**公開版S-1（またはS-1/A）の提出は2026年8月末頃**と見込まれています（報道ベースの観測）。
+
+ただし**2026年8月26日時点で、SEC EDGAR検索では公開S-1・S-1/Aは確認されていません**。評価額ターゲット「$2兆」（前述、NYT報道も同数字で追認）・上場時期「2026年秋/Q4/10月目標」についても、既に本記事で扱った観測から数字上の更新はなく、**公開S-1の実際の提出タイミングが唯一の未確定要素**として残っています。
+
+出典: [Unusual Whales: Anthropic Public S-1 Filing Nears（2026-08）](https://unusualwhales.com/news/anthropic-public-s1-filing-august-2026)
 
 ---
 
