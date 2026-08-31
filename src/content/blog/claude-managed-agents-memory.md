@@ -1,10 +1,10 @@
 ---
 title: "Claude Managed Agents Memory 完全ガイド — 永続記憶機能（Public Beta）の仕組みと活用"
 date: 2026-05-02
-updatedDate: 2026-08-22
+updatedDate: 2026-09-01
 category: "Claude技術解説"
 tags: ["Claude", "Managed Agents", "Memory", "永続記憶", "Public Beta", "Anthropic", "API", "監査ログ", "マルチエージェント", "Dreaming", "Self-hosted sandboxes"]
-excerpt: "2026年4月23日にPublic Betaへ移行したClaude Managed AgentsのMemory機能を詳細に解説。memory storeのアーキテクチャ、必須ヘッダーmanaged-agents-2026-04-01（メモリストア系エンドポイントは2026-07-22以降agent-memory-2026-07-22に置換）、ファイルツール連携、バージョン管理（30日保持）、監査・redact、マルチエージェント共有パターン、長期プロジェクト・ユーザー嗜好・タスク継続といったユースケース、制限事項と運用上のヒント。2026年5月発表のDreaming（セッション間自己改善・Harvey社で完了率6倍）、2026年8月19日のSelf-hosted sandboxesへのmemory store接続対応も解説。"
+excerpt: "2026年4月23日にPublic Betaへ移行したClaude Managed AgentsのMemory機能を詳細に解説。memory storeのアーキテクチャ、必須ヘッダーmanaged-agents-2026-04-01（メモリストア系エンドポイントは2026-07-22以降agent-memory-2026-07-22に置換）、ファイルツール連携、バージョン管理（30日保持）、監査・redact、マルチエージェント共有パターン、長期プロジェクト・ユーザー嗜好・タスク継続といったユースケース、制限事項と運用上のヒント。2026年5月発表のDreaming（セッション間自己改善・Harvey社で完了率6倍）、2026年8月19日のSelf-hosted sandboxesへのmemory store接続対応、2026年8月25日のclaude.ai/Cowork向けUnified Memory統合（本記事のManaged Agents Memoryとは別機能）との違いも解説。"
 draft: false
 ---
 
@@ -526,6 +526,24 @@ Python / TypeScript / Go の各SDKで動くワーカーが、**サンドボッ�
 これにより、コンプライアンス要件で自組織インフラ上でのセッション実行が必須なチームでも、本記事で解説してきたMemory機能（永続ナレッジベース・redact・監査ログ等）を同様に利用できるようになりました。
 
 出典: [Self-hosted sandboxes（公式ドキュメント）](https://platform.claude.com/docs/en/managed-agents/self-hosted-sandboxes#use-memory-stores)
+
+---
+
+## 【2026-08-25追記】同名だが別機能 — claude.ai/CoworkのUnified Memoryとの違い
+
+2026年8月25日（JST: 8月26日）、**claude.ai（Chat）と Cowork のメモリが単一の統合レイヤーに統合**され、双方向にコンテキストが流れるようになりました（Settings → Memory から**トピック単位**で閲覧・編集・削除可能。健康・人種・宗教・政治・性自認等のセンシティブなトピックは既定で除外、SSN・政府IDなどは保存されません）。
+
+**これは本記事で解説している Managed Agents の Memory（API・`memory store`・`mount_path`）とは別の機能**です。
+
+| | Managed Agents Memory（本記事） | Unified Memory（claude.ai/Cowork） |
+|:---|:---|:---|
+| 対象 | API経由で構築するエージェント | claude.aiのChat・Cowork（エンドユーザー向け製品） |
+| 単位 | `memory store`（ファイルシステムマウント） | トピック（Settings → Memoryで管理） |
+| 主な用途 | マルチエージェント間の永続ナレッジ共有 | Chat/Coworkをまたいだ個人の会話コンテキスト共有 |
+
+名称が同じ「Memory」であるため混同しやすい点に注意してください。Managed AgentsのAPIを実装する開発者にとって、本記事の内容（memory store・`agent-memory-2026-07-22`ヘッダー等）に変更はありません。
+
+出典: [BigHat Group Claude Weekly（2026-08-27）](https://www.bighatgroup.com/blog/claude-weekly-2026-08-27/)
 
 ---
 
