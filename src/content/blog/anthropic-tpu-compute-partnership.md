@@ -1,10 +1,10 @@
 ---
 title: "Anthropic コンピュートインフラ & TPUパートナーシップ — Google・BroadcomとのマルチギガワットTPU契約（2027年稼働）"
 date: 2026-04-29
-updatedDate: 2026-08-29
+updatedDate: 2026-09-01
 category: "一般リサーチ"
 tags: ["Anthropic", "Google", "Broadcom", "TPU", "AIインフラ", "コンピュート", "パートナーシップ", "SpaceX", "xAI", "Colossus", "GPU", "Akamai", "Fluidstack", "データセンター", "米国インフラ投資", "AMD", "Volta", "カスタムシリコン", "Riot Platforms"]
-excerpt: "2026年4月6日発表のGoogle・BroadcomとのマルチギガワットTPU契約（2027年稼働）に加え、2026年5月のSpaceX xAI Colossus 1データセンター全容量契約（300MW超・GPU22万台超）、Akamai Technologies $1.8B・7年間クラウドコンピュート契約を収録。Anthropicのマルチクラウド・マルチベンダーインフラ戦略を整理。あわせて2025年11月発表の$50B米国AIインフラ投資（Fluidstackと組みテキサス州・ニューヨーク州にデータセンターを建設、2026年中に順次稼働）、2026年6月のMicron戦略協定（HBM/DRAM/SSD複数年供給）、2026年7月のTeraWulf 20年リース（$19B・ケンタッキー州Hawesville・最大401MW・2027年後半稼働）、2026年7月22日のAMD戦略提携（最大$5B投資・Instinct MI450 GPU最大2GW）、2026年8月4日のVolta Infra Holdings契約（$10B・6年間・ノルウェー133MW・Nvidia Vera Rubin）、2026年8月5日のAnthropic自社カスタムシリコン設計チーム公式確認（元OpenAI Clive Chan主導、推論コスト50%削減目標）、2026年8月10日のRiot Platforms契約（$9.1B・20年・テキサス州Rockdale 191MW・ビットコイン採掘業者からの転換）、2026年8月21日の元Google TPUチーフ Amir Salek氏のコンピュートチーム参加（Google第1〜7世代TPUを主導、James Bradbury配下）も収録。"
+excerpt: "2026年4月6日発表のGoogle・BroadcomとのマルチギガワットTPU契約（2027年稼働）に加え、2026年5月のSpaceX xAI Colossus 1データセンター全容量契約（300MW超・GPU22万台超）、Akamai Technologies $1.8B・7年間クラウドコンピュート契約を収録。Anthropicのマルチクラウド・マルチベンダーインフラ戦略を整理。あわせて2025年11月発表の$50B米国AIインフラ投資（Fluidstackと組みテキサス州・ニューヨーク州にデータセンターを建設、2026年中に順次稼働）、2026年6月のMicron戦略協定（HBM/DRAM/SSD複数年供給）、2026年7月のTeraWulf 20年リース（$19B・ケンタッキー州Hawesville・最大401MW・2027年後半稼働）、2026年7月22日のAMD戦略提携（最大$5B投資・Instinct MI450 GPU最大2GW）、2026年8月4日のVolta Infra Holdings契約（$10B・6年間・ノルウェー133MW・Nvidia Vera Rubin）、2026年8月5日のAnthropic自社カスタムシリコン設計チーム公式確認（元OpenAI Clive Chan主導、推論コスト50%削減目標）、2026年8月10日のRiot Platforms契約（$9.1B・20年・テキサス州Rockdale 191MW・ビットコイン採掘業者からの転換）、2026年8月21日の元Google TPUチーフ Amir Salek氏のコンピュートチーム参加（Google第1〜7世代TPUを主導、James Bradbury配下）、2026年8月26日のNscale契約（$45B・6年・ウェストバージニア州460MW・Nvidia Vera Rubin・2027年後半稼働）も収録。"
 draft: false
 ---
 
@@ -478,6 +478,30 @@ Riot Platformsは元来ビットコインマイニング企業で、既存の電
 補遺4（Clive Chan率いるカスタムシリコン設計チーム）が**チップそのものの設計**を担うのに対し、Salek氏の役割は**Google出身のTPU大量生産・データセンター展開の経験を、Anthropicのコンピュート調達・インフラ戦略に持ち込む**ことにあります。Nvidia・Google・AWS・AMD等の複数サプライヤーから調達しつつ自社チップ開発も進める、という**二正面戦略（補遺4参照）の両輪に有力な人材を配置した**形です。
 
 参考: [Bloomberg（2026-08-21）](https://www.bloomberg.com/news/articles/2026-08-21/anthropic-taps-google-chip-veteran-as-part-of-push-into-hardware)
+
+---
+
+## 第11章補遺7: Nscale — $45B・6年契約でウェストバージニア州にNvidia Vera Rubin拠点（2026-08-26）
+
+2026年8月26日、Anthropicは英国拠点のAIインフラ事業者 **Nscale** と、**$45B規模・6年間**のコンピュート契約を締結しました。補遺3のVolta Infra（ノルウェー）、補遺5のRiot Platforms（テキサス）に続く、新興インフラ事業者との大型契約です。
+
+### 契約の概要
+
+| 項目 | 内容 |
+|---|---|
+| 契約規模 | **$45B** |
+| 契約期間 | **6年間** |
+| 拠点 | **ウェストバージニア州** |
+| 容量 | **460MW** |
+| チップ | **Nvidia Vera Rubin**（次世代GPU） |
+| 稼働予定 | **2027年後半** |
+| 発表日 | 2026年8月26日（PT）/ 8月27日（JST） |
+
+### 戦略的意義
+
+Nscaleは比較的新しい参入企業でありながら、$45Bという本記事で扱ってきた契約群の中でも上位規模の案件を獲得しました。**Vera Rubin世代のNvidia GPU**を早期に大量確保する動きは、補遺2のAMD戦略提携（Instinct MI450）・補遺3のVolta Infra（Vera Rubin）と合わせて、**Anthropicが特定ベンダー・特定世代に依存しないよう複数の供給網を並行して構築している**ことを改めて示しています。ウェストバージニア州は既存のデータセンター適地とは異なる立地であり、**電力確保のための地理的分散**という文脈でも注目されます。
+
+参考: [TechCrunch（2026-08-26）](https://techcrunch.com/2026/08/26/anthropic-continues-compute-gobbling-streak-in-45-billion-deal-with-nscale/) / [Forbes（2026-08-28）](https://www.forbes.com/sites/jonmarkman/2026/08/28/anthropics-45-billion-nscale-deal-buys-460-megawatts-of-vera-rubin/)
 
 ---
 
