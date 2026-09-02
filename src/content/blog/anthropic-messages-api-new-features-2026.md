@@ -1,7 +1,7 @@
 ---
 title: "Anthropic Messages API 新機能まとめ（2026年5〜8月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・Opus5対応・Browser use tool"
 date: 2026-06-20
-updatedDate: 2026-08-29
+updatedDate: 2026-09-03
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ", "Compliance API", "EU AI Act", "Browser use tool", "Python SDK"]
 excerpt: "2026年5〜8月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）まで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
@@ -428,6 +428,20 @@ Anthropic 公式 Python SDK のメジャーバージョン **v1.0** がリリー
 
 出典: [Anthropic Platform リリースノート（2026-08-27）](https://platform.claude.com/docs/en/release-notes/overview)
 
+## 16. 2026年9月1日のアップデート — Claude Fable 5.1/Mythos 5.1 リリースに伴うAPI仕様変更
+
+2026年9月1日、**Claude Fable 5.1（`claude-fable-5-1`）・Claude Mythos 5.1（`claude-mythos-5-1`）**がリリースされました。モデル自体の詳細は [Claude Fable 5.1 / Mythos 5.1 完全ガイド](/mdTechKnowledge/blog/claude-fable-5-1-mythos-5-1-guide/) に譲り、ここではMessages APIの**仕様変更点**を整理します。
+
+- **`tool_choice` の `"any"`/`"tool"` が非対応**: Fable 5.1・Mythos 5.1では、`tool_choice`に`"any"`または`"tool"`を指定すると**400エラー**になります（`"auto"`/`"none"`は従来どおり）。スキーマ準拠のツール入力を保証したい場合は、strict tool useまたはstructured outputsで代替してください。
+- **thinking blocksの保持ルールが変更**: Fable 5.1・Mythos 5.1が生成した thinking block は、**生成元と同じモデルか、それより新しいモデルでのみ保持**されます。古いモデルへ会話を渡すと、APIがそのthinking blockを破棄します（Opus 5・Fable 5・Mythos 5・それより古いモデルからは引き続き受理可能）。
+- **thinking display に新モード `"updates"` 追加（ベータ）**: `thinking.display`の3つ目の値として`"updates"`が追加されました（`thinking-display-updates-2026-08-18`ベータヘッダー必須）。推論内容自体は空の`thinking`フィールドで返り、代わりに**ツール呼び出し間の短い進捗更新がテキストとして**返されます（ツール呼び出し前は最大1つのthinkingブロックのみ）。
+- **キャッシュ読み取り価格が90%削減**: Fable 5.1・Mythos 5.1の入出力価格は Fable 5 と同額（$10/$50 per MTok）ですが、**キャッシュ読み取りのみ $0.25/MTok**（通常の0.025倍）に大幅値下げされています。
+- **Per-Message Effort（ベータ）**: Fable 5.1・Mythos 5.1・Opus 5で、メッセージの`output_config.effort`（`"high"`/`"max"`）をターンごとに変更可能に（ヘッダー: `mid-conversation-output-config-2026-07-01`）。ターン間でプロンプトキャッシュは保持されます。
+- **データ保持要件はFable 5と同様**: 30日データ保持が必須で、Anthropicの明示許可がない限りゼロデータ保持（ZDR）契約では利用できません。
+- **テキストウォーターマーク・C2PA Content Credentials**: Fable 5.1・Mythos 5.1のテキスト出力にはAnthropicのテキストウォーターマークが付加され、コード実行ツール経由で生成された画像・動画にはC2PA Content Credentialsが付与されます。
+
+出典: [Anthropic Platform リリースノート（2026-09-01）](https://platform.claude.com/docs/en/release-notes/overview)
+
 ## まとめ — どの機能をいつ使うか
 
 2026年5〜6月の Messages API 新機能は、「**品質を上げる**」「**コストを下げる**」「**運用を見通せるようにする**」の3方向に効きます。
@@ -444,6 +458,7 @@ Anthropic 公式 Python SDK のメジャーバージョン **v1.0** がリリー
 - **ブラウザ操作を自動化したい** → Browser use tool（`browser_toolset_20260801`）。**PC画面全体の操作が必要** → Computer use tool（GA済み、betaヘッダー不要）。**Files/Skills/Admin APIをbetaヘッダーなしで使いたい** → いずれも2026-08-19にGA昇格済み。**Python SDKをこれから更新する** → v1.0の破壊的変更（`httpx2`移行・サンプリングパラメータ削除等）を事前確認。
 - **Cowork・Claude Code・Claude Science・M365セッションを監査対象にしたい** → Compliance API（Cowork/Claude CodeはGA、Claude Science/M365はベータ）。**Admin APIを自社言語のSDKから直接呼びたい** → `client.beta.organization`（ant CLI・Python/TypeScript/C#/Go/Java/PHP/Ruby対応）。
 - **Files/Skills APIをSDKからbetaヘッダーなしで呼びたい** → 各SDK最新版（Python 1.2.0以降等）に更新（`BetaSkill`→`BetaContainerSkill`のリネームに注意）。**キー発行者を個人/サービスアカウント単位で追跡したい** → Console の Personal keys / Service account keys。
+- **Fable 5.1/Mythos 5.1に切替予定** → `tool_choice`の`any`/`tool`指定コードを事前に洗い出す（400エラー回避）。**古いモデルとthinking blockを共有する構成がある** → 保持ルール変更でblockが破棄される点に注意。**キャッシュ多用のワークロードでコストを下げたい** → キャッシュ読み取り90%削減の恩恵が大きい。
 
 ## 参考資料
 
