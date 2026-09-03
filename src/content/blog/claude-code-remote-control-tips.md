@@ -1,10 +1,10 @@
 ---
 title: "【重要Tips】Claude Code リモートセッション起動"
 date: 2026-03-29
-updatedDate: 2026-08-25
+updatedDate: 2026-09-04
 category: "Claude技術解説"
 tags: ["Claude Code", "リモートセッション", "Remote Control", "OAuth認証", "PowerShell"]
-excerpt: "Cowork経由でClaude Codeを起動する際のOAuthトークン問題と、Remote Controlセッションを正しく起動するための手順を解説する。2026年8月追記: v2.1.229の claude remote-control --continue（最新セッションを名前不要で再開）と、v2.1.232の安定化（ネットワーク断後約30分の自動再接続・セッション再アタッチ・別デバイス引き継ぎの明示）、Week 34でのRemote Control正式版化とスマホの「デバイスカード」からのセッション開始を反映。"
+excerpt: "Cowork経由でClaude Codeを起動する際のOAuthトークン問題と、Remote Controlセッションを正しく起動するための手順を解説する。2026年8月追記: v2.1.229の claude remote-control --continue（最新セッションを名前不要で再開）と、v2.1.232の安定化（ネットワーク断後約30分の自動再接続・セッション再アタッチ・別デバイス引き継ぎの明示）、Week 34でのRemote Control正式版化とスマホの「デバイスカード」からのセッション開始、v2.1.251でのフォアグラウンド部分エージェントのツール呼び出しライブ配信を反映。"
 draft: false
 ---
 
@@ -183,3 +183,12 @@ claude remote-control
 - Desktop / VS Code がホストする Remote Control セッションでは、接続中のデバイスに**現在の permission mode が表示**される
 
 参考: [What's new in Claude Code — Week 34（公式）](https://code.claude.com/docs/en/whats-new/2026-w34) / [Remote Control ドキュメント](https://code.claude.com/docs/en/remote-control)
+
+## 【2026-08-28 追記】v2.1.251 — フォアグラウンド部分エージェントのツール呼び出しをライブ配信
+
+**Claude Code v2.1.251** で、Remote Controlクライアント（スマホ・claude.ai/code等）への情報配信が拡充されました。
+
+- **フォアグラウンドの部分エージェント（subagent）が実行中のツール呼び出し・結果が、Remote Controlクライアントへリアルタイムに配信**されるようになりました。従来はメインセッションの動きしか見えませんでしたが、フォアグラウンドで動くサブエージェントの詳細な進捗もスマホ側から追えます。
+- **バックグラウンドのサブエージェントは引き続きステータスのみ表示**（「実行中」「完了」等）で、詳細なツール呼び出しはライブ配信されません。フォアグラウンド／バックグラウンドで情報量に差がある点に注意してください。
+
+出典: [Claude Code CHANGELOG（v2.1.251）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
