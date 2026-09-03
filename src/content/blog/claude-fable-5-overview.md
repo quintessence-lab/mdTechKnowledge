@@ -1,10 +1,10 @@
 ---
 title: "Claude Fable 5 徹底解剖① — 「危険すぎて封印」された Mythos は、なぜ Fable 5 として一般公開できたのか"
 date: 2026-06-10
-updatedDate: 2026-07-23
+updatedDate: 2026-09-03
 category: "Claude技術解説"
 tags: ["Claude Fable 5", "Anthropic", "Mythos", "Fable 5", "Mythos 5", "AIモデル", "Claude"]
-excerpt: "2026年6月9日、Anthropic は最強クラスのモデル群「Mythos」を初めて一般公開した。その公開版が Claude Fable 5 だ。Fable 5 と非公開の Mythos 5 は同じ基盤モデルで、違いは安全装置の有無だけ——高リスク領域では応答を Claude Opus 4.8 にフォールバックする。本シリーズ第1話では、Fable 5 とは何か、Mythos 5 との関係、モデルファミリーの系譜、「AIは危険になりすぎている」と警告した数日後に最強モデルを公開したリリースの文脈、価格、そして使える場所までを整理する。さらに API 利用者向けに、新トークナイザ（同一テキストで約30%トークン増）・`stop_reason: refusal`・opt-in `fallbacks`・30日データ保持必須（ZDR不可）・手動 thinking バジェット非対応（400エラー）といった破壊的 API 変更も解説する。"
+excerpt: "2026年6月9日、Anthropic は最強クラスのモデル群「Mythos」を初めて一般公開した。その公開版が Claude Fable 5 だ。Fable 5 と非公開の Mythos 5 は同じ基盤モデルで、違いは安全装置の有無だけ——高リスク領域では応答を Claude Opus 4.8 にフォールバックする。本シリーズ第1話では、Fable 5 とは何か、Mythos 5 との関係、モデルファミリーの系譜、「AIは危険になりすぎている」と警告した数日後に最強モデルを公開したリリースの文脈、価格、そして使える場所までを整理する。さらに API 利用者向けに、新トークナイザ（同一テキストで約30%トークン増）・`stop_reason: refusal`・opt-in `fallbacks`・30日データ保持必須（ZDR不可）・手動 thinking バジェット非対応（400エラー）といった破壊的 API 変更も解説する。2026年9月1日リリースの後継モデル Fable 5.1 / Mythos 5.1（キャッシュ読取90%削減・tool_choice仕様変更）についても追記した。"
 draft: false
 ---
 
@@ -169,6 +169,21 @@ Fable 5 の提供形態は以下の通りです。
 これらは Opus 4.8 等からの「モデルID差し替えだけ」の移行では踏み抜きやすい落とし穴です。とりわけ **トークン約30%増（実コスト増）**・**手動 thinking バジェットの 400 エラー**・**ZDR不可**は既存パイプラインに直接影響します。API 移行の詳細チェックリストは別記事で扱う予定です。
 
 *（出典: [Anthropic Platform release notes 2026年6月9日](https://platform.claude.com/docs/en/release-notes/overview)）*
+
+## 【2026-09-01追記】後継モデル Fable 5.1 / Mythos 5.1 がリリース
+
+2026年9月1日、本記事のFable 5・Mythos 5の**後継モデル**として **Claude Fable 5.1（`claude-fable-5-1`）・Claude Mythos 5.1（`claude-mythos-5-1`）**がリリースされ、**Fable 5.1がFableファミリーの既定モデル**になりました。
+
+主な変更点:
+
+- **価格は同額**（$10/$50 per MTok）だが、**キャッシュ読み取りのみ $0.25/MTokに90%削減**（従来$1/MTok）
+- **API仕様の破壊的変更**: `tool_choice`の`"any"`/`"tool"`指定が非対応に（400エラー）
+- **thinking display新モード「updates」**（ベータ）、thinking blocksの保持ルール変更
+- ナレッジカットオフの更新、テキストウォーターマーク・C2PA Content Credentials対応
+
+本記事（Fable 5・Mythos 5の基礎解説）の内容は引き続き有効ですが、**新規に導入するなら5.1が既定の選択肢**です。5.1の詳細・「誰が使うべきか」は [Claude Fable 5.1 / Mythos 5.1 完全ガイド](/mdTechKnowledge/blog/claude-fable-5-1-mythos-5-1-guide/) を参照してください。
+
+出典: [Anthropic Platform リリースノート（2026-09-01）](https://platform.claude.com/docs/en/release-notes/overview)
 
 ## まとめと次回予告
 
