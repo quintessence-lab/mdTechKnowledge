@@ -1,6 +1,7 @@
 ---
 title: "Claude Fable 5 徹底解剖② — 2ヶ月の仕事が1日で終わる。Fable 5 の5,000万行移行と SWE-Bench Pro 80.3% の衝撃"
 date: 2026-06-10
+updatedDate: 2026-09-03
 category: "Claude技術解説"
 tags: ["Claude Fable 5", "Anthropic", "ベンチマーク", "SWE-Bench", "Fable 5", "AIモデル", "性能比較"]
 excerpt: "Claude Fable 5 はどれだけ強いのか。SWE-Bench Pro で 80.3%、自社コア分析ベンチで初の90%超え、そして5,000万行の Ruby コードベースの移行を1日で完了した Stripe の事例まで。本シリーズ第2話では、Fable 5 のベンチマーク数値と実世界の能力実証を、Opus 4.8・GPT-5.5・Gemini 3.1 Pro との比較とともに整理する。数値の出所（公式かサードパーティ集計か）も明示する。"
@@ -109,6 +110,10 @@ Fable 5 は最高水準の性能と引き換えに、価格も最高水準です
 次回・第3話では、この強力なモデルを安全に公開するための仕組み——高リスク領域での **Opus 4.8 へのフォールバック**、30日データ保持ポリシー、専門家の懸念、そして「政府を不安にさせた技術」をめぐる社会的文脈を掘り下げます。
 
 → [Claude Fable 5 徹底解剖③安全設計・社会的文脈編](/blog/claude-fable-5-safety-context/)
+
+## 【2026-09-01追記】後継モデル Fable 5.1 がリリース
+
+2026年9月1日、本記事で扱ったFable 5の後継 **Claude Fable 5.1** がリリースされ、Fableファミリーの既定モデルになりました。本記事執筆時点で5.1個別のベンチマーク数値は公式に未公開のため、本記事のFable 5ベンチマークはそのまま参考値として有効です。5.1の価格・API仕様変更点は [Claude Fable 5.1 / Mythos 5.1 完全ガイド](/mdTechKnowledge/blog/claude-fable-5-1-mythos-5-1-guide/) を参照してください。
 
 ## 参考資料
 
