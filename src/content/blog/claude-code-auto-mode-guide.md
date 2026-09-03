@@ -1,10 +1,10 @@
 ---
 title: "Claude Code Auto Mode 完全ガイド — --dangerously-skip-permissions を卒業する自律型権限管理"
 date: 2026-06-21
-updatedDate: 2026-08-30
+updatedDate: 2026-09-04
 category: "Claude技術解説"
 tags: ["Claude Code", "Auto Mode", "permission mode", "dangerously-skip-permissions", "分類器", "classifier", "claudeignore", "安全運用"]
-excerpt: "Claude Code の Auto Mode（自律型権限管理）は、すべてを無条件に許可する --dangerously-skip-permissions の安全な代替として 2026-03-24 に登場した。モデルベースの2段階トランスクリプト分類器（Sonnet 4.6 による高速フィルター＋思考連鎖による精査）で各アクションを起動前に評価し、連続3拒否・累計20拒否で自動停止する。2026-08-14 からは Pro/Max/Team プランの新規セッションで Auto Mode が既定の権限モードになった（人間の目視13.6%に対し分類器89%の危険コマンド捕捉率が論拠。Enterprise/API/Bedrock/Vertex/Foundry はオプトイン継続）。2026-08-25のv2.1.246では`/permissions`にAuto modeタブが追加され、分類器ルールをGUIから閲覧・編集可能になった。2026-08-27のv2.1.248では`--restricted`フラグが追加され、実行系ツール・WebFetchをそもそも起動時から除去する、Auto Modeとは別系統の静的な制限モードが利用可能に。本記事では権限モードの全体像、分類器の仕組み、エスカレーション停止、.claudeignore 連携、卒業の手順までを公式情報ベースで整理する。"
+excerpt: "Claude Code の Auto Mode（自律型権限管理）は、すべてを無条件に許可する --dangerously-skip-permissions の安全な代替として 2026-03-24 に登場した。モデルベースの2段階トランスクリプト分類器（Sonnet 4.6 による高速フィルター＋思考連鎖による精査）で各アクションを起動前に評価し、連続3拒否・累計20拒否で自動停止する。2026-08-14 からは Pro/Max/Team プランの新規セッションで Auto Mode が既定の権限モードになった（人間の目視13.6%に対し分類器89%の危険コマンド捕捉率が論拠。Enterprise/API/Bedrock/Vertex/Foundry はオプトイン継続）。2026-08-25のv2.1.246では`/permissions`にAuto modeタブが追加され、分類器ルールをGUIから閲覧・編集可能になった。2026-08-27のv2.1.248では`--restricted`フラグが追加され、実行系ツール・WebFetchをそもそも起動時から除去する、Auto Modeとは別系統の静的な制限モードが利用可能に。2026-09-01のv2.1.257ではContainment Escapeルールが追加され、クラウドメタデータ認証情報取得・egress回避・クロステナントアクセスが環境の明示許可なしには自動承認されなくなった。本記事では権限モードの全体像、分類器の仕組み、エスカレーション停止、.claudeignore 連携、卒業の手順までを公式情報ベースで整理する。"
 draft: false
 ---
 
@@ -181,6 +181,22 @@ Auto Mode の安全性は、その後のバージョンアップでさらに強�
 `--restricted` は「何が危険か」を分類器に判定させるAuto Modeとは思想が異なり、**「そもそも危険な手段を持たせない」**という静的な制限です。信頼できない外部入力（第三者提供のプロンプト・スクリプト経由の自動実行等）を扱う場面では、Auto Modeより`--restricted`のほうが安全側に倒せます。
 
 参考: [Claude Code CHANGELOG（v2.1.248）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
+
+---
+
+## 5.8. 【2026-09-01】v2.1.257 — Containment Escapeルール追加
+
+**Claude Code v2.1.257** で、Auto Modeの分類器に **Containment Escapeルール** が追加されました。これは、Auto Modeが「サンドボックスの外へ実質的に抜け出す」種類のアクションを、**環境側が明示的に「想定内」とマークしない限り自動承認しなくなった**というルールです。
+
+対象となる代表的なアクション:
+
+- **クラウドメタデータ認証情報の取得**（例: AWS IMDSv2などのメタデータエンドポイントへのアクセス）
+- **egress回避**（ネットワーク制限を迂回する挙動）
+- **クロステナントアクセス**（本来隔離されているはずの別テナント領域への到達）
+
+これらは従来、危険なコマンドとしてAuto Modeの分類器が個別に判定していましたが、**「封じ込め（containment）から逃れる」という性質を持つ操作群をひとまとめにルール化**したことで、個別の分類漏れに依存せず一貫して確認プロンプトが出るようになりました。CI/CDやサンドボックス内での正当な用途がある場合は、環境側の設定で明示的に許可扱いにできます。
+
+参考: [Claude Code CHANGELOG（v2.1.257）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 ---
 
