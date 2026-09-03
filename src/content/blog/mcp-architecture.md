@@ -1,10 +1,10 @@
 ---
 title: "MCP (Model Context Protocol) アーキテクチャ詳細"
 date: 2026-04-26
-updatedDate: 2026-08-27
+updatedDate: 2026-09-04
 category: "Claude技術解説"
 tags: ["MCP", "Claude Code", "JSON-RPC", "GitHub", "OAuth", "プロトコル", "Claude for Legal", "ステートレス", "SEP-2577", "SEP-2663", "Sampling", "非推奨ポリシー", "MCP Apps", "Extensions", "JSON Schema 2020-12", "W3C Trace Context"]
-excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness/エンタープライズSSO・監査トレイル・ガバナンス成熟化（貢献者ラダー/委任モデル/憲章）・新コアメンテナー）、MCP Apps（SEP-1865）、**2026-07-28 に正式リリースされたMCP新仕様**（プロトコルステートレス化＝Mcp-Session-Id 廃止、MCP Apps の HTML UI、Tasks Extension 再設計）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、Claude for Legal で公開された20+ MCPコネクタ、約20万サーバーに影響した重大脆弱性事案、さらに新仕様で制定された SEP-2577 の非推奨ポリシー（Active/Deprecated/Removed の3段階・最低12ヶ月）と Sampling/Roots/Logging の deprecated 化、**2026-08-22 公開の新ロードマップ**（Agentic Messaging・HTTP-native transport 全面化・Agent Identity/DPoP/WIF・ツールプリミティブ改善・SDK DX の5優先領域と SEP 加速レビュー）、**2026-08-24 に GA となった Enterprise-managed authorization for MCP connectors**（Datadog・Notion・Slackが新規対応、公開MCPサーバー950以上）までの参照リンクを網羅"
+excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness/エンタープライズSSO・監査トレイル・ガバナンス成熟化（貢献者ラダー/委任モデル/憲章）・新コアメンテナー）、MCP Apps（SEP-1865）、**2026-07-28 に正式リリースされたMCP新仕様**（プロトコルステートレス化＝Mcp-Session-Id 廃止、MCP Apps の HTML UI、Tasks Extension 再設計）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、Claude for Legal で公開された20+ MCPコネクタ、約20万サーバーに影響した重大脆弱性事案、さらに新仕様で制定された SEP-2577 の非推奨ポリシー（Active/Deprecated/Removed の3段階・最低12ヶ月）と Sampling/Roots/Logging の deprecated 化、**2026-08-22 公開の新ロードマップ**（Agentic Messaging・HTTP-native transport 全面化・Agent Identity/DPoP/WIF・ツールプリミティブ改善・SDK DX の5優先領域と SEP 加速レビュー）、**2026-08-24 に GA となった Enterprise-managed authorization for MCP connectors**（Datadog・Notion・Slackが新規対応、公開MCPサーバー950以上）、**Claude Code v2.1.259の`managedMcpServers`マネージド設定・無人ホスト向け`--permission-prompts none`**までの参照リンクを網羅"
 draft: false
 ---
 
@@ -1413,6 +1413,17 @@ MCPサーバーをプラグイン経由で利用する際、依存関係が未�
 
 - 効果: 初回セットアップでのつまずきを大幅に削減
 - 対象: stdio 系のローカルMCPサーバー全般
+
+### 【2026-09-02追記】v2.1.259 — managedMcpServers設定・無人ホスト向けpermission-prompts制御
+
+**Claude Code v2.1.259** で、組織運用・無人実行まわりのMCP関連機能が2件追加されました。
+
+- **`managedMcpServers` マネージド設定**: 組織が**全ユーザーにHTTP/SSE MCPサーバーを一括配布**できるようになりました。エントリの形式は`.mcp.json`と同じですが、**コマンド実行を指定するエントリはスキップ**されます（マネージド配布経由でのローカルコマンド実行を許可しないための制限）。これにより、組織標準のMCPサーバー群を個々のユーザーが`.mcp.json`を手動設定することなく利用できます。
+- **`--permission-prompts none`（無人headlessホスト向け）**: 本来プロンプトが発生するアクション（MCPツールの権限確認等を含む）を、**有効な権限モード（auto modeを含む）の判定ロジックは維持したまま自動的に拒否**するオプションです。人が対話できないheadless環境で、MCPサーバーからの予期しない権限要求によってセッションが停止するのを防ぎます。
+
+あわせて、`allowedMcpServers`の挙動も変更されています。従来は`managed-mcp.json`由来のサーバーもユーザーの許可リストでフィルタされ得ましたが、v2.1.259以降**`allowedMcpServers`はユーザーが追加したサーバーのみを対象**とするようになり、マネージド配布されたMCPサーバーを止めたい場合は`deniedMcpServers`を使う必要があります。
+
+出典: [Claude Code CHANGELOG（v2.1.259）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 参考: [Claude Code Changelog](https://code.claude.com/docs/en/changelog) / [Claude Code リリース履歴 (releasebot)](https://releasebot.io/updates/anthropic/claude-code)
 
