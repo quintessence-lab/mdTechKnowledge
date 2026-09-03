@@ -1,9 +1,10 @@
 ---
 title: "Claude Fable 5.1 / Mythos 5.1 完全ガイド — 何がアップデートされ、誰が使うべきか"
 date: 2026-09-03
+updatedDate: 2026-09-04
 category: "Claude技術解説"
 tags: ["Claude Fable 5.1", "Claude Mythos 5.1", "Anthropic", "AIモデル", "Fable 5", "tool_choice", "thinking", "プロンプトキャッシュ", "Claude"]
-excerpt: "2026年9月1日、Anthropicは Claude Fable 5 / Mythos 5 の後継モデル Claude Fable 5.1（claude-fable-5-1）・Claude Mythos 5.1（claude-mythos-5-1）をリリースし、Fable 5.1がFableファミリーの既定モデルになった。価格は入出力ともFable 5と同額（$10/$50 per MTok）だが、キャッシュ読み取りが$0.25/MTokへ90%削減。API仕様面ではtool_choiceの`any`/`tool`指定が非対応化（400エラー）、thinking blocksの保持ルール変更、thinking display新モード「updates」（ベータ）が追加された。本記事は、Fable 5からの変更点を整理したうえで、既存Fable 5利用者が移行前に確認すべき破壊的変更と、Fable 5.1が向くユースケース・向かないユースケースを解説する。"
+excerpt: "2026年9月1日、Anthropicは Claude Fable 5 / Mythos 5 の後継モデル Claude Fable 5.1（claude-fable-5-1）・Claude Mythos 5.1（claude-mythos-5-1）をリリースし、Fable 5.1がFableファミリーの既定モデルになった。価格は入出力ともFable 5と同額（$10/$50 per MTok）だが、キャッシュ読み取りが$0.25/MTokへ90%削減。API仕様面ではtool_choiceの`any`/`tool`指定が非対応化（400エラー）、thinking blocksの保持ルール変更、thinking display新モード「updates」（ベータ）が追加された。EU AI Act Article 50対応のテキストウォーターマーク（2026年8月2日以降リリースのモデルに適用、検出APIは規制当局・メディア・研究機関等に限定したprivate preview）も実装された。本記事は、Fable 5からの変更点を整理したうえで、既存Fable 5利用者が移行前に確認すべき破壊的変更と、Fable 5.1が向くユースケース・向かないユースケースを解説する。"
 draft: false
 ---
 
@@ -56,9 +57,15 @@ Fable 5.1・Mythos 5.1が生成したthinking blockは、**生成元と同じモ
 
 `output_config.effort`（`"high"`/`"max"`）をメッセージ単位・ターンごとに切り替え可能になりました（ヘッダー: `mid-conversation-output-config-2026-07-01`）。ターン間でプロンプトキャッシュは保持されるため、「通常は軽めに、難しい局面だけeffortを上げる」といった運用がキャッシュを壊さずに行えます。
 
-### 6. ウォーターマーク・C2PA対応
+### 6. テキストウォーターマーク・C2PA対応（EU AI Act対応）
 
-Fable 5.1・Mythos 5.1のテキスト出力にはAnthropicのテキストウォーターマークが付加されます。コード実行ツール経由で生成された画像・動画にはC2PA Content Credentials（来歴メタデータ）が付与されます。
+Fable 5.1・Mythos 5.1のテキスト出力には、**不可視のテキストウォーターマーク**が付加されます。検出ツールなしでは目視できませんが、Anthropicの検出APIで識別可能です。
+
+- **法規制上の背景**: **EU AI Act Article 50**は、AI生成コンテンツを機械可読な形式でマークし検出可能にすることをプロバイダーに義務付けています。この要件は**2026年8月2日以降にリリースされたモデルに適用**され、Fable 5.1・Mythos 5.1はローンチ時点からこの要件に対応した最初のモデル群です。
+- **ウォーターマーク検出API（private preview）**: Anthropicは検出APIを**private preview**で提供していますが、対象は**規制当局・法執行機関・メディア・ファクトチェッカー・独立研究者・教育機関・EU市民社会団体**に限定されています。一般開発者向けの公開APIではありません。
+- **C2PA Content Credentials**: コード実行ツール経由で生成された画像・動画には、C2PA（Coalition for Content Provenance and Authenticity）準拠のContent Credentials（来歴メタデータ）が付与されます。
+
+**実務上の含意**: 自社アプリケーションでFable 5.1の出力を扱う場合、ウォーターマーク自体はテキストに埋め込まれますが、**自社で検出・除去する手段は用意されていません**（検出APIはEU規制対応の限定公開のため）。フォーマット変換・再保存の過程でウォーターマークが失われる可能性がある点も留意してください。
 
 詳細なAPI仕様は [Anthropic Messages API 新機能まとめ 第16章](/mdTechKnowledge/blog/anthropic-messages-api-new-features-2026/) も参照してください。
 
