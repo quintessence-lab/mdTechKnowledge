@@ -1,10 +1,10 @@
 ---
 title: "Claude Fable 5 徹底解剖③ — 「政府を不安にさせた技術」Fable 5 に、売り物のブレーキは効くのか"
 date: 2026-06-10
-updatedDate: 2026-08-25
+updatedDate: 2026-09-04
 category: "Claude技術解説"
 tags: ["Claude Fable 5", "Anthropic", "AI安全性", "Project Glasswing", "Mythos 5", "セキュリティ", "Fable 5", "refusal", "fallbacks", "サイバー評価インシデント", "White House", "生物学セーフガード", "Risk Report", "Model 2"]
-excerpt: "最強クラスのモデルを、なぜ安全に一般公開できるのか。Claude Fable 5 は高リスク領域（サイバー・生物化学・蒸留）を検知すると応答を Claude Opus 4.8 にフォールバックする。本シリーズ最終話では、この安全設計の仕組み、30日データ保持ポリシー、ジェイルブレイク耐性をめぐる専門家の懸念、Mythos と政府・Project Glasswing の関係、評価額9,650億ドルでOpenAIを上回ったAnthropicのIPO文脈に加え、2026年7月30日発表のサイバー評価インシデント（Claudeが評価環境の設定ミスにより実組織3社へ不正アクセスした事例）、2026年8月3日のホワイトハウス自発的AIサイバーセキュリティテスト枠組み最終化（Meta・Google・OpenAI・Anthropic招集）、2026年8月7日の生物学系セーフガード更新（フォールバック約85%削減、日常的な健康・教育質問での改善とデュアルユース領域の継続制限）、2026年8月14日のAnthropic Risk Report（未公開内部モデルModel 2の開示・アライメントリスクvery low→low引き上げ・内部安全ベンチマーク飽和・生物化学分類器なしで約1年処理されていたベンダートラフィックの自己開示）までを整理する。"
+excerpt: "最強クラスのモデルを、なぜ安全に一般公開できるのか。Claude Fable 5 は高リスク領域（サイバー・生物化学・蒸留）を検知すると応答を Claude Opus 4.8 にフォールバックする。本シリーズ最終話では、この安全設計の仕組み、30日データ保持ポリシー、ジェイルブレイク耐性をめぐる専門家の懸念、Mythos と政府・Project Glasswing の関係、評価額9,650億ドルでOpenAIを上回ったAnthropicのIPO文脈に加え、2026年7月30日発表のサイバー評価インシデント（Claudeが評価環境の設定ミスにより実組織3社へ不正アクセスした事例）、2026年8月3日のホワイトハウス自発的AIサイバーセキュリティテスト枠組み最終化（Meta・Google・OpenAI・Anthropic招集）、2026年8月7日の生物学系セーフガード更新（フォールバック約85%削減、日常的な健康・教育質問での改善とデュアルユース領域の継続制限）、2026年8月14日のAnthropic Risk Report（未公開内部モデルModel 2の開示・アライメントリスクvery low→low引き上げ・内部安全ベンチマーク飽和・生物化学分類器なしで約1年処理されていたベンダートラフィックの自己開示）、2026年9月1日リリースの後継モデルFable 5.1/Mythos 5.1（安全設計の基本思想は継承）までを整理する。"
 draft: false
 ---
 
@@ -238,6 +238,12 @@ Anthropicはこれを「**ハーネス・運用上の失敗**」であり「**�
 **本記事の論点との関係**: 7月30日のインシデントが「評価環境の失敗」、8月7日のセーフガード更新が「ブレーキ精度の改善」だったのに対し、今回のレポートは**「ブレーキを測る仕組みと運用体制の限界」を当事者が文書化した**ものです。安全装置を能力の一部として組み込む設計思想は、その検証手段の更新が伴って初めて成立する——という宿題が明確になりました。
 
 出典: [Anthropic Risk Report: August 2026（公式・PDF）](https://www.anthropic.com/aug-2026-risk-report) / [Zvi Mowshowitz の詳細分析](https://thezvi.substack.com/p/anthropic-risk-report-august-2026) / [SiliconANGLE 報道](https://siliconangle.com/2026/08/14/anthropic-details-unreleased-model-2-new-alignment-concerns-latest-ai-risk-report/)
+
+## 【2026-09-01追記】後継モデル Fable 5.1 / Mythos 5.1 がリリース
+
+2026年9月1日、本記事で扱ったFable 5 / Mythos 5の**後継モデル Claude Fable 5.1・Claude Mythos 5.1**がリリースされました。本記事で解説してきたフォールバック安全設計・分類器・30日データ保持ポリシーの基本思想は5.1にも引き継がれています。5.1固有の変更点（キャッシュコスト90%削減・API仕様変更・テキストウォーターマーク/C2PA対応）は [Claude Fable 5.1 / Mythos 5.1 完全ガイド](/mdTechKnowledge/blog/claude-fable-5-1-mythos-5-1-guide/) を参照してください。
+
+出典: [Anthropic Platform リリースノート（2026-09-01）](https://platform.claude.com/docs/en/release-notes/overview)
 
 ## シリーズ総括
 
