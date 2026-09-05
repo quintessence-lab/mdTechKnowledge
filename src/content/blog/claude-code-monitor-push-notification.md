@@ -1,10 +1,10 @@
 ---
 title: "Claude Code Monitorツール & Push通知 完全ガイド — Routines・自動化との組み合わせ"
 date: 2026-04-29
-updatedDate: 2026-08-25
+updatedDate: 2026-09-05
 category: "Claude技術解説"
 tags: ["Claude Code", "Monitor", "Push通知", "Remote Control", "Routines", "自動化", "クロスセッションメッセージング", "SendMessage"]
-excerpt: "Claude Code v2.1.xで追加されたMonitorツール（バックグラウンドスクリプトのイベントストリーミング）とPush通知ツール（Remote Control経由のモバイル通知）を解説。Routines連携・自動化ワークフローでの活用例を含む。2026年8月追記: クロスセッションメッセージング（ListAgents/SendMessage・@メンション・notify_when_idle・Windows対応）を反映。"
+excerpt: "Claude Code v2.1.xで追加されたMonitorツール（バックグラウンドスクリプトのイベントストリーミング）とPush通知ツール（Remote Control経由のモバイル通知）を解説。Routines連携・自動化ワークフローでの活用例を含む。2026年8月追記: クロスセッションメッセージング（ListAgents/SendMessage・@メンション・notify_when_idle・Windows対応）、v2.1.251の`PreModelSwitch`/`PostModelSwitch`フックイベントとRemote Controlへのフォアグラウンド部分エージェントのライブ配信を反映。"
 draft: false
 ---
 
@@ -302,6 +302,22 @@ Week 32（2026-08-03〜07 PT）で、**同一マシン上の Claude Code セッ�
 | Week 34（2026-08-17〜21 PT） | **`notify_when_idle`** — SendMessage の入力で、**相手セッションが次にアイドルになった時点で一度だけ通知**を受け取れる（one-shot）。「相手の作業が一段落したら知りたい」を Monitor なしで実現。また**ネイティブ Windows でも SendMessage / ListAgents が利用可能**になった（macOS / Linux と同等） |
 
 参考: [Cross-session messaging（公式ドキュメント）](https://code.claude.com/docs/en/cross-session-messaging) / [What's new Week 32](https://code.claude.com/docs/en/whats-new/2026-w32)
+
+---
+
+## 【2026-08-28追記】v2.1.251 — モデル切替フックとRemote Controlへのライブ配信
+
+**Claude Code v2.1.251** で、通知・可観測性まわりに2件の関連機能が追加されました。
+
+### `PreModelSwitch` / `PostModelSwitch` フックイベント
+
+セッション中にモデルが切り替わる**前後にhookを実行**できるようになりました。モデル切替を**ブロック・確認・注釈付け**できるため、「特定のモデルへの切替時だけ通知を飛ばす」「コスト管理ポリシーに反するモデル切替を止める」といった運用に組み込めます。あわせて`SessionStart`のresumeフックが、セッションの陳腐化度（staleness）と再キャッシュの推定コストも受け取るようになりました。
+
+### フォアグラウンド部分エージェントのツール呼び出しをRemote Controlへライブ配信
+
+フォアグラウンドで動作するサブエージェントのツール呼び出し・結果が、**Remote Controlクライアント（スマホ・claude.ai/code等）へリアルタイムに配信**されるようになりました。従来はメインセッションの動きしか見えませんでしたが、詳細な進捗もスマホ側から追えます。**バックグラウンドのサブエージェントは引き続きステータスのみ表示**で、この点は変わりません。本記事のMonitor/Push通知が「完了/失敗を知らせる」ものだとすれば、こちらは「進行中の詳細をリアルタイムに覗ける」機能で、両者は補完関係にあります。
+
+出典: [Claude Code CHANGELOG（v2.1.251）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 ---
 
