@@ -1,10 +1,10 @@
 ---
 title: "Anthropic Enterprise Analytics API 完全ガイド — 組織別利用データの照会と活用"
 date: 2026-05-02
-updatedDate: 2026-08-30
+updatedDate: 2026-09-05
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Admin API", "Analytics", "エンタープライズ", "FinOps", "Slack連携", "Workload Identity Federation", "OIDC", "Spend Limits API", "RBAC", "ユーザー管理"]
-excerpt: "2026年4月、Anthropic は Claude / Claude Code Remote / Claude Cowork の組織別利用データをプログラム照会できる Enterprise Analytics API を拡張した。Rate Limits API との位置付けの違い、エンドポイント構造、認証、レスポンス、Python/curl 実装例、Slackボット連携、運用ユースケース、制限事項までをまとめて解説する。さらに2026年6月の Workload Identity Federation（WIF＝OIDCトークンによるAPIキー不要認証）対応と、Admin API に追加された issuers / service accounts / federation rules エンドポイントも解説する。 さらに 2026-07-14 Beta のユーザー管理API（組織ロール5種・APIで割当可能なのは user/managed のみ・シート消費・SSO/SCIM併用時の制約）と、Enterprise 専用の Spend Limits API（上限の階層解決・ユーザー単位上書き・増額申請の承認/却下・金額は最小単位の文字列）、2026年8月のAdmin API GA化（8/19ユーザー管理ベータヘッダー不要化、8/26 `client.beta.organization`として全主要SDKから利用可能に）も収録。"
+excerpt: "2026年4月、Anthropic は Claude / Claude Code Remote / Claude Cowork の組織別利用データをプログラム照会できる Enterprise Analytics API を拡張した。Rate Limits API との位置付けの違い、エンドポイント構造、認証、レスポンス、Python/curl 実装例、Slackボット連携、運用ユースケース、制限事項までをまとめて解説する。さらに2026年6月の Workload Identity Federation（WIF＝OIDCトークンによるAPIキー不要認証）対応と、Admin API に追加された issuers / service accounts / federation rules エンドポイントも解説する。 さらに 2026-07-14 Beta のユーザー管理API（組織ロール5種・APIで割当可能なのは user/managed のみ・シート消費・SSO/SCIM併用時の制約）と、Enterprise 専用の Spend Limits API（上限の階層解決・ユーザー単位上書き・増額申請の承認/却下・金額は最小単位の文字列）、2026年8月のAdmin API GA化（8/19ユーザー管理ベータヘッダー不要化、8/26 `client.beta.organization`として全主要SDKから利用可能に）、2026-09-01の`anthropic-version`ヘッダーがAdmin API・Enterprise Analytics API・Compliance APIでも必須化された変更も収録。"
 draft: false
 ---
 
@@ -526,6 +526,18 @@ members = client.beta.organization.users.list()
 > 上記はSDKの命名規則から推測した記述例です。実際のメソッド名・引数は各言語SDKの最新リファレンスで確認してください。
 
 出典: [Anthropic Platform リリースノート（2026-08-19, 2026-08-26）](https://platform.claude.com/docs/en/release-notes/overview)
+
+### 【2026-09-01追記】`anthropic-version`ヘッダーがAdmin API・Enterprise Analytics API・Compliance APIでも必須化
+
+従来Messages APIでは必須だった **`anthropic-version`ヘッダー**が、**Admin API・Enterprise Analytics API・Compliance API**でも明示的に要求されるようになりました。これまで本記事のcurl例のようにMessages API以外の呼び出しではこのヘッダーを省略していた場合、**今後は失敗する可能性がある**ため、既存の管理系API呼び出しコードを見直してください。
+
+```bash
+curl https://api.anthropic.com/v1/organizations/usage_report/messages \
+  -H "x-api-key: $ANTHROPIC_ADMIN_KEY" \
+  -H "anthropic-version: 2023-06-01"  # ← Enterprise Analytics APIでも必須に
+```
+
+出典: [Anthropic Platform リリースノート（2026-09-01）](https://platform.claude.com/docs/en/release-notes/overview)
 
 ## Spend Limits API — 支出「上限」をAPIで制御する（Enterprise 専用）
 
