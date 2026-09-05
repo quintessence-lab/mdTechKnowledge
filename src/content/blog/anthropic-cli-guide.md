@@ -1,9 +1,10 @@
 ---
 title: "ant CLI 完全ガイド — Anthropic公式Claude API向けコマンドラインクライアント"
 date: 2026-04-26
+updatedDate: 2026-09-05
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "CLI", "ant", "開発ツール"]
-excerpt: "Anthropic公式のClaude API向けCLI「ant」を解説。go installでセットアップし、フラグ/YAML/@path参照でリクエスト構築、--transformでレスポンス抽出。Claude Codeとの連携・APIリソースのYAMLバージョン管理を整理。"
+excerpt: "Anthropic公式のClaude API向けCLI「ant」を解説。go installでセットアップし、フラグ/YAML/@path参照でリクエスト構築、--transformでレスポンス抽出。Claude Codeとの連携・APIリソースのYAMLバージョン管理に加え、2026-09-03にGAした`ant apply`（v1.30.0以降必須、agents/environments/skills/memory stores/deploymentsをリポジトリファイルで宣言管理するインフラ-as-codeワークフロー、`claude-lock.json`によるリソース重複防止）も整理。"
 draft: false
 ---
 
@@ -217,6 +218,54 @@ AGENT_ID=$(ant beta:agents create --transform id --format raw < agents/code-revi
 # 更新（version 不一致なら 409 で失敗）
 ant beta:agents update --agent-id "$AGENT_ID" --version 3 < agents/code-reviewer.yaml
 ```
+
+## 【2026-09-03追記】`ant apply` — Managed Agentsリソースのインフラ-as-codeがGA
+
+**`ant apply`**（**ant CLI v1.30.0以降が必須**）が正式提供されました。上記の`ant beta:agents create/update`を手動で使い分ける運用に代わり、**agents / environments / skills / memory stores / deployments をリポジトリのファイルとして宣言し、`ant apply`一発でAPI側のリソースと同期**できます。
+
+### 基本の流れ
+
+```bash
+# agents/summarizer.md というMarkdownファイルを用意（frontmatterが設定、本文がsystem prompt）
+ant apply agents/summarizer.md
+```
+
+実行すると**変更内容のプラン（plan）が表示され、承認してから適用**されます（`y`/`n`/`d`〔詳細表示〕で応答）。初回実行時に **`claude-lock.json`**（ロックファイル）が生成され、各ファイルが作成したリソースのID・organization/workspace・ハッシュ値が記録されます。
+
+### `claude-lock.json` をコミットする理由
+
+このロックファイルを**必ずコミット**することで、次回以降の`ant apply`実行時（自分のマシンでもCIでも）に**同じリソースを更新する**ようになり、実行のたびに重複作成されるのを防ぎます。ファイルが編集されたかどうかは、送信時のハッシュと応答時のハッシュ（`hash`/`remote_hash`）の比較で検知されます。
+
+### ディレクトリ規約とリソース参照
+
+| リソース種別 | 配置ディレクトリ | 形式 |
+|:---|:---|:---|
+| agent | `agents/` | Markdown（frontmatter + system prompt） |
+| environment | `environments/` | YAML |
+| memory store | `memory_stores/` | YAML |
+| deployment | `deployments/` | Markdown（frontmatterがリクエストボディ、本文がセッション開始メッセージ） |
+| skill | `skills/<name>/SKILL.md` を含むディレクトリ | 1バンドルとしてアップロード |
+
+リソース同士は**相対パスで参照**できます（例: deploymentのfrontmatターで`agent: ../agents/reviewer.md`）。`ant apply`は依存順に作成し、実際のIDへ自動解決します。ディレクトリ全体を対象にする場合は`ant apply .`。
+
+### 主要フラグ
+
+| フラグ | 効果 |
+|:---|:---|
+| `--dry-run` | プラン表示のみで適用しない（ブロックされていても終了コード0） |
+| `--yes` | 確認なしで適用（ターミナルなし＝CI実行時は必須） |
+| `--force` | Console等ファイル外で変更・アーカイブ・削除されたリソースも上書き |
+| `--prune` | ロックファイルにあるがファイルで宣言されなくなったリソースを削除 |
+| `--upgrade` | GitHub URL参照のskillを再解決（既定ではロック時点のcommitに固定） |
+
+### CI運用時の注意点
+
+- ターミナルがない環境（CI）では確認プロンプトが出せないため、**`--yes`必須**
+- PRでは`--dry-run`でプランを表示するだけに留め、default branchへのマージ後に本適用するのが定石
+- **1度に1つのapplyのみ実行**（ロックファイル自体には排他制御がない）
+- 認証はAPIキーではなく **Workload Identity Federation** を推奨（`claude-lock.json`に記録された組織・ワークスペース以外の資格情報は拒否される）
+
+出典: [Manage resources as code with ant apply（公式ドキュメント）](https://platform.claude.com/docs/en/cli-sdks-libraries/cli/apply)
 
 ## Claude Code との連携・使い分け
 
