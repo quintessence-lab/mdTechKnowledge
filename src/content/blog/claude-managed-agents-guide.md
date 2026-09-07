@@ -1,10 +1,10 @@
 ---
 title: "Claude Managed Agents 簡易ガイド — アーキテクチャ・比較・ユースケース"
 date: 2026-04-08
-updatedDate: 2026-08-27
+updatedDate: 2026-09-07
 category: "Claude技術解説"
 tags: ["Claude", "Managed Agents", "Agent SDK", "Claude Code", "API", "マルチエージェント", "Memory", "Enterprise", "Self-hosted sandboxes", "MCP tunnels", "Cloudflare", "Modal", "Vercel", "Daytona", "Cloudflare Environments", "Webhooks", "microVM", "V8 Isolate", "Scheduled deployments", "Vault環境変数"]
-excerpt: "Claude Managed Agentsの3層アーキテクチャ（Session/Harness/Sandbox）、p50 TTFT 60%削減のパフォーマンス改善、Memory機能、Dreaming・Outcomes・Multi-agent orchestration、エンタープライズ向けRBAC・OpenTelemetry、2026年5月19日発表のSelf-hosted sandboxes（Cloudflare/Daytona/Modal/Vercel対応、Public Beta）とMCP tunnels（Research Preview、プライベートネットワーク内MCPサーバーへの outbound-only E2E接続）、料金体系（$0.08/session-hour）、Cloudflare Environments（brain/hands 分離・Linux microVM と V8 Isolate を選択可能・ブラウザ/メール/アウトバウンドプロキシ/Cloudflare Mesh・Workers VPC）に加え、2026年8月1日のDreaming Opus 5対応、8月7日のセッション予算（budget_reached）・マルチエージェントrosterへのアドバイザー追加・推論ジオ制御（inference_geo）・GitHubリポジトリからのスキル自動ロード、8月19日のweb検索/取得ドメイン制限・self-hosted sandboxへのmemory store接続・Console session viewer再設計、8月26日のAdmin APIが全主要SDKで`client.beta.organization`として利用可能になった件までを1ページに整理。"
+excerpt: "Claude Managed Agentsの3層アーキテクチャ（Session/Harness/Sandbox）、p50 TTFT 60%削減のパフォーマンス改善、Memory機能、Dreaming・Outcomes・Multi-agent orchestration、エンタープライズ向けRBAC・OpenTelemetry、2026年5月19日発表のSelf-hosted sandboxes（Cloudflare/Daytona/Modal/Vercel対応、Public Beta）とMCP tunnels（Research Preview、プライベートネットワーク内MCPサーバーへの outbound-only E2E接続）、料金体系（$0.08/session-hour）、Cloudflare Environments（brain/hands 分離・Linux microVM と V8 Isolate を選択可能・ブラウザ/メール/アウトバウンドプロキシ/Cloudflare Mesh・Workers VPC）に加え、2026年8月1日のDreaming Opus 5対応、8月7日のセッション予算（budget_reached）・マルチエージェントrosterへのアドバイザー追加・推論ジオ制御（inference_geo）・GitHubリポジトリからのスキル自動ロード、8月19日のweb検索/取得ドメイン制限・self-hosted sandboxへのmemory store接続・Console session viewer再設計、8月26日のAdmin APIが全主要SDKで`client.beta.organization`として利用可能になった件、2026年9月のCompliance APIによるCowork/Claude Codeローカルセッショントランスクリプト対応（関連情報）までを1ページに整理。"
 draft: false
 ---
 
@@ -538,6 +538,18 @@ Outcomes と組み合わせれば「成功基準を満たすまで自律的に�
 Admin API（組織情報・メンバー・招待・ワークスペース・APIキー・レート制限レポート・Workload Identity Federation・CMEKをカバー）が、**ant CLI** に加えて **Python／TypeScript／C#／Go／Java／PHP／Ruby** の各公式SDKで `client.beta.organization` 名前空間から直接呼び出せるようになりました。Managed Agentsを運用する組織のエージェント数・利用状況を、エージェント自体と同じ言語のSDKで一元的に管理できます。
 
 出典: [Anthropic Release notes（2026-08-26）](https://platform.claude.com/docs/en/release-notes/overview)
+
+## 【2026-09追記】Compliance APIがCowork/Claude Codeのローカルセッショントランスクリプトに対応（関連情報）
+
+**Managed Agents自体の対象拡大ではありません**が、関連するコンプライアンス機能として、**Compliance API**（Claude Enterprise向けの監査・ガバナンスAPI）が新たに**Cowork・Claude Code・Claude Science・Claude for Microsoft 365のローカルセッション**（ユーザーがEnterpriseアカウントでサインインした状態で自分のマシン上で実行したセッション）のトランスクリプトを取得できるようになりました。
+
+- 対象は**Compliance Access Key**を持つエンドポイント（`/v1/compliance/*`配下）
+- **ローカルセッション**（ユーザーのマシン上）と、claude.ai Web/モバイルで動く**リモートセッション**（Anthropic管理環境）の両方をカバー
+- レート制限は親組織あたり600 req/分を共有。リモートセッション用には別枠のリクエスト予算が追加である
+
+Managed Agents（本記事のエージェント構築API）のセッション自体が対象に含まれるわけではありませんが、同じ組織内でCowork/Claude Codeを併用しているチームの監査要件を考える上で関連する情報です。
+
+出典: [Compliance API（公式ドキュメント）](https://platform.claude.com/docs/en/manage-claude/compliance-api)
 
 ## APIアクセスとレート制限
 
