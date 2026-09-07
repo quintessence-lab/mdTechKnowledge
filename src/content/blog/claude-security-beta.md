@@ -1,10 +1,10 @@
 ---
 title: "Claude Security Beta — Anthropic エンタープライズセキュリティ製品の全貌（2026年5月発表）"
 date: 2026-05-02
-updatedDate: 2026-08-07
+updatedDate: 2026-09-07
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude Security", "Opus 4.7", "セキュリティ", "脆弱性スキャン", "エンタープライズ", "脅威インテリジェンス", "MITRE ATT&CK", "サイバー攻撃", "サイバー評価インシデント", "Inference hooks", "DLP"]
-excerpt: "2026年5月1日、Anthropic は Claude Opus 4.7 を中核に据えたエンタープライズ向けセキュリティ製品 Claude Security のパブリックベータを発表した。コードベース脆弱性スキャン・パッチ生成、CrowdStrike / Microsoft Security / Palo Alto Networks / SentinelOne / TrendAI / Wiz などの技術パートナー、Accenture / BCG / Deloitte / Infosys / PwC などのサービスパートナー連携を含め、全体像を整理する。さらに2026年6月3日公開の脅威インテリジェンスレポート（禁止832アカウントの MITRE ATT&CK マッピング、マルウェア生成67.3%、中リスク以上が33%→56%へ）、2025年11月に阻止された AI 主導サイバースパイ活動の事例、2026年7月30日発表のサイバー評価インシデント（評価環境の設定ミスでClaudeが実組織3社に不正アクセス）、そして2026年8月5日発表のInference hooks（Claude Enterprise beta。DLPサーバーへ推論前にプロンプトを問い合わせ、Netskope/Palo Alto/Proofpoint/Zscaler等と統合）も追補する。"
+excerpt: "2026年5月1日、Anthropic は Claude Opus 4.7 を中核に据えたエンタープライズ向けセキュリティ製品 Claude Security のパブリックベータを発表した。コードベース脆弱性スキャン・パッチ生成、CrowdStrike / Microsoft Security / Palo Alto Networks / SentinelOne / TrendAI / Wiz などの技術パートナー、Accenture / BCG / Deloitte / Infosys / PwC などのサービスパートナー連携を含め、全体像を整理する。さらに2026年6月3日公開の脅威インテリジェンスレポート（禁止832アカウントの MITRE ATT&CK マッピング、マルウェア生成67.3%、中リスク以上が33%→56%へ）、2025年11月に阻止された AI 主導サイバースパイ活動の事例、2026年7月30日発表のサイバー評価インシデント（評価環境の設定ミスでClaudeが実組織3社に不正アクセス）、そして2026年8月5日発表のInference hooks（Claude Enterprise beta。DLPサーバーへ推論前にプロンプトを問い合わせ、Netskope/Palo Alto/Proofpoint/Zscaler等と統合）、2026年9月2日発表のEnterprise Frontier Safeguards（EFS。ゼロデータリテンションと不正利用検出を両立する新アーキテクチャ、顧客所有クラウドへのデータ保持、100社超と共同開発・秋以降段階ロールアウト）も追補する。"
 draft: false
 ---
 
@@ -335,6 +335,24 @@ Claude Security が「AI で守る」プロダクトであるのと表裏一体�
 | 通信方向 | Anthropicが組織のサーバーを呼ぶ | 組織がAnthropic APIを呼ぶ |
 
 出典: [Anthropic公式ブログ: Claude Enterprise Inference Hooks](https://claude.com/blog/claude-enterprise-inference-hooks) ／ [Inference hooks（公式ドキュメント）](https://platform.claude.com/docs/en/manage-claude/inference-hooks)
+
+## 【2026-09-02追記】Enterprise Frontier Safeguards（EFS）— ゼロデータリテンションと不正利用検出の両立
+
+2026年9月2日、Anthropicは新しいセキュリティアーキテクチャ **Enterprise Frontier Safeguards（EFS）** を発表しました。「ゼロデータリテンションを求める企業でも、不正利用検出を諦めなくていい」という、これまで両立が難しかった要件に応える仕組みです。
+
+### なぜゼロデータリテンションと不正検出は両立しにくいのか
+
+Anthropicの説明によれば、**「最も洗練された不正利用は、単一のやり取りではなく、複数のタスク・複数セッション・複数アカウントにまたがって広がる」**ため、個々のやり取りを都度スキャンして即座に削除する運用では、こうしたパターンを検出できません。EFSは**30日間のリテンション期間**を設け、その間に継続的な監視を行うことでパターンを検出します。
+
+### 顧客所有クラウドへのデータ保持
+
+EFSの特徴は、**この監視用データを顧客自身のクラウドインフラ（Amazon S3・Azure Blob Storage・Google Cloud Storage）に保管する**点です。顧客自身の暗号化鍵・アクセスポリシー・監査ログの管理下に置かれるため、Anthropic側にデータを預けたくない企業でも導入しやすい設計になっています。検出対象は盗難認証情報の悪用やサイバー攻撃能力の開発試行などです。
+
+### 開発パートナーと展開時期
+
+**100社超の顧客と共同開発**されており、フォーチュン500企業の約4分の1、米国のグローバルシステム上重要銀行（G-SIB）各行に加え、**Comcast・KPMG・Mastercard・Salesforce・Visa**などが名を連ねています。Goldman Sachs・Morgan Stanley・Citi等の金融機関も参画していると報じられています。**2026年秋の広範な段階的ロールアウト**が予定されています。
+
+出典: [Help Net Security（2026-09-02）](https://www.helpnetsecurity.com/2026/09/02/anthropic-enterprise-frontier-safeguards/) / [MarkTechPost（2026-09-02）](https://www.marktechpost.com/2026/09/02/anthropic-enterprise-frontier-safeguards-efs/)
 
 ## 既存セキュリティ事案との関係性
 
