@@ -1,10 +1,10 @@
 ---
 title: "Claude Managed Agents 簡易ガイド — アーキテクチャ・比較・ユースケース"
 date: 2026-04-08
-updatedDate: 2026-09-07
+updatedDate: 2026-09-12
 category: "Claude技術解説"
 tags: ["Claude", "Managed Agents", "Agent SDK", "Claude Code", "API", "マルチエージェント", "Memory", "Enterprise", "Self-hosted sandboxes", "MCP tunnels", "Cloudflare", "Modal", "Vercel", "Daytona", "Cloudflare Environments", "Webhooks", "microVM", "V8 Isolate", "Scheduled deployments", "Vault環境変数"]
-excerpt: "Claude Managed Agentsの3層アーキテクチャ（Session/Harness/Sandbox）、p50 TTFT 60%削減のパフォーマンス改善、Memory機能、Dreaming・Outcomes・Multi-agent orchestration、エンタープライズ向けRBAC・OpenTelemetry、2026年5月19日発表のSelf-hosted sandboxes（Cloudflare/Daytona/Modal/Vercel対応、Public Beta）とMCP tunnels（Research Preview、プライベートネットワーク内MCPサーバーへの outbound-only E2E接続）、料金体系（$0.08/session-hour）、Cloudflare Environments（brain/hands 分離・Linux microVM と V8 Isolate を選択可能・ブラウザ/メール/アウトバウンドプロキシ/Cloudflare Mesh・Workers VPC）に加え、2026年8月1日のDreaming Opus 5対応、8月7日のセッション予算（budget_reached）・マルチエージェントrosterへのアドバイザー追加・推論ジオ制御（inference_geo）・GitHubリポジトリからのスキル自動ロード、8月19日のweb検索/取得ドメイン制限・self-hosted sandboxへのmemory store接続・Console session viewer再設計、8月26日のAdmin APIが全主要SDKで`client.beta.organization`として利用可能になった件、2026年9月のCompliance APIによるCowork/Claude Codeローカルセッショントランスクリプト対応（関連情報）までを1ページに整理。"
+excerpt: "Claude Managed Agentsの3層アーキテクチャ（Session/Harness/Sandbox）、p50 TTFT 60%削減のパフォーマンス改善、Memory機能、Dreaming・Outcomes・Multi-agent orchestration、エンタープライズ向けRBAC・OpenTelemetry、2026年5月19日発表のSelf-hosted sandboxes（Cloudflare/Daytona/Modal/Vercel対応、Public Beta）とMCP tunnels（Research Preview、プライベートネットワーク内MCPサーバーへの outbound-only E2E接続）、料金体系（$0.08/session-hour）、Cloudflare Environments（brain/hands 分離・Linux microVM と V8 Isolate を選択可能・ブラウザ/メール/アウトバウンドプロキシ/Cloudflare Mesh・Workers VPC）に加え、2026年8月1日のDreaming Opus 5対応、8月7日のセッション予算（budget_reached）・マルチエージェントrosterへのアドバイザー追加・推論ジオ制御（inference_geo）・GitHubリポジトリからのスキル自動ロード、8月19日のweb検索/取得ドメイン制限・self-hosted sandboxへのmemory store接続・Console session viewer再設計、8月26日のAdmin APIが全主要SDKで`client.beta.organization`として利用可能になった件、2026年9月のCompliance APIによるCowork/Claude Codeローカルセッショントランスクリプト対応（関連情報）、2026年9月10日追加の権限ポリシー`auto`オプション（サーバー側での自動評価・`evaluation`/`evaluated_permission`フィールド）までを1ページに整理。"
 draft: false
 ---
 
@@ -550,6 +550,31 @@ Admin API（組織情報・メンバー・招待・ワークスペース・API�
 Managed Agents（本記事のエージェント構築API）のセッション自体が対象に含まれるわけではありませんが、同じ組織内でCowork/Claude Codeを併用しているチームの監査要件を考える上で関連する情報です。
 
 出典: [Compliance API（公式ドキュメント）](https://platform.claude.com/docs/en/manage-claude/compliance-api)
+
+## 【2026-09-10追記】権限ポリシーに`auto`オプション追加 — サーバー側での自動評価
+
+Managed Agentsの**権限ポリシー**に、新しい選択肢として **`auto`** が追加されました。従来は許可/拒否をあらかじめ静的に定義する運用が中心でしたが、`auto`を指定すると**サーバー側が各ツール呼び出しをそのつど評価**し、次の3つのいずれかを自動的に判断します。
+
+| 評価結果 | 動作 |
+|:---|:---|
+| **実行（Run）** | ツール呼び出しを許可してそのまま実行 |
+| **拒否（Deny）** | ツール呼び出しをブロック |
+| **一時停止（Pause for approval）** | 人間の承認を待つためセッションを一時停止 |
+
+```
+permission_policy: "auto"
+```
+
+### 評価結果を追跡する新フィールド
+
+`agent.tool_use` / `agent.mcp_tool_use` イベントに、サーバーの判断根拠を確認できる新フィールドが追加されました。
+
+- **`evaluation`**: サーバーが各ツール呼び出しをどう評価したか
+- **`evaluated_permission`**: 実際に適用された権限ポリシーの判定結果
+
+これにより、静的なallow/denyリストでは対応しきれない状況（文脈依存でリスクが変わる操作等）でも、サーバー側の評価ロジックに判断を委ねつつ、**判断の経緯をイベントログから追跡できる**ようになりました。
+
+出典: [Let the server evaluate each call with auto（公式ドキュメント）](https://platform.claude.com/docs/en/managed-agents/permission-policies#let-the-server-evaluate-each-call-with-auto)
 
 ## APIアクセスとレート制限
 
