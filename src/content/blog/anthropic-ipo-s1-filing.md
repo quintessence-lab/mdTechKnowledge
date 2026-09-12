@@ -1,10 +1,10 @@
 ---
 title: "Anthropic、SEC へ機密ドラフト S-1 提出 — 『公式発表に数字はない』IPOプロセスとPBC上場の論点"
 date: 2026-06-06
-updatedDate: 2026-09-01
+updatedDate: 2026-09-12
 category: "一般リサーチ"
 tags: ["Anthropic", "IPO", "S-1", "SEC", "Public Benefit Corporation", "Long-Term Benefit Trust", "上場", "資本市場", "OpenAI", "SpaceX", "メガIPO"]
-excerpt: "2026年6月1日、Anthropic は SEC へ Form S-1 の機密ドラフト登録届出書を提出し IPO 手続きを開始した。本記事は『公式発表は Rule 135 準拠の定型文で具体的な数値を一切含まない』という事実の確認から始め、機密提出（confidential filing）の仕組み、評価額$965B・年次ランレート$47Bの出典の切り分け、未定事項（株式数・価格・市場・ティッカー）、想定主幹事、2026メガIPO 3社（SpaceX/OpenAI/Anthropic）の横比較、そして PBC × Long-Term Benefit Trust という独特のガバナンスが上場でどう論点化するかを整理する。2026-08追記: 8〜9月のロードショー本格化・10月Nasdaq上場・$60B超調達という観測報道、評価額ターゲット$2兆観測・収益ランレート$65B突破・Q2収益$11.5B（いずれも報道・投資家推計ベース、公式未確認）を追記。公開S-1提出は2026年8月末見込みだが8月26日時点でSEC EDGAR未掲載という状況も追記した。"
+excerpt: "2026年6月1日、Anthropic は SEC へ Form S-1 の機密ドラフト登録届出書を提出し IPO 手続きを開始した。本記事は『公式発表は Rule 135 準拠の定型文で具体的な数値を一切含まない』という事実の確認から始め、機密提出（confidential filing）の仕組み、評価額$965B・年次ランレート$47Bの出典の切り分け、未定事項（株式数・価格・市場・ティッカー）、想定主幹事、2026メガIPO 3社（SpaceX/OpenAI/Anthropic）の横比較、そして PBC × Long-Term Benefit Trust という独特のガバナンスが上場でどう論点化するかを整理する。2026-08追記: 8〜9月のロードショー本格化・10月Nasdaq上場・$60B超調達という観測報道、評価額ターゲット$2兆観測・収益ランレート$65B突破・Q2収益$11.5B（いずれも報道・投資家推計ベース、公式未確認）を追記。公開S-1提出は2026年8月末見込みだが8月26日時点でSEC EDGAR未掲載という状況、2026年9月3日確定間近の$15Bプレクレジットファシリティ（Morgan Stanley主導、目標$10Bから拡大）とIPO開始時期の10月中旬への延期も追記した。"
 draft: false
 ---
 
@@ -265,6 +265,18 @@ CEO の Daniela Amodei は IPO に先立つインタビュー（TechCrunch, 6/4�
 ただし**2026年8月26日時点で、SEC EDGAR検索では公開S-1・S-1/Aは確認されていません**。評価額ターゲット「$2兆」（前述、NYT報道も同数字で追認）・上場時期「2026年秋/Q4/10月目標」についても、既に本記事で扱った観測から数字上の更新はなく、**公開S-1の実際の提出タイミングが唯一の未確定要素**として残っています。
 
 出典: [Unusual Whales: Anthropic Public S-1 Filing Nears（2026-08）](https://unusualwhales.com/news/anthropic-public-s1-filing-august-2026)
+
+### 【2026-09 追記】$15Bプレクレジットファシリティ確定・IPO開始は10月中旬に延期
+
+2026年9月3日（PT）、Anthropicが**IPO前のリボルビング・クレジットファシリティを$15B規模で確定**間近と報じられました。当初目標としていた約$10Bを大きく上回る規模で、前年に確保した**$2.5B・5年物ファシリティ**からは6倍規模への拡大です。
+
+- **主幹事**: **Morgan Stanley**が主導し、**Goldman Sachs・JPMorgan Chase・Citigroup**が主要ポジションを担う。Barclays・Wells Fargoも主要行として参加見込みで、Bank of America・Deutsche Bank・Royal Bank of Canada・UBSも上位に名を連ねる
+- **IPO主幹事との重複**: 最も主要な役割を担う4行（Morgan Stanley・Goldman Sachs・JPMorgan Chase・Citigroup）は、**IPO自体の主幹事も務めている**とされる
+- **規模観**: AnthropicはSpaceXのIPO規模に匹敵、またはそれを上回る調達を狙っているとみられる
+
+**IPO開始時期についても続報**があり、2026年9月7日時点の報道では**IPOの本格開始が10月中旬に延期**されたとされています（プロスペクタスは9月末目安、投資家向けマーケティングは10月という段取り）。前述の「10月Nasdaq上場」という時期観測自体は維持されつつ、具体的なプロセスの各段階が後ろ倒しになっている状況です。
+
+出典: [Bloomberg: Anthropic Nears Finalizing $15 Billion Pre-IPO Credit Facility（2026-09-03）](https://www.bloomberg.com/news/articles/2026-09-03/anthropic-nears-finalizing-15-billion-pre-ipo-credit-facility)
 
 ---
 
