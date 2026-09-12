@@ -1,10 +1,10 @@
 ---
 title: "Anthropic エンタープライズ攻勢2026 — PwC・KPMG・DXC・TCS と Big Four/SIer 連携、$1.5B FDE スタジオまで"
 date: 2026-06-20
-updatedDate: 2026-07-28
+updatedDate: 2026-09-12
 category: "一般リサーチ"
 tags: ["Anthropic", "Claude", "エンタープライズAI", "PwC", "KPMG", "DXC", "TCS", "Forward Deployed Engineer"]
-excerpt: "2026年5〜6月、Anthropic は PwC・KPMG・DXC・TCS という Big Four / 大手 SIer との大型連携を相次いで発表し、さらに Blackstone・Goldman Sachs・Hellman & Friedman と組んで FDE 型のエンタープライズ AI サービス会社（報道で総額 $1.5B 規模）を立ち上げた。コンサル・SIer・PE を「実装の通り道」として、規制業種・大企業・PE 保有の中堅市場へ Claude を一気に押し込む攻勢の全体像と、各社の認定規模・活用製品・狙う市場を比較整理する一般リサーチ。"
+excerpt: "2026年5〜6月、Anthropic は PwC・KPMG・DXC・TCS という Big Four / 大手 SIer との大型連携を相次いで発表し、さらに Blackstone・Goldman Sachs・Hellman & Friedman と組んで FDE 型のエンタープライズ AI サービス会社（報道で総額 $1.5B 規模）を立ち上げた。コンサル・SIer・PE を「実装の通り道」として、規制業種・大企業・PE 保有の中堅市場へ Claude を一気に押し込む攻勢の全体像と、各社の認定規模・活用製品・狙う市場を比較整理する一般リサーチ。2026年8月26日発表のSalesforce「Claudeforce」（両社が互いの顧客となる双方向パートナーシップ、Claude in Salesforce・Salesforce in Claudeの相互統合）も追記した。"
 draft: false
 ---
 
@@ -160,6 +160,22 @@ Anthropic CFO の Krishna Rao は「Claude へのエンタープライズ需要�
 **Cognizant**（2026年7月27日発表）: Cognizant が Anthropic との提携を拡大し、Claude を自社の中核プラットフォーム **Flowsource™（仕様駆動型開発。Claude Code が同モジュール内で機能）・Neuro® AI Engineering・Neuro® IT Ops** の3製品へ組み込み。Cognizant 自身も **Claude Partner Network の Global Premier Partner** に昇格した。**従業員30,000人以上を Claude 認定トレーニング**し「Frontier Certified workforce」モデルを構築。対象は製造業・ライフサイエンス・保険業など規制の厳しい業界で、実装例として製薬企業向け契約審査システムが審査時間を最大40%削減・抽出精度88%以上を達成したと報告されている。
 
 UST・LTM に続き Cognizant も加わったことで、大手SIer/コンサル各社が Claude Partner Network を軸にエンタープライズ実装体制を competitively 強化する動きが2026年7月に集中して顕在化した。出典: [The Cryptonomist（2026-07-27）](https://en.cryptonomist.ch/2026/07/27/cognizant-anthropic-partnership/)。
+
+### 【2026-08-26 追記】Salesforce「Claudeforce」— 双方向の戦略的パートナーシップ
+
+**Salesforce と Anthropic**（2026年8月26日発表）: これまでのコンサル・SIer型提携とは性格が異なる、**両社が互いの顧客でもある双方向パートナーシップ**です。「AIの#1」×「CRMの#1」を掲げ、Claude in Salesforce・Salesforce in Claude の2方向で統合が進みます。
+
+| 統合 | 内容 |
+|:---|:---|
+| **Claude in Salesforce** | Agentforceの**Atlas Reasoning Engine**を支え、**Agentforce Vibes・Agentforce Coworkerの既定モデル**に。規制業界向けには**Amazon Bedrock経由・Salesforce Trust Boundary内**での提供にも対応 |
+| **Salesforce in Claude** | Claude側に追加されるプラグイン。**37種のプリビルトセールススキル**を搭載し、営業担当者がライブの収益データにアクセス・パイプライン更新を自動化できる。Salesforceのエンタープライズ統合レイヤー**AIforce**（MCPサーバー・API・CLIツール経由で業務データ・ワークフローをエージェントに接続）上に構築 |
+
+- **展開状況**: Salesforce in Claudeは**選定パイロット顧客に提供中、オープンベータは2026年9月予定**。追加のプリビルトスキルは2026年後半にリリース予定
+- **相互採用**: Salesforceは社内・Slack・Agentforce等でClaudeを既定AIモデルとして採用しており、Claude CodeとClaude Enterpriseも全Salesforce開発者・ナレッジワーカーへ展開予定
+
+これまでの提携（PwC・KPMG・DXC・TCS等）が「導入支援」の色合いが強かったのに対し、Claudeforceは**プラットフォーム同士の相互組み込み**という点で異なる形態の提携です。
+
+出典: [Salesforce公式プレスリリース（2026-08-26）](https://www.salesforce.com/news/press-releases/2026/08/26/salesforce-and-anthropic-announce-claudeforce/)
 
 ---
 
