@@ -1,10 +1,10 @@
 ---
 title: "ant CLI 完全ガイド — Anthropic公式Claude API向けコマンドラインクライアント"
 date: 2026-04-26
-updatedDate: 2026-09-05
+updatedDate: 2026-09-12
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "CLI", "ant", "開発ツール"]
-excerpt: "Anthropic公式のClaude API向けCLI「ant」を解説。go installでセットアップし、フラグ/YAML/@path参照でリクエスト構築、--transformでレスポンス抽出。Claude Codeとの連携・APIリソースのYAMLバージョン管理に加え、2026-09-03にGAした`ant apply`（v1.30.0以降必須、agents/environments/skills/memory stores/deploymentsをリポジトリファイルで宣言管理するインフラ-as-codeワークフロー、`claude-lock.json`によるリソース重複防止）も整理。"
+excerpt: "Anthropic公式のClaude API向けCLI「ant」を解説。go installでセットアップし、フラグ/YAML/@path参照でリクエスト構築、--transformでレスポンス抽出。Claude Codeとの連携・APIリソースのYAMLバージョン管理に加え、2026-09-03にGAした`ant apply`（v1.30.0以降必須、agents/environments/skills/memory stores/deploymentsをリポジトリファイルで宣言管理するインフラ-as-codeワークフロー、`claude-lock.json`によるリソース重複防止）、2026-09-10追加の`ant beta:sessions connect`（実行中セッションにターミナルをアタッチしライブ監視・介入）も整理。"
 draft: false
 ---
 
@@ -266,6 +266,29 @@ ant apply agents/summarizer.md
 - 認証はAPIキーではなく **Workload Identity Federation** を推奨（`claude-lock.json`に記録された組織・ワークスペース以外の資格情報は拒否される）
 
 出典: [Manage resources as code with ant apply（公式ドキュメント）](https://platform.claude.com/docs/en/cli-sdks-libraries/cli/apply)
+
+## 【2026-09-10追記】`ant beta:sessions connect` — ターミナルから実行中セッションに接続
+
+**`ant beta:sessions connect`** が追加されました。**実行中のManaged Agentsセッションにターミナルをアタッチし、トランスクリプトをライブで追跡**できるコマンドです。
+
+```bash
+# セッションにターミナルを接続
+ant beta:sessions connect <session-id>
+
+# ブラウザ経由でClaude Consoleのセッションビューワーを開く
+ant beta:sessions connect <session-id> --web
+```
+
+接続したターミナル内では以下の操作が可能です。
+
+- **メッセージ入力**: 実行中のセッションに追加のメッセージを送れる
+- **Esc**: エージェントを割り込み停止
+- **Ctrl+O**: ツール入力・トークン使用量の表示切り替え
+- **ツール呼び出しの承認待ち時**: allow/denyのプロンプトに応答可能
+
+これまでManaged Agentsのセッションは主にAPI経由・Consoleのセッションビューワーで監視するものでしたが、`ant beta:sessions connect`により**ターミナルからのリアルタイム監視・介入**が可能になりました。CI/CDパイプラインから起動したセッションのデバッグや、長時間実行中のエージェントに人間が割り込みたい場面で有用です。
+
+出典: [ant CLI関連の複数報道](https://alphasignal.ai/news/anthropic-s-claude-managed-agents-now-flag-risky-actions-for-human-approval)
 
 ## Claude Code との連携・使い分け
 
