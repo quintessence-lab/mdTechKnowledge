@@ -3,8 +3,8 @@ title: "Claude Cowork アップデートまとめ"
 date: 2026-04-26
 category: "Claude技術解説"
 tags: ["Claude", "Cowork", "エージェント", "Claude Desktop", "Computer Use", "KPMG", "Claude for Legal", "Finance Agents"]
-excerpt: "AnthropicのデスクトップAIエージェント機能「Claude Cowork」のリリースから2026年4月GA移行・Live Artifacts・Amazon Bedrock対応・Claude for Small Business・PwC 拡大パートナーシップ・KPMG Digital Gateway（276,000人 / 138 か国 / 2026-05-19）・Claude for Legal（20+ MCPコネクタ・12 practice-area プラグイン、2026-05-12）・Finance Agents 10 テンプレート（2026年5月）・Cowork 5時間制限2倍キャンペーン（2026年6月）・エンタープライズ向けコネクタ一括認可EMA（Okta／2026-06-18ベータ）・Cowork の Web/iOS/Android 展開とリモートセッション（2026-07-07）・Claude for Teachers 米国K-12教育者向け無料プログラム（2026-07-14）・Chrome サイドパネルの完全 Cowork セッション化（会話とスキル/コネクタを desktop/web/mobile と共有、ブラウザ内クリック・フォーム入力等の実アクション対応、Max/Team から展開、2026-08-12）・Claude Tag が新体験へ完全移行（チャンネルメモリ・スタンディングインストラクション・ambient mode、2026-08-03）・Cowork Built-in Browser（デスクトップアプリ専用の隔離ブラウザでナビゲート・クリック・入力、ユーザーのタブ/パスワードは非共有、2026-08-26）までのアップデートをリリース順に整理。"
-updatedDate: 2026-08-29
+excerpt: "AnthropicのデスクトップAIエージェント機能「Claude Cowork」のリリースから2026年4月GA移行・Live Artifacts・Amazon Bedrock対応・Claude for Small Business・PwC 拡大パートナーシップ・KPMG Digital Gateway（276,000人 / 138 か国 / 2026-05-19）・Claude for Legal（20+ MCPコネクタ・12 practice-area プラグイン、2026-05-12）・Finance Agents 10 テンプレート（2026年5月）・Cowork 5時間制限2倍キャンペーン（2026年6月）・エンタープライズ向けコネクタ一括認可EMA（Okta／2026-06-18ベータ）・Cowork の Web/iOS/Android 展開とリモートセッション（2026-07-07）・Claude for Teachers 米国K-12教育者向け無料プログラム（2026-07-14）・Chrome サイドパネルの完全 Cowork セッション化（会話とスキル/コネクタを desktop/web/mobile と共有、ブラウザ内クリック・フォーム入力等の実アクション対応、Max/Team から展開、2026-08-12）・Claude Tag が新体験へ完全移行（チャンネルメモリ・スタンディングインストラクション・ambient mode、2026-08-03）・Cowork Built-in Browser（デスクトップアプリ専用の隔離ブラウザでナビゲート・クリック・入力、ユーザーのタブ/パスワードは非共有、2026-08-26）・Smart Reports（Enterprise向けベータ、チームの利用状況・コスト・スキル候補を自動分析）までのアップデートをリリース順に整理。"
+updatedDate: 2026-09-12
 draft: false
 ---
 
@@ -170,6 +170,27 @@ Claude CoworkはAnthropicが提供するデスクトップAIエージェント�
 > **意味**: Chrome サイドパネル版（拡張機能・ユーザーの既存ブラウザ内で動作）と、今回のビルトインブラウザ（デスクトップアプリ内・Claude専用の隔離環境）で、**用途に応じて2つのブラウザ操作手段**が揃ったことになります。機密性の高い操作はビルトインブラウザの分離環境、既存のログイン状態を使い回したい操作は Chrome サイドパネルという使い分けが可能です。
 
 **参考**: [Anthropic 公式ブログ: Cowork Built-in Browser](https://claude.com/blog/cowork-built-in-browser) ／ [The New Stack（2026-08-26）](https://thenewstack.io/claude-built-in-browser-cowork/)
+
+---
+
+## 【2026-09追記】Smart Reports — チームの利用状況を自動分析（Enterprise beta）
+
+Cowork に **Smart Reports**（Enterprise向けベータ）が追加されました。**チームがClaudeをどう使っているか・実行された作業・コスト・セッションが遭遇した摩擦点・パッケージ化する価値のある反復パターン**を自動分析するレポート機能です。
+
+| 分析項目 | 内容 |
+|:---|:---|
+| ワークストリーム分析 | 最も使用されたタスク領域を可視化 |
+| 成果物の種類 | 分析・ドキュメント・コンテンツドラフト・コード等で分類 |
+| 効率性の問題 | 実行可能な成果を生まなかったセッションを検出 |
+| 再利用可能なスキル候補 | チーム全体で共有できるパターンを提案 |
+| コスト分析 | 出力タイプ別の平均支出を算出 |
+
+- **対象**: Claude Enterpriseプランのベータ機能（CMEK・HIPAA設定・Access Transparencyを使用している組織では利用不可）
+- **利用上限**: 組織あたり**月10レポートまで無料**（カレンダー月初にリセット、ベータ期間中の制限）
+
+Built-in Browser（機能面の拡張）とSmart Reports（利用状況の可視化）は独立した機能で、組織がCoworkの導入効果を測る手段が増えた形です。
+
+出典: [Get started with smart reports（公式サポート記事）](https://support.claude.com/en/articles/16893491-get-started-with-smart-reports)
 
 ---
 
