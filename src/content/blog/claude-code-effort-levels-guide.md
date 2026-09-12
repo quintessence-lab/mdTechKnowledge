@@ -1,10 +1,10 @@
 ---
 title: "Claude Code の Effort レベルを /effort で選ぶ — low〜max と ultracode（xhigh + workflows）の6段階ガイド"
 date: 2026-06-19
-updatedDate: 2026-07-04
+updatedDate: 2026-09-12
 category: "Claude技術解説"
 tags: ["Claude Code", "effort", "ultracode", "Dynamic Workflows", "xhigh", "Opus 4.8", "設定"]
-excerpt: "Claude Code の /effort コマンドで選べる Effort レベル（low / medium / high / xhigh / max / ultracode）を、実際のスライダー画面とともに解説。各レベルの『速度 vs 知能・トークン消費』のトレードオフ、Opus 4.8 の既定（high）、最上位の ultracode が『xhigh + workflows』＝xhigh 推論に Dynamic Workflows の自動オーケストレーションを足したものである正体、永続レベルとセッション限定レベルの違い、操作方法までをまとめる。"
+excerpt: "Claude Code の /effort コマンドで選べる Effort レベル（low / medium / high / xhigh / max / ultracode）を、実際のスライダー画面とともに解説。各レベルの『速度 vs 知能・トークン消費』のトレードオフ、Opus 4.8 の既定（high）、最上位の ultracode が『xhigh + workflows』＝xhigh 推論に Dynamic Workflows の自動オーケストレーションを足したものである正体、永続レベルとセッション限定レベルの違い、操作方法に加え、v2.1.267で追加された`maxEffortLevel`設定（Bedrock/Vertex/Foundryを含む全プロバイダ横断でeffortの上限をキャップ）までをまとめる。"
 draft: false
 ---
 
@@ -91,6 +91,20 @@ Claude Code には、応答にどれだけの推論リソース（思考の深�
 - **新トークナイザを採用し、同一テキストで約30%トークン増**。effort とは別に、入出力トークン量そのものが増えるため、コスト試算・コンテキスト消費に影響する。
 
 Claude Code では `/effort` で従来どおり段階を選べます。Sonnet 5 の詳細は [Claude Sonnet 5 完全ガイド](/mdTechKnowledge/blog/claude-sonnet-5-guide/) を参照。
+
+---
+
+## 6. `maxEffortLevel` — 全プロバイダ横断でeffortの上限をキャップ（v2.1.267）
+
+**Claude Code v2.1.267** で、**`maxEffortLevel`** 設定が追加されました。組織やチーム単位で「これ以上のeffortは使わせない」という上限を設定できる機能です。
+
+- **設定場所**: トップレベル、または`modelSettings`配下でモデルごとに個別指定も可能
+- **適用範囲**: **Bedrock・Vertex・Foundryを含む全プロバイダ**でキャップが効く（特定のプロバイダだけの制限ではない）
+- **ユーザー側の挙動**: 上限より**低いレベルは引き続き自由に選択可能**。`/effort`で上限を超えるレベルを指定してもキャップされる
+
+コスト管理の観点で、`xhigh`/`max`のような高effortレベルを組織全体で使わせたくない場合に、個々のユーザーが`/effort`で誤って高負荷な設定を選んでしまうのを防げます。第2章で触れた「maxとultracodeは使いどころを選ぶ」高コストなレベルに対して、組織側から機械的に歯止めをかける手段と言えます。
+
+出典: [Claude Code CHANGELOG（v2.1.267）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 ---
 
