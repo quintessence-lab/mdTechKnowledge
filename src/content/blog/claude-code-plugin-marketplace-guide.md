@@ -1,10 +1,10 @@
 ---
 title: "Claude Code Plugin Marketplace ガイド — slash/hooks/サブエージェント/skills を束ねて配布・導入する"
 date: 2026-06-21
-updatedDate: 2026-08-22
+updatedDate: 2026-09-12
 category: "Claude技術解説"
 tags: ["Claude Code", "プラグイン", "Marketplace", "slash commands", "hooks", "サブエージェント", "skills", "MCP", "design"]
-excerpt: "Claude Code のプラグインは、slash commands・hooks・サブエージェント・skills・MCP サーバーを1つのパッケージに束ねて配布・導入できる仕組みです（2025年10月 公開ベータ）。/plugin コマンドでの検索・インストール、公式マーケットプレイス claude-plugins-official とサードパーティ/自前マーケットプレイスの追加方法、plugin.json の構成、作成の流れまでを公式ドキュメントベースで整理します。2026-08-17（v2.1.234）追加のバンドルスキル`/design`（Research Preview）も追記。"
+excerpt: "Claude Code のプラグインは、slash commands・hooks・サブエージェント・skills・MCP サーバーを1つのパッケージに束ねて配布・導入できる仕組みです（2025年10月 公開ベータ）。/plugin コマンドでの検索・インストール、公式マーケットプレイス claude-plugins-official とサードパーティ/自前マーケットプレイスの追加方法、plugin.json の構成、作成の流れまでを公式ドキュメントベースで整理します。2026-08-17（v2.1.234）追加のバンドルスキル`/design`（Research Preview）、2026-09-04（v2.1.261）追加の`/skill-doctor`（未使用スキルとコンテキストコストの可視化）も追記。"
 draft: false
 ---
 
@@ -87,6 +87,17 @@ UI を開かずにコマンドラインから直接操作することもでき�
 プラグインが提供する skill は**プラグイン名で名前空間化**されます。例えば `commit-commands` プラグインを入れると、skill は `/commit-commands:commit` のように呼び出します。インストール・有効化・無効化を行った直後は `/reload-plugins` を実行すると、セッションを再起動せずに反映できます（再読み込み時には次リクエストでトークンコストが発生する点に注意）。
 
 利用可能な skill を探すときは `/skills` を使うと、入力に応じてリアルタイムにフィルタしながら目的の skill を絞り込めます。プラグイン由来の skill も `プラグイン名:skill名` の形でここに並びます。
+
+### 【2026-09-04追記】`/skill-doctor` — 未使用スキルとコンテキストコストを可視化（v2.1.261）
+
+プラグイン経由で導入したスキルが増えてくると、「実際どれだけ使われているか」「読み込みにどれくらいコンテキストを消費しているか」が見えにくくなります。**Claude Code v2.1.261** で追加された **`/skill-doctor`** は、この2点を可視化するコマンドです。
+
+- **読み込み済みスキルのうち未使用のものを表示**: プラグイン・ユーザー・プロジェクトいずれの由来かを問わず、一度も呼び出されていないスキルを一覧化
+- **コンテキストコストを表示**: 各スキルの定義がプロンプトに占めるトークン量を示し、プルーニング（不要スキルの整理）判断の材料にできる
+
+多数のプラグインを入れてスキルが乱立してきたときに、`/plugin disable` や `/reload-plugins` で整理する前段階の**診断ステップ**として使えます。
+
+出典: [Claude Code CHANGELOG（v2.1.261）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 ---
 
