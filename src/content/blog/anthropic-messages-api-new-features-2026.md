@@ -1,10 +1,10 @@
 ---
-title: "Anthropic Messages API 新機能まとめ（2026年5〜8月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・Opus5対応・Browser use tool"
+title: "Anthropic Messages API 新機能まとめ（2026年5〜9月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・Opus5対応・Browser use tool・Fable 5.1/Mythos 5.1対応"
 date: 2026-06-20
-updatedDate: 2026-09-05
+updatedDate: 2026-09-14
 category: "Claude技術解説"
-tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ", "Compliance API", "EU AI Act", "Browser use tool", "Python SDK"]
-excerpt: "2026年5〜8月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）まで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
+tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ", "Compliance API", "EU AI Act", "Browser use tool", "Python SDK", "Fable 5.1", "Mythos 5.1"]
+excerpt: "2026年5〜9月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）、9月1日の Fable 5.1/Mythos 5.1リリースに伴うtool_choice制限・thinking保持ルール変更・キャッシュ90%値下げ・Per-Message Effort（9月3日Google Cloud対応拡大）まで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
 draft: false
 ---
 
@@ -443,6 +443,12 @@ Anthropic 公式 Python SDK のメジャーバージョン **v1.0** がリリー
 - **`anthropic-version`ヘッダーがAdmin API・Enterprise Analytics API・Compliance APIでも必須化**: 従来Messages APIでは必須だったこのヘッダーが、管理系API群でも明示的に要求されるようになりました。省略していた既存の管理系API呼び出しは、このタイミングで失敗し得るため注意してください（詳細は [Anthropic Enterprise Analytics API 完全ガイド](/mdTechKnowledge/blog/anthropic-enterprise-analytics-api/) も参照）。
 
 出典: [Anthropic Platform リリースノート（2026-09-01）](https://platform.claude.com/docs/en/release-notes/overview)
+
+## 17. 2026年9月3日のアップデート — Per-Message EffortがGoogle Cloudにも対応
+
+前章の **Per-Message Effort（ベータ）** は2026年9月1日時点でClaude API・Amazon Bedrock・Microsoft Foundryが対象でしたが、2026年9月3日に**Google Cloud（Vertex AI）**にも対応が拡大されました。対応モデル（Claude Fable 5.1・Claude Mythos 5.1・Claude Opus 5）とベータヘッダー（`mid-conversation-output-config-2026-07-01`）は前章と同一です。マルチクラウドでモデルを使い分けている場合も、プラットフォームを問わず同じ運用でメッセージ途中のeffort変更が可能になります。
+
+出典: [Anthropic Platform リリースノート（2026-09-03）](https://platform.claude.com/docs/en/release-notes/overview)
 
 ## まとめ — どの機能をいつ使うか
 
