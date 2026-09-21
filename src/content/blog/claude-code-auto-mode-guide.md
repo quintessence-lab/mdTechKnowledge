@@ -1,10 +1,10 @@
 ---
 title: "Claude Code Auto Mode 完全ガイド — --dangerously-skip-permissions を卒業する自律型権限管理"
 date: 2026-06-21
-updatedDate: 2026-09-04
+updatedDate: 2026-09-21
 category: "Claude技術解説"
 tags: ["Claude Code", "Auto Mode", "permission mode", "dangerously-skip-permissions", "分類器", "classifier", "claudeignore", "安全運用"]
-excerpt: "Claude Code の Auto Mode（自律型権限管理）は、すべてを無条件に許可する --dangerously-skip-permissions の安全な代替として 2026-03-24 に登場した。モデルベースの2段階トランスクリプト分類器（Sonnet 4.6 による高速フィルター＋思考連鎖による精査）で各アクションを起動前に評価し、連続3拒否・累計20拒否で自動停止する。2026-08-14 からは Pro/Max/Team プランの新規セッションで Auto Mode が既定の権限モードになった（人間の目視13.6%に対し分類器89%の危険コマンド捕捉率が論拠。Enterprise/API/Bedrock/Vertex/Foundry はオプトイン継続）。2026-08-25のv2.1.246では`/permissions`にAuto modeタブが追加され、分類器ルールをGUIから閲覧・編集可能になった。2026-08-27のv2.1.248では`--restricted`フラグが追加され、実行系ツール・WebFetchをそもそも起動時から除去する、Auto Modeとは別系統の静的な制限モードが利用可能に。2026-09-01のv2.1.257ではContainment Escapeルールが追加され、クラウドメタデータ認証情報取得・egress回避・クロステナントアクセスが環境の明示許可なしには自動承認されなくなった。本記事では権限モードの全体像、分類器の仕組み、エスカレーション停止、.claudeignore 連携、卒業の手順までを公式情報ベースで整理する。"
+excerpt: "Claude Code の Auto Mode（自律型権限管理）は、すべてを無条件に許可する --dangerously-skip-permissions の安全な代替として 2026-03-24 に登場した。モデルベースの2段階トランスクリプト分類器（Sonnet 4.6 による高速フィルター＋思考連鎖による精査）で各アクションを起動前に評価し、連続3拒否・累計20拒否で自動停止する。2026-08-14 からは Pro/Max/Team プランの新規セッションで Auto Mode が既定の権限モードになった（人間の目視13.6%に対し分類器89%の危険コマンド捕捉率が論拠。Enterprise/API/Bedrock/Vertex/Foundry はオプトイン継続）。2026-08-25のv2.1.246では`/permissions`にAuto modeタブが追加され、分類器ルールをGUIから閲覧・編集可能になった。2026-08-27のv2.1.248では`--restricted`フラグが追加され、実行系ツール・WebFetchをそもそも起動時から除去する、Auto Modeとは別系統の静的な制限モードが利用可能に。2026-09-01のv2.1.257ではContainment Escapeルールが追加され、クラウドメタデータ認証情報取得・egress回避・クロステナントアクセスが環境の明示許可なしには自動承認されなくなった。2026-09-14のv2.1.271ではBash/PowerShell/Monitorへコマンド単位の`allowed_domains`が追加され、2026-09-18のv2.1.278では分類器の実行場所がデフォルトでサーバー側に変更（オーバーヘッド課金なし、`CLAUDE_CODE_AUTO_MODE_SERVER=0`でopt-out可）された。本記事では権限モードの全体像、分類器の仕組み、エスカレーション停止、.claudeignore 連携、卒業の手順までを公式情報ベースで整理する。"
 draft: false
 ---
 
@@ -197,6 +197,32 @@ Auto Mode の安全性は、その後のバージョンアップでさらに強�
 これらは従来、危険なコマンドとしてAuto Modeの分類器が個別に判定していましたが、**「封じ込め（containment）から逃れる」という性質を持つ操作群をひとまとめにルール化**したことで、個別の分類漏れに依存せず一貫して確認プロンプトが出るようになりました。CI/CDやサンドボックス内での正当な用途がある場合は、環境側の設定で明示的に許可扱いにできます。
 
 参考: [Claude Code CHANGELOG（v2.1.257）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
+
+---
+
+## 5.9. 【2026-09-14】v2.1.271 — Bash/PowerShell/Monitorへのコマンド単位`allowed_domains`
+
+**Claude Code v2.1.271** で、Auto Mode のサンドボックス機能に**コマンド単位のドメイン許可リスト**が追加されました。Bash・PowerShell・Monitor の各ツールで、**実行しようとしているコマンドが必要とするホストだけをそのコマンド1回限りで開放**し、それ以外のホストへの通信は拒否する仕組みです。
+
+従来のドメイン許可設定はセッション全体・環境全体に対する静的な設定でしたが、本機能により**コマンドの実行時にそのコマンドが必要とするドメインだけをレビューして開放**できるようになり、「1つの許可が全コマンドに及ぶ」ことによる攻撃面の拡大を抑えられます。
+
+参考: [Claude Code CHANGELOG（v2.1.271）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
+
+## 5.10. 【2026-09-18】v2.1.278 — auto modeがサーバーサイド分類器にデフォルト変更
+
+**Claude Code v2.1.278** で、Auto Mode の**分類器の実行場所がデフォルトでサーバー側に変更**されました。対象は **Claude API・Enterprise ユーザー、および Bedrock・Vertex AI・Foundry・LLMゲートウェイ経由の利用**です。
+
+| 項目 | 内容 |
+|---|---|
+| デフォルト変更 | 分類器がクライアントのローカル計算ではなく**サーバー側で実行**されるように |
+| 課金 | **分類器のオーバーヘッド分は課金されない**（サーバー側実行の追加コストなし） |
+| opt-out | Bedrock・Vertex・Foundry・ゲートウェイ利用者は `CLAUDE_CODE_AUTO_MODE_SERVER=0` でローカル分類器に戻せる |
+| 確認方法 | `/status` に **「Auto mode server」行**が追加され、このセッションの分類器がサーバー側で動いているかを表示 |
+| フォールバック時の挙動 | サーバー側分類器が使えない場合にローカル分類器へ課金ありでフォールバックする際は警告が表示される |
+
+分類器の判定ロジック自体（2段階トランスクリプト分類器、FPR/FNRの実測値等）は変わらず、**実行場所とコスト構造のみの変更**です。詳細は[公式ドキュメント](https://code.claude.com/docs/en/auto-mode-classifier-billing)を参照してください。
+
+参考: [Claude Code CHANGELOG（v2.1.278）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 ---
 

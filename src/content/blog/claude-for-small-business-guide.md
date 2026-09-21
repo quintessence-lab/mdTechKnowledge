@@ -1,10 +1,10 @@
 ---
 title: "Claude for Small Business 完全ガイド — Cowork トグルで7コネクタ・15ワークフロー・15スキル"
 date: 2026-05-18
-updatedDate: 2026-07-24
+updatedDate: 2026-09-21
 category: "Claude技術解説"
-tags: ["Claude", "Cowork", "SMB", "中小企業", "ワークフロー自動化", "コネクタ", "PayPal"]
-excerpt: "2026年5月14日（JST）GAローンチした Claude for Small Business を解説。Claude Cowork のトグルで有効化し、QuickBooks/PayPal/HubSpot/Canva/DocuSign/Google Workspace/Microsoft 365 の7コネクタ（＋業種別アプリ向けの拡張枠）と連携。財務・営業・HR・CS の15ワークフロー＋15スキルを追加料金なしで提供。米国10都市の無料ワークショップ（AI Fluency for Small Business）も併走。"
+tags: ["Claude", "Cowork", "SMB", "中小企業", "ワークフロー自動化", "コネクタ", "PayPal", "Shopify", "Salesforce"]
+excerpt: "2026年5月14日（JST）GAローンチした Claude for Small Business を解説。Claude Cowork のトグルで有効化し、QuickBooks/PayPal/HubSpot/Canva/DocuSign/Google Workspace/Microsoft 365 の7コネクタ（＋業種別アプリ向けの拡張枠）と連携。財務・営業・HR・CS の15ワークフロー＋15スキルを追加料金なしで提供。米国10都市の無料ワークショップ（AI Fluency for Small Business）も併走。2026-09-15追記: ワークフロー43本・コネクタ総数37（新規27統合、Shopify/Salesforce/TikTok/Atlassian/Zoom/Xero/Gusto/Square/Stripe/Zapier等）へ拡大、累計インストール90万件突破、週次月曜ブリーフ等の主要ワークフロー例、Claude SMBツアー再開（米国10都市）を追記。"
 draft: false
 ---
 
@@ -169,6 +169,39 @@ Claude for Small Business は、Anthropic の **業界別バージョン戦略�
 | 5 | **Claude for Small Business（SMB）** | **2026年5月13日 PT** |
 
 業種別から **企業規模別** への拡張は、Anthropic の市場戦略の幅を広げる象徴的な動きと言える。法律・金融のような専門業種では「業務知識の組み込み」が差別化要因だったが、SMB 向けでは「複数 SaaS の統合とワークフロー自動化」が中心になる。
+
+---
+
+## 8.5. 【2026-09-15追記】43ワークフロー・27新規統合へ拡大、インストール90万件突破
+
+GA時点では「7コネクタ・15ワークフロー・15スキル」だった Claude for Small Business は、2026年9月15日発表で大幅に拡張されました。
+
+| 指標 | GA時点（2026年5月） | 2026年9月15日時点 |
+|---|---|---|
+| ワークフロー数 | 15 | **43** |
+| 新規追加統合数 | — | **27**（コネクタ総数は**37**に到達） |
+| 累計インストール数 | — | **900,000件超** |
+
+### 新規追加コネクタ（27件の一部）
+
+**Shopify・Salesforce・TikTok・Atlassian・Zoom・Xero・Gusto・Square・Stripe・Zapier** など。EC・CRM・広告・プロジェクト管理・会計・給与・決済まで、SMBの業務全体をカバーする形に広がっています。
+
+### 主要ワークフロー例（週次の業務フローに沿って提供）
+
+| ワークフロー | トリガー | 内容 | 接続コネクタ数 |
+|---|---|---|---|
+| **週次月曜ブリーフ** | 「give me my Monday brief」/ `/monday-brief` | 現金ポジション・先週対比の売上・パイプライン動向・期限超過請求書・今週注視すべきトップ3を要約 | 37（全パートナーコネクタ対応） |
+| **Speed to Lead（インバウンドリード対応）** | 「answer new leads as they come in」/ `/speed-to-lead` | リードを査定し、カレンダーから実際に空いている日程を2つ提示する返信を作成、CRMに記録 | 15 |
+| **Proposal Builder（提案書作成）** | 「turn this into a proposal」/ `/proposal-builder` | 過去案件の実績から価格を算出したブランド提案書を自動作成 | 17 |
+| **Close the Month（月次決算締め）** | 「close September」/ `/close-month` | 売上決済・カード支出・給与など、資金が動く全箇所と帳簿を照合 | 14 |
+
+各ワークフローには「コネクタ未接続でもスプレッドシートのアップロードで代替動作する」フォールバックが用意されています。
+
+### トレーニングプログラムの拡充
+
+パートナーTenexと共同で、**米国10都市**（ボストン・ピッツバーグ・デトロイト・ミネアポリス・フェニックス・メンフィス・サバンナ・ベントンビル・タンパ・ローリー）で無料半日ワークショップを実施する「Claude SMBツアー」が今秋再開。認定を受けた**150超の団体が「Claude SMB Trainer」**として自コミュニティで**750件超のワークショップ**を実施予定で、**14の統合パートナーが無料ウェビナー**を開催します。
+
+出典: [Claude for Small Business launches new workflows, integrations, and training programs（公式ブログ、2026-09-15）](https://claude.com/blog/claude-for-small-business-launches-new-workflows-integrations-and-training-programs)
 
 ---
 

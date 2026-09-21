@@ -3,8 +3,8 @@ title: "Claude Cowork アップデートまとめ"
 date: 2026-04-26
 category: "Claude技術解説"
 tags: ["Claude", "Cowork", "エージェント", "Claude Desktop", "Computer Use", "KPMG", "Claude for Legal", "Finance Agents"]
-excerpt: "AnthropicのデスクトップAIエージェント機能「Claude Cowork」のリリースから2026年4月GA移行・Live Artifacts・Amazon Bedrock対応・Claude for Small Business・PwC 拡大パートナーシップ・KPMG Digital Gateway（276,000人 / 138 か国 / 2026-05-19）・Claude for Legal（20+ MCPコネクタ・12 practice-area プラグイン、2026-05-12）・Finance Agents 10 テンプレート（2026年5月）・Cowork 5時間制限2倍キャンペーン（2026年6月）・エンタープライズ向けコネクタ一括認可EMA（Okta／2026-06-18ベータ）・Cowork の Web/iOS/Android 展開とリモートセッション（2026-07-07）・Claude for Teachers 米国K-12教育者向け無料プログラム（2026-07-14）・Chrome サイドパネルの完全 Cowork セッション化（会話とスキル/コネクタを desktop/web/mobile と共有、ブラウザ内クリック・フォーム入力等の実アクション対応、Max/Team から展開、2026-08-12）・Claude Tag が新体験へ完全移行（チャンネルメモリ・スタンディングインストラクション・ambient mode、2026-08-03）・Cowork Built-in Browser（デスクトップアプリ専用の隔離ブラウザでナビゲート・クリック・入力、ユーザーのタブ/パスワードは非共有、2026-08-26）・Smart Reports（Enterprise向けベータ、チームの利用状況・コスト・スキル候補を自動分析）までのアップデートをリリース順に整理。"
-updatedDate: 2026-09-12
+excerpt: "AnthropicのデスクトップAIエージェント機能「Claude Cowork」のリリースから2026年4月GA移行・Live Artifacts・Amazon Bedrock対応・Claude for Small Business・PwC 拡大パートナーシップ・KPMG Digital Gateway（276,000人 / 138 か国 / 2026-05-19）・Claude for Legal（20+ MCPコネクタ・12 practice-area プラグイン、2026-05-12）・Finance Agents 10 テンプレート（2026年5月）・Cowork 5時間制限2倍キャンペーン（2026年6月）・エンタープライズ向けコネクタ一括認可EMA（Okta／2026-06-18ベータ）・Cowork の Web/iOS/Android 展開とリモートセッション（2026-07-07）・Claude for Teachers 米国K-12教育者向け無料プログラム（2026-07-14）・Chrome サイドパネルの完全 Cowork セッション化（会話とスキル/コネクタを desktop/web/mobile と共有、ブラウザ内クリック・フォーム入力等の実アクション対応、Max/Team から展開、2026-08-12）・Claude Tag が新体験へ完全移行（チャンネルメモリ・スタンディングインストラクション・ambient mode、2026-08-03）・Cowork Built-in Browser（デスクトップアプリ専用の隔離ブラウザでナビゲート・クリック・入力、ユーザーのタブ/パスワードは非共有、2026-08-26）・Smart Reports（Enterprise向けベータ、チームの利用状況・コスト・スキル候補を自動分析）・CoworkとChatが1つのClaudeに統合（Claude Docs/Claude Slides新設・Design会話内対応、Pro/Maxから数週間かけてロールアウト、2026-09-16）までのアップデートをリリース順に整理。"
+updatedDate: 2026-09-21
 draft: false
 ---
 
@@ -439,6 +439,42 @@ Claude for Legal と組み合わせて、**専門サービス（コンサル／�
 これは本記事で扱ってきたCoworkの「リモートセッション」「クロスデバイス継続」といった**PC外での自律実行**の流れと軌を一にする変更です。Slack上のClaude Tagも、単発の質問応答ツールから、**継続的にコンテキストを保持し能動的に動くエージェント**へと位置づけが変化しています。
 
 出典: [What is Claude Tag（公式サポート）](https://support.claude.com/en/articles/15594475-what-is-claude-tag)
+
+---
+
+## 【2026-09-16追記】Cowork と Chat が1つの Claude に統合
+
+2026年9月16日、AnthropicはClaude CoworkとClaude Chat（通常のチャット体験）を**1つのClaudeに統合**すると発表しました。「タスクをどこに向かわせるか選ばなくていい。Claudeがより多くの作業を引き受ける」というのが統合の狙いです。
+
+### 何が変わるか
+
+従来、Anthropicは「大きな作業向けの別の場所」としてCoworkを、「ビジュアル作業向け」としてDesignを、それぞれ**独立した行き先**として構築してきました。しかし、どのツールにタスクを持ち込むべきか利用者が毎回判断する必要があり、一方で作った成果物がもう一方に引き継がれない、という摩擦がありました。今回の統合で、**CoworkとDesignにあった機能が、どの会話からでも、既存のコンテキスト・スキル・コネクタを伴って使えるように**なりました。
+
+### Claude Docs / Claude Slides（新機能）・Claude Design（会話内対応）
+
+| 機能 | 内容 |
+|---|---|
+| **Claude Docs**（新規） | 会話の中でドキュメントを依頼すると、Claudeと**共同でその場で書き上げる** |
+| **Claude Slides**（新規） | 会話の中でプレゼンテーションを依頼すると、Claudeが**スライドを起こす** |
+| **Claude Design**（会話内対応） | 従来Design単体で提供していたビジュアル作成機能が、**通常の会話の中でも動作**するように（Design単体の利用は従来どおり継続） |
+
+Docs・Slides・Design（会話内）で作った成果物は、いずれも**1つの共有リンク**として保存され、スマートフォンからも開けます。要素を選択して移動したり、Claudeに変更内容を伝えて修正させたりできます。Slidesは**Claudeから直接プレゼンできるほか、PowerPoint/PDFとしてダウンロード**も可能です。
+
+> **ベータ提供**: Docs・Slides・会話内Designの3つはいずれも**有料プランでベータ提供**。Enterprise管理者は有効化のタイミングを選択できます。
+
+### ロールアウト計画
+
+| 対象 | 時期 |
+|---|---|
+| Pro / Max（web・desktop・mobile） | 2026年9月16日から**数週間かけて**ロールアウト。既存/新規ユーザーとも自動適用で、有効化操作は不要 |
+| Team / Free | **近日中に追従予定**（時期未確定） |
+| Enterprise | 組織への変更が生じる**30日以上前に事前通知** |
+
+既存のCowork利用者は「チャット・プロジェクト・成果物・コネクタ・スキルはすべて元の場所のまま」引き継がれ、チャット中心の利用者は特に何もする必要がないとされています。デフォルトでは**Claudeはアクションを取る前に確認を挟む**挙動が維持され、「重要な判断が必要な時だけ確認する」設定に切り替えることも可能です。
+
+> **注**: 本発表のブログ記事ではメモリ機能の変更（リアルタイム更新化等）やSmart Reports・アドバイザープラグインへの言及はなく、一次ソースで確認できた範囲は上記の統合内容とロールアウト計画のみです。
+
+出典: [Claude Cowork and chat are now one Claude（公式ブログ、2026-09-16）](https://claude.com/blog/cowork-is-now-claude)
 
 ---
 

@@ -1,10 +1,10 @@
 ---
 title: "Anthropic、SEC へ機密ドラフト S-1 提出 — 『公式発表に数字はない』IPOプロセスとPBC上場の論点"
 date: 2026-06-06
-updatedDate: 2026-09-12
+updatedDate: 2026-09-21
 category: "一般リサーチ"
 tags: ["Anthropic", "IPO", "S-1", "SEC", "Public Benefit Corporation", "Long-Term Benefit Trust", "上場", "資本市場", "OpenAI", "SpaceX", "メガIPO"]
-excerpt: "2026年6月1日、Anthropic は SEC へ Form S-1 の機密ドラフト登録届出書を提出し IPO 手続きを開始した。本記事は『公式発表は Rule 135 準拠の定型文で具体的な数値を一切含まない』という事実の確認から始め、機密提出（confidential filing）の仕組み、評価額$965B・年次ランレート$47Bの出典の切り分け、未定事項（株式数・価格・市場・ティッカー）、想定主幹事、2026メガIPO 3社（SpaceX/OpenAI/Anthropic）の横比較、そして PBC × Long-Term Benefit Trust という独特のガバナンスが上場でどう論点化するかを整理する。2026-08追記: 8〜9月のロードショー本格化・10月Nasdaq上場・$60B超調達という観測報道、評価額ターゲット$2兆観測・収益ランレート$65B突破・Q2収益$11.5B（いずれも報道・投資家推計ベース、公式未確認）を追記。公開S-1提出は2026年8月末見込みだが8月26日時点でSEC EDGAR未掲載という状況、2026年9月3日確定間近の$15Bプレクレジットファシリティ（Morgan Stanley主導、目標$10Bから拡大）とIPO開始時期の10月中旬への延期も追記した。"
+excerpt: "2026年6月1日、Anthropic は SEC へ Form S-1 の機密ドラフト登録届出書を提出し IPO 手続きを開始した。本記事は『公式発表は Rule 135 準拠の定型文で具体的な数値を一切含まない』という事実の確認から始め、機密提出（confidential filing）の仕組み、評価額$965B・年次ランレート$47Bの出典の切り分け、未定事項（株式数・価格・市場・ティッカー）、想定主幹事、2026メガIPO 3社（SpaceX/OpenAI/Anthropic）の横比較、そして PBC × Long-Term Benefit Trust という独特のガバナンスが上場でどう論点化するかを整理する。2026-08追記: 8〜9月のロードショー本格化・10月Nasdaq上場・$60B超調達という観測報道、評価額ターゲット$2兆観測・収益ランレート$65B突破・Q2収益$11.5B（いずれも報道・投資家推計ベース、公式未確認）を追記。公開S-1提出は2026年8月末見込みだが8月26日時点でSEC EDGAR未掲載という状況、2026年9月3日確定間近の$15Bプレクレジットファシリティ（Morgan Stanley主導、目標$10Bから拡大）とIPO開始時期の10月中旬への延期、Q2調整済み営業利益$559M超の実績確定・Q3も2四半期連続黒字化見通しを株主に通知・粗利率80%超（分配前・学習コスト控除前）も追記した。"
 draft: false
 ---
 
@@ -277,6 +277,23 @@ CEO の Daniela Amodei は IPO に先立つインタビュー（TechCrunch, 6/4�
 **IPO開始時期についても続報**があり、2026年9月7日時点の報道では**IPOの本格開始が10月中旬に延期**されたとされています（プロスペクタスは9月末目安、投資家向けマーケティングは10月という段取り）。前述の「10月Nasdaq上場」という時期観測自体は維持されつつ、具体的なプロセスの各段階が後ろ倒しになっている状況です。
 
 出典: [Bloomberg: Anthropic Nears Finalizing $15 Billion Pre-IPO Credit Facility（2026-09-03）](https://www.bloomberg.com/news/articles/2026-09-03/anthropic-nears-finalizing-15-billion-pre-ipo-credit-facility)
+
+### 【2026-09 追記】Q2黒字化の実績確定・Q3連続黒字化を投資家に通知・粗利率80%超
+
+前述（第5章補遺2）の「WSJ報道による Q2 調整済み営業利益 約$559M の社内予測」は、その後の一連の報道で**Q2実績として確定**したことが確認されています。Q2 2026収益は事前予測の$10.9Bを上回る**$11.5B超**を記録し、これに伴う調整済み営業利益$559Mが**初の黒字四半期**として報じられました。
+
+さらに2026年9月13日（PT）前後の報道では、Anthropicが一部の株主に対し**Q3 2026も2四半期連続で調整済み営業利益が黒字になる見込みを通知した**とされています（IPOを控えた投資家の資金燃焼リスク懸念を払拭する狙い）。
+
+| 指標 | 数値 | 出典・時期 |
+|---|---|---|
+| Q2 2026収益 | **$11.5B超**（予測$10.9Bを上回る） | 複数報道、2026年8月 |
+| Q2 2026調整済み営業利益 | **$559M超**（初の黒字四半期） | 複数報道 |
+| Q3 2026見通し | **2四半期連続の黒字化**を株主に通知 | Irish Times、2026-09-14 |
+| 粗利率 | **80%超**（Amazon等への分配収益・モデル学習コストを控除する**前**の数値という留保付き） | 複数報道、2026年9月 |
+
+> **留保事項**: 「調整済み営業利益（adjusted operating income）」は GAAP 純利益ではなく、株式報酬等の非現金項目を除いた指標です。粗利率「80%超」もAmazon分配前・学習コスト控除前という条件付きで、批評家からは指標の見え方について懐疑的な指摘も出ています（SemiAnalysis等はQ3 GAAP EBITで$1B超を見込むと報じる一方、これらの黒字化指標の持続性には留保が必要との論調もあります）。
+
+出典: [Irish Times: Anthropic tells investors it will be profitable for second straight quarter（2026-09-14）](https://www.irishtimes.com/business/2026/09/14/anthropic-tells-investors-it-will-be-profitable-for-second-straight-quarter/) / [SemiAnalysis: Anthropic 3Q26 Profit Over $1B](https://newsletter.semianalysis.com/p/anthropic-3q26-profit-over-1b-the)
 
 ---
 

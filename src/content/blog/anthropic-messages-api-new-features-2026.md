@@ -1,10 +1,10 @@
 ---
 title: "Anthropic Messages API 新機能まとめ（2026年5〜9月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・Opus5対応・Browser use tool・Fable 5.1/Mythos 5.1対応"
 date: 2026-06-20
-updatedDate: 2026-09-14
+updatedDate: 2026-09-21
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ", "Compliance API", "EU AI Act", "Browser use tool", "Python SDK", "Fable 5.1", "Mythos 5.1"]
-excerpt: "2026年5〜9月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）、9月1日の Fable 5.1/Mythos 5.1リリースに伴うtool_choice制限・thinking保持ルール変更・キャッシュ90%値下げ・Per-Message Effort（9月3日Google Cloud対応拡大）まで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
+excerpt: "2026年5〜9月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）、9月1日の Fable 5.1/Mythos 5.1リリースに伴うtool_choice制限・thinking保持ルール変更・キャッシュ90%値下げ・Per-Message Effort（9月3日Google Cloud対応拡大）、9月14日のOn-demand conversation compaction（任意タイミングでの会話圧縮ベータ）・9月18日のCompliance APIがClaude in Chromeセッションに対応まで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
 draft: false
 ---
 
@@ -449,6 +449,37 @@ Anthropic 公式 Python SDK のメジャーバージョン **v1.0** がリリー
 前章の **Per-Message Effort（ベータ）** は2026年9月1日時点でClaude API・Amazon Bedrock・Microsoft Foundryが対象でしたが、2026年9月3日に**Google Cloud（Vertex AI）**にも対応が拡大されました。対応モデル（Claude Fable 5.1・Claude Mythos 5.1・Claude Opus 5）とベータヘッダー（`mid-conversation-output-config-2026-07-01`）は前章と同一です。マルチクラウドでモデルを使い分けている場合も、プラットフォームを問わず同じ運用でメッセージ途中のeffort変更が可能になります。
 
 出典: [Anthropic Platform リリースノート（2026-09-03）](https://platform.claude.com/docs/en/release-notes/overview)
+
+## 18. 2026年9月14日のアップデート — On-demand conversation compaction（会話の任意タイミング圧縮）
+
+**Messages API に、会話を任意のタイミングで圧縮できる新機能**が追加されました。ベータヘッダー **`compact-2026-09-04`** で有効化します。
+
+従来のcompaction（`compact-2026-01-12`）は**トークン数のしきい値到達で自動発火**する方式でしたが、on-demand compactionは**開発者側が任意のタイミングでリクエスト**する方式です。公式ドキュメントの説明:
+
+> 「`compact-2026-09-04`ベータヘッダーを使うと、任意のタイミングでサマリーをリクエストできます。このリクエストは会話のターンとは別物で、サマリーのみを返すため、バックグラウンドで実行できます。ブロックが届いたら、それが要約したメッセージ群と差し替えます」
+
+主な特徴:
+
+- **トップレベルの`compaction`パラメータを送信**すると、APIは送信したメッセージ群を要約した**署名付き（signed）`compaction`ブロック**を返す
+- 後続のリクエストでは、要約対象だったメッセージの代わりに**このブロックを先頭に送信**する
+- **圧縮タイミングは開発者が選択でき、バックグラウンド実行も可能**
+- **直近のターンは一字一句そのまま保持**した状態で要約後に付け足せる
+- **preserved thinking対応モデルでは、保持したターンのthinkingが有効なまま**使える
+
+対応モデル・プラットフォームは執筆時点で変動があり得るため、正確な対応範囲は[公式ドキュメント](https://platform.claude.com/docs/en/build-with-claude/compaction)で確認してください。
+
+出典: [Anthropic Platform リリースノート（2026-09-14）](https://platform.claude.com/docs/en/release-notes/overview) / [Compaction（公式ドキュメント）](https://platform.claude.com/docs/en/build-with-claude/compaction)
+
+## 19. 2026年9月18日のアップデート — Compliance APIがClaude in Chromeセッションに対応
+
+**Compliance API**のローカルセッションエンドポイントが、**Claude in Chrome（Chromium拡張機能）のセッショントランスクリプトも返す**ようになりました（`product_surface`の値が`claude_in_chrome`）。
+
+- **Claude Enterprise組織向けベータ**
+- 既存の**Compliance Access Key**と**`read:compliance_user_data`スコープ**でそのまま利用可能（追加のキー発行は不要）
+
+`product_surface`フィールドは、2026年8月26日のClaude Science（`claude_science`）・Claude for Microsoft 365（`office_agents`始まり）対応に続く形で、監査対象の製品面を拡張し続けているパターンの一つです。
+
+出典: [Anthropic Platform リリースノート（2026-09-18）](https://platform.claude.com/docs/en/release-notes/overview) / [Compliance API（公式ドキュメント）](https://platform.claude.com/docs/en/manage-claude/compliance-api)
 
 ## まとめ — どの機能をいつ使うか
 

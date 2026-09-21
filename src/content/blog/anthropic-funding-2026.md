@@ -1,10 +1,10 @@
 ---
 title: "Anthropic 大型資本調達ラウンド — Amazon $5B/$100B AWSコミット・Google 最大$40B 投資・Series G $380B → Series H $965B評価額（OpenAI超）の戦略的意義"
 date: 2026-04-26
-updatedDate: 2026-09-14
+updatedDate: 2026-09-21
 category: "一般リサーチ"
 tags: ["Anthropic", "Amazon", "Google", "AWS", "GCP", "Trainium", "TPU", "投資", "クラウドインフラ", "Claude", "Series G", "Series H", "CoreWeave", "Blackstone", "Goldman Sachs", "合弁会社", "EPAM", "Dragoneer", "Greenoaks", "Sequoia", "Altimeter", "Gates Foundation", "公益", "IPO", "S-1", "SEC", "Micron", "Samsung", "SK hynix", "Fluidstack", "データセンター", "HBM", "半導体", "Apollo", "プライベートクレジット", "Decart"]
-excerpt: "2026年4月にAnthropicが立て続けに発表したAmazon・Googleからの巨額投資ラウンドと、Series G $380B評価額調達・年間収益ランレート $30B 突破（OpenAI 逆転）・CoreWeave との計算インフラ個別契約を整理。2026年5月3日発表のBlackstone・H&F・Goldman Sachs との$1.5Bエンタープライズ AI サービス合弁会社、5月7日発表のEPAM Systems との戦略的多年契約、5月8日 Fortune 報道『単一四半期で80倍成長』、5月12日 Bloomberg 報道の$30B 調達ラウンド合意確定（評価額 $900B 超、ARR $45B）、5月14日 Gates Foundation との $200M／4年 grant partnership（医療・K-12教育・経済モビリティ）まで追補。さらに2026年5月28日発表の Series H — $65B 調達・post-money $965B 評価額（OpenAI を上回り AI スタートアップ史上最高）・年率 run-rate revenue $47B 到達・ハイパースケーラー既コミット $15B（Amazon $5B 含む）、6月1日（PT）に SEC へ機密ドラフト S-1 を提出した IPO 申請開始、Google製カスタムTPUのリース資金を賄うApollo/Blackstoneのプライベートクレジット（第1弾$35B完了・2026年8月時点で第2弾最低$36B打診中）に加え、2026年7月末のGoogle支援$15Bデット調達、8月13日のDecart AI買収交渉（$6B・未確定）、8月時点で収益ランレート$65B突破・Q2収益$11.5B（前年同期比約15倍）、8月18日報道のIPO前リボルビング・クレジットファシリティが目標$10Bを超過見込み（主要行に約$1.25Bずつコミット要請）、9月4日報道の累計調達総額$130B超・IPO評価額ターゲット$2兆規模まで追補。"
+excerpt: "2026年4月にAnthropicが立て続けに発表したAmazon・Googleからの巨額投資ラウンドと、Series G $380B評価額調達・年間収益ランレート $30B 突破（OpenAI 逆転）・CoreWeave との計算インフラ個別契約を整理。2026年5月3日発表のBlackstone・H&F・Goldman Sachs との$1.5Bエンタープライズ AI サービス合弁会社、5月7日発表のEPAM Systems との戦略的多年契約、5月8日 Fortune 報道『単一四半期で80倍成長』、5月12日 Bloomberg 報道の$30B 調達ラウンド合意確定（評価額 $900B 超、ARR $45B）、5月14日 Gates Foundation との $200M／4年 grant partnership（医療・K-12教育・経済モビリティ）まで追補。さらに2026年5月28日発表の Series H — $65B 調達・post-money $965B 評価額（OpenAI を上回り AI スタートアップ史上最高）・年率 run-rate revenue $47B 到達・ハイパースケーラー既コミット $15B（Amazon $5B 含む）、6月1日（PT）に SEC へ機密ドラフト S-1 を提出した IPO 申請開始、Google製カスタムTPUのリース資金を賄うApollo/Blackstoneのプライベートクレジット（第1弾$35B完了・2026年8月時点で第2弾最低$36B打診中）に加え、2026年7月末のGoogle支援$15Bデット調達、8月13日のDecart AI買収交渉（$6B・未確定）、8月時点で収益ランレート$65B突破・Q2収益$11.5B（前年同期比約15倍）、8月18日報道のIPO前リボルビング・クレジットファシリティが目標$10Bを超過見込み（主要行に約$1.25Bずつコミット要請）、9月4日報道の累計調達総額$130B超・IPO評価額ターゲット$2兆規模、SPV経由で60日間に$71Bのチップリース債務を積み上げ（オフバランスシート、Broadcomがシニアトランシェ保証）・Fortune10のうち8社がClaude顧客化まで追補。"
 draft: false
 ---
 
@@ -512,6 +512,14 @@ The Motley Foolは、AnthropicがこれまでのAmazon・Google戦略投資やSe
 IPOの具体的なタイムライン・主幹事（Morgan Stanley・Goldman Sachs・JPMorgan・Citigroup）・上場延期報道などの詳細は、本記事のスコープ外のため [Anthropic IPO / S-1提出 完全ガイド](/mdTechKnowledge/blog/anthropic-ipo-s1-filing/) を参照してください。
 
 出典: [The Motley Fool: Anthropic Has Already Raised $130 Billion Ahead of...（2026-09-04）](https://www.fool.com/investing/2026/09/04/anthropic-has-already-raised-130-billion-ahead-of/)
+
+### SPV経由で$71Bのチップリース債務を60日間で積み上げ（オフバランスシート）・Fortune10の8社が顧客に
+
+Anthropicは、**SPV（特別目的事業体）がチップを購入しAnthropicにリースバックする**スキームを通じて、**わずか60日間で約$71B（710億ドル）規模のチップリース債務**を積み上げたと報じられました。Broadcomがシニアトランシェを保証する構成で、これらの負債はAnthropic本体の**貸借対照表には計上されないオフバランスシート**の仕組みです（前述の第5章補遺2で扱ったApollo/Blackstone経由のGoogle製TPUリース案件$35Bも、この一連のSPVスキームの一部）。AI業界全体で「ビルドアウトの規模が個社の貸借対照表を超え、資金調達がアームズレングスの特別目的事業体に移っている」構造変化の一例とされています。
+
+エンタープライズ導入の面では、**Fortune 10（米フォーチュン誌の売上高上位10社）のうち8社がすでにClaude顧客**になっていると報じられています。年間$100万を超える支出を持つ顧客は既に1,000社超（2026年4月時点で500社超から2ヶ月足らずで倍増）に達しており、Deloitteが47万人超・150か国規模でClaudeを展開する等、大企業への浸透が加速しています。
+
+出典: [Yahoo Finance: Anthropic SPVs Stack $71 Billion in Chip-Lease Debt in 60 Days](https://finance.yahoo.com/technology/ai/articles/anthropic-spvs-stack-71-billion-000514097.html) / [WION: Anthropic has stacked $71 billion in chip-lease debt](https://www.wionews.com/world/anthropic-has-stacked-71-billion-in-chip-lease-debt-in-60-days-and-kept-it-off-its-books-1786631219409)
 
 ---
 

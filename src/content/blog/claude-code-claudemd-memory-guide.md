@@ -1,9 +1,10 @@
 ---
 title: "Claude Code の CLAUDE.md とメモリの仕組み"
 date: 2026-04-12
+updatedDate: 2026-09-21
 category: "Claude技術解説"
-tags: ["Claude Code", "CLAUDE.md", "メモリ", "設定"]
-excerpt: "CLAUDE.mdの階層構造（グローバル/プロジェクト）、読み込みルール、メモリのプロジェクト単位管理、使い分け判断フローを解説。"
+tags: ["Claude Code", "CLAUDE.md", "メモリ", "設定", "AGENTS.md"]
+excerpt: "CLAUDE.mdの階層構造（グローバル/プロジェクト）、読み込みルール、メモリのプロジェクト単位管理、使い分け判断フローを解説。2026-09-18追記: v2.1.277で追加されたAGENTS.mdサポート（CLAUDE.mdが無いプロジェクトでの代替読み込み、`/config`での切替）を追記。"
 draft: false
 ---
 
@@ -213,4 +214,18 @@ projectAで保存したメモリはprojectBからは見えない。プロジェ�
 
 ---
 
-*Claude Code CLAUDE.md & メモリ仕組みガイド — 2026年4月時点*
+## 7. 【2026-09-18追記】AGENTS.mdサポート追加（v2.1.277）
+
+**Claude Code v2.1.277** で、**AGENTS.md**（他のAIコーディングエージェントツールでも使われる汎用プロジェクト指示ファイル）のサポートが追加されました。
+
+- **読み込みルール**: プロジェクトに **CLAUDE.md が存在しない場合、代わりに AGENTS.md を読み込む**（CLAUDE.mdが存在する場合はこれまで通りCLAUDE.mdが優先）
+- **切り替え設定**: `/config` の **「Project instructions」** からどちらを使うか変更可能
+- **未対応環境**: **Bedrock・Vertex AI・Microsoft Foundry** ではこの時点でまだ未対応
+
+他のエージェントツール（Cursor等）が既にAGENTS.mdを使っているプロジェクトに対して、CLAUDE.mdを別途用意しなくてもClaude Codeがそのまま指示を読み込めるようになり、**複数のAIコーディングツールを併用するプロジェクトでの互換性**が向上しました。本記事の第2章「CLAUDE.mdの階層構造」・第4章「メモリの仕組み」で説明した読み込みルールは、AGENTS.mdをCLAUDE.mdの代替ファイルとして読み替えれば同様に適用されます。
+
+出典: [Claude Code CHANGELOG（v2.1.277）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
+
+---
+
+*Claude Code CLAUDE.md & メモリ仕組みガイド — 2026年4月時点、2026年9月にAGENTS.mdサポートを追記*
