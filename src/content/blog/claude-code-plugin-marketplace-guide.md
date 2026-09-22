@@ -1,10 +1,10 @@
 ---
 title: "Claude Code Plugin Marketplace ガイド — slash/hooks/サブエージェント/skills を束ねて配布・導入する"
 date: 2026-06-21
-updatedDate: 2026-09-12
+updatedDate: 2026-09-22
 category: "Claude技術解説"
 tags: ["Claude Code", "プラグイン", "Marketplace", "slash commands", "hooks", "サブエージェント", "skills", "MCP", "design"]
-excerpt: "Claude Code のプラグインは、slash commands・hooks・サブエージェント・skills・MCP サーバーを1つのパッケージに束ねて配布・導入できる仕組みです（2025年10月 公開ベータ）。/plugin コマンドでの検索・インストール、公式マーケットプレイス claude-plugins-official とサードパーティ/自前マーケットプレイスの追加方法、plugin.json の構成、作成の流れまでを公式ドキュメントベースで整理します。2026-08-17（v2.1.234）追加のバンドルスキル`/design`（Research Preview）、2026-09-04（v2.1.261）追加の`/skill-doctor`（未使用スキルとコンテキストコストの可視化）も追記。"
+excerpt: "Claude Code のプラグインは、slash commands・hooks・サブエージェント・skills・MCP サーバーを1つのパッケージに束ねて配布・導入できる仕組みです（2025年10月 公開ベータ）。/plugin コマンドでの検索・インストール、公式マーケットプレイス claude-plugins-official とサードパーティ/自前マーケットプレイスの追加方法、plugin.json の構成、作成の流れまでを公式ドキュメントベースで整理します。2026-08-17（v2.1.234）追加のバンドルスキル`/design`（Research Preview）、2026-09-04（v2.1.261）追加の`/skill-doctor`（未使用スキルとコンテキストコストの可視化）、2026-09-11（v2.1.269）追加の`claude plugin eval`（プラグインのevalスイート実行・ノープラグインベースラインとのスコア比較）も追記。"
 draft: false
 ---
 
@@ -98,6 +98,18 @@ UI を開かずにコマンドラインから直接操作することもでき�
 多数のプラグインを入れてスキルが乱立してきたときに、`/plugin disable` や `/reload-plugins` で整理する前段階の**診断ステップ**として使えます。
 
 出典: [Claude Code CHANGELOG（v2.1.261）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
+
+### 【2026-09-11追記】`claude plugin eval` — プラグインのevalスイートを実行・スコア比較（v2.1.269）
+
+**Claude Code v2.1.269** で、**`claude plugin eval`** コマンドが追加されました。プラグインに含まれる**evalスイート**をClaude Codeに対して実行し、**再現可能なスコア付き結果**を得られる機能です。
+
+- **ノープラグインのベースラインと比較**したスコアを算出
+- 結果は **JSON + HTMLレポート**で出力され、機械可読・人間可読の両方に対応
+- プラグイン開発者が「このプラグインを入れると実際に成果が上がるか」を定量的に検証する手段になる
+
+前述の `/skill-doctor`（未使用スキルの可視化）が「使われているか」を見る診断ツールだとすれば、`claude plugin eval` は「入れる価値があるか」を**事前に・定量的に**検証するツールという位置づけです。プラグイン開発・選定の両局面で、勘に頼らない判断材料を提供します。
+
+出典: [Claude Code CHANGELOG（v2.1.269）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 ---
 

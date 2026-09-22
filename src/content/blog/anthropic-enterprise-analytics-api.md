@@ -1,10 +1,10 @@
 ---
 title: "Anthropic Enterprise Analytics API 完全ガイド — 組織別利用データの照会と活用"
 date: 2026-05-02
-updatedDate: 2026-09-05
+updatedDate: 2026-09-22
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Admin API", "Analytics", "エンタープライズ", "FinOps", "Slack連携", "Workload Identity Federation", "OIDC", "Spend Limits API", "RBAC", "ユーザー管理"]
-excerpt: "2026年4月、Anthropic は Claude / Claude Code Remote / Claude Cowork の組織別利用データをプログラム照会できる Enterprise Analytics API を拡張した。Rate Limits API との位置付けの違い、エンドポイント構造、認証、レスポンス、Python/curl 実装例、Slackボット連携、運用ユースケース、制限事項までをまとめて解説する。さらに2026年6月の Workload Identity Federation（WIF＝OIDCトークンによるAPIキー不要認証）対応と、Admin API に追加された issuers / service accounts / federation rules エンドポイントも解説する。 さらに 2026-07-14 Beta のユーザー管理API（組織ロール5種・APIで割当可能なのは user/managed のみ・シート消費・SSO/SCIM併用時の制約）と、Enterprise 専用の Spend Limits API（上限の階層解決・ユーザー単位上書き・増額申請の承認/却下・金額は最小単位の文字列）、2026年8月のAdmin API GA化（8/19ユーザー管理ベータヘッダー不要化、8/26 `client.beta.organization`として全主要SDKから利用可能に）、2026-09-01の`anthropic-version`ヘッダーがAdmin API・Enterprise Analytics API・Compliance APIでも必須化された変更も収録。"
+excerpt: "2026年4月、Anthropic は Claude / Claude Code Remote / Claude Cowork の組織別利用データをプログラム照会できる Enterprise Analytics API を拡張した。Rate Limits API との位置付けの違い、エンドポイント構造、認証、レスポンス、Python/curl 実装例、Slackボット連携、運用ユースケース、制限事項までをまとめて解説する。さらに2026年6月の Workload Identity Federation（WIF＝OIDCトークンによるAPIキー不要認証）対応と、Admin API に追加された issuers / service accounts / federation rules エンドポイントも解説する。 さらに 2026-07-14 Beta のユーザー管理API（組織ロール5種・APIで割当可能なのは user/managed のみ・シート消費・SSO/SCIM併用時の制約）と、Enterprise 専用の Spend Limits API（上限の階層解決・ユーザー単位上書き・増額申請の承認/却下・金額は最小単位の文字列）、2026年8月のAdmin API GA化（8/19ユーザー管理ベータヘッダー不要化、8/26 `client.beta.organization`として全主要SDKから利用可能に）、2026-09-01の`anthropic-version`ヘッダーがAdmin API・Enterprise Analytics API・Compliance APIでも必須化された変更、2026-09-10のSmart Reports（Enterprise beta、利用実態の定性分析）も収録。"
 draft: false
 ---
 
@@ -538,6 +538,21 @@ curl https://api.anthropic.com/v1/organizations/usage_report/messages \
 ```
 
 出典: [Anthropic Platform リリースノート（2026-09-01）](https://platform.claude.com/docs/en/release-notes/overview)
+
+### 【2026-09-10追記】Smart Reports（Enterprise beta）— Analytics APIとは異なる「定性分析」の位置づけ
+
+Cowork（claude.aiアプリ）に **Smart Reports**（Enterprise向けベータ）という新機能が追加されました。本記事のAnalytics API・Spend Limits APIが「**数値をAPIで照会・制御する**」仕組みであるのに対し、Smart Reportsは**チームのClaude利用実態を自動分析してレポート化するUIベースの機能**で、両者は補完関係にあります。
+
+| 項目 | 内容 |
+|---|---|
+| 分析対象 | チームが実施した業務の種類・コスト・セッションの摩擦ポイント・スキル化すべき反復パターン |
+| 有効化 | Enterprise Owner が有効化 |
+| 無料枠 | **月10件まで無料**（beta期間中） |
+| Analytics APIとの違い | Analytics API＝**トークン数・費用の定量ダッシュボード**、Smart Reports＝**利用内容の定性分析** |
+
+Smart Reportsの詳細な機能解説は [Claude Cowork アップデートまとめ](/mdTechKnowledge/blog/claude-cowork-updates/) を参照してください。
+
+出典: [Claude Enterprise Smart Reports beta（2026-09-10）](https://claypier.com/en/claude-enterprise-smart-reports-beta/)
 
 ## Spend Limits API — 支出「上限」をAPIで制御する（Enterprise 専用）
 
