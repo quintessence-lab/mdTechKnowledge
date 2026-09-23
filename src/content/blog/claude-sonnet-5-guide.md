@@ -1,10 +1,10 @@
 ---
 title: "Claude Sonnet 5 完全ガイド — Opus 4.8 に迫る性能を低価格で回す新デフォルトモデル"
 date: 2026-07-03
-updatedDate: 2026-08-19
+updatedDate: 2026-09-24
 category: "Claude技術解説"
 tags: ["Claude", "Sonnet 5", "Anthropic", "AIモデル", "エージェント", "コーディング"]
-excerpt: "2026年6月30日（PT）リリースのClaude Sonnet 5は、Free/Pro/Claude Codeの新デフォルトモデル。agentic codingベンチ63.2%でOpus 4.8（69.2%）に迫りつつ、価格$2/$10という破格の低価格を実現した（当初は2026-08-31までの導入価格→**2026-08-10に恒久化を発表**、9月からの$3/$15への値上げは撤回）。エージェント自律実行・ツールユース・コンピュータ使用を強化した後継モデルの実力を、Sonnet 4.6・Opus 4.8との比較で総点検する。"
+excerpt: "2026年6月30日（PT）リリースのClaude Sonnet 5は、Free/Pro/Claude Codeの新デフォルトモデル。agentic codingベンチ63.2%でOpus 4.8（69.2%）に迫りつつ、価格$2/$10という破格の低価格を実現した（当初は2026-08-31までの導入価格→**2026-08-10に恒久化を発表**、9月からの$3/$15への値上げは撤回）。エージェント自律実行・ツールユース・コンピュータ使用を強化した後継モデルの実力を、Sonnet 4.6・Opus 4.8との比較で総点検する。2026-09-22追記: Claude Code v2.1.280でPro・Team StandardプランのデフォルトがSonnetからOpus（5.5）へ再変更された点を追記（Claude.aiのFree/Proチャットは引き続きSonnet 5既定）。"
 draft: false
 ---
 
@@ -237,6 +237,8 @@ Sonnet 5 は新トークナイザを採用し、**同一の入力テキストが
 ### 7.2 Claude Code / Free / Pro ユーザー
 
 Free / Pro プランおよび Claude Code ユーザーは、**特別な操作なしで自動的に Sonnet 5** が使われます（デフォルト交代済み）。Opus 4.8 を使いたい場面では `/model` コマンドなどで明示的に切り替えます。
+
+> **【2026-09-22追記】Claude Code の Pro・Team Standard デフォルトは Opus（5.5）へ再変更**: Claude Code v2.1.280（2026-09-22 PT）で、**Pro・Team Standardプランの既定モデルがSonnetからOpus（新登場のOpus 5.5）へ変更**されました。Max・Team Premium・Enterpriseは元々Opus既定だったため、これで**全プランがOpus既定に統一**されています。詳細は[Claude Opus 5 完全ガイド](/mdTechKnowledge/blog/claude-opus-5-guide/)を参照。本節で説明している「Sonnet 5が自動的に使われる」という挙動は、**Claude.aiのFree/Proチャットには引き続き該当**しますが、**Claude Code（v2.1.280以降のPro/Team Standard）には該当しなくなった**点に注意してください。
 
 ### 7.3 クラウド利用
 

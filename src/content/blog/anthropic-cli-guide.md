@@ -1,10 +1,10 @@
 ---
 title: "ant CLI 完全ガイド — Anthropic公式Claude API向けコマンドラインクライアント"
 date: 2026-04-26
-updatedDate: 2026-09-12
+updatedDate: 2026-09-24
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "CLI", "ant", "開発ツール"]
-excerpt: "Anthropic公式のClaude API向けCLI「ant」を解説。go installでセットアップし、フラグ/YAML/@path参照でリクエスト構築、--transformでレスポンス抽出。Claude Codeとの連携・APIリソースのYAMLバージョン管理に加え、2026-09-03にGAした`ant apply`（v1.30.0以降必須、agents/environments/skills/memory stores/deploymentsをリポジトリファイルで宣言管理するインフラ-as-codeワークフロー、`claude-lock.json`によるリソース重複防止）、2026-09-10追加の`ant beta:sessions connect`（実行中セッションにターミナルをアタッチしライブ監視・介入）も整理。"
+excerpt: "Anthropic公式のClaude API向けCLI「ant」を解説。go installでセットアップし、フラグ/YAML/@path参照でリクエスト構築、--transformでレスポンス抽出。Claude Codeとの連携・APIリソースのYAMLバージョン管理に加え、2026-09-03にGAした`ant apply`（v1.30.0以降必須、agents/environments/skills/memory stores/deploymentsをリポジトリファイルで宣言管理するインフラ-as-codeワークフロー、`claude-lock.json`によるリソース重複防止）、2026-09-10追加の`ant beta:sessions connect`（実行中セッションにターミナルをアタッチしライブ監視・介入）、2026-08-26のAdmin APIが`ant` CLIおよび全主要SDKから`client.beta.organization`名前空間経由で利用可能になった変更も整理。"
 draft: false
 ---
 
@@ -289,6 +289,16 @@ ant beta:sessions connect <session-id> --web
 これまでManaged Agentsのセッションは主にAPI経由・Consoleのセッションビューワーで監視するものでしたが、`ant beta:sessions connect`により**ターミナルからのリアルタイム監視・介入**が可能になりました。CI/CDパイプラインから起動したセッションのデバッグや、長時間実行中のエージェントに人間が割り込みたい場面で有用です。
 
 出典: [ant CLI関連の複数報道](https://alphasignal.ai/news/anthropic-s-claude-managed-agents-now-flag-risky-actions-for-human-approval)
+
+## 【2026-08-26追記】Admin APIがant CLIおよび全主要SDKから利用可能に
+
+**Admin API**（組織メンバー・招待・ワークスペース・APIキー・レート制限レポート・Workload Identity Federation・CMEKなど、組織管理系の全機能）が、**`ant` CLI に加えて Python・TypeScript・C#・Go・Java・PHP・Ruby の各公式SDK**で、統一的に **`client.beta.organization`** 名前空間から直接呼び出せるようになりました。
+
+- 従来は**生のHTTPリクエスト**を組む必要があったが、`ant` CLIおよび主要言語SDKから**型付きのクライアントコード**で呼び出せるように
+- カバー範囲: organization info・members・invites・workspaces・API keys・rate limits・service accounts・CMEKなど
+- Admin API自体は本記事のスコープ外（Enterprise Analytics API記事等を参照）ですが、**`ant` CLIがAdmin APIの正式な操作窓口の1つ**になった点は`ant`利用者にとって重要な変更です
+
+出典: [Admin API on ant CLI and SDKs（2026-08-26）](https://www.getclaudeskills.com/blog/admin-api-ant-cli-sdks)
 
 ## Claude Code との連携・使い分け
 

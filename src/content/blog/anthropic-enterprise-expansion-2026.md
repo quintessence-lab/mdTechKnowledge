@@ -1,10 +1,10 @@
 ---
 title: "Anthropic エンタープライズ攻勢2026 — PwC・KPMG・DXC・TCS と Big Four/SIer 連携、$1.5B FDE スタジオまで"
 date: 2026-06-20
-updatedDate: 2026-09-12
+updatedDate: 2026-09-24
 category: "一般リサーチ"
 tags: ["Anthropic", "Claude", "エンタープライズAI", "PwC", "KPMG", "DXC", "TCS", "Forward Deployed Engineer"]
-excerpt: "2026年5〜6月、Anthropic は PwC・KPMG・DXC・TCS という Big Four / 大手 SIer との大型連携を相次いで発表し、さらに Blackstone・Goldman Sachs・Hellman & Friedman と組んで FDE 型のエンタープライズ AI サービス会社（報道で総額 $1.5B 規模）を立ち上げた。コンサル・SIer・PE を「実装の通り道」として、規制業種・大企業・PE 保有の中堅市場へ Claude を一気に押し込む攻勢の全体像と、各社の認定規模・活用製品・狙う市場を比較整理する一般リサーチ。2026年8月26日発表のSalesforce「Claudeforce」（両社が互いの顧客となる双方向パートナーシップ、Claude in Salesforce・Salesforce in Claudeの相互統合）も追記した。"
+excerpt: "2026年5〜6月、Anthropic は PwC・KPMG・DXC・TCS という Big Four / 大手 SIer との大型連携を相次いで発表し、さらに Blackstone・Goldman Sachs・Hellman & Friedman と組んで FDE 型のエンタープライズ AI サービス会社（報道で総額 $1.5B 規模）を立ち上げた。コンサル・SIer・PE を「実装の通り道」として、規制業種・大企業・PE 保有の中堅市場へ Claude を一気に押し込む攻勢の全体像と、各社の認定規模・活用製品・狙う市場を比較整理する一般リサーチ。2026年8月26日発表のSalesforce「Claudeforce」（両社が互いの顧客となる双方向パートナーシップ、Claude in Salesforce・Salesforce in Claudeの相互統合）、2026年9月21日発表のAccentureが「初の組み込み外部評価者」に就任（導入支援ではなくモデル安全性検証への参加）も追記した。"
 draft: false
 ---
 
@@ -176,6 +176,18 @@ UST・LTM に続き Cognizant も加わったことで、大手SIer/コンサル
 これまでの提携（PwC・KPMG・DXC・TCS等）が「導入支援」の色合いが強かったのに対し、Claudeforceは**プラットフォーム同士の相互組み込み**という点で異なる形態の提携です。
 
 出典: [Salesforce公式プレスリリース（2026-08-26）](https://www.salesforce.com/news/press-releases/2026/08/26/salesforce-and-anthropic-announce-claudeforce/)
+
+### 【2026-09-21追記】Accentureが「初の組み込み外部評価者」に就任 — 従来の導入支援パートナーとは異なる役割
+
+**Accenture**（2026年9月21日発表）: 本記事のこれまでの提携（PwC・KPMG・DXC・TCS・Salesforce等）はいずれも「顧客企業へのClaude導入を支援する」役割でしたが、Accentureとの今回の提携は**性格が根本的に異なります**。Accenture自身が、Anthropicの**"inaugural embedded evaluator"（初の組み込み外部評価者）**として、モデルの安全性評価プロセスに組み込まれます。
+
+- **役割**: Accentureの**AI評価部門「Faculty」**を活用し、Anthropicの社内チームと共同で**モデルのred-team（敵対的検証）・安全装置（safeguards）テスト**を実施
+- **位置づけ**: 「Claudeを導入する側」ではなく「Claudeを検証する側」としての参加であり、Anthropicが外部組織を安全性評価プロセスに正式に組み込む珍しい事例
+- **文脈**: Anthropicが2026年9月に打ち出した「フロンティアAI開発のペース調整」方針と軌を一にする、第三者評価の拡充という流れの一部
+
+これまでのAccentureとの関係（Claude Partner Networkメンバーとしての導入支援、第3部参照）に加え、**評価・検証という新しい役割**が追加された形です。
+
+出典: [Accenture-Anthropic Partnership（2026-09-21）](https://en.cryptonomist.ch/2026/09/21/accenture-anthropic-partnership/)
 
 ---
 
