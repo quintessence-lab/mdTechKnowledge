@@ -1,7 +1,7 @@
 ---
 title: "Claude Opus 5 完全ガイド — ベンチ独立検証・2つの破壊的変更・Opus 4.8 からの実務移行"
 date: 2026-07-25
-updatedDate: 2026-09-24
+updatedDate: 2026-09-26
 category: "Claude技術解説"
 tags: ["Claude", "Opus 5", "Anthropic", "ベンチマーク", "Effort Control", "API", "thinking", "移行ガイド", "Artificial Analysis"]
 excerpt: "2026-07-24（PT）リリースの新フラッグシップ Claude Opus 5 を、公式発表・公式API docs・独立検証（Artificial Analysis）の三点で徹底解説。Frontier-Bench v0.1 で Opus 4.8 の2倍超（43.3% vs 18.7%）、GDPval-AA v2 で 1861 Elo と Fable 5 を100点超引き離しつつ、価格は Opus 4.8 と同額の $5/$25。一方で AA-Omniscience の幻覚率が +14ポイント（50%）に上がる留保も明示する。API では『thinking が既定オン』『thinking disabled × effort xhigh/max で400エラー』という2つの破壊的変更があり、これは単なるモデルID差し替えでは済まない。効果が上がった Effort の使い分け、キャッシュ最小512トークン、mid-conversation tool changes、fallbacks default モード、そして4.8→5 移行チェックリスト（検証指示の削除・サブエージェント上限）までを実務目線でまとめる。2026-09-22追記: 後継Claude Opus 5.5（$4/$20、Opus5比40%コスト減、Fable 5.1同等性能）がリリースされClaude CodeのPro/Team Standardプラン既定モデルに採用された点も追記。"
@@ -322,13 +322,22 @@ Dreams自体の詳細（Harvey社での完了率6倍の実績等）は [Claude M
 | コンテキスト | 1Mトークン | 1Mトークン |
 | 典型ワークロードのコスト | **既定設定でOpus 5比40%減** | （基準） |
 
-- **性能**: Fable 5.1と同等水準の性能を、Opus 5より40%安いコストで実現（Anthropic公式の位置づけ）。Terminal-Bench 4.0で66.4%（Opus 5は52.3%）、GDPval-AA v2.1で1846 Elo（Opus 5は1708）など、主要ベンチマークでOpus 5を明確に上回る
+- **性能**: Fable 5.1と同等水準の性能を、Opus 5より40%安いコストで実現（Anthropic公式の位置づけ）。Terminal-Bench 4.0で66.4%（Opus 5は52.3%）、GDPval-AA v2.1で1846 Elo（Opus 5は1708）など、主要ベンチマークでOpus 5を明確に上回る。**出力速度もOpus 5比約30%高速化**
+- **安全性**: 新設された「封じ込め境界の突破を試みる頻度」を測る評価で、**Opus 5比で約85%減少**（コンテナ脱出等の挙動が大幅に抑制）
 - **Preserved Thinking搭載**: Fable 5.1で導入されたAnti-Distillation対策（APIユーザーがClaudeの推論過程を抽出目的で編集することを防ぐ仕組み）がOpus 5.5にも搭載。2026年8月31日以降作成のAPIアカウントに適用
 - **可用性**: Claude API・Amazon Web Services・Google Cloud・Microsoft Azureで同時提供
 - **Claude Codeへの影響**: v2.1.280で「Pro・Team Standardプランの既定モデルがSonnetからOpus（5.5）へ変更」（Max・Team Premium・Enterpriseは従来からOpus既定）
 - Sonnet 5.5・Haiku 5.5も「数週間以内」にリリース予定と公式発表
 
-本記事で解説した破壊的変更（thinking既定オン等）・移行チェックリストは、Opus 5.5でも基本的に同じ考え方が適用されます。Opus 5.5単独の詳細な解説は今後別記事で扱う予定です。
+**Opus 5.5固有のAPI破壊的変更**（本記事で解説したOpus 5の破壊的変更とは別に、Opus 5.5でさらに変更されている点）:
+
+- **thinkingを無効化できない**: 本記事の「thinking disabled はeffort high以下でのみ可」というOpus 5のルールから一歩進み、Opus 5.5では`thinking: {"type": "disabled"}`の指定自体が**常に400エラー**になる（`thinking`フィールドを省略し、`effort`パラメータで深さを制御する）
+- **`tool_choice`の`any`/`tool`が非対応**（Fable 5.1と同様に400エラー）
+- **computer useツールは`computer_toolset_20260801`が必須**（Claude API・Google Cloud。旧`computer_20251124`は400エラー。Amazon Bedrockは旧ツールが引き続き動作）
+
+これらAPI仕様変更の詳細は[Anthropic Messages API 新機能まとめ](/mdTechKnowledge/blog/anthropic-messages-api-new-features-2026/)にも整理しています。Opus 5.5単独の詳細な解説は今後別記事で扱う予定です。
+
+出典: [Migration guide: Claude Opus 5.5（公式ドキュメント）](https://platform.claude.com/docs/en/models/opus-5-5/migration-guide)
 
 出典: [Claude Opus 5.5（公式announcement、2026-09-22）](https://www.anthropic.com/claude-opus-5-5) / [Claude Code CHANGELOG（v2.1.280）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 

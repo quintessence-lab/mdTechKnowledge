@@ -1,10 +1,10 @@
 ---
-title: "Anthropic Messages API 新機能まとめ（2026年5〜9月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・Opus5対応・Browser use tool・Fable 5.1/Mythos 5.1対応"
+title: "Anthropic Messages API 新機能まとめ（2026年5〜9月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・Opus5対応・Browser use tool・Fable 5.1/Mythos 5.1・Opus 5.5対応"
 date: 2026-06-20
-updatedDate: 2026-09-21
+updatedDate: 2026-09-26
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ", "Compliance API", "EU AI Act", "Browser use tool", "Python SDK", "Fable 5.1", "Mythos 5.1"]
-excerpt: "2026年5〜9月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）、9月1日の Fable 5.1/Mythos 5.1リリースに伴うtool_choice制限・thinking保持ルール変更・キャッシュ90%値下げ・Per-Message Effort（9月3日Google Cloud対応拡大）、9月14日のOn-demand conversation compaction（任意タイミングでの会話圧縮ベータ）・9月18日のCompliance APIがClaude in Chromeセッションに対応まで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
+excerpt: "2026年5〜9月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）、9月1日の Fable 5.1/Mythos 5.1リリースに伴うtool_choice制限・thinking保持ルール変更・キャッシュ90%値下げ・Per-Message Effort（9月3日Google Cloud対応拡大）、9月14日のOn-demand conversation compaction（任意タイミングでの会話圧縮ベータ）・9月18日のCompliance APIがClaude in Chromeセッションに対応、9月22日のClaude Opus 5.5リリース（thinking無効化不可・tool_choice any/tool廃止等のAPI破壊的変更）・Inline tools beta（会話途中でのツール定義変更）、9月23日のCache Diagnostics GA化まで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
 draft: false
 ---
 
@@ -480,6 +480,41 @@ Anthropic 公式 Python SDK のメジャーバージョン **v1.0** がリリー
 `product_surface`フィールドは、2026年8月26日のClaude Science（`claude_science`）・Claude for Microsoft 365（`office_agents`始まり）対応に続く形で、監査対象の製品面を拡張し続けているパターンの一つです。
 
 出典: [Anthropic Platform リリースノート（2026-09-18）](https://platform.claude.com/docs/en/release-notes/overview) / [Compliance API（公式ドキュメント）](https://platform.claude.com/docs/en/manage-claude/compliance-api)
+
+## 20. 2026年9月22〜23日のアップデート — Claude Opus 5.5リリースに伴うAPI変更・Inline tools beta・Cache Diagnostics GA
+
+### Claude Opus 5.5（`claude-opus-5-5`）リリース（2026-09-22）
+
+新モデル**Claude Opus 5.5**がリリースされました。1Mトークンコンテキスト（デフォルト）・最大出力128Kトークン・常時オンのAdaptive Thinking、価格は**$4/$20 per MTok**（Opus 5は$5/$25）。Claude API・Amazon Bedrock・Claude Platform on AWS・Google Cloud・Microsoft Foundryに同時対応。モデル自体の詳細は[Claude Opus 5 完全ガイド](/mdTechKnowledge/blog/claude-opus-5-guide/)を参照してください。
+
+**API破壊的変更**（公式ドキュメントより）:
+
+- **thinkingを無効化できない**: `thinking: {"type": "disabled"}`および`thinking: {"type": "enabled", ...}`の明示指定はいずれも**400エラー**。`thinking`フィールド自体を省略し、思考の深さは`effort`パラメータで制御する
+- **`tool_choice`の`any`/`tool`が非対応**: Fable 5.1と同様に400エラー。`auto`とstrict tool useの組み合わせに移行する
+- **computer useツールの版指定**: Claude APIとGoogle Cloudでは`computer_toolset_20260801`が必須（旧`computer_20251124`は400エラー）。Amazon Bedrockでは`computer_20251124`が引き続き動作
+
+**Fast mode（research preview）**もOpus 5.5向けにClaude APIで利用可能になりました。
+
+出典: [Anthropic Platform リリースノート（2026-09-22）](https://platform.claude.com/docs/en/release-notes/overview) / [Migration guide: Claude Opus 5.5](https://platform.claude.com/docs/en/models/opus-5-5/migration-guide)
+
+### Inline tools（ベータ、2026-09-22）
+
+会話途中のsystem メッセージの中で**ツール定義そのものを変更**できるベータ機能が追加されました。ベータヘッダー **`inline-tools-2026-09-15`**。
+
+- `tool_addition`ブロックに**ツールの完全な定義**（`tool: {"type": "tool_definition", "definition": {...}}`）を含められる
+- **`tools`配列を編集せずに**、ツールの追加・スキーマ変更・サーバーツールの新バージョンへの切り替えが可能（プロンプトキャッシュを無効化しない）
+- 同ヘッダーは参照によるツールの追加・削除もカバー
+- MCPコネクタの**`mcp-client-2026-09-15`ベータヘッダーと併用**すると、定義にMCPツールセットを指定可能。レスポンスは各サーバーが取得したツール一覧を`mcp_tool_listing`ブロックとして記録し、それを送り返すことでリストを固定できる
+
+第16〜17章で紹介した会話途中system メッセージ・Mid-conversation tool changesの発展形として、**ツール定義自体の途中変更**という新しい柔軟性が加わった形です。
+
+出典: [Anthropic Platform リリースノート（2026-09-22）](https://platform.claude.com/docs/en/release-notes/overview) / [Mid-conversation system messages（公式ドキュメント）](https://platform.claude.com/docs/en/build-with-claude/mid-conversation-system-messages#define-tools-in-a-message-beta)
+
+### Cache DiagnosticsがGA（2026-09-23）
+
+第1章で紹介した**Cache Diagnostics**が、Claude APIで正式GAになりました。**`cache-diagnosis-2026-04-07`ベータヘッダーが不要**になり、Messagesリクエストに`diagnostics`オブジェクトを含めるだけでオプトインできます（旧ヘッダーを送るリクエストも引き続き動作）。あわせて`POST /v1/messages`のレスポンスには**常に`diagnostics`フィールドが含まれる**ようになり（`diagnostics`オブジェクトを送らなかった場合は`null`）、キャッシュ診断が標準機能として組み込まれた形です。
+
+出典: [Anthropic Platform リリースノート（2026-09-23）](https://platform.claude.com/docs/en/release-notes/overview) / [Cache diagnostics（公式ドキュメント）](https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics)
 
 ## まとめ — どの機能をいつ使うか
 
