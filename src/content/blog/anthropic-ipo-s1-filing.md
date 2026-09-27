@@ -1,10 +1,10 @@
 ---
 title: "Anthropic、SEC へ機密ドラフト S-1 提出 — 『公式発表に数字はない』IPOプロセスとPBC上場の論点"
 date: 2026-06-06
-updatedDate: 2026-09-21
+updatedDate: 2026-09-28
 category: "一般リサーチ"
 tags: ["Anthropic", "IPO", "S-1", "SEC", "Public Benefit Corporation", "Long-Term Benefit Trust", "上場", "資本市場", "OpenAI", "SpaceX", "メガIPO"]
-excerpt: "2026年6月1日、Anthropic は SEC へ Form S-1 の機密ドラフト登録届出書を提出し IPO 手続きを開始した。本記事は『公式発表は Rule 135 準拠の定型文で具体的な数値を一切含まない』という事実の確認から始め、機密提出（confidential filing）の仕組み、評価額$965B・年次ランレート$47Bの出典の切り分け、未定事項（株式数・価格・市場・ティッカー）、想定主幹事、2026メガIPO 3社（SpaceX/OpenAI/Anthropic）の横比較、そして PBC × Long-Term Benefit Trust という独特のガバナンスが上場でどう論点化するかを整理する。2026-08追記: 8〜9月のロードショー本格化・10月Nasdaq上場・$60B超調達という観測報道、評価額ターゲット$2兆観測・収益ランレート$65B突破・Q2収益$11.5B（いずれも報道・投資家推計ベース、公式未確認）を追記。公開S-1提出は2026年8月末見込みだが8月26日時点でSEC EDGAR未掲載という状況、2026年9月3日確定間近の$15Bプレクレジットファシリティ（Morgan Stanley主導、目標$10Bから拡大）とIPO開始時期の10月中旬への延期、Q2調整済み営業利益$559M超の実績確定・Q3も2四半期連続黒字化見通しを株主に通知・粗利率80%超（分配前・学習コスト控除前）も追記した。"
+excerpt: "2026年6月1日、Anthropic は SEC へ Form S-1 の機密ドラフト登録届出書を提出し IPO 手続きを開始した。本記事は『公式発表は Rule 135 準拠の定型文で具体的な数値を一切含まない』という事実の確認から始め、機密提出（confidential filing）の仕組み、評価額$965B・年次ランレート$47Bの出典の切り分け、未定事項（株式数・価格・市場・ティッカー）、想定主幹事、2026メガIPO 3社（SpaceX/OpenAI/Anthropic）の横比較、そして PBC × Long-Term Benefit Trust という独特のガバナンスが上場でどう論点化するかを整理する。2026-08追記: 8〜9月のロードショー本格化・10月Nasdaq上場・$60B超調達という観測報道、評価額ターゲット$2兆観測・収益ランレート$65B突破・Q2収益$11.5B（いずれも報道・投資家推計ベース、公式未確認）を追記。公開S-1提出は2026年8月末見込みだが8月26日時点でSEC EDGAR未掲載という状況、2026年9月3日確定間近の$15Bプレクレジットファシリティ（Morgan Stanley主導、目標$10Bから拡大）とIPO開始時期の10月中旬への延期、Q2調整済み営業利益$559M超の実績確定・Q3も2四半期連続黒字化見通しを株主に通知・粗利率80%超（分配前・学習コスト控除前）、2026年9月25日報道の創業者7名が合計50.1%の議決権確保を株主に要請（LTBTは取締役会指名権を維持）、上場先をNasdaqに選択・IPO本格始動が10月から11月へ後ろ倒し（報道ベース）、IPO富がもたらす新しい政治献金ネットワークの形成も追記した。"
 draft: false
 ---
 
@@ -202,6 +202,23 @@ Anthropic は営利だが**公益**も定款に組み込んだ **Public Benefit 
 
 > この **「ミッション保全 vs. 投資家の支配権」のトレードオフ**こそ、S-1 で最も議論される構造的トピックになる見込みです。評価額の抑制や上場の遅延リスクと、安全性ブランドの信頼性担保とが天秤にかかります。なお LTBT の詳細メカニズムは二次解説由来で、**S-1 本文（機密のため非公開）でどう開示されるかは現時点では未確認**です。
 
+### 【2026-09-25追記】創業者7名が合計50.1%の議決権を確保する株主承認を要請 — 「委譲」から「保持」への転換
+
+The Information（2026-09-25報道、TechCrunch等が後追い）によれば、Anthropicは株主に対し、**Dario Amodeiを含む共同創業者7名に、大半の企業判断において合計50.1%の議決権を与える株式構造**の承認を求めています。上記で説明してきた「創業者が支配権を独立したLTBTに委譲する」という構造とは、方向性が異なる動きです。
+
+| 項目 | 内容 |
+|:---|:---|
+| 対象 | 共同創業者7名（各自の経済的持分は**約2%**ずつに過ぎない） |
+| 仕組み | 経済的価値を伴わない**特別株（super-voting shares）**で、合計50.1%の議決権を付与 |
+| 発動条件 | 7名のうち**少なくとも3名が最低保有比率を維持**していること |
+| LTBTとの関係 | LTBTは引き続き取締役会**7議席の大半**を指名する権限を保持。創業者自身の取締役会議席は**2→3議席**に増加 |
+| 従業員向け措置 | 別クラスの株式により、**特定の企業判断で従業員がタイブレーク票**を持つ仕組みも導入 |
+
+- **先例**: 複数の創業者が結束して合計議決権を確保する構造は、Mark ZuckerbergのMeta・Evan SpiegelのSnapのようなスーパー議決権株の**単独版とは異なる、複数創業者による集団的な設計**という点が特徴的とされています。
+- **本記事の第6章との関係**: これまで説明してきた「創業者がLTBTに長期的権限を委譲する、支配型テック企業とは逆の設計」という整理は、**Series G/H時点までの構造**を前提にしたものです。IPOを前に、創業者側が**議決権そのものは手元に残す**方向へ設計を追加した形になります。ミッション保全（LTBT）と創業者の支配権保持が**併存する構造**へと変化しつつあると読めますが、**この株主提案がS-1にどう反映されるか、実際に承認されるかは未確定**です。
+
+出典: [TechCrunch: Anthropic's founders seek voting control ahead of IPO（2026-09-25、The Information の報道を引用）](https://techcrunch.com/2026/09/25/anthropics-founders-seek-voting-control-ahead-of-ipo/)
+
 ---
 
 ## 7. なぜ今、公開市場なのか（Daniela Amodei の論調）
@@ -294,6 +311,32 @@ CEO の Daniela Amodei は IPO に先立つインタビュー（TechCrunch, 6/4�
 > **留保事項**: 「調整済み営業利益（adjusted operating income）」は GAAP 純利益ではなく、株式報酬等の非現金項目を除いた指標です。粗利率「80%超」もAmazon分配前・学習コスト控除前という条件付きで、批評家からは指標の見え方について懐疑的な指摘も出ています（SemiAnalysis等はQ3 GAAP EBITで$1B超を見込むと報じる一方、これらの黒字化指標の持続性には留保が必要との論調もあります）。
 
 出典: [Irish Times: Anthropic tells investors it will be profitable for second straight quarter（2026-09-14）](https://www.irishtimes.com/business/2026/09/14/anthropic-tells-investors-it-will-be-profitable-for-second-straight-quarter/) / [SemiAnalysis: Anthropic 3Q26 Profit Over $1B](https://newsletter.semianalysis.com/p/anthropic-3q26-profit-over-1b-the)
+
+### 【2026-09追記】上場先はNasdaqに・時期は10月から11月へさらに後ろ倒し
+
+**上場先**について、2026年9月13日（PT）、AnthropicがNYSEではなく**Nasdaqを選択した**と報じられました。Nasdaq-100指数への組み入れ含みという点も報じられています。ただし本記事の第4章で述べたとおり、**上場市場は依然として公式には未発表**であり、これも報道ベースの観測です。
+
+**上場時期**については、本記事既出の「10月中旬」からさらに後ろ倒しの動きが報じられています。2026年9月18〜21日（PT）にWSJ等が報じたところでは、**IPOの本格始動が11月にずれ込む**見通しです。
+
+- **理由（報道ベース）**: 第3四半期の業績（前節の連続黒字化見通し）を投資家に提示できるタイミングまで待つ狙いとされています。加えて、OpenAIが2026年9月にリリースした新モデル（GPT-6 Astra）への対抗上、競争力を示せる状態で臨みたいとの分析もあります。
+- **文脈**: この延期報道は、Anthropic CEOのDario Amodeiが「We Must Pace the Frontier（フロンティアのペースを落とすべきだ）」という論考を発表した**1週間後**に出ています。
+- **市場の織り込み**: 予測市場では、11月という新しい時期表明についても**さらなる延期の可能性**が織り込まれていると報じられています。
+
+> **重要**: 本記事でこれまで扱ってきた時期観測（10月中旬・10月Nasdaq上場等）は、いずれも報道ベースの観測でした。今回の「11月」も同様に**報道・観測の域を出ず、Anthropic公式のスケジュール発表ではありません**。
+
+出典: [Bloomberg: Anthropic Said to Choose Nasdaq for Much-Anticipated IPO Listing（2026-09-13）](https://www.bloomberg.com/news/articles/2026-09-13/anthropic-said-to-choose-nasdaq-for-much-anticipated-ipo-listing) / [Investing.com: Anthropic delays IPO staging to November amid AI fears, WSJ says](https://www.investing.com/news/stock-market-news/anthropic-delays-ipo-staging-to-november-amid-ai-fears-wsj-says-4907941)
+
+### 【2026-09-24追記】IPOがもたらす富が新しい政治献金ネットワークを形成
+
+2026年9月24日、Bloombergは、Anthropicの近く見込まれるIPOによる資産の増加が、**AI安全性の強化を求める新しい政治献金ネットワーク**を生んでいると報じました。
+
+- **組織的な献金**: Anthropicは2026年2月、AI安全フレームワークを支持する候補者を後押しする政治団体 **Public First Action に$20M（2000万ドル）を拠出**したと報じられています。
+- **従業員個人の献金**: 2026年第1四半期までに、Anthropicの従業員は**302件・合計$880,000超**の個人献金を行い、献金者の約39%が法定上限額を献金したとされています。報道で名前が挙がった例では、ある従業員が**PAC・候補者へ約$1.2M**、別の従業員が**$1.4M超**、また別の従業員が**$700K超**を献金したとされています。
+- **文脈**: この動きは、AI安全性を支持する立場が**中間選挙に向けて政治的な勢力**になりつつあるという分析の一部として報じられています。IPOによる更なる流動性（株式の現金化）が、今後さらにこうした献金を後押しする可能性があるとされています。
+
+> **注記**: 本項目は政治献金・ロビー活動に関する報道であり、Anthropic本体の企業活動そのものではなく、同社および従業員個人の政治的関与に関する報道です。事実関係の評価は読者の判断に委ねます。
+
+出典: [Bloomberg: Anthropic's Coming IPO Riches Fuel a New Political Donor Network（2026-09-24）](https://www.bloomberg.com/news/articles/2026-09-24/anthropic-s-coming-ipo-riches-fuel-a-new-political-donor-network)
 
 ---
 
