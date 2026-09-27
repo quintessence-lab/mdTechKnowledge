@@ -1,10 +1,10 @@
 ---
 title: "MCP (Model Context Protocol) アーキテクチャ詳細"
 date: 2026-04-26
-updatedDate: 2026-09-04
+updatedDate: 2026-09-27
 category: "Claude技術解説"
 tags: ["MCP", "Claude Code", "JSON-RPC", "GitHub", "OAuth", "プロトコル", "Claude for Legal", "ステートレス", "SEP-2577", "SEP-2663", "Sampling", "非推奨ポリシー", "MCP Apps", "Extensions", "JSON Schema 2020-12", "W3C Trace Context"]
-excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness/エンタープライズSSO・監査トレイル・ガバナンス成熟化（貢献者ラダー/委任モデル/憲章）・新コアメンテナー）、MCP Apps（SEP-1865）、**2026-07-28 に正式リリースされたMCP新仕様**（プロトコルステートレス化＝Mcp-Session-Id 廃止、MCP Apps の HTML UI、Tasks Extension 再設計）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、Claude for Legal で公開された20+ MCPコネクタ、約20万サーバーに影響した重大脆弱性事案、さらに新仕様で制定された SEP-2577 の非推奨ポリシー（Active/Deprecated/Removed の3段階・最低12ヶ月）と Sampling/Roots/Logging の deprecated 化、**2026-08-22 公開の新ロードマップ**（Agentic Messaging・HTTP-native transport 全面化・Agent Identity/DPoP/WIF・ツールプリミティブ改善・SDK DX の5優先領域と SEP 加速レビュー）、**2026-08-24 に GA となった Enterprise-managed authorization for MCP connectors**（Datadog・Notion・Slackが新規対応、公開MCPサーバー950以上）、**Claude Code v2.1.259の`managedMcpServers`マネージド設定・無人ホスト向け`--permission-prompts none`**までの参照リンクを網羅"
+excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness/エンタープライズSSO・監査トレイル・ガバナンス成熟化（貢献者ラダー/委任モデル/憲章）・新コアメンテナー）、MCP Apps（SEP-1865）、**2026-07-28 に正式リリースされたMCP新仕様**（プロトコルステートレス化＝Mcp-Session-Id 廃止、MCP Apps の HTML UI、Tasks Extension 再設計）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、Claude for Legal で公開された20+ MCPコネクタ、約20万サーバーに影響した重大脆弱性事案、さらに新仕様で制定された SEP-2577 の非推奨ポリシー（Active/Deprecated/Removed の3段階・最低12ヶ月）と Sampling/Roots/Logging の deprecated 化、**2026-08-22 公開の新ロードマップ**（Agentic Messaging・HTTP-native transport 全面化・Agent Identity/DPoP/WIF・ツールプリミティブ改善・SDK DX の5優先領域と SEP 加速レビュー）、**2026-08-24 に GA となった Enterprise-managed authorization for MCP connectors**（Datadog・Notion・Slackが新規対応、公開MCPサーバー950以上）、**Claude Code v2.1.259の`managedMcpServers`マネージド設定・無人ホスト向け`--permission-prompts none`**、2026-09-22 に Claude API の MCP コネクタへ加わった**`mcp-client-2026-09-15`（サーバーが返したツール一覧を`mcp_tool_listing`ブロックとして記録・固定。Inline toolsと併用すると会話途中でMCPツールセットを追加可能）**までの参照リンクを網羅"
 draft: false
 ---
 
@@ -1366,6 +1366,32 @@ SEPはMCP仕様への変更を議論・追跡するための公式提案プロ�
 公式ブログによれば、MCPサーバーディレクトリは**950以上**に到達し、**毎日数百万人のユーザー**が利用しているとされています（前掲のエコシステム規模指標と合わせて、企業導入フェーズへの移行が進んでいることを示しています）。
 
 出典: [Anthropic Enterprise-managed MCP Connectors（Cybersecurity News）](https://cybersecuritynews.com/anthropic-enterprise-managed-mcp-connectors/)
+
+### 【2026-09-22追記】Claude API の MCP コネクタ — ツール一覧を記録して固定する（`mcp-client-2026-09-15`、ベータ）
+
+2026年9月22日（PT）、Claude API の **MCP コネクタ**に、新しいベータヘッダー **`mcp-client-2026-09-15`** が加わりました。MCP サーバーは**ツールをいつでも変更できる**ため、会話の途中でサーバー側のツールが変わると、Claude から見えるツールも変わってしまいます。このヘッダーは、**各サーバーが返したツール一覧を記録し、固定（ピン留め）できる**ようにして、この問題を防ぎます。
+
+公式ドキュメントは目的を次のように説明しています。
+
+> An MCP server can change its tools at any time. The mcp-client-2026-09-15 beta header records the tool list each server returns and lets you pin it, so a server that changes its tools doesn't change what Claude sees partway through a conversation.
+> （MCP サーバーはいつでもツールを変更できる。`mcp-client-2026-09-15` は各サーバーが返したツール一覧を記録して固定できるようにし、サーバーがツールを変えても、会話の途中で Claude に見えるものが変わらないようにする）
+
+**仕組み**:
+
+- API が応答を作る途中で MCP サーバーにツール一覧を問い合わせると、**応答の先頭に、そのサーバーの `mcp_tool_listing` ブロック**が付く（問い合わせたサーバーごとに1つ）。ブロックは `mcp_server_name` と、`name` / `description` / `input_schema` を持つ `tools` の一覧を含む。
+- **アシスタントのメッセージは、`mcp_tool_listing` ブロックを含めたまま、そのまま送り返す**。そのリクエストにも `mcp-client-2026-09-15` を付け続ける。以降のリクエストは、**サーバーへ再問い合わせせず、記録済みの一覧**を使う。
+- 自分で固定するには、ブロックの `tools` を、そのサーバーの `MCPToolset`（`"type": "mcp_toolset"`）の **`tools` フィールドにコピー**する。API はサーバーに問い合わせず、ツールセットの中身は**その一覧のとおり**になる（`default_config` と `configs` は適用される）。
+- **`content[0]` を読むコードは、これらのブロックを読み飛ばす**必要がある。応答の先頭にブロックが付くため、ブロックの `type` を確認して処理する。
+
+**互換性と提供範囲**:
+
+- **`mcp-client-2025-11-20` の機能をすべて含む**ため、旧ヘッダーの代わりにこちらを送る（両方は不要）。
+- **Claude API で利用可能**（ベータ）。MCP コネクタのデータ保持の条件はそのまま適用される。
+- 同じ日に追加された **Inline tools**（`inline-tools-2026-09-15`）と併用すると、会話の途中で `tool_addition` ブロックの中に `mcp_toolset` を定義し、**MCP サーバーのツールを途中から使い始める**こともできます（サーバーの URL やトークンは `tool_addition` に入れず、`mcp_servers` に書く）。Inline tools の詳細は [Anthropic Messages API 新機能まとめ](/mdTechKnowledge/blog/anthropic-messages-api-new-features-2026/) の第20章を参照してください。
+
+本記事で解説してきた MCP の仕様（プロトコル・トランスポート・認証）は Claude Code など**クライアント側の接続**の話ですが、これは **Claude API がサーバー側で MCP サーバーへ接続する**機能に関する更新です。ツール定義が途中で変わる問題は、プロンプトキャッシュの維持や再現性にも影響するため、長い会話でMCPコネクタを使う場合に意識しておく価値があります。
+
+出典: [MCP connector — Claude Platform ドキュメント](https://platform.claude.com/docs/en/agents-and-tools/mcp-connector)（Pin an MCP server's tool list） / [Anthropic Platform リリースノート（2026-09-22）](https://platform.claude.com/docs/en/release-notes/overview) / [Mid-conversation system messages（公式ドキュメント）](https://platform.claude.com/docs/en/build-with-claude/mid-conversation-system-messages)
 
 ---
 
