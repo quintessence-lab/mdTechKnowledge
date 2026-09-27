@@ -1,10 +1,10 @@
 ---
 title: "Anthropic Messages API 新機能まとめ（2026年5〜9月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・Opus5対応・Browser use tool・Fable 5.1/Mythos 5.1・Opus 5.5対応"
 date: 2026-06-20
-updatedDate: 2026-09-26
+updatedDate: 2026-09-27
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ", "Compliance API", "EU AI Act", "Browser use tool", "Python SDK", "Fable 5.1", "Mythos 5.1"]
-excerpt: "2026年5〜9月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）、9月1日の Fable 5.1/Mythos 5.1リリースに伴うtool_choice制限・thinking保持ルール変更・キャッシュ90%値下げ・Per-Message Effort（9月3日Google Cloud対応拡大）、9月14日のOn-demand conversation compaction（任意タイミングでの会話圧縮ベータ）・9月18日のCompliance APIがClaude in Chromeセッションに対応、9月22日のClaude Opus 5.5リリース（thinking無効化不可・tool_choice any/tool廃止等のAPI破壊的変更）・Inline tools beta（会話途中でのツール定義変更）、9月23日のCache Diagnostics GA化まで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
+excerpt: "2026年5〜9月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）、9月1日の Fable 5.1/Mythos 5.1リリースに伴うtool_choice制限・thinking保持ルール変更・キャッシュ90%値下げ・Per-Message Effort（9月3日Google Cloud対応拡大）、9月14日のOn-demand conversation compaction（任意タイミングでの会話圧縮ベータ）・9月18日のCompliance APIがClaude in Chromeセッションに対応、9月22日のClaude Opus 5.5リリース（thinking無効化不可・tool_choice any/tool廃止等のAPI破壊的変更）・Inline tools beta（会話途中でのツール定義変更）、9月23日のCache Diagnostics GA化、9月24日のRefusal課金の再開（bio/frontier_llm/reasoning_extractionの3カテゴリは出力前の拒否でも課金）・Compliance API Activity Feedが名称・タイトルを返さなくなった破壊的変更・Claude for Microsoft 365セッションのGA化まで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
 draft: false
 ---
 
@@ -208,7 +208,7 @@ for i, user_message in enumerate(
 
 2026年5月28日、拒否レスポンスの **`stop_details`** フィールドが公式に文書化されました。安全性分類器がリクエストを拒否すると、Messages API は `stop_reason: "refusal"` を返し、`stop_details` に次が含まれます。
 
-- `category`: 拒否の種別（`cyber` / `bio` / `null`）
+- `category`: 拒否の種別（文書化当初は `cyber` / `bio` / `null`。現行ドキュメントでは `cyber` / `bio` / `frontier_llm` / `reasoning_extraction` / `general_harms` の5種と `null`。詳細は第21章）
 - `explanation`: 人間可読の説明
 
 これにより、アプリ側で**拒否の種類ごとに次のアクションを振り分ける（ルーティングする）**ことができます。例えば「`cyber` 系は社内ポリシー確認フローへ」「`null`（種別なし）は再プロンプト」といった分岐です。**beta ヘッダーは不要**です。
@@ -219,7 +219,9 @@ for i, user_message in enumerate(
 | `bio` | 生物関連の安全制約による拒否 | 同上、用途確認 |
 | `null` | 種別なしの拒否 | プロンプト言い換え・再試行 |
 
-> 課金面の合わせ技: 2026年6月2日のリリースノートで、**出力が生成される前に `stop_reason: "refusal"` で返ったリクエストは Claude API では課金されない**ことが明記されました。さらに 2026年6月9日の Fable 5 では、別モデルで再実行する opt-in の `fallbacks` パラメータ（beta）や、`reasoning_extraction` という新カテゴリも追加されています（Fable 5 固有）。本記事の主対象は Messages API 一般機能のため詳細は割愛しますが、refusal ハンドリングは継続的に拡張されている領域です。
+> **【2026-09-24 更新】以下の「課金されない」という記述は、`bio` / `frontier_llm` / `reasoning_extraction` の3カテゴリについては当てはまらなくなりました**（出力前の拒否でも課金が再開）。現在のルールは第21章を参照してください。
+>
+> 課金面の合わせ技（2026年6月時点の記述）: 2026年6月2日のリリースノートで、**出力が生成される前に `stop_reason: "refusal"` で返ったリクエストは Claude API では課金されない**ことが明記されました。さらに 2026年6月9日の Fable 5 では、別モデルで再実行する opt-in の `fallbacks` パラメータ（beta）や、`reasoning_extraction` という新カテゴリも追加されています（Fable 5 固有）。本記事の主対象は Messages API 一般機能のため詳細は割愛しますが、refusal ハンドリングは継続的に拡張されている領域です。
 
 ## 5. Advisor Tool（概要のみ・参照）
 
@@ -359,7 +361,7 @@ response = client.beta.messages.create(
 
 2026年8月のリリースノートで、次の4点が追加・明確化されました。
 
-- **拒否時の課金廃止の一般化**: `stop_reason: "refusal"` で **Claude が出力を一切生成せずに終了したリクエストは課金されない**ことが明記されました。第5章の脚注で触れた6月2日の記述（「出力が生成される前に refusal で返った場合は課金されない」）を**追認・一般化**するもので、安全性分類器による拒否のコストリスクを気にせずリトライ/ルーティング設計ができます。
+- **拒否時の課金廃止の一般化**: `stop_reason: "refusal"` で **Claude が出力を一切生成せずに終了したリクエストは課金されない**ことが明記されました。第5章の脚注で触れた6月2日の記述（「出力が生成される前に refusal で返った場合は課金されない」）を**追認・一般化**するもので、安全性分類器による拒否のコストリスクを気にせずリトライ/ルーティング設計ができます。**【2026-09-24 更新】ただしこの一般化は、9月24日に `bio` / `frontier_llm` / `reasoning_extraction` の3カテゴリで課金が再開されたため、現在は当てはまりません（第21章）。**
 - **Advisor Tool に `max_tokens` パラメータ追加**: アドバイザーモデル（助言役）の**呼び出し単位で出力量に上限**を設定できるようになりました。助言が長くなりがちなケースでの**レイテンシとコストの削減**が狙いです。Advisor Tool 自体の解説は [Advisor Tool ガイド](/mdTechKnowledge/blog/anthropic-advisor-tool-guide/) を参照してください。
 - **Compliance API が Cowork・Claude Code を統合カバー**: 従来 claude.ai チャットが中心だった Compliance API の対象範囲が、**Cowork と Claude Code（デスクトップ／Web／モバイル／CLI）にも拡大**されました。監査・eDiscovery の実務で、セッション内容とメタデータを**一元的に取得**できるようになり、エンタープライズのガバナンス要件（第9章の Admin API User Management とあわせて、組織のメンバー管理・利用状況把握の両輪）に応える形です。
 - **EU AI Act 対応のウォーターマーキング実装**: AI が生成したテキストに対する**ウォーターマーキング（電子透かし）**が実装されました。EU AI Act が求める AI生成コンテンツの識別可能性要件への対応で、EU域内でのエンタープライズ利用における規制対応の一環です。
@@ -516,6 +518,59 @@ Anthropic 公式 Python SDK のメジャーバージョン **v1.0** がリリー
 
 出典: [Anthropic Platform リリースノート（2026-09-23）](https://platform.claude.com/docs/en/release-notes/overview) / [Cache diagnostics（公式ドキュメント）](https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics)
 
+## 21. 2026年9月24日のアップデート — Refusal課金の再開（3カテゴリ）・Compliance API Activity Feedの変更
+
+### Refusal課金が3カテゴリで再開
+
+2026年9月24日、出力が生成される前に返る拒否（`stop_reason: "refusal"`）のうち、**`stop_details.category` が `"bio"`・`"frontier_llm"`・`"reasoning_extraction"` のもの**について、**課金が再開**されました。公式の説明は次のとおりです。
+
+> We're resuming billing for refusals that arrive before any output when stop_details.category is "bio", "frontier_llm", or "reasoning_extraction", the categories where we measure low volumes of false positives. Mid-stream refusals were already billed.
+> （`stop_details.category` が `bio`・`frontier_llm`・`reasoning_extraction` で、出力前に届く拒否の課金を再開する。誤検知の量が少ないと測定しているカテゴリである。ストリーム途中の拒否は、すでに課金されていた）
+
+**カテゴリ別の扱い**（現行ドキュメントの表）:
+
+| `category` | 意味 | 出力前の拒否の課金 |
+|:---|:---|:---:|
+| `cyber` | マルウェアやエクスプロイトの開発など、サイバー被害を可能にしうる依頼（無害なセキュリティ作業でも該当しうる） | 課金されない |
+| `bio` | 危険な実験手法など、生物学的被害を可能にしうる依頼（有益なライフサイエンス作業でも該当しうる） | **課金される** |
+| `frontier_llm` | 競合AIモデルの開発を支援しうる依頼（商用規約で制限。無害な機械学習作業でも該当しうる） | **課金される** |
+| `reasoning_extraction` | モデルの内部推論を応答テキストに再現させる依頼（構造化された形で得たい場合は adaptive thinking を使う） | **課金される** |
+| `general_harms` | 上の4種以外の利用ポリシー領域 | 課金されない |
+| `null` | 名前付きカテゴリに対応しない拒否 | 課金されない |
+
+**課金の詳細**（`How refusals are billed`）:
+
+- **課金額**: 出力前の拒否でも、対象カテゴリなら**通常のリクエストと同じく、実行したモデルの料金**で課金される。`content` は空で、トークン数は `usage` に出る。
+- **レート上限**: 課金の有無にかかわらず、**出力前の拒否もレート上限に算入**される。
+- **ストリーム途中の拒否**: 入力トークンと、すでにストリームした出力が**通常料金で課金**される（従来どおり）。
+- **フォールバック併用時**: 拒否がストリーム途中だった場合、または課金対象カテゴリだった場合は、**拒否したリクエストとフォールバックのリクエストの両方が課金**される。フォールバッククレジットは、フォールバック側のプロンプトキャッシュミス分を補填する仕組みで、この点は変わらない。
+- **適用範囲**: Claude API・Amazon Bedrock・Claude Platform on AWS・Google Cloud・Microsoft Foundry の**全プラットフォーム**。
+- **将来の変更**: 誤検知率の測定と改善に応じて、**課金対象のカテゴリは変わりうる**。
+
+**実務への影響**:
+
+- 第5章・第12章で「拒否は課金されないのでリトライ設計のコストを気にしなくてよい」と書いた前提は、**上の3カテゴリでは崩れました**。生命科学・機械学習開発・推論内容の出力を扱うワークロードでは、拒否1回ごとの課金を見積もりに入れてください。
+- `reasoning_extraction` は、**内部推論をテキストで出させる指示**が原因になります。推論の可視化が目的なら、指示で引き出すのではなく adaptive thinking を使ってください。
+- 正当なライフサイエンス業務で `bio` の拒否が多い場合は、緩和された安全策が使える [Life Sciences Verification Program](/mdTechKnowledge/blog/claude-security-beta/)（別記事で解説）の対象かどうかを確認する価値があります。
+
+出典: [Anthropic Platform リリースノート（2026-09-24）](https://platform.claude.com/docs/en/release-notes/overview) / [Refusals and fallback（公式ドキュメント）](https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback)
+
+### Compliance API: Activity Feedが名称・タイトルを返さなくなった（破壊的変更）
+
+同日、**Compliance API の Activity Feed** から、ファイル名・プロジェクトドキュメント名・アーティファクトのタイトルが**返らなくなりました**。
+
+> The filename and title fields on file, project document, and artifact activities are now always empty or omitted, including on activities recorded before this change.
+> （ファイル、プロジェクトドキュメント、アーティファクトの各アクティビティの `filename` と `title` フィールドは、この変更より前に記録された分も含め、常に空か省略される）
+
+- **影響**: 名称・タイトルを画面やレポートに表示している監査・可視化ツールは、**過去分を含めて空欄になる**。
+- **対処**: アクティビティに含まれる**IDから名称・タイトルを引く**。そのために、**`read:compliance_user_data` スコープを持つ Compliance Access Key** を使う。
+
+### Compliance API: Claude for Microsoft 365 のセッションがGA
+
+同日、Compliance API のローカルセッション用エンドポイントが、**Claude for Microsoft 365 のセッション**（Excel・PowerPoint・Word・Outlook。`product_surface` が `office_agents` で始まる値）について**ベータを卒業**しました。第14章・第19章で触れた「Claude Science・Claude for Microsoft 365 はベータ」という状況のうち、Microsoft 365 側は**GA**になった形です。
+
+出典: [Anthropic Platform リリースノート（2026-09-24）](https://platform.claude.com/docs/en/release-notes/overview) / [Sessions on users' machines（Compliance API）](https://platform.claude.com/docs/en/manage-claude/compliance-sessions)
+
 ## まとめ — どの機能をいつ使うか
 
 2026年5〜6月の Messages API 新機能は、「**品質を上げる**」「**コストを下げる**」「**運用を見通せるようにする**」の3方向に効きます。
@@ -533,6 +588,7 @@ Anthropic 公式 Python SDK のメジャーバージョン **v1.0** がリリー
 - **Cowork・Claude Code・Claude Science・M365セッションを監査対象にしたい** → Compliance API（Cowork/Claude CodeはGA、Claude Science/M365はベータ）。**Admin APIを自社言語のSDKから直接呼びたい** → `client.beta.organization`（ant CLI・Python/TypeScript/C#/Go/Java/PHP/Ruby対応）。
 - **Files/Skills APIをSDKからbetaヘッダーなしで呼びたい** → 各SDK最新版（Python 1.2.0以降等）に更新（`BetaSkill`→`BetaContainerSkill`のリネームに注意）。**キー発行者を個人/サービスアカウント単位で追跡したい** → Console の Personal keys / Service account keys。
 - **Fable 5.1/Mythos 5.1に切替予定** → `tool_choice`の`any`/`tool`指定コードを事前に洗い出す（400エラー回避）。**古いモデルとthinking blockを共有する構成がある** → 保持ルール変更でblockが破棄される点に注意。**キャッシュ多用のワークロードでコストを下げたい** → キャッシュ読み取り90%削減の恩恵が大きい。
+- **拒否（refusal）のコストを見積もりたい** → 2026-09-24 以降、`stop_details.category` が `bio` / `frontier_llm` / `reasoning_extraction` の拒否は**出力前でも課金**される（`cyber` / `general_harms` / `null` は課金されない）。`category` で分岐し、対象カテゴリの拒否コストを見積もりに入れる。**Compliance API の Activity Feed で名称・タイトルを表示している** → 常に空になったため、IDから引く（`read:compliance_user_data` の Compliance Access Key）。
 
 ## 参考資料
 
