@@ -1,10 +1,10 @@
 ---
 title: "MCPサーバーとClaudeの接続パターン解説 — Browser / Claude Code Terminal / Claude Code Web"
 date: 2026-04-26
-updatedDate: 2026-08-26
+updatedDate: 2026-09-27
 category: "Claude技術解説"
 tags: ["MCP", "Claude", "Claude Code", "アーキテクチャ", "接続パターン", "GitHub MCP", "ステートレス"]
-excerpt: "MCPサーバーとClaudeの3つの主要接続パターン（Browser / Claude Code Terminal / Claude Code Web）を図解。GitHub MCPを例にアクセス経路の違い・認証フロー・運用上の選択基準を整理。**2026-07-28に正式リリースされたMCP新仕様**によるステートレス化（Mcp-Session-Id 廃止、スティッキー LB・共有セッションストア不要化）が各パターンへ与える実務影響と自社 MCP サーバー移行チェックリスト、2026-08-22公開の新ロードマップ（5優先領域）が接続パターンに与える影響も収録。"
+excerpt: "MCPサーバーとClaudeの3つの主要接続パターン（Browser / Claude Code Terminal / Claude Code Web）を図解。GitHub MCPを例にアクセス経路の違い・認証フロー・運用上の選択基準を整理。**2026-07-28に正式リリースされたMCP新仕様**によるステートレス化（Mcp-Session-Id 廃止、スティッキー LB・共有セッションストア不要化）が各パターンへ与える実務影響と自社 MCP サーバー移行チェックリスト、2026-08-22公開の新ロードマップ（5優先領域）が接続パターンに与える影響、2026-09-22 に Claude API の MCP コネクタへ加わった`mcp-client-2026-09-15`（リモートMCPサーバーが返したツール一覧を`mcp_tool_listing`ブロックとして記録・固定。ローカルstdioは対象外・HTTP公開が前提）も収録。"
 draft: false
 ---
 
@@ -704,6 +704,44 @@ CI・SSH・ヘッドレス寄りの運用で、**ブラウザを開けない環�
 > **実務への示唆**: 自社 MCP サーバーを運用している場合（パターン2・第13.3節のチェックリスト）、当面の対応は 2026-07-28 仕様（ステートレス化）で完了です。ロードマップ項目はいずれも SEP 段階のため追加対応は不要ですが、**認可設計を新規に組む際は「人の承認ありき」の作りに固定しない**（DPoP / WIF が来る前提で抽象化しておく）ことをおすすめします。
 
 参考: [MCP Roadmap（公式ブログ・2026-08-22）](https://blog.modelcontextprotocol.io/posts/mcp-roadmap/)
+
+---
+
+## 15. 【2026-09-22 追記】Claude API の MCP コネクタ — ツール一覧を記録して固定する（`mcp-client-2026-09-15`）
+
+本記事の3パターン（＋パターン4）は、**クライアント（ブラウザ・Claude Code）や Managed Agents から MCP サーバーへ接続する経路**の整理でした。これとは別に、**Messages API から直接、リモート MCP サーバーへ接続する** **MCP コネクタ**があります。2026年9月22日（PT）、このコネクタに新しいベータヘッダー **`mcp-client-2026-09-15`** が加わりました。
+
+### MCP コネクタの前提（公式ドキュメント）
+
+- **接続先はリモートの MCP サーバー**。**HTTP で公開されている必要があり**（Streamable HTTP と SSE に対応）、**ローカルの STDIO サーバーには直接接続できません**。第1章の整理でいえば、ローカル（stdio）は対象外です。
+- 認証が必要なサーバーでは、**OAuth の `authorization_token` を呼び出し側が取得して渡す**（トークンの取得と更新は API 利用者の責任）。第6章の「OAuth 前提」の設計思想と同じ考え方です。
+- 接続情報（URL・トークン）は `mcp_servers` に書き、`mcp_toolset` でそのサーバーのツールを使う指定をします。
+
+### 何が新しいか — ツール一覧の記録とピン留め
+
+MCP サーバーはツールを**いつでも変更できます**。会話の途中でサーバー側の定義が変わると、Claude に見えるツールも変わってしまいます。`mcp-client-2026-09-15` は、**各サーバーが返したツール一覧を記録して固定**できるようにします。
+
+- 応答の先頭に、問い合わせたサーバーごとの **`mcp_tool_listing` ブロック**が付き、ツール一覧（`name` / `description` / `input_schema`）が記録される。
+- **そのブロックを含めたままアシスタントのメッセージを送り返す**と、以降のリクエストは**サーバーへ再問い合わせせず、記録済みの一覧を使う**。
+- **自分で固定**するなら、ブロックの `tools` を `mcp_toolset` の `tools` フィールドにコピーする。ツールセットの中身はその一覧どおりになる。
+- **`mcp-client-2025-11-20` の機能をすべて含む**ので、旧ヘッダーの代わりに送る。**Claude API で利用可能**（ベータ）。
+
+さらに、同日に追加された Inline tools（`inline-tools-2026-09-15`）と併用すると、**会話の途中で `mcp_toolset` を追加**して、MCP サーバーのツールを途中から使い始められます（サーバーの URL やトークンは `mcp_servers` に置き、`tool_addition` には入れません）。
+
+### 接続パターンの選び方への含意
+
+| 状況 | 検討すること |
+|---|---|
+| 自社 MCP サーバーのツール定義を頻繁に更新している | 会話中にツールが入れ替わると挙動が変わる。**ピン留めで、会話の途中は同じ一覧を使わせる**ことを検討する |
+| ローカル（stdio）の MCP サーバーを使いたい | MCP コネクタは**リモート（HTTP 公開）専用**。パターン2（Claude Code）を使うか、サーバーを HTTP で公開する必要がある |
+| 社内ネットワーク内のサーバーに API から接続したい | MCP コネクタは**公開された HTTP サーバー**が前提。閉域のサーバーはパターン4（MCP Tunnels / Managed Agents）の対象になりうる |
+| 応答をコードで処理している | **`content[0]` を読む実装は、`mcp_tool_listing` ブロックを読み飛ばす**か、ブロックの `type` を確認する必要がある |
+
+> **注意**: `mcp_tool_listing` ブロックは応答の先頭に付くため、**「先頭ブロックがテキスト」という前提で書かれたコード**は、ヘッダーを切り替えると動かなくなる可能性があります。ベータヘッダーを切り替える前に、応答のパース処理を確認してください。
+
+詳しい仕様は [MCP アーキテクチャ詳細](/mdTechKnowledge/blog/mcp-architecture/) の同名節、Inline tools 側の詳細は [Anthropic Messages API 新機能まとめ](/mdTechKnowledge/blog/anthropic-messages-api-new-features-2026/) の第20章を参照してください。
+
+出典: [MCP connector — Claude Platform ドキュメント](https://platform.claude.com/docs/en/agents-and-tools/mcp-connector) / [Anthropic Platform リリースノート（2026-09-22）](https://platform.claude.com/docs/en/release-notes/overview)
 
 ---
 
