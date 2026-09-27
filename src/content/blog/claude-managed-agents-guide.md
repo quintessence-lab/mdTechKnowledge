@@ -1,10 +1,10 @@
 ---
 title: "Claude Managed Agents 簡易ガイド — アーキテクチャ・比較・ユースケース"
 date: 2026-04-08
-updatedDate: 2026-09-12
+updatedDate: 2026-09-28
 category: "Claude技術解説"
 tags: ["Claude", "Managed Agents", "Agent SDK", "Claude Code", "API", "マルチエージェント", "Memory", "Enterprise", "Self-hosted sandboxes", "MCP tunnels", "Cloudflare", "Modal", "Vercel", "Daytona", "Cloudflare Environments", "Webhooks", "microVM", "V8 Isolate", "Scheduled deployments", "Vault環境変数"]
-excerpt: "Claude Managed Agentsの3層アーキテクチャ（Session/Harness/Sandbox）、p50 TTFT 60%削減のパフォーマンス改善、Memory機能、Dreaming・Outcomes・Multi-agent orchestration、エンタープライズ向けRBAC・OpenTelemetry、2026年5月19日発表のSelf-hosted sandboxes（Cloudflare/Daytona/Modal/Vercel対応、Public Beta）とMCP tunnels（Research Preview、プライベートネットワーク内MCPサーバーへの outbound-only E2E接続）、料金体系（$0.08/session-hour）、Cloudflare Environments（brain/hands 分離・Linux microVM と V8 Isolate を選択可能・ブラウザ/メール/アウトバウンドプロキシ/Cloudflare Mesh・Workers VPC）に加え、2026年8月1日のDreaming Opus 5対応、8月7日のセッション予算（budget_reached）・マルチエージェントrosterへのアドバイザー追加・推論ジオ制御（inference_geo）・GitHubリポジトリからのスキル自動ロード、8月19日のweb検索/取得ドメイン制限・self-hosted sandboxへのmemory store接続・Console session viewer再設計、8月26日のAdmin APIが全主要SDKで`client.beta.organization`として利用可能になった件、2026年9月のCompliance APIによるCowork/Claude Codeローカルセッショントランスクリプト対応（関連情報）、2026年9月10日追加の権限ポリシー`auto`オプション（サーバー側での自動評価・`evaluation`/`evaluated_permission`フィールド）までを1ページに整理。"
+excerpt: "Claude Managed Agentsの3層アーキテクチャ（Session/Harness/Sandbox）、p50 TTFT 60%削減のパフォーマンス改善、Memory機能、Dreaming・Outcomes・Multi-agent orchestration、エンタープライズ向けRBAC・OpenTelemetry、2026年5月19日発表のSelf-hosted sandboxes（Cloudflare/Daytona/Modal/Vercel対応、Public Beta）とMCP tunnels（Research Preview、プライベートネットワーク内MCPサーバーへの outbound-only E2E接続）、料金体系（$0.08/session-hour）、Cloudflare Environments（brain/hands 分離・Linux microVM と V8 Isolate を選択可能・ブラウザ/メール/アウトバウンドプロキシ/Cloudflare Mesh・Workers VPC）に加え、2026年8月1日のDreaming Opus 5対応、8月7日のセッション予算（budget_reached）・マルチエージェントrosterへのアドバイザー追加・推論ジオ制御（inference_geo）・GitHubリポジトリからのスキル自動ロード、8月19日のweb検索/取得ドメイン制限・self-hosted sandboxへのmemory store接続・Console session viewer再設計、8月26日のAdmin APIが全主要SDKで`client.beta.organization`として利用可能になった件、2026年9月のCompliance APIによるCowork/Claude Codeローカルセッショントランスクリプト対応（関連情報）、2026年9月10日追加の権限ポリシー`auto`オプション（サーバー側での自動評価・`evaluation`/`evaluated_permission`フィールド）、セッション予算`max_list_cost`の詳細仕様（公開リスト価格ベースの課金・リクエスト間判定によるオーバーシュート・budget_reached時の挙動）までを1ページに整理。"
 draft: false
 ---
 
@@ -522,6 +522,29 @@ Outcomes と組み合わせれば「成功基準を満たすまで自律的に�
 | GitHubスキルロード | セッションが[リポジトリをマウント](https://platform.claude.com/docs/en/managed-agents/github)している場合、ルートの **`.claude/skills`** ディレクトリ内のスキルをセッション開始時に**自動検出**し、そのセッションのエージェントが利用可能に |
 
 出典: [Anthropic Release notes（2026-08-07）](https://platform.claude.com/docs/en/release-notes/overview)。
+
+### セッション予算の詳細仕様（`max_list_cost`）
+
+上表の「セッション予算」は、公式ドキュメント（[Session budgets](https://platform.claude.com/docs/en/managed-agents/budgets)、ベータ）で `budget.max_list_cost` というフィールドとして提供されています。
+
+```json
+{
+  "budget": {
+    "type": "limit",
+    "max_list_cost": { "amount": "125", "currency": "USD" }
+  }
+}
+```
+
+- **`amount`**: 米セント単位の整数を**文字列で**指定（`"125"` = $1.25）。先頭ゼロ・小数点（`"25.00"`等）は拒否される。文字列にしているのは、浮動小数点の丸め誤差を避けるため
+- **`currency`**: ISO-4217の通貨コード（大文字）。現時点で**`USD`のみ対応**
+- **課金の計算基準は「公開リスト価格」**であり、契約上の割引価格ではない。組織が値引き契約をしていても、**リスト価格ベースの合計が上限に達した時点で一時停止**する。したがって実際の請求額は上限より低くなることがある
+- **課金対象**: モデルトークン（各モデルのリスト価格）／Web検索（1,000件あたり$10）／セッションの稼働時間（1時間あたり$0.08）
+- **上限判定はリクエストの合間**に行われるため、**上限を超過することがある**（例: 上限50セントのセッションが、リストコスト53セントで一時停止するのは仕様であり、課金エラーではない。超過幅は1リクエスト分に限られる）
+- **一時停止時の挙動**: `stop_reason: "budget_reached"` で**アイドル状態になる**（終了はしない）。履歴・サンドボックスは他のアイドルセッションと同様に保持される。この状態で受け付けられるのはツール確認・ツール結果・割り込みなどの完了系イベントのみで、新しい作業を始めるイベント（新規メッセージ等）は拒否される
+- **Deployment側の予算**は各セッションに個別に適用され（Deployment全体の累積支出ではない）、`null`を指定すればいつでも解除して再設定できる。一方、**セッション自体の予算は一度削除すると再設定できない**という非対称な仕様がある
+
+出典: [Session budgets（公式ドキュメント）](https://platform.claude.com/docs/en/managed-agents/budgets)
 
 ## 【2026-08-19追記】ドメイン制限・self-hosted sandboxのmemory store対応・Console session viewer再設計
 
