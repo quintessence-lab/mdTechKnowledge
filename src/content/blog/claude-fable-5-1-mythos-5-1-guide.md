@@ -1,7 +1,7 @@
 ---
 title: "Claude Fable 5.1 / Mythos 5.1 完全ガイド — 何がアップデートされ、誰が使うべきか"
 date: 2026-09-03
-updatedDate: 2026-09-07
+updatedDate: 2026-09-27
 category: "Claude技術解説"
 tags: ["Claude Fable 5.1", "Claude Mythos 5.1", "Anthropic", "AIモデル", "Fable 5", "tool_choice", "thinking", "プロンプトキャッシュ", "Claude"]
 excerpt: "2026年9月1日、Anthropicは Claude Fable 5 / Mythos 5 の後継モデル Claude Fable 5.1（claude-fable-5-1）・Claude Mythos 5.1（claude-mythos-5-1）をリリースし、Fable 5.1がFableファミリーの既定モデルになった。価格は入出力ともFable 5と同額（$10/$50 per MTok）だが、キャッシュ読み取りが$0.25/MTokへ90%削減。API仕様面ではtool_choiceの`any`/`tool`指定が非対応化（400エラー）、thinking blocksの保持ルール変更、thinking display新モード「updates」（ベータ）が追加された。EU AI Act Article 50対応のテキストウォーターマーク（2026年8月2日以降リリースのモデルに適用、検出APIは規制当局・メディア・研究機関等に限定したprivate preview）も実装された。Mythos 5.1向けにはLife Sciences Verification Program（米国政府連携の招待制ベータ、ライフサイエンス研究向けに生物学セーフガードを緩和）も新設された。本記事は、Fable 5からの変更点を整理したうえで、既存Fable 5利用者が移行前に確認すべき破壊的変更と、Fable 5.1が向くユースケース・向かないユースケースを解説する。"
@@ -69,15 +69,17 @@ Fable 5.1・Mythos 5.1のテキスト出力には、**不可視のテキスト�
 
 詳細なAPI仕様は [Anthropic Messages API 新機能まとめ 第16章](/mdTechKnowledge/blog/anthropic-messages-api-new-features-2026/) も参照してください。
 
-### 7. Life Sciences Verification Program（Mythos 5.1限定・招待制ベータ）
+### 7. Life Sciences Verification Program（9/1時点は Mythos 5.1 向けの招待制ベータ → 9/17 に申請受付を拡大）
+
+> **【2026-09-17 更新】** LSVP は9月17日（PT）に正式発表され、**対象モデルが Mythos 5.1 から Opus 5・Sonnet 5 にも広がり、より広い生命科学コミュニティへの申請受付が始まりました**（ベータ）。最新の仕様（Standard Use / High-risk Use の2種類の許可、リアルタイムのブロックから事後監視への移行、30日データ保持の必須化、提供範囲）は [Claude Security Beta — Life Sciences Verification Program](/mdTechKnowledge/blog/claude-security-beta/) にまとめています。以下は **9月1日の Fable 5.1 / Mythos 5.1 発表時点**の記述です。
 
 Mythos 5.1向けに、**Life Sciences Verification Program（LSVP）**が新設されました。米国政府と連携した**招待制ベータ**で、ライフサイエンス分野の専門家がMythos 5.1を**研究開発活動向けに調整された安全策のもとで利用**できる仕組みです。
 
 - **何が緩和されるか**: プログラム参加者に対しては**生物学関連のセーフガードが専門的な研究開発活動向けに緩和**されます。それ以外の安全策（サイバー・化学等）はすべて維持されたままです
-- **提供範囲**: 現時点では**米国の一部組織に限定**されており、初期参加者の登録は既に完了。Anthropicは今後**より広いライフサイエンスコミュニティへの拡大**を計画しています
+- **提供範囲（9/1時点）**: **米国の一部組織に限定**されており、初期参加者の登録は既に完了。Anthropicは今後**より広いライフサイエンスコミュニティへの拡大**を計画していました（**9/17 に申請受付が開始**）
 - **既存のMythos限定アクセス（サイバーセキュリティ）との関係**: Mythos 5.1は元々サイバーセキュリティ領域の審査済み個人・組織向けに緩和されたセーフガードを提供していますが、LSVPはこれとは別の**ライフサイエンス分野専用の追加プログラム**です
 
-一般ユーザー・Fable 5.1利用者には直接関係しない機能ですが、Mythos 5.1へのアクセスを検討している研究機関にとっては重要な選択肢です。
+一般ユーザー・Fable 5.1利用者には直接関係しない機能ですが、生命科学分野で Mythos 5.1・Opus 5・Sonnet 5 へのアクセスを検討している研究機関にとっては重要な選択肢です。
 
 出典: [Anthropic公式: Introducing Claude Fable 5.1 and Claude Mythos 5.1](https://www.anthropic.com/claude-fable-and-mythos-5-1)
 
