@@ -1,10 +1,10 @@
 ---
 title: "Claude Security Beta — Anthropic エンタープライズセキュリティ製品の全貌（2026年5月発表）"
 date: 2026-05-02
-updatedDate: 2026-09-07
+updatedDate: 2026-09-27
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude Security", "Opus 4.7", "セキュリティ", "脆弱性スキャン", "エンタープライズ", "脅威インテリジェンス", "MITRE ATT&CK", "サイバー攻撃", "サイバー評価インシデント", "Inference hooks", "DLP"]
-excerpt: "2026年5月1日、Anthropic は Claude Opus 4.7 を中核に据えたエンタープライズ向けセキュリティ製品 Claude Security のパブリックベータを発表した。コードベース脆弱性スキャン・パッチ生成、CrowdStrike / Microsoft Security / Palo Alto Networks / SentinelOne / TrendAI / Wiz などの技術パートナー、Accenture / BCG / Deloitte / Infosys / PwC などのサービスパートナー連携を含め、全体像を整理する。さらに2026年6月3日公開の脅威インテリジェンスレポート（禁止832アカウントの MITRE ATT&CK マッピング、マルウェア生成67.3%、中リスク以上が33%→56%へ）、2025年11月に阻止された AI 主導サイバースパイ活動の事例、2026年7月30日発表のサイバー評価インシデント（評価環境の設定ミスでClaudeが実組織3社に不正アクセス）、そして2026年8月5日発表のInference hooks（Claude Enterprise beta。DLPサーバーへ推論前にプロンプトを問い合わせ、Netskope/Palo Alto/Proofpoint/Zscaler等と統合）、2026年9月2日発表のEnterprise Frontier Safeguards（EFS。ゼロデータリテンションと不正利用検出を両立する新アーキテクチャ、顧客所有クラウドへのデータ保持、100社超と共同開発・秋以降段階ロールアウト）も追補する。"
+excerpt: "2026年5月1日、Anthropic は Claude Opus 4.7 を中核に据えたエンタープライズ向けセキュリティ製品 Claude Security のパブリックベータを発表した。コードベース脆弱性スキャン・パッチ生成、CrowdStrike / Microsoft Security / Palo Alto Networks / SentinelOne / TrendAI / Wiz などの技術パートナー、Accenture / BCG / Deloitte / Infosys / PwC などのサービスパートナー連携を含め、全体像を整理する。さらに2026年6月3日公開の脅威インテリジェンスレポート（禁止832アカウントの MITRE ATT&CK マッピング、マルウェア生成67.3%、中リスク以上が33%→56%へ）、2025年11月に阻止された AI 主導サイバースパイ活動の事例、2026年7月30日発表のサイバー評価インシデント（評価環境の設定ミスでClaudeが実組織3社に不正アクセス）、そして2026年8月5日発表のInference hooks（Claude Enterprise beta。DLPサーバーへ推論前にプロンプトを問い合わせ、Netskope/Palo Alto/Proofpoint/Zscaler等と統合）、2026年9月2日発表のEnterprise Frontier Safeguards（EFS。ゼロデータリテンションと不正利用検出を両立する新アーキテクチャ、顧客所有クラウドへのデータ保持、100社超と共同開発・秋以降段階ロールアウト）、2026年9月17日発表のLife Sciences Verification Program（LSVP。検証済みの生命科学組織に生物学関連の安全策を緩和する信頼アクセス。Standard Use／High-risk Useの2種の許可、リアルタイムのブロックから事後監視への移行、30日データ保持必須、Enterprise/Team・API向けベータ）も追補する。"
 draft: false
 ---
 
@@ -353,6 +353,51 @@ EFSの特徴は、**この監視用データを顧客自身のクラウドイン
 **100社超の顧客と共同開発**されており、フォーチュン500企業の約4分の1、米国のグローバルシステム上重要銀行（G-SIB）各行に加え、**Comcast・KPMG・Mastercard・Salesforce・Visa**などが名を連ねています。Goldman Sachs・Morgan Stanley・Citi等の金融機関も参画していると報じられています。**2026年秋の広範な段階的ロールアウト**が予定されています。
 
 出典: [Help Net Security（2026-09-02）](https://www.helpnetsecurity.com/2026/09/02/anthropic-enterprise-frontier-safeguards/) / [MarkTechPost（2026-09-02）](https://www.marktechpost.com/2026/09/02/anthropic-enterprise-frontier-safeguards-efs/)
+
+## 【2026-09-17追記】Life Sciences Verification Program（LSVP）— 「検証済みの信頼アクセス」で生物学の安全策を緩和する
+
+2026年9月17日（PT）、Anthropicは **Life Sciences Verification Program（LSVP）** を発表しました。**生命科学の専門家が、生物学関連の作業に対して緩和された安全策のもとで Mythos・Opus・Sonnet を使える**プログラムで、**ベータ**として始まりました。これまで早期アクセスで数十の組織を受け入れており、今回**より広い生命科学コミュニティへ申請の受付を開始**しています。
+
+EFS が「ゼロデータリテンションでも不正利用を検出する」方向の仕組みだったのに対し、LSVP は「**身元と用途を検証した組織にだけ、リアルタイムのブロックを緩め、事後の監視で守る**」という別の解き方です。
+
+### 何が緩和されるのか
+
+一般提供の **Fable モデル**では、創薬、研究生物学、臨床開発、製造といった生命科学の作業が**現在ブロックされることがあります**。LSVP はこうした作業を、検証済みの組織向けに使えるようにします。**サイバー分類器など、生物学以外の安全策はそのまま維持**されます。
+
+### 2種類の許可（グラント）
+
+申請者は、研究者としての資格・セキュリティ基準・研究倫理の監督体制などの**検証**を通ったうえで、次の2種類の許可を申請できます。利用は Claude Science・Claude.ai・Claude Code・API のすべての製品面で可能です。
+
+| 許可 | 対象・範囲 | 有効期間 | 内容 |
+|:---|:---|:---:|:---|
+| **Standard Use** | チーム全体。生物学の研究開発の大半のワークフロー（基礎科学、R&D、サプライチェーン・製造、臨床開発、品質保証、規制対応、投資・デューデリジェンスなど） | 1年ごとに更新 | 科学系のタスクに対し、一般提供モデルより**緩い分類器**を適用 |
+| **High-risk Use** | **単一の研究プロジェクト**（Standard Use では扱えない領域向けの追加許可） | **6か月ごとに更新** | 生命科学の依頼をブロックする**安全策をすべて外す** |
+
+- **対象モデル**: Standard Use は現在 **Mythos 5.1・Opus 5・Sonnet 5**（今後の新モデルにも適用）。High-risk Use は **Opus 5 と Sonnet 5 で提供中**で、**Mythos については米国政府と連携して拡大を進めており、現時点では追加審査を受けた少数の組織に限られる**。
+- **典型的な使い方**: 1人の研究者が、日常業務用に Standard Use を1つ、特定プロジェクト（例: 特定のウイルスベクターが免疫経路に認識される仕組みの解析）用に High-risk Use を1つ以上持つ。
+
+### 「リアルタイムのブロック」から「事後の監視」へ
+
+生物学では、正当な研究（ワクチン開発のためのウイルス研究）と有害な目的（ウイルスの感染力を悪意で高める試み）を、**個々のリクエストだけでは区別できない**ことが多く、深刻な悪用は**多数のリクエストやセッションに分散**して検出を逃れがちです。そこで LSVP では、**安全策を「リクエストごとのリアルタイムのブロック」から「オフラインの監視」へ移して**います。
+
+- **想定する3つの脅威**: アクセスの乗っ取り（マルウェアやアカウント乗っ取り）／内部関係者による不正（悪意ある、または強要された従業員）／エージェントの誤用（特にエージェント群や長時間タスクによる意図しない危険な行動）。
+- **共有責任モデル**: 組織は**自分たちの想定用途を申請時に記載**し、各エンティティのアクセスは**その用途に紐づく**。Anthropic は LSVP のトラフィックを**継続的に監視**し、範囲外の利用があれば組織の管理者に通知して、**事前に合意した期間内に調査・是正**を求める。用途の記載は、求人票のような**高レベルの説明にとどめ、機密情報や知的財産は含めない**。
+- **データ保持**: 監視のために、**LSVP のトラフィックは30日間の保持が必須**。このデータは**厳密に区分**され、**モデルの学習には使われず**、Anthropic の生命科学研究チームも閲覧できない。対象となる組織については、上の **EFS との統合**も検討している。
+
+### 提供範囲と制約
+
+- **利用できる場所**: 現時点では、**ファーストパーティのコンソール（API）と、Claude for Enterprise・Team プラン**。**個人プラン（Pro・Max）は未対応**（拡大予定）。**サードパーティプラットフォームでも未対応**。
+- **BAA 有効の組織では利用不可**（ベータのため）。PHI（保護対象の医療情報）を扱う顧客は、**BAA なし・非 HIPAA の別組織**を使う必要がある。
+- **許可の切り替え**: API と Claude Science では、許可をネイティブに切り替えられる。**Claude.ai と Claude Code では、当初は事前に選ばれた既定の許可だけ**が適用される（API 認証で Claude Code を使う場合を除く）。大半の利用者は Standard Use だけで足りる見込み。
+- **申請の見通し**: 最初の1週間で**数百の組織**の受け入れを見込み、以降の数週間で生命科学コミュニティの大半へ広げる計画。
+- 前月（9月1日）の Fable 5.1 / Mythos 5.1 の発表時点では、LSVP は「Mythos 5.1向けの招待制ベータ」として紹介されていました（[Claude Fable 5.1 / Mythos 5.1 完全ガイド](/mdTechKnowledge/blog/claude-fable-5-1-mythos-5-1-guide/)）。今回の発表で、**対象モデルが Opus 5・Sonnet 5 に広がり、申請の受付が生命科学コミュニティ全体に開かれました**。
+
+### 実務上のポイント
+
+- 生命科学の正当な業務で、Messages API の拒否（`stop_details.category` が `"bio"`）が頻発する場合、**LSVP の対象かどうかの確認**が選択肢になります。`bio` の拒否は**出力前でも課金される**ようになっているため（[Anthropic Messages API 新機能まとめ](/mdTechKnowledge/blog/anthropic-messages-api-new-features-2026/)の第21章）、誤検知の頻発はコストにも直結します。
+- **PHI を扱う場合の別組織運用**と、**30日のデータ保持が必須**である点は、契約・コンプライアンス部門と事前に確認してください。
+
+出典: [Introducing the Life Sciences Verification Program — Anthropic 公式（2026-09-17）](https://www.anthropic.com/news/life-sciences-verification-program)
 
 ## 既存セキュリティ事案との関係性
 
