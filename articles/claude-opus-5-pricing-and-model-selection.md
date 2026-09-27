@@ -39,12 +39,15 @@ per-MTok（100万トークンあたり）の USD 単価です。すべて[公式
 
 | モデル | モデルID | 入力 | 出力 | キャッシュ読取 | 備考 |
 |:---|:---|:---:|:---:|:---:|:---|
+| **Opus 5.5** 🆕 | `claude-opus-5-5` | **$4** | **$20** | **$0.20** | **新デフォルトOpus（9/22）。Opus 5比40%コスト減・Fable 5.1同等性能** |
+| Fable 5.1 | `claude-fable-5-1` | $10 | $50 | $0.25 | Fableの既定に。キャッシュ読取90%削減 |
+| Mythos 5.1 | `claude-mythos-5-1` | $10 | $50 | $0.25 | Project Glasswing 限定 |
 | **Fable 5** | `claude-fable-5` | $10 | $50 | $1 | 最上位。思考は常時オン |
 | Mythos 5 | `claude-mythos-5` | $10 | $50 | $1 | Project Glasswing 限定 |
-| **Opus 5** 🆕 | `claude-opus-5` | **$5** | **$25** | $0.50 | **新フロンティア主力（7/24）** |
+| **Opus 5** | `claude-opus-5` | $5 | $25 | $0.50 | 前世代主力（7/24）。Opus 5.5にデフォルトの座を譲る |
 | **Opus 4.8** | `claude-opus-4-8` | $5 | $25 | $0.50 | 前世代・継続提供 |
 | Opus 4.7 / 4.6 / 4.5 | `claude-opus-4-7` 他 | $5 | $25 | $0.50 | いずれも同額 |
-| **Sonnet 5** | `claude-sonnet-5` | **$2** | **$10** | $0.20 | **導入価格・〜2026-08-31**。9/1以降 $3/$15 |
+| **Sonnet 5** | `claude-sonnet-5` | **$2** | **$10** | $0.20 | **恒久価格に確定**（2026-08-10発表、9/1からの$3/$15値上げは撤回） |
 | Sonnet 4.6 / 4.5 | `claude-sonnet-4-6` 他 | $3 | $15 | $0.30 | |
 | **Haiku 4.5** | `claude-haiku-4-5` | $1 | $5 | $0.10 | 軽量。コンテキストは 200K |
 
@@ -77,15 +80,16 @@ per-MTok（100万トークンあたり）の USD 単価です。すべて[公式
 
 | 対象モデル | 入力 | 出力 | 提供範囲 |
 |:---|:---:|:---:|:---|
+| **Opus 5.5** | $8 | $40 | Claude CodeとClaude Platformで利用可（最大2.5倍速） |
 | **Opus 5 / Opus 4.8** | $10 | $50 | **Claude API のみ**（Bedrock・Google Cloud・Foundry 非対応） |
 
-同じモデルを出力トークン毎秒で最大2.5倍速く回す代わりに、単価はちょうど2倍（＝Fable 5 と同額）になります。Opus 4.7 の fast mode は**削除済み**で、指定するとエラーになります。
+同じモデルを出力トークン毎秒で最大2.5倍速く回す代わりに、単価が上がります（Opus 5/4.8はちょうど2倍＝Fable 5と同額、Opus 5.5は標準単価の2倍）。Opus 4.7 の fast mode は**削除済み**で、指定するとエラーになります。
 
 ### 他社との比較
 
 クラス横断の比較（Gemini・GPT-5.6・Kimi K3 等を含む）は、別記事に単価表を整理しています。**Opus 5（$5/$25）は GPT-5.6 Sol（$5/$30）と入力同額・出力で約2割安**という位置関係です。
 
-→ [AIトークン単価の価格破壊が止まらない — Claude・Gemini・GPT-5.6・Copilot 単価総覧](https://note.com/mdtechknowledge/n/nd276ef5b00cd)
+→ [AIトークン単価の価格破壊が止まらない — Claude・Gemini・GPT-5.6・Copilot 単価総覧](https://note.com/mdtechknowledge/n/n473d45d9d0c3)
 
 ## 3. 【本題】Claude Code で Opus 4.8 は指定できなくなった？ → 選べます
 
@@ -190,7 +194,7 @@ CHANGELOG の該当エントリは次のとおりです。
 
 ## 関連記事
 
-- [AIトークン単価の価格破壊が止まらない — Claude・Gemini・GPT-5.6・Copilot 単価総覧](https://note.com/mdtechknowledge/n/nd276ef5b00cd) — 他社を含めたクラス横断の単価比較と「フロンティア×安価」のコスト設計
+- [AIトークン単価の価格破壊が止まらない — Claude・Gemini・GPT-5.6・Copilot 単価総覧](https://note.com/mdtechknowledge/n/n473d45d9d0c3) — 他社を含めたクラス横断の単価比較と「フロンティア×安価」のコスト設計
 - [これがラストチャンスかも③（完結編）— Fable 5 が7月20日に最終決着](https://note.com/mdtechknowledge/n/n4b565a267c66) — 最上位 Fable 5 のプラン組み込みと Usage Credits
 - [Claude Code バージョン履歴まとめ](https://note.com/mdtechknowledge/n/n1fe3c416626a) — 各バージョンの変更点
 

@@ -113,6 +113,12 @@ canonical_url: "https://note.com/mdtechknowledge/n/n4027232a27ca"
 
 ---
 
+## 【2026-09-01追記】後継モデル Fable 5.1 リリース — Pro向け扱いは同枠組みを想定
+
+2026年9月1日、本記事で扱ったFable 5の後継 **Claude Fable 5.1** がリリースされました。API単価はFable 5と同額（$10/$50、キャッシュ読取のみ$0.25/MTokに削減）のため、**本記事で解説したPro/Max/Team Premiumでの扱い（Usage Credits・$100一時クレジット・週間50%組み込み等）は5.1にもそのまま引き継がれる想定**です（Anthropicから5.1固有のプラン変更は本記事執筆時点でアナウンスされていません）。5.1自体の詳細は [Claude Fable 5.1 / Mythos 5.1 完全ガイド](https://note.com/mdtechknowledge/n/n621a7212c928) を参照してください。
+
+---
+
 ## まとめ
 
 - **Fable 5 は Pro でも使える**が、**2026年7月20日の最終方針で Max/Team Premium とは扱いが分かれた**。Max/Team Premium は週間50%として恒久組み込み、**Pro/Team Standard は Usage Credits＋$100の一時クレジット**という形。

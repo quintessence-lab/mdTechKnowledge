@@ -118,6 +118,23 @@ Dynamic Workflows のランタイムは、会話とは**隔離された環境**�
 
 ただし注意点として、**同時最大16・総計最大1000 / run というリソース上限は引き続き全体に適用**されます。階層を深くしても**走る延べエージェント数の上限（1000）は変わらない**ため、各階層で子を増やしすぎると総計上限に早く到達します。深いツリーを組む場合は、階層×分岐数の掛け算で延べ数が膨らむ点を見込んでおく必要があります。
 
+### v2.1.212 — セッション全体のサブエージェント生成上限（Dynamic Workflows とは別軸）→ v2.1.228 で廃止
+
+**v2.1.212（2026-07-14 PT）** で、Dynamic Workflows の「総計1000/run」とは**別に**、**セッション全体を通じたサブエージェント生成数の上限**（既定 **200**、`CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` で調整可、`/clear` でリセット）が追加されました。同時に**セッション全体の WebSearch 呼び出し上限**（既定200、`CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`）も導入されています。
+
+これは「1回のワークフロー実行あたり最大1000」というDynamic Workflows固有の制約とは異なる階層の上限でした。
+
+> **【2026-08-15追記・廃止】この「セッション全体200件」の上限は、v2.1.228（2026-08-11 PT / 2026-08-12 JST）で撤廃されました**（公式changelog: *"Removed the 200-subagent-per-session spawn cap; long-running sessions no longer refuse new agents (concurrency and depth limits still apply)"*）。長時間の対話セッションで多数回ワークフローを実行しても、この200件上限による拒否は発生しなくなっています。ただし**同時実行数の上限（最大16）と生成階層の深さ上限（既定3階層）は引き続き適用**されます。WebSearch呼び出しのセッション全体上限（既定200、`CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`）は本バージョンの変更対象外で、従来通り有効です。
+
+以下は廃止前（v2.1.212〜v2.1.227）の制約構造です。参考として残します。
+
+| 制約 | 適用範囲 | 既定値 | 環境変数 |
+|:---|:---|:---|:---|
+| Dynamic Workflows 総計上限 | 1回の `agent()` 群の実行（1 run） | 1,000 | — |
+| ~~セッション全体のサブエージェント生成上限~~（v2.1.228で廃止） | セッション開始 〜 `/clear` まで | ~~200~~ 廃止 | `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` |
+
+同バージョンで **`/fork`** コマンドの挙動も変更されました。従来の `/fork`（会話をセッション内でサブタスクとして分岐する機能）は **`/subtask`** に改名され、新しい `/fork` は**会話を新しいバックグラウンドセッションとしてコピーする**機能（`claude agents` に別行として表示）に変わっています。Dynamic Workflows自体の起動方法（`ultracode`キーワード等）には影響しませんが、ワークフロー実行前後に会話を分岐・退避する目的で `/fork` を使っていた場合は、新しい挙動（バックグラウンドセッション化）を前提に運用を見直してください。
+
 ### v2.1.202 / v2.1.218 / v2.1.219 — デフォルトサイズガイドライン
 
 「最大1000」はあくまで**上限**であり、**既定の目標規模はより小さく設定**されています。
@@ -315,6 +332,20 @@ Dynamic Workflows は単体で完結する機能ではなく、Claude Code の�
 > **効果**: 「規模の好みを設定で固定（size）」×「実行を OTel で機械追跡（run_id/name）」により、Dynamic Workflows を**チーム運用・継続監視**しやすくなりました。トークン消費のローカル蓄積（本記事の運用Tips）と OTel 追跡を併用すると、コスト管理がさらに正確になります。
 
 出典: [Claude Code CHANGELOG v2.1.202](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md)。
+
+---
+
+## 14. 【2026-09-11追記】v2.1.269 — `CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS`で同時実行数を調整
+
+**Claude Code v2.1.269** で、環境変数 **`CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS`** が追加されました。本記事で解説した「**同時最大16**」という既定の並列度上限を、**Workflowツールの実行1回あたり1〜256の範囲で明示的に調整**できるようになりました。
+
+- 既定の同時16体では足りない大規模並列ワークフロー（第3章「並列度」参照）で、**上限を引き上げて実効スループットを高める**運用が可能に
+- 逆に、リソースが限られた環境やコストを厳密に管理したい場面では、**既定より低い値に絞る**こともできる
+- 「総計最大1000」という技術的な天井（第2章参照）は変わらず、あくまで**同時実行数の調整弁**という位置づけ
+
+第13章で解説した`/config`の「Dynamic workflow size」設定（small/medium/large の規模プリセット）が定性的な調整手段であるのに対し、本設定は**同時実行数を数値で直接指定**できる、より細かい制御手段です。
+
+出典: [Claude Code CHANGELOG（v2.1.269）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 ---
 
