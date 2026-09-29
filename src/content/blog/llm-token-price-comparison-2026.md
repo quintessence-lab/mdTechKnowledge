@@ -102,7 +102,9 @@ draft: false
 | GPT-5 | $1.25 | $10 | 価格変更なし |
 | GPT-5-nano | $0.05 | $0.40 | 最軽量（価格変更なし） |
 
-> **GPT-6 ファミリーは Astra / Sol / Luna の3段階**です。GPT-5.6 の Sol / Terra / Luna とは名前が似ていますが、**GPT-6 Sol は GPT-5.6 Terra より安く、GPT-6 Luna は GPT-5.6 Luna のさらに半額以下**という関係です。**入力272K超は入力とキャッシュが2倍・出力が1.5倍**になり、リクエスト全体に適用されます（GPT-5.6 も同じルールで、以前の「272K超で $10/$30 に切替」は誤りでした）。キャッシュ書込は入力の1.25倍、Fast mode は2倍です。**Azure（Microsoft Foundry）でも GPT-6 Astra は2026-09-03から提供**され、Global は OpenAI と同額、US Data Zone は10%上乗せです。
+> **GPT-6 ファミリーは Astra / Sol / Luna の3段階**です。GPT-5.6 の Sol / Terra / Luna とは名前が似ていますが、**GPT-6 Sol は GPT-5.6 Terra より安く、GPT-6 Luna は GPT-5.6 Luna のさらに半額以下**という関係です。**入力272K超は入力とキャッシュが2倍・出力が1.5倍**になり、リクエスト全体に適用されます（GPT-5.6 も同じルールで、以前の「272K超で $10/$30 に切替」は誤りでした）。キャッシュ書込は入力の1.25倍、Fast mode は2倍です（**Fast mode は旧「Priority Processing」を2026-07-30に改称したもので、リクエストに`priority`を指定していた既存コードは自動的にFast modeとして扱われる後方互換**）。**Azure（Microsoft Foundry）でも GPT-6 Astra は2026-09-03から提供**され、Global は OpenAI と同額、US Data Zone は10%上乗せです。
+
+> **課金体系そのものは変わっていない**: 2026年9月に相次いだのは新モデルの投入（Astra/Sol/Luna）と既存モデルの値下げ（Sol/Terra/Lunaの3モデル）であり、「$ per 1Mトークン」という課金単位・メカニズム自体に変更はありません。Short/Long contextの2階建て価格やキャッシュ書込の別建ては、GPT-5.4/5.5世代から続く既存の構造です。
 
 ### Gemini（Google）
 
