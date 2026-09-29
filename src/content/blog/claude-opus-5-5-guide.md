@@ -1,6 +1,7 @@
 ---
 title: "Claude Opus 5.5 完全ガイド — Fable 5.1 級の性能を40%安く・4つの破壊的変更・Opus 5 からの移行"
 date: 2026-09-26
+updatedDate: 2026-09-29
 category: "Claude技術解説"
 tags: ["Claude", "Opus 5.5", "Anthropic", "ベンチマーク", "API", "thinking", "Preserved Thinking", "移行ガイド", "Effort Control", "computer use", "Claude Code", "Artificial Analysis"]
 excerpt: "2026-09-22（PT）リリースの Claude Opus 5.5（claude-opus-5-5）を、公式発表・公式 API docs・システムカード・独立検証（Artificial Analysis）で徹底解説。単価は $4/$20 で Opus 5 比20%減、キャッシュ読取は $0.20 で60%減、タスクあたりのトークン削減も合わせて典型ワークロードの総コストは40%減。そのうえで Terminal-Bench 4.0 66.4%・GDPval-AA v2.1 1846 Elo など主要ベンチで Fable 5.1 と GPT-6 Astra を上回り、出力も Opus 5 より30%超速い。一方で API は Opus 5 から4つの破壊的変更（thinking の無効化不可・tool_choice の any/tool 不可・thinking ブロックのモデル紐付け・Claude API と Google Cloud での computer_20251124 廃止）があり、既定 effort が medium に下がった点、2026-08-31 以降作成の API アカウントで Preserved Thinking（蒸留対策）により会話の途中改変が400になる点など、モデルIDの差し替えだけでは済まない。Claude Code v2.1.280 で既定 Opus になり、Pro / Team Standard の既定モデルも Sonnet から Opus に変わった。移行チェックリストと、システムカードが示す回帰点（貼り付けテキスト内の悪意ある指示に従いやすい等）も整理する。"
@@ -247,9 +248,11 @@ Pro プランで既定が Opus になったことで、**同じ使い方でも�
 10. **貼り付けテキストをタグで区切る**（システムカードの回帰点への対策）
 11. **コストを実測する**。既定設定なら40%減が見込めるが、max で回すとタスクあたりの出力トークンが増えることがある
 
-## 10. Sonnet 5.5 / Haiku 5.5 は「数週間以内」
+## 10. Sonnet 5.5 はリリース済み、Haiku 5.5 は「数週間以内」
 
-公式発表には「Claude Sonnet 5.5 と Claude Haiku 5.5 も、性能・効率・安全性の同様の改善を伴って数週間以内に続く」とあります。**具体的な日付・価格・仕様は未公表**です。Claude の軽量級は Haiku 4.5（$1/$5）のまま他社の最新軽量級より出力単価が高い状態なので、Haiku 5.5 の価格が次の注目点になります。
+**【2026-09-29更新】Claude Sonnet 5.5 は2026年9月28日（PT）にリリースされました。** Sonnet 5 と同じ $2/$10 で、出力が30%以上速くなっています。Terminal-Bench 4.0 では 70.6% と Opus 5.5（66.4%）を上回り、GDPval-AA でも Opus 5.5 と2点差です。公式は「Opus 5.5 は慎重な判断を要する複雑な作業向け、Sonnet 5.5 は範囲の明確な日常タスクやバグ修正に最も強い」と役割を分けています。詳しくは [Claude Sonnet 5 完全ガイド](/mdTechKnowledge/blog/claude-sonnet-5-guide/) の追記を参照してください。
+
+**Haiku 5.5** は「大量処理とコスト重視の用途向けに、数週間以内に Claude 5.5 ファミリーに加わる」と予告されています。**日付・価格・仕様は未公表**です。Claude の軽量級は Haiku 4.5（$1/$5）のまま他社の最新軽量級より出力単価が高い状態なので、Haiku 5.5 の価格が次の注目点になります。
 
 ## まとめ
 
