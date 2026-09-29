@@ -1,14 +1,16 @@
 ---
 title: "Claude Sonnet 5 完全ガイド — Opus 4.8 に迫る性能を低価格で回す新デフォルトモデル"
 date: 2026-07-03
-updatedDate: 2026-09-24
+updatedDate: 2026-09-29
 category: "Claude技術解説"
 tags: ["Claude", "Sonnet 5", "Anthropic", "AIモデル", "エージェント", "コーディング"]
-excerpt: "2026年6月30日（PT）リリースのClaude Sonnet 5は、Free/Pro/Claude Codeの新デフォルトモデル。agentic codingベンチ63.2%でOpus 4.8（69.2%）に迫りつつ、価格$2/$10という破格の低価格を実現した（当初は2026-08-31までの導入価格→**2026-08-10に恒久化を発表**、9月からの$3/$15への値上げは撤回）。エージェント自律実行・ツールユース・コンピュータ使用を強化した後継モデルの実力を、Sonnet 4.6・Opus 4.8との比較で総点検する。2026-09-22追記: Claude Code v2.1.280でPro・Team StandardプランのデフォルトがSonnetからOpus（5.5）へ再変更された点を追記（Claude.aiのFree/Proチャットは引き続きSonnet 5既定）。"
+excerpt: "2026年6月30日（PT）リリースのClaude Sonnet 5は、Free/Pro/Claude Codeの新デフォルトモデル。agentic codingベンチ63.2%でOpus 4.8（69.2%）に迫りつつ、価格$2/$10という破格の低価格を実現した（当初は2026-08-31までの導入価格→**2026-08-10に恒久化を発表**、9月からの$3/$15への値上げは撤回）。エージェント自律実行・ツールユース・コンピュータ使用を強化した後継モデルの実力を、Sonnet 4.6・Opus 4.8との比較で総点検する。2026-09-22追記: Claude Code v2.1.280でPro・Team StandardプランのデフォルトがSonnetからOpus（5.5）へ再変更された点を追記（Claude.aiのFree/Proチャットは引き続きSonnet 5既定）。 【2026-09-29追記】後継のClaude Sonnet 5.5（2026-09-28 PT、同価格$2/$10で出力30%超高速）の概要・公式ベンチマーク・5つのAPI破壊的変更と、Sonnet 5がLegacy扱いになった点を追記。"
 draft: false
 ---
 
 ## 1. リリース概要・位置づけ
+
+> **【2026-09-29追記】後継の Claude Sonnet 5.5 がリリースされました（2026-09-28 PT）。** 同じ価格で出力が30%以上速く、Sonnet 5 はモデル一覧で Legacy（旧世代）扱いになりました。概要は本記事末尾の「後継 Claude Sonnet 5.5 がリリース」の節を参照してください。
 
 Anthropic は **2026年6月30日（PT／日本時間 7月1日）**、Sonnet シリーズの新世代 **Claude Sonnet 5**（API モデル ID: `claude-sonnet-5`）をリリースしました。同モデルは即日、**Claude.ai の Free / Pro プランおよび Claude Code の新しいデフォルトモデル**として展開され、前世代 [Claude Sonnet 4.6](/mdTechKnowledge/blog/claude-sonnet-4-6-guide/) からデフォルトの座を引き継ぎました。Max / Team / Enterprise ユーザーも利用できます。
 
@@ -261,6 +263,44 @@ Free / Pro プランおよび Claude Code ユーザーは、**特別な操作な
 | コンピュータ使用（GUI 操作） | Sonnet 5 | OSWorld-Verified 78.5% |
 | 長時間自律エージェント | Sonnet 5 ＋ Opus 4.8 | 通常 Sonnet、難所のみ Opus |
 | 難バグ根本解析 / 大規模設計 | Opus 4.8 | 深い推論が必要 |
+
+## 【2026-09-29追記】後継 Claude Sonnet 5.5 がリリース
+
+**2026年9月28日（PT）**、Sonnet 5 の後継となる **Claude Sonnet 5.5（`claude-sonnet-5-5`）** がリリースされました。公式は「Sonnet 5 からの明確なアップグレードで、出力は30%以上速く、ほとんどの作業でコストが最大30%安い」と説明しています。モデル一覧では、現行の Sonnet が Sonnet 5.5 になり、**Sonnet 5 は Legacy（旧世代）**に移りました。
+
+| 項目 | Sonnet 5.5 |
+|---|---|
+| 価格（入力 / 出力） | $2 / $10 per MTok（Sonnet 5 と同額。キャッシュ書込 $2.50・$4、読取 $0.20、Batch 50%引きも同じ） |
+| 速度 | 出力の生成が Sonnet 5 より **30%以上速い**（Sonnet として過去最速） |
+| コンテキスト / 最大出力 | 1M / 128K（Batch API はベータヘッダーで 300K） |
+| 知識カットオフ | 2026年6月 |
+| thinking | Adaptive thinking が既定でオン。`between_tools` で事前の thinking を切れる（effort が high 以下のとき） |
+| 既定 effort | API は `high`、Claude アプリと Claude Code は `medium` |
+
+**公式ベンチマーク**（公式発表より）
+
+| ベンチマーク | Sonnet 5.5 | Sonnet 5 | Opus 5.5 |
+|---|---|---|---|
+| Terminal-Bench 4.0 | **70.6%** | 10.3% | 66.4%（xhigh） |
+| FrontierCode 1.1（Main） | 46.2%（Max） | 42.4% | 54.4% |
+| CursorBench 4.0 | 55.5% | 34.1% | 57.8% |
+| GDPval-AA v2.1（Elo） | 1844 | 1449 | 1846 |
+| AA-Briefcase v1.1（Elo） | 1811 | 1359 | 1822 |
+| Humanity's Last Exam（ツールあり） | 64.5% | 54.9% | 67.7% |
+| OSWorld 2.1（partial） | 80.1% | 57.0% | 81.8% |
+| Chartography（ツールなし） | 61.6% | 15.6% | 64.4% |
+
+Terminal-Bench 4.0 では Opus 5.5 を上回り、GDPval-AA では Opus 5.5 と2点差です。一方、FrontierCode では Opus 5.5 との差が大きく残っています。公式は「Opus 5.5 は慎重な判断を要する複雑な作業向け、Sonnet 5.5 は範囲の明確な日常タスクやバグ修正に最も強い」と役割を分けています。
+
+- **安全性**: **Sonnet として初めて、最上位モデル向けに作られたサイバー分野の safeguard とフォールバックを搭載**しました。リスクの高いサイバーセキュリティのタスクは、目に見える形で Sonnet 5 に切り替わります。生物分野の safeguard は Sonnet 5 と同じです。Preserved Thinking（蒸留対策）も適用されます。
+- **API の破壊的変更は5点**です。① thinking を切るには `disabled` ではなく `between_tools` を使う（`disabled` と `enabled`＋`budget_tokens` は400エラー）、② `tool_choice` の `any` / `tool` が使えない、③ thinking ブロックがモデルと会話に紐付く、④ Claude API と Google Cloud で `computer_20251124` が使えない、⑤ advisor tool で Opus 4.8・Opus 4.7・Sonnet 5 を助言役に指定できない。Sonnet 5 からの移行では、Opus 5.5 と同様にモデル ID の差し替えだけでは済みません。
+- **Claude Code**: v2.1.284 で追加されました。Anthropic API では `sonnet` エイリアスが Sonnet 5.5 を指します（Bedrock・Google Cloud・Claude Platform on AWS では旧 Sonnet のまま）。**Claude Code の既定モデルは Opus 5.5 のまま**です。
+- **提供範囲**: Claude API・Amazon Bedrock・Claude Platform on AWS・Google Cloud・Microsoft Foundry、claude.ai の全プラン、GitHub Copilot（Pro 以上）。
+- **Haiku 5.5** は「数週間以内」に Claude 5.5 ファミリーに加わると予告されています。
+
+API の変更点の詳細は [Anthropic Messages API 新機能まとめ](/mdTechKnowledge/blog/anthropic-messages-api-new-features-2026/) の第22章、同じ 5.5 世代の上位モデルは [Claude Opus 5.5 完全ガイド](/mdTechKnowledge/blog/claude-opus-5-5-guide/) を参照してください。
+
+出典: [Claude Sonnet 5.5 — Anthropic 公式発表](https://www.anthropic.com/claude-sonnet-5-5)（2026-09-28） / [Claude Sonnet 5.5 モデルページ](https://platform.claude.com/docs/en/models/sonnet-5-5/overview) / [What's new in Claude Sonnet 5.5](https://platform.claude.com/docs/en/models/sonnet-5-5/whats-new-sonnet-5-5) / [Platform リリースノート（2026-09-28）](https://platform.claude.com/docs/en/release-notes/overview)
 
 ---
 
