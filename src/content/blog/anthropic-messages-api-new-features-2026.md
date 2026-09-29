@@ -1,10 +1,10 @@
 ---
 title: "Anthropic Messages API 新機能まとめ（2026年5〜9月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・Opus5対応・Browser use tool・Fable 5.1/Mythos 5.1・Opus 5.5対応"
 date: 2026-06-20
-updatedDate: 2026-09-27
+updatedDate: 2026-09-29
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ", "Compliance API", "EU AI Act", "Browser use tool", "Python SDK", "Fable 5.1", "Mythos 5.1"]
-excerpt: "2026年5〜9月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）、9月1日の Fable 5.1/Mythos 5.1リリースに伴うtool_choice制限・thinking保持ルール変更・キャッシュ90%値下げ・Per-Message Effort（9月3日Google Cloud対応拡大）、9月14日のOn-demand conversation compaction（任意タイミングでの会話圧縮ベータ）・9月18日のCompliance APIがClaude in Chromeセッションに対応、9月22日のClaude Opus 5.5リリース（thinking無効化不可・tool_choice any/tool廃止等のAPI破壊的変更）・Inline tools beta（会話途中でのツール定義変更）、9月23日のCache Diagnostics GA化、9月24日のRefusal課金の再開（bio/frontier_llm/reasoning_extractionの3カテゴリは出力前の拒否でも課金）・Compliance API Activity Feedが名称・タイトルを返さなくなった破壊的変更・Claude for Microsoft 365セッションのGA化まで、対応モデル・betaヘッダー・コード例つきで横断解説する。"
+excerpt: "2026年5〜9月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）、9月1日の Fable 5.1/Mythos 5.1リリースに伴うtool_choice制限・thinking保持ルール変更・キャッシュ90%値下げ・Per-Message Effort（9月3日Google Cloud対応拡大）、9月14日のOn-demand conversation compaction（任意タイミングでの会話圧縮ベータ）・9月18日のCompliance APIがClaude in Chromeセッションに対応、9月22日のClaude Opus 5.5リリース（thinking無効化不可・tool_choice any/tool廃止等のAPI破壊的変更）・Inline tools beta（会話途中でのツール定義変更）、9月23日のCache Diagnostics GA化、9月24日のRefusal課金の再開（bio/frontier_llm/reasoning_extractionの3カテゴリは出力前の拒否でも課金）・Compliance API Activity Feedが名称・タイトルを返さなくなった破壊的変更・Claude for Microsoft 365セッションのGA化まで、対応モデル・betaヘッダー・コード例つきで横断解説する。 2026-09-29更新: Claude Sonnet 5.5（9/28）のリリースと5つのAPI破壊的変更を第22章に追加。"
 draft: false
 ---
 
@@ -570,6 +570,32 @@ Anthropic 公式 Python SDK のメジャーバージョン **v1.0** がリリー
 同日、Compliance API のローカルセッション用エンドポイントが、**Claude for Microsoft 365 のセッション**（Excel・PowerPoint・Word・Outlook。`product_surface` が `office_agents` で始まる値）について**ベータを卒業**しました。第14章・第19章で触れた「Claude Science・Claude for Microsoft 365 はベータ」という状況のうち、Microsoft 365 側は**GA**になった形です。
 
 出典: [Anthropic Platform リリースノート（2026-09-24）](https://platform.claude.com/docs/en/release-notes/overview) / [Sessions on users' machines（Compliance API）](https://platform.claude.com/docs/en/manage-claude/compliance-sessions)
+
+## 22. 2026年9月28日のアップデート — Claude Sonnet 5.5 リリースと5つの破壊的変更
+
+### Claude Sonnet 5.5（`claude-sonnet-5-5`）リリース
+
+**2026年9月28日**、Claude Sonnet 5.5 が Claude API・Amazon Bedrock（`anthropic.claude-sonnet-5-5`）・Claude Platform on AWS・Google Cloud・Microsoft Foundry で提供開始されました。価格は Sonnet 5 と同じ **$2/$10 per MTok**（キャッシュ読取 $0.20、Batch 50%引き）、コンテキストは 1M、最大出力は 128K（Batch API はベータヘッダー `output-300k-2026-03-24` で 300K）です。モデル一覧では Sonnet 5 が Legacy に移りました。キャッシュ可能な最小プロンプト長は 512 トークン（Sonnet 5 は 1,024）です。
+
+### Sonnet 5 からの破壊的変更は5点
+
+Opus 5.5（第20章）の4点とは内容が異なります。
+
+1. **thinking を切るには `between_tools` を使う**: `thinking: {"type": "disabled"}` と `{"type": "enabled", "budget_tokens": N}` は400エラー。事前の thinking を切りたい場合は `between_tools`（effort が `high` 以下のときだけ）を使う
+2. **`tool_choice` の `any` / `tool` が使えない**（400エラー。`auto` と strict tool use に置き換える）
+3. **thinking ブロックがモデルと会話に紐付く**: 2026-08-31以降に作成したアカウントでは、履歴を書き換えてからブロックを再送すると400エラー。Sonnet 5.5 の thinking ブロックは、生成したアカウント（またはリンクされたアカウント）でしか使えない
+4. **Claude API と Google Cloud で `computer_20251124` が使えない**（`computer_toolset_20260801` へ移行。Bedrock は旧ツールのまま使える）
+5. **advisor tool で Opus 4.8・Opus 4.7・Sonnet 5 を助言役に指定できない**
+
+エラーにはならない変化として、Opus 5.5 と同じく、ツール呼び出しの間のテキストが `thinking` ブロックで返ります。temperature・top_p・top_k を既定以外にすると400エラーになる点も同じです。
+
+### 拒否カテゴリとフォールバック
+
+`stop_details.category` の拒否カテゴリは cyber / bio / frontier_llm / reasoning_extraction / general_harms の5つです。サーバー側フォールバック（`fallbacks: "default"`、ベータ）が Sonnet 5 で再試行するのは **cyber と frontier_llm だけ**です。Sonnet 5.5 は Sonnet として初めて、最上位モデル向けのサイバー分野の safeguard を搭載しており、リスクの高いサイバー系のタスクは Sonnet 5 に切り替わります。
+
+> **補足**: この時期に報じられた「キャッシュ診断の GA」は2026-09-23、「会話途中の system メッセージでツールを定義してもキャッシュが壊れない」機能は2026-09-22の Inline tools（ベータ）で、どちらも第20章で解説済みです。モデル概要は [Claude Sonnet 5 完全ガイド](/mdTechKnowledge/blog/claude-sonnet-5-guide/) の追記を参照してください。
+
+出典: [Claude Sonnet 5.5 — Anthropic 公式発表](https://www.anthropic.com/claude-sonnet-5-5)（2026-09-28） / [Claude Sonnet 5.5 モデルページ](https://platform.claude.com/docs/en/models/sonnet-5-5/overview) / [What's new in Claude Sonnet 5.5](https://platform.claude.com/docs/en/models/sonnet-5-5/whats-new-sonnet-5-5) / [Platform リリースノート（2026-09-28）](https://platform.claude.com/docs/en/release-notes/overview)
 
 ## まとめ — どの機能をいつ使うか
 
