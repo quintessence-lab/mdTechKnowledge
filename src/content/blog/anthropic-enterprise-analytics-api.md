@@ -1,10 +1,10 @@
 ---
 title: "Anthropic Enterprise Analytics API 完全ガイド — 組織別利用データの照会と活用"
 date: 2026-05-02
-updatedDate: 2026-09-22
+updatedDate: 2026-09-30
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Admin API", "Analytics", "エンタープライズ", "FinOps", "Slack連携", "Workload Identity Federation", "OIDC", "Spend Limits API", "RBAC", "ユーザー管理"]
-excerpt: "2026年4月、Anthropic は Claude / Claude Code Remote / Claude Cowork の組織別利用データをプログラム照会できる Enterprise Analytics API を拡張した。Rate Limits API との位置付けの違い、エンドポイント構造、認証、レスポンス、Python/curl 実装例、Slackボット連携、運用ユースケース、制限事項までをまとめて解説する。さらに2026年6月の Workload Identity Federation（WIF＝OIDCトークンによるAPIキー不要認証）対応と、Admin API に追加された issuers / service accounts / federation rules エンドポイントも解説する。 さらに 2026-07-14 Beta のユーザー管理API（組織ロール5種・APIで割当可能なのは user/managed のみ・シート消費・SSO/SCIM併用時の制約）と、Enterprise 専用の Spend Limits API（上限の階層解決・ユーザー単位上書き・増額申請の承認/却下・金額は最小単位の文字列）、2026年8月のAdmin API GA化（8/19ユーザー管理ベータヘッダー不要化、8/26 `client.beta.organization`として全主要SDKから利用可能に）、2026-09-01の`anthropic-version`ヘッダーがAdmin API・Enterprise Analytics API・Compliance APIでも必須化された変更、2026-09-10のSmart Reports（Enterprise beta、利用実態の定性分析）も収録。"
+excerpt: "2026年4月、Anthropic は Claude / Claude Code Remote / Claude Cowork の組織別利用データをプログラム照会できる Enterprise Analytics API を拡張した。Rate Limits API との位置付けの違い、エンドポイント構造、認証、レスポンス、Python/curl 実装例、Slackボット連携、運用ユースケース、制限事項までをまとめて解説する。さらに2026年6月の Workload Identity Federation（WIF＝OIDCトークンによるAPIキー不要認証）対応と、Admin API に追加された issuers / service accounts / federation rules エンドポイントも解説する。 さらに 2026-07-14 Beta のユーザー管理API（組織ロール5種・APIで割当可能なのは user/managed のみ・シート消費・SSO/SCIM併用時の制約）と、Enterprise 専用の Spend Limits API（上限の階層解決・ユーザー単位上書き・増額申請の承認/却下・金額は最小単位の文字列）、2026年8月のAdmin API GA化（8/19ユーザー管理ベータヘッダー不要化、8/26 `client.beta.organization`として全主要SDKから利用可能に）、2026-09-01の`anthropic-version`ヘッダーがAdmin API・Enterprise Analytics API・Compliance APIでも必須化された変更、2026-09-10のSmart Reports（Enterprise beta、利用実態の定性分析）、2026-09-24のClaude for Microsoft 365ローカルセッションのGA化・Compliance API Activity Feedがファイル名/タイトルを返さなくなった破壊的変更も収録。"
 draft: false
 ---
 
@@ -400,6 +400,20 @@ Enterprise Analytics API を本番運用で使う際の注意点を整理しま�
 | 用途 | 監査・SIEM 連携・コンテンツの取得/削除（GDPR 等の削除要求対応含む） |
 
 > **Analytics API（集計）と Compliance API（生イベント）の棲み分け**: 「何にどれだけ使ったか」を集計で見るのが Analytics、「誰がいつ何をしたか」をイベント単位で追うのが Compliance。キーも別、プロビジョニングも別です。
+
+### 【2026-09-24追記】Claude for Microsoft 365 のGA化とActivity Feedの破壊的変更
+
+**Compliance API のローカルセッション用エンドポイント**が、**Claude for Microsoft 365**（Excel・PowerPoint・Word・Outlook。`product_surface` が `office_agents` で始まる値）について**ベータを卒業**しました。第19章までで扱ってきた「Claude Science・Claude for Microsoft 365 はベータ」という状況のうち、Microsoft 365 側は**GA**になった形です。
+
+同日、**Activity Feed** の仕様に**破壊的変更**が入りました。
+
+> The filename and title fields on file, project document, and artifact activities are now always empty or omitted, including on activities recorded before this change.
+> （ファイル、プロジェクトドキュメント、アーティファクトの各アクティビティの `filename` と `title` フィールドは、この変更より前に記録された分も含め、常に空か省略される）
+
+- **影響**: ファイル名・プロジェクトドキュメント名・アーティファクトのタイトルを、Activity Feed の応答から**画面やレポートに直接表示している**実装は、**過去分を含めて空欄になる**
+- **対処**: アクティビティに含まれる**IDから名称・タイトルを引く**。そのために、**`read:compliance_user_data` スコープを持つ Compliance Access Key** を使う
+
+出典: [Anthropic Platform リリースノート（2026-09-24）](https://platform.claude.com/docs/en/release-notes/overview) / [Sessions on users' machines（Compliance API）](https://platform.claude.com/docs/en/manage-claude/compliance-sessions)
 
 ### per-user attribution（named users 単位）の拡張
 
