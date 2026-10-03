@@ -1,10 +1,10 @@
 ---
 title: "Claude Code Plugin Marketplace ガイド — slash/hooks/サブエージェント/skills を束ねて配布・導入する"
 date: 2026-06-21
-updatedDate: 2026-09-29
+updatedDate: 2026-10-03
 category: "Claude技術解説"
 tags: ["Claude Code", "プラグイン", "Marketplace", "slash commands", "hooks", "サブエージェント", "skills", "MCP", "design"]
-excerpt: "Claude Code のプラグインは、slash commands・hooks・サブエージェント・skills・MCP サーバーを1つのパッケージに束ねて配布・導入できる仕組みです（2025年10月 公開ベータ）。/plugin コマンドでの検索・インストール、公式マーケットプレイス claude-plugins-official とサードパーティ/自前マーケットプレイスの追加方法、plugin.json の構成、作成の流れまでを公式ドキュメントベースで整理します。2026-08-17（v2.1.234）追加のバンドルスキル`/design`（Research Preview）、2026-09-04（v2.1.261）追加の`/skill-doctor`（未使用スキルとコンテキストコストの可視化）、2026-09-11（v2.1.269）追加の`claude plugin eval`（プラグインのevalスイート実行・ノープラグインベースラインとのスコア比較）も追記。 2026-09-29更新: 2026-09-23に公開された Claude Marketplace（2,000以上のコネクタ・プラグイン、3セクション構成）と、9/25に開設されたプラグイン申請窓口を追記。"
+excerpt: "Claude Code のプラグインは、slash commands・hooks・サブエージェント・skills・MCP サーバーを1つのパッケージに束ねて配布・導入できる仕組みです（2025年10月 公開ベータ）。/plugin コマンドでの検索・インストール、公式マーケットプレイス claude-plugins-official とサードパーティ/自前マーケットプレイスの追加方法、plugin.json の構成、作成の流れまでを公式ドキュメントベースで整理します。2026-08-17（v2.1.234）追加のバンドルスキル`/design`（Research Preview）、2026-09-04（v2.1.261）追加の`/skill-doctor`（未使用スキルとコンテキストコストの可視化）、2026-09-11（v2.1.269）追加の`claude plugin eval`（プラグインのevalスイート実行・ノープラグインベースラインとのスコア比較）も追記。 2026-09-29更新: 2026-09-23に公開された Claude Marketplace（2,000以上のコネクタ・プラグイン、3セクション構成）と、9/25に開設されたプラグイン申請窓口を追記。2026-10-03更新: `claude plugin configure`（v2.1.285）とClaude Mods・組み込みMod「You Should Know」（v2.1.287）を追記。"
 draft: false
 ---
 
@@ -251,6 +251,23 @@ my-plugin/
 本記事で解説した `/plugin` のマーケットプレイスは Claude Code 側の仕組みで、Claude Marketplace は claude.ai を含む Claude 全体の窓口という位置づけです。
 
 出典: [Claude Marketplace — Claude Blog](https://claude.com/blog/claude-marketplace)（2026-09-23） / [Build plugins for Claude — Claude Blog](https://claude.com/blog/build-plugins-for-claude)（2026-09-25）
+
+## 【2026-09-29追記】`claude plugin configure` — プラグインのオプションを管理（v2.1.285）
+
+**Claude Code v2.1.285** で、**`claude plugin configure <plugin>`** コマンドが追加されました。プラグインが持つ**設定オプションの表示・保存**を、インストール後に行えるようになります。あわせて、プラグインのインストール設定に **`.mcpb` 形式の MCP サーバー設定**を記述する構文も追加されました。これまでプラグインのオプションは `plugin.json` 編集などで直接触る必要がありましたが、`configure` サブコマンドで一段簡単に扱えるようになっています。
+
+出典: [Claude Code CHANGELOG（v2.1.285）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
+
+## 【2026-10-01追記】Claude Mods — プラグインがより深い動作を変更できる新サブシステム（v2.1.287）
+
+**Claude Code v2.1.287** で、**Claude Mods** という新しいサブシステムが追加されました。これまでのプラグインは commands・hooks・サブエージェント・skills・MCP（＋LSP）という**公開された拡張点**に差し込む仕組みでしたが、Mods は**Claude Codeのより深い動作そのものを変更**できる、プラグインの上位にあたる仕組みです。
+
+- **組み込みMod「You Should Know」**: `/plugin enable cc-plugin-you-should-know@builtin` で有効化できます。見落としがちな問題（テストを書かずに進めている、設定ファイルを壊す変更をしている等）を監視する**サイドエージェント**として動作します
+- プラグイン作者が Mods を使って独自の監視・介入ロジックを組み込める点が、従来の拡張点ベースのプラグインとの違いです
+
+本記事の「プラグインを作る」で解説した `plugin.json` ベースの拡張とは別の層にあたるため、既存のプラグイン開発に影響はありません。
+
+出典: [Claude Code CHANGELOG（v2.1.287）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 ---
 
