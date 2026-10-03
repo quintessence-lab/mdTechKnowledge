@@ -1,10 +1,10 @@
 ---
 title: "Anthropic Messages API 新機能まとめ（2026年5〜9月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・Opus5対応・Browser use tool・Fable 5.1/Mythos 5.1・Opus 5.5対応"
 date: 2026-06-20
-updatedDate: 2026-09-29
+updatedDate: 2026-10-03
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ", "Compliance API", "EU AI Act", "Browser use tool", "Python SDK", "Fable 5.1", "Mythos 5.1"]
-excerpt: "2026年5〜9月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）、9月1日の Fable 5.1/Mythos 5.1リリースに伴うtool_choice制限・thinking保持ルール変更・キャッシュ90%値下げ・Per-Message Effort（9月3日Google Cloud対応拡大）、9月14日のOn-demand conversation compaction（任意タイミングでの会話圧縮ベータ）・9月18日のCompliance APIがClaude in Chromeセッションに対応、9月22日のClaude Opus 5.5リリース（thinking無効化不可・tool_choice any/tool廃止等のAPI破壊的変更）・Inline tools beta（会話途中でのツール定義変更）、9月23日のCache Diagnostics GA化、9月24日のRefusal課金の再開（bio/frontier_llm/reasoning_extractionの3カテゴリは出力前の拒否でも課金）・Compliance API Activity Feedが名称・タイトルを返さなくなった破壊的変更・Claude for Microsoft 365セッションのGA化まで、対応モデル・betaヘッダー・コード例つきで横断解説する。 2026-09-29更新: Claude Sonnet 5.5（9/28）のリリースと5つのAPI破壊的変更を第22章に追加。"
+excerpt: "2026年5〜9月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）、9月1日の Fable 5.1/Mythos 5.1リリースに伴うtool_choice制限・thinking保持ルール変更・キャッシュ90%値下げ・Per-Message Effort（9月3日Google Cloud対応拡大）、9月14日のOn-demand conversation compaction（任意タイミングでの会話圧縮ベータ）・9月18日のCompliance APIがClaude in Chromeセッションに対応、9月22日のClaude Opus 5.5リリース（thinking無効化不可・tool_choice any/tool廃止等のAPI破壊的変更）・Inline tools beta（会話途中でのツール定義変更）、9月23日のCache Diagnostics GA化、9月24日のRefusal課金の再開（bio/frontier_llm/reasoning_extractionの3カテゴリは出力前の拒否でも課金）・Compliance API Activity Feedが名称・タイトルを返さなくなった破壊的変更・Claude for Microsoft 365セッションのGA化まで、対応モデル・betaヘッダー・コード例つきで横断解説する。 2026-09-29更新: Claude Sonnet 5.5（9/28）のリリースと5つのAPI破壊的変更を第22章に追加。2026-10-03更新: Claude Sonnet 4.5の廃止通知（9/30、リタイアは11/30・移行先Sonnet 5.5）を第23章に追加。"
 draft: false
 ---
 
@@ -596,6 +596,18 @@ Opus 5.5（第20章）の4点とは内容が異なります。
 > **補足**: この時期に報じられた「キャッシュ診断の GA」は2026-09-23、「会話途中の system メッセージでツールを定義してもキャッシュが壊れない」機能は2026-09-22の Inline tools（ベータ）で、どちらも第20章で解説済みです。モデル概要は [Claude Sonnet 5 完全ガイド](/mdTechKnowledge/blog/claude-sonnet-5-guide/) の追記を参照してください。
 
 出典: [Claude Sonnet 5.5 — Anthropic 公式発表](https://www.anthropic.com/claude-sonnet-5-5)（2026-09-28） / [Claude Sonnet 5.5 モデルページ](https://platform.claude.com/docs/en/models/sonnet-5-5/overview) / [What's new in Claude Sonnet 5.5](https://platform.claude.com/docs/en/models/sonnet-5-5/whats-new-sonnet-5-5) / [Platform リリースノート（2026-09-28）](https://platform.claude.com/docs/en/release-notes/overview)
+
+## 23. 2026年9月30日のアップデート — Claude Sonnet 4.5 の廃止通知
+
+**2026年9月30日（PT）**、`claude-sonnet-4-5-20250929`（Claude Sonnet 4.5）の廃止がアナウンスされました。公式の文言は次のとおりです。
+
+> We announced the deprecation of the Claude Sonnet 4.5 model (`claude-sonnet-4-5-20250929`), with retirement on the Claude API scheduled for November 30, 2026. We recommend migrating to Claude Sonnet 5.5.
+
+- **リタイア予定日**: **2026年11月30日**（Claude API）
+- **推奨移行先**: 前章で解説した **Claude Sonnet 5.5**（`claude-sonnet-5-5`）
+- モデル廃止の管理一般については [Anthropic モデル廃止スケジュール & 移行ガイド](/mdTechKnowledge/blog/anthropic-model-deprecation-migration/) に詳細を整理しています
+
+出典: [Anthropic Platform リリースノート（2026-09-30）](https://platform.claude.com/docs/en/release-notes/overview)
 
 ## まとめ — どの機能をいつ使うか
 
