@@ -1,10 +1,10 @@
 ---
 title: "Claude Code /ultrareview 完全ガイド — クラウドマルチエージェントによる深掘りコードレビュー"
 date: 2026-05-02
-updatedDate: 2026-08-30
+updatedDate: 2026-10-03
 category: "Claude技術解説"
 tags: ["Claude Code", "ultrareview", "code-review ultra", "コードレビュー", "マルチエージェント", "CICD", "Anthropic"]
-excerpt: "2026年4月17日にClaude Code v2.1.111でリリースされた/ultrareviewは、リモートサンドボックス上でエージェントフリートを並列実行し、マージ前に深掘りバグハントを行うコードレビュー機能。基本操作から非対話型CI実行、料金体系、--jsonオプション、/reviewとの使い分けまで網羅的に整理する。2026-08-27のv2.1.248では、クラウドセッション起動失敗時に従来の最大30分待機から早期報告へ改善された。※現在この機能は /code-review ultra に統合され、/ultrareview は非推奨エイリアスとなっている（本文の /ultrareview は /code-review ultra に読み替え）。"
+excerpt: "2026年4月17日にClaude Code v2.1.111でリリースされた/ultrareviewは、リモートサンドボックス上でエージェントフリートを並列実行し、マージ前に深掘りバグハントを行うコードレビュー機能。基本操作から非対話型CI実行、料金体系、--jsonオプション、/reviewとの使い分けまで網羅的に整理する。2026-08-27のv2.1.248では、クラウドセッション起動失敗時に従来の最大30分待機から早期報告へ改善された。2026-10-02のv2.1.288では`/code-review`に`--max-findings <n>|all`フラグが追加され、報告する指摘件数の上限を指定できるようになった。※現在この機能は /code-review ultra に統合され、/ultrareview は非推奨エイリアスとなっている（本文の /ultrareview は /code-review ultra に読み替え）。"
 draft: false
 ---
 
@@ -406,6 +406,17 @@ Code Review が PR 自動監視という「面」を押さえるのに対し、`
 > 参考: 同時期のv2.1.247では、コスト最適化コマンド `/claude-api cost-optimize`（既存プロジェクトのAPI支出をキャッシュ・トークン節約・モデル選択の観点でプロファイルする機能）が追加されています。`/ultrareview`自体とは別コマンドですが、レビュー運用のコストを見直したい場合の関連ツールとして押さえておくと良いでしょう。
 
 出典: [Claude Code CHANGELOG（v2.1.247, v2.1.248）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
+
+## 10.8 【2026-10-02追記】v2.1.288 — `--max-findings`で報告件数の上限を指定
+
+**Claude Code v2.1.288** で、`/code-review`（および `/code-review ultra` 経由の `/ultrareview`）に **`--max-findings <n>|all`** フラグが追加されました。
+
+- **`--max-findings <n>`**: レビューが報告する指摘の件数を**最大n件に制限**できます。大量の指摘が出るレビューで、優先度の高いものだけに絞って確認したい場合に使います
+- **`--max-findings all`**: 件数制限をかけず、**すべての指摘を報告**させます
+
+件数制限は「何も指定しない既定の挙動」を変えるものではなく、**レビュー結果の表示量を調整するオプトインの調整弁**です。第7章の`--json`オプションと組み合わせて、CI上で件数を絞った要約だけを後段処理に渡す、といった使い方もできます。
+
+出典: [Claude Code CHANGELOG（v2.1.288）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 ---
 
