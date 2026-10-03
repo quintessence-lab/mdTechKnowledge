@@ -1,10 +1,10 @@
 ---
 title: "Anthropic モデル廃止スケジュール & 移行ガイド — 1Mコンテキストβ廃止・Sonnet/Opus 4 廃止の対応"
 date: 2026-05-02
-updatedDate: 2026-08-07
+updatedDate: 2026-10-03
 category: "Claude技術解説"
-tags: ["Claude", "Anthropic", "API", "モデル廃止", "移行", "1Mコンテキスト", "Sonnet 4", "Opus 4", "Opus 4.1", "Opus 4.8", "extended thinking", "Agent SDK", "課金"]
-excerpt: "2026年4月30日に1Mコンテキストβ（context-1m-2025-08-07）が廃止、2026年6月15日にSonnet 4 (claude-sonnet-4-0)とOpus 4 (claude-opus-4-0)が廃止された（リタイア済み）。本稿では緊急度の高い2件の廃止について、影響範囲・移行手順・extended thinkingの変更点・テストスニペット・ロールバック戦略まで体系的に整理する。【2026-06-08更新】6/15は同日にAgent SDK／claude -p（headless）の課金分離（独立クレジットプール: Pro $20／Max 5x $100／Max 20x $200、ロールオーバーなし）も発生（§10）。さらに2026-06-05にOpus 4.1（claude-opus-4-1-20250805）がDeprecated通知され、2026-08-05リタイア・移行先claude-opus-4-8に確定。【2026-06-16更新】6/15のSonnet 4／Opus 4リタイアは実施済み。旧モデルID指定はエラー化するため移行完了の確認を推奨。【2026-08-06更新】Opus 4.1も予定通り8/5にリタイア完了を公式ページで確認、未移行はエラーになる。"
+tags: ["Claude", "Anthropic", "API", "モデル廃止", "移行", "1Mコンテキスト", "Sonnet 4", "Opus 4", "Opus 4.1", "Opus 4.8", "Sonnet 4.5", "Sonnet 5.5", "extended thinking", "Agent SDK", "課金"]
+excerpt: "2026年4月30日に1Mコンテキストβ（context-1m-2025-08-07）が廃止、2026年6月15日にSonnet 4 (claude-sonnet-4-0)とOpus 4 (claude-opus-4-0)が廃止された（リタイア済み）。本稿では緊急度の高い2件の廃止について、影響範囲・移行手順・extended thinkingの変更点・テストスニペット・ロールバック戦略まで体系的に整理する。【2026-06-08更新】6/15は同日にAgent SDK／claude -p（headless）の課金分離（独立クレジットプール: Pro $20／Max 5x $100／Max 20x $200、ロールオーバーなし）も発生（§10）。さらに2026-06-05にOpus 4.1（claude-opus-4-1-20250805）がDeprecated通知され、2026-08-05リタイア・移行先claude-opus-4-8に確定。【2026-06-16更新】6/15のSonnet 4／Opus 4リタイアは実施済み。旧モデルID指定はエラー化するため移行完了の確認を推奨。【2026-08-06更新】Opus 4.1も予定通り8/5にリタイア完了を公式ページで確認、未移行はエラーになる。【2026-09-30更新】Claude Sonnet 4.5（claude-sonnet-4-5-20250929）の廃止を新たに通知、Claude APIでのリタイアは2026年11月30日・移行先はClaude Sonnet 5.5。"
 draft: false
 ---
 
@@ -18,6 +18,19 @@ draft: false
 > - **対応の目安**: リタイアは**完了済み**です。未対応の箇所がある場合は、エラー発生を前提にフォールバックを挟みつつ即時に移行を完了させてください。
 >
 > 注: リタイア日は公式ページ上『June 15, 2026』という日付表記であり、**具体的な時刻（時分・タイムゾーン）はAnthropic公式に明記がありません**。日付境界はPTを想定し、JSTでは余裕をもって6月15日中の完了を推奨します。
+
+> ## 🔔 【2026-09-30追記】Claude Sonnet 4.5 の廃止を新たに通知 — リタイアは2026-11-30
+>
+> **2026年9月30日（PT）、Anthropicは `claude-sonnet-4-5-20250929`（Claude Sonnet 4.5）の廃止を通知しました。** Claude API上でのリタイア予定日は **2026年11月30日**です。公式の文言は次のとおりです。
+>
+> > "We announced the deprecation of the Claude Sonnet 4.5 model (`claude-sonnet-4-5-20250929`), with retirement on the Claude API scheduled for November 30, 2026. We recommend migrating to Claude Sonnet 5.5."
+>
+> - **対象モデルID**: `claude-sonnet-4-5-20250929`
+> - **リタイア予定日**: **2026年11月30日**（Claude API）
+> - **公式推奨の移行先**: **Claude Sonnet 5.5**（`claude-sonnet-5-5`）。Sonnet 5.5はAnthropic APIの既定Sonnetモデルで、価格はSonnet 4.5と同額帯（$2/$10 per MTok）のまま出力速度が向上しています。詳細は[Claude Sonnet 5 完全ガイド](/mdTechKnowledge/blog/claude-sonnet-5-guide/)の後継節、および[公式移行ガイド](https://platform.claude.com/docs/en/models/sonnet-5-5/migration-guide#migrating-from-sonnet-45)を参照
+> - **本記事執筆時点では「廃止通知」段階**で、まだリタイア（エラー化）していません。11/30までに移行を完了させる必要があります
+>
+> 出典: [Anthropic Platform リリースノート（2026-09-30）](https://platform.claude.com/docs/en/release-notes/overview)
 
 ## はじめに
 
