@@ -1,10 +1,10 @@
 ---
 title: "【2026年9月版】Claude 全プラン費用比較 — Web契約と iPhone アプリ契約はどちらが安いか"
 date: 2026-09-05
-updatedDate: 2026-09-22
+updatedDate: 2026-10-09
 category: "Claude技術解説"
 tags: ["Claude", "Anthropic", "サブスクリプション", "料金", "iOS", "App Store", "iPhone", "コスト比較", "Pro", "Max", "為替", "Fable 5.1"]
-excerpt: "2026年9月時点で Claude 各プラン（Free / Pro / Max 5x / Max 20x）を Web 直接契約した場合と iPhone アプリ（App Store）で契約した場合の費用を比較。iOS 側の円価格（Pro 月額¥3,000・Pro 年¥35,000・Max 5x ¥20,000・Max 20x ¥40,000）は8月から変更なし。9月上旬に$1≈¥156まで進んだ円高は下旬に一服し、9月22日は$1≈¥157.4で再計算。Pro 月額は iOS が月約¥463安、Max は Web が月約¥2,700〜¥5,400安で結論は変わらないが、Pro 年契約は Web の優位が年約¥372まで縮んでほぼ互角に戻った。$1≈¥159.1より円安になるか、カードの海外事務手数料次第で iOS が逆転する。2026年9月1日リリースのClaude Fable 5.1（Fableの既定モデルに）を踏まえたプラン選びも整理する。Fable系モデルはPro/Team StandardではUsage Credits（従量課金）扱いのため、本格的に使うならMax/Team Premium（週間上限の50%までプラン内）でないとすぐ課金圏に入る点を重点解説。"
+excerpt: "2026年9月時点で Claude 各プラン（Free / Pro / Max 5x / Max 20x）を Web 直接契約した場合と iPhone アプリ（App Store）で契約した場合の費用を比較。iOS 側の円価格（Pro 月額¥3,000・Pro 年¥35,000・Max 5x ¥20,000・Max 20x ¥40,000）は8月から変更なし。9月上旬に$1≈¥156まで進んだ円高は下旬に一服し、9月22日は$1≈¥157.4で再計算。Pro 月額は iOS が月約¥463安、Max は Web が月約¥2,700〜¥5,400安で結論は変わらないが、Pro 年契約は Web の優位が年約¥372まで縮んでほぼ互角に戻った。$1≈¥159.1より円安になるか、カードの海外事務手数料次第で iOS が逆転する。2026年9月1日リリースのClaude Fable 5.1（Fableの既定モデルに）を踏まえたプラン選びも整理する。Fable系モデルはPro/Team StandardではUsage Credits（従量課金）扱いのため、本格的に使うならMax/Team Premium（週間上限の50%までプラン内）でないとすぐ課金圏に入る点を重点解説。2026-10-07からMax 5x（$100）・Max 20x（$200）・Team（Standard席$20／Premium席$100、プール上限$500）に付く月次APIクレジットの条件・対象範囲・受け取り方も追記。"
 draft: false
 ---
 
@@ -153,6 +153,7 @@ Anthropicから**$100の一時クレジット**が付与されていましたが
 
 ## 7. 注意点
 
+- **【2026-10-07追記】Max・Team には月次 API クレジットが付く** — 費用比較に効く新要素。詳細は本記事の「8. 【2026-10-07追記】Max・Team プランの月次 API クレジット」を参照
 - **契約経路の移管は不可** — iOS ⇄ Web の切り替えは「解約 → 新規契約」が必要
 - **iOS の領収書は Apple 名義のみ** — 法人の経費処理・インボイスには不向き
 - **為替で結論が変わる** — 9月上旬の円高は一服し、¥157台に戻った。特に Pro 年契約は逆転ライン（$1≈¥159.1）に近いので、**契約時のレートで再計算**を
@@ -160,6 +161,29 @@ Anthropicから**$100の一時クレジット**が付与されていましたが
 - **iOS は為替ヘッジになる** — 円安に振れても価格が動かないのは iOS の利点。逆に円高では不利
 - **Fable系のクレジットは期限切れ** — Pro/Team Standardの$100一時クレジットは2026-09-17に期限を迎えた。無料枠のつもりで使い続けると、気づかないうちに実費課金になる
 - **課金分離は一時停止のまま** — 2026年6月15日施行予定だった Agent SDK / `claude -p` 等の課金プール分離は施行当日に一時停止され、9月上旬時点でも再開されていない（比較への影響なし）
+
+## 8. 【2026-10-07追記】Max・Team プランの月次 API クレジット
+
+**2026年10月7日（PT）**、Claude **Max 5x / Max 20x / Team**（割引Teamプランを含む）に、Claude API 用の**月次クレジット**が付くようになりました。サブスク料金そのものは変わらず、**「契約するとAPI利用分が毎月付いてくる」**形です。Web契約か iPhone 契約かの比較（1〜6章）には影響しませんが、**Max・Team を選ぶ理由が1つ増えた**と言えます。
+
+| プラン | 月次クレジット |
+|:---|:---|
+| Max 5x | **$100** |
+| Max 20x | **$200** |
+| Team（Standard 席） | **席あたり $20** |
+| Team（Premium 席） | **席あたり $100** |
+
+- **Team はプール方式**: 全席分が1つの月次残高にまとまり、**上限は $500**。たとえば Standard 3席＋Premium 2席なら月 $260。Premium 席を1つ足すと翌月から $360 になります
+- **対象外**: Free・Pro・Enterprise。**Pro では付かない**点が、Pro と Max の差を広げます
+- **使える範囲**: Claude API・Claude Managed Agents・Claude Agent SDK・Playground。**Claude Code と、Claudeアプリの追加利用（extra usage）には使えません**。Bedrock・Google Cloud・Microsoft Foundry・Claude Platform on AWS でも使えません
+- **有効期限**: 請求サイクル末（年払いは毎月末）で失効し、**繰り越しなし**。年払いプランも月ごとに付与
+- **受け取り方**: ① claude.ai の **Settings > Billing**（Team は Organization settings > Billing）→ ② **API credits** 欄で受け取り先の **Claude Console 組織**を選び、規約に同意してリンク → ③ Console の Settings > Billing の **Promotional credits** に表示。Claude Platform への支払い方法の登録は不要
+- **注意点**: 1つのプランにリンクできる Console 組織は1つ、1つの Console 組織が受け取れるプランも1つ。**リンク後は自分で変更できない**（サポート連絡が必要）ので、実際に開発する組織を選ぶ。新規加入は**7日経過後**に受け取り可能。iOS / Android アプリ経由で契約した Max も対象（受け取りは Web の claude.ai で）
+- **使い切った場合**: プランには請求されず、API リクエストが止まる。購入クレジットがあればそちらが使われ、自動チャージも購入残高にのみ作用します
+
+> **読み方**: Max 20x（月額 $200 相当）に月 $200 の API クレジットが付くのは、**APIで何かを作る人**にはほぼ実質値引きです。一方、Claude Code を中心に使う人には使えないため、**自分の用途がAPI・Managed Agents・Agent SDKに及ぶか**で価値が変わります。
+
+出典: [API credits for Max and Team plans（公式ドキュメント）](https://platform.claude.com/docs/en/about-claude/api-credits-for-subscribers) / [Platform リリースノート（2026-10-07）](https://platform.claude.com/docs/en/release-notes/overview)
 
 ## まとめ
 
