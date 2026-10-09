@@ -1,10 +1,10 @@
 ---
 title: "Anthropic Messages API 新機能まとめ（2026年5〜9月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・Opus5対応・Browser use tool・Fable 5.1/Mythos 5.1・Opus 5.5対応"
 date: 2026-06-20
-updatedDate: 2026-10-03
+updatedDate: 2026-10-09
 category: "Claude技術解説"
-tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ", "Compliance API", "EU AI Act", "Browser use tool", "Python SDK", "Fable 5.1", "Mythos 5.1"]
-excerpt: "2026年5〜9月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）、9月1日の Fable 5.1/Mythos 5.1リリースに伴うtool_choice制限・thinking保持ルール変更・キャッシュ90%値下げ・Per-Message Effort（9月3日Google Cloud対応拡大）、9月14日のOn-demand conversation compaction（任意タイミングでの会話圧縮ベータ）・9月18日のCompliance APIがClaude in Chromeセッションに対応、9月22日のClaude Opus 5.5リリース（thinking無効化不可・tool_choice any/tool廃止等のAPI破壊的変更）・Inline tools beta（会話途中でのツール定義変更）、9月23日のCache Diagnostics GA化、9月24日のRefusal課金の再開（bio/frontier_llm/reasoning_extractionの3カテゴリは出力前の拒否でも課金）・Compliance API Activity Feedが名称・タイトルを返さなくなった破壊的変更・Claude for Microsoft 365セッションのGA化まで、対応モデル・betaヘッダー・コード例つきで横断解説する。 2026-09-29更新: Claude Sonnet 5.5（9/28）のリリースと5つのAPI破壊的変更を第22章に追加。2026-10-03更新: Claude Sonnet 4.5の廃止通知（9/30、リタイアは11/30・移行先Sonnet 5.5）を第23章に追加。"
+tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ", "Compliance API", "EU AI Act", "Browser use tool", "Python SDK", "Fable 5.1", "Mythos 5.1", "Haiku 5.5", "Models API"]
+excerpt: "2026年5〜9月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）、9月1日の Fable 5.1/Mythos 5.1リリースに伴うtool_choice制限・thinking保持ルール変更・キャッシュ90%値下げ・Per-Message Effort（9月3日Google Cloud対応拡大）、9月14日のOn-demand conversation compaction（任意タイミングでの会話圧縮ベータ）・9月18日のCompliance APIがClaude in Chromeセッションに対応、9月22日のClaude Opus 5.5リリース（thinking無効化不可・tool_choice any/tool廃止等のAPI破壊的変更）・Inline tools beta（会話途中でのツール定義変更）、9月23日のCache Diagnostics GA化、9月24日のRefusal課金の再開（bio/frontier_llm/reasoning_extractionの3カテゴリは出力前の拒否でも課金）・Compliance API Activity Feedが名称・タイトルを返さなくなった破壊的変更・Claude for Microsoft 365セッションのGA化まで、対応モデル・betaヘッダー・コード例つきで横断解説する。 2026-09-29更新: Claude Sonnet 5.5（9/28）のリリースと5つのAPI破壊的変更を第22章に追加。2026-10-03更新: Claude Sonnet 4.5の廃止通知（9/30、リタイアは11/30・移行先Sonnet 5.5）を第23章に追加。2026-10-09更新: Claude Haiku 5.5（10/7、$0.10/$0.50・Haiku 4.5からの破壊的変更）・Sonnet 5.5のキャッシュ読取半額化・Models APIの`line`/`thinking.types.disabled`/`server_tools`フィールドを第24章に追加。"
 draft: false
 ---
 
@@ -609,6 +609,65 @@ Opus 5.5（第20章）の4点とは内容が異なります。
 
 出典: [Anthropic Platform リリースノート（2026-09-30）](https://platform.claude.com/docs/en/release-notes/overview)
 
+## 24. 2026年10月1〜8日のアップデート — Claude Haiku 5.5 リリース・Models APIの新フィールド・Sonnet 5.5のキャッシュ読取値下げ
+
+### Claude Haiku 5.5（`claude-haiku-5-5`）リリース（10月7日）
+
+**2026年10月7日（PT）**、高ボリューム・低レイテンシ向けの **Claude Haiku 5.5** が Claude API・Amazon Bedrock（`anthropic.claude-haiku-5-5`）・Claude Platform on AWS・Google Cloud・Microsoft Foundry で提供開始されました。分類・ルーティング・抽出・サブエージェント用途を想定したモデルで、モデル概要では最速（Fastest）に位置付けられています。
+
+| 項目 | Claude Haiku 5.5 | （参考）Haiku 4.5 |
+|------|------------------|-------------------|
+| コンテキスト | **1M トークン** | 200k |
+| 最大出力 | **128k トークン**（Batch API ベータで 300k） | 64k |
+| 入力価格 | **$0.10 / MTok**（100,000トークン超のプロンプトは $0.50） | $1 |
+| 出力価格 | **$0.50 / MTok**（100,000トークン超のプロンプトは $2.50） | $5 |
+| キャッシュ読取 | $0.01 / MTok（100,000トークン超は $0.05） | — |
+| Batch API | 入出力とも 50% 引き | — |
+| 思考 | Adaptive thinking（既定オン）＋ `effort`（既定 `medium`） | 手動 extended thinking |
+| 知識カットオフ | 2026年6月 | — |
+
+入力・出力とも Haiku 4.5（$1/$5）の **10分の1** 水準です。ただし価格は**プロンプト長で2段階**になっており、100,000トークンを超える長いプロンプトでは単価が5倍になる点に注意が必要です。退役は**2027年10月7日より前にはならない**とされています。
+
+### Haiku 4.5 からの移行で壊れる点
+
+Haiku 4.5 向けのコードは、モデル ID を差し替えるだけでは動かない場合があります。
+
+1. **`budget_tokens`（手動 extended thinking）は400エラー**。adaptive thinking へ置き換える
+2. **`temperature` / `top_p` / `top_k` を既定以外にすると400エラー**。指定を外す
+3. **assistant メッセージの prefill は400エラー**。`messages` は user ターンで終える
+4. **computer use は `computer_toolset_20260801` が必要**（Claude API・Google Cloud で `computer_20250124` は不可）
+5. **前のターンを書き換えると thinking ブロックが無効化される**。thinking を送り返す場合は会話を追記のみにする
+
+エラーにはならない変化として、**応答が `thinking` ブロックから始まることがある**（adaptive thinking が既定オンのため、位置ではなく `type` でブロックを選ぶ）、**thinking の本文は既定で省略される**（要約を受け取るには `thinking.display` を `"summarized"` に）、そして **同じテキストが Haiku 4.5 より約30%多いトークンとして数えられる**（Claude 4.7 以降と同じ新トークナイザー）点があります。トークン換算の見積もりと `max_tokens` の見直しが必要です。thinking ブロックは、生成したアカウント（またはリンクされたアカウント）でしか使えません。
+
+> **単価だけで比べない**: 新トークナイザーにより同じ文章でトークン数が約30%増えるため、「$1→$0.10 で10分の1」という名目の比較より、実効コストの削減幅は小さくなります。実際の請求は自社データで再計測して見積もってください。
+
+### Sonnet 5.5 のキャッシュ読取価格を半額に（10月7日）
+
+同日、**Claude Sonnet 5.5 のプロンプトキャッシュ読取価格が $0.20 から $0.10 / MTok に引き下げられました**（基準入力価格の 0.1倍 → 0.05倍）。キャッシュ書き込みなど他の価格は変更ありません。第22章で触れた「キャッシュ読取 $0.20」は、この日以降は $0.10 になります。
+
+### Models API の新フィールド（10月1日・5日・6日）
+
+`GET /v1/models` と `GET /v1/models/{model_id}` に、モデルを機械的に選別するためのフィールドが段階的に追加されました。
+
+| 日付 | フィールド | 内容 |
+|------|-----------|------|
+| 10月1日 | `line` | モデルが属するラインを返す（Claude Opus 4.5 と Opus 4.6 はともに `opus`）。モデル ID を文字列解析せずにグルーピングできる。どのラインにも属さないモデルは `null` |
+| 10月5日 | `capabilities.thinking.types.disabled` | `thinking: {type: "disabled"}`（思考オフ）を受け付けるモデルかどうか |
+| 10月6日 | `capabilities.server_tools` | Web検索・コード実行ツールを受け付けるか。コード実行は `capabilities.server_tools.code_execution` で確認（トップレベルの `capabilities.code_execution` は「コードがリクエスト内の他のツールを呼べるか」を表す） |
+
+第22章の Sonnet 5.5 のように「thinking を切る方法がモデルごとに違う」状況では、`capabilities.thinking.types.disabled` を見て分岐するほうが、モデル名のハードコードより安全です。
+
+### その他（10月7〜8日）
+
+- **Python / TypeScript SDK に browser use tool・computer use tool 用のクラス（ベータ）が追加**: クラスを継承し、自前のブラウザ／デスクトップ自動化に対してツールごとに1メソッドを書く方式。ツールループ、ブラウザ向けの URL・ファイルポリシー、承認コールバックは SDK が実行する
+- **Claude Max・Team プランに月次 API クレジットが付与**: 受け取り方は公式の「API credits for Max and Team plans」を参照（プラン面の詳細は[全プラン費用比較](/mdTechKnowledge/blog/claude-plans-cost-comparison-2026-09/)）
+- **Managed Agents の `allowed_hosts` が `web_search` / `web_fetch` にも適用**（`limited` ネットワーク時）。詳細は[Claude Managed Agents 簡易ガイド](/mdTechKnowledge/blog/claude-managed-agents-guide/)を参照
+- **Compliance API のチャット系エンドポイントが、統合された Claude 体験（unified Claude experience）のチャットも返すように**（10月8日。Claude Enterprise 向けベータ、既存の Compliance Access Key で利用可）
+- **Dreams（リサーチプレビュー）が Opus 5.5・Fable 5.1・Sonnet 5.5 に対応**（10月1日）
+
+出典: [Anthropic Platform リリースノート（2026-10-01〜10-08）](https://platform.claude.com/docs/en/release-notes/overview) / [Claude Haiku 5.5 モデルページ](https://platform.claude.com/docs/en/models/haiku-5-5/overview) / [What's new in Claude Haiku 5.5](https://platform.claude.com/docs/en/models/haiku-5-5/whats-new-haiku-5-5)
+
 ## まとめ — どの機能をいつ使うか
 
 2026年5〜6月の Messages API 新機能は、「**品質を上げる**」「**コストを下げる**」「**運用を見通せるようにする**」の3方向に効きます。
@@ -625,6 +684,7 @@ Opus 5.5（第20章）の4点とは内容が異なります。
 - **ブラウザ操作を自動化したい** → Browser use tool（`browser_toolset_20260801`）。**PC画面全体の操作が必要** → Computer use tool（GA済み、betaヘッダー不要）。**Files/Skills/Admin APIをbetaヘッダーなしで使いたい** → いずれも2026-08-19にGA昇格済み。**Python SDKをこれから更新する** → v1.0の破壊的変更（`httpx2`移行・サンプリングパラメータ削除等）を事前確認。
 - **Cowork・Claude Code・Claude Science・M365セッションを監査対象にしたい** → Compliance API（Cowork/Claude CodeはGA、Claude Science/M365はベータ）。**Admin APIを自社言語のSDKから直接呼びたい** → `client.beta.organization`（ant CLI・Python/TypeScript/C#/Go/Java/PHP/Ruby対応）。
 - **Files/Skills APIをSDKからbetaヘッダーなしで呼びたい** → 各SDK最新版（Python 1.2.0以降等）に更新（`BetaSkill`→`BetaContainerSkill`のリネームに注意）。**キー発行者を個人/サービスアカウント単位で追跡したい** → Console の Personal keys / Service account keys。
+- **大量の分類・抽出・サブエージェント処理を安く速く回したい** → Claude Haiku 5.5（$0.10/$0.50、100Kトークン超は単価5倍の2段階）。Haiku 4.5 からは `budget_tokens`・サンプリング指定・prefill が400エラーになるため事前に洗い出す。**モデルの能力をコードで判定したい** → Models API の `line` / `capabilities` フィールド。
 - **Fable 5.1/Mythos 5.1に切替予定** → `tool_choice`の`any`/`tool`指定コードを事前に洗い出す（400エラー回避）。**古いモデルとthinking blockを共有する構成がある** → 保持ルール変更でblockが破棄される点に注意。**キャッシュ多用のワークロードでコストを下げたい** → キャッシュ読み取り90%削減の恩恵が大きい。
 - **拒否（refusal）のコストを見積もりたい** → 2026-09-24 以降、`stop_details.category` が `bio` / `frontier_llm` / `reasoning_extraction` の拒否は**出力前でも課金**される（`cyber` / `general_harms` / `null` は課金されない）。`category` で分岐し、対象カテゴリの拒否コストを見積もりに入れる。**Compliance API の Activity Feed で名称・タイトルを表示している** → 常に空になったため、IDから引く（`read:compliance_user_data` の Compliance Access Key）。
 
