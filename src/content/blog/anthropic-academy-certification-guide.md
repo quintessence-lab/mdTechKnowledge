@@ -1,10 +1,10 @@
 ---
 title: "Anthropic Academy & 認定資格ガイド（2026年8月更新）"
 date: 2026-04-04
-updatedDate: 2026-08-25
+updatedDate: 2026-10-09
 category: "Claude技術解説"
 tags: ["Anthropic Academy", "認定資格", "CCA", "Claude Certified Architect", "学習", "Claude Academy"]
-excerpt: "Anthropic公式の無料学習プラットフォーム「Anthropic Academy」と技術認定資格「Claude Certified Architect (CCA-F)」の全体像を整理。Claude Opus 4.7・Claude Design・Mythos Preview対応の最新動向に加え、2026年8月に新規ローンチした別プラットフォーム「Claude Academy」（academy.claude.com・無料学習ハブ）との違いも解説。"
+excerpt: "Anthropic公式の無料学習プラットフォーム「Anthropic Academy」と技術認定資格「Claude Certified Architect (CCA-F)」の全体像を整理。Claude Opus 4.7・Claude Design・Mythos Preview対応の最新動向に加え、2026年8月に新規ローンチした別プラットフォーム「Claude Academy」（academy.claude.com・無料学習ハブ）との違いも解説。2026年10月2日発表の企業向け育成プログラム「Claude Frontier Academy」（$100M・2027年末までに1万人・2段階バッジ・組織推薦制）も追記。"
 draft: false
 ---
 
@@ -200,8 +200,48 @@ Anthropicは以下の追加認定資格を2026年中にリリース予定と発�
 
 ---
 
+## 2026年10月の最新動向（追記：2026-10-09）— 企業向け育成プログラム「Claude Frontier Academy」
+
+2026年10月2日（PT）、Anthropic は **Claude Frontier Academy** を発表しました。ここまでの「Anthropic Academy（Skilljar）」「Claude Academy（無料学習ハブ）」とは別の、**企業が選抜したエンジニアを対象とする育成プログラム**です。
+
+### 概要
+
+| 項目 | 内容 |
+|:---|:---|
+| 投資額 | **$1億（$100M）** |
+| 目標 | **2027年末までに1万人**のエンジニアを育成 |
+| 形式 | 複数日の**対面**プログラム（企業導入を模したシミュレーション）＋**12週間のレジデンシー**（自社で本物のClaudeプロジェクトを主導） |
+| 土台 | 既存の没入型プログラム「Basecamp」（公式説明では Anthropic の応用AIチームが受けるものと同じカリキュラムを教える）の上に積み上げる位置付け |
+| 開催地 | サンフランシスコ・ニューヨーク・ロンドン |
+| 第1期の参加組織 | Accenture・Bain・Capgemini・Commonwealth Bank of Australia・Deloitte・McKinsey・Morgan Stanley・Novo Nordisk |
+| 対象者 | 基礎に強い実務のソフトウェアエンジニア。LLMでの開発実績があり、他者のAI導入を支援した経験がある人 |
+| 参加方法 | **組織による推薦制**。Anthropic のアカウントチームへ問い合わせ（個人での申込は不可） |
+
+### 2段階のバッジ
+
+- **Claude Resident Engineer**: 最初の対面フェーズの修了後
+- **Claude Frontier Deployed Engineer**: 12週間のレジデンシー修了後
+
+公式は、既存の **Claude Partner Network（認定の累計付与数は17万5,000件超）** と Basecamp の上に積み上げる位置付けだと説明しています。参加費は公式ページに記載がありません。
+
+### 3つの学習・認定の入口の使い分け
+
+| | Anthropic Academy（Skilljar） | Claude Academy | Claude Frontier Academy |
+|---|---|---|---|
+| 対象 | 開発者・パートナー・受験者 | AIを使い始める人〜実務者 | **企業が推薦する選抜エンジニア** |
+| 申込 | 個人で可 | 誰でも（無料） | **組織推薦のみ** |
+| 得られるもの | CCA-F等の認定資格 | コース修了バッジ | **Resident Engineer / Frontier Deployed Engineer バッジ** |
+| 位置付け | 認定資格・パートナー要件 | 一般向け学習ハブ | **導入を担う人材（FDE）の育成** |
+
+個人が CCA-F などの資格を目指す場合は引き続き Anthropic Academy が入口で、Frontier Academy は**組織に所属して導入を担う立場の人**向けです。背景にある Forward Deployed Engineer 型の展開戦略は [Anthropic エンタープライズ攻勢2026](/mdTechKnowledge/blog/anthropic-enterprise-expansion-2026/) を参照してください。
+
+出典: [Claude Frontier Academy（Anthropic公式）](https://anthropic.com/news/claude-frontier-academy)（2026-10-02）
+
+---
+
 ## 参考リンク
 
+- Claude Frontier Academy（2026-10-02発表・企業向け育成）: https://anthropic.com/news/claude-frontier-academy
 - Claude Academy（2026-08新設・無料学習ハブ）: https://academy.claude.com/
 - Anthropic Academy: https://anthropic.skilljar.com/
 - Anthropic Newsroom（Opus 4.7 / Claude Design）: https://www.anthropic.com/news
