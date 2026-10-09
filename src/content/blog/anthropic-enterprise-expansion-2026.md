@@ -1,10 +1,10 @@
 ---
 title: "Anthropic エンタープライズ攻勢2026 — PwC・KPMG・DXC・TCS と Big Four/SIer 連携、$1.5B FDE スタジオまで"
 date: 2026-06-20
-updatedDate: 2026-09-24
+updatedDate: 2026-10-09
 category: "一般リサーチ"
 tags: ["Anthropic", "Claude", "エンタープライズAI", "PwC", "KPMG", "DXC", "TCS", "Forward Deployed Engineer"]
-excerpt: "2026年5〜6月、Anthropic は PwC・KPMG・DXC・TCS という Big Four / 大手 SIer との大型連携を相次いで発表し、さらに Blackstone・Goldman Sachs・Hellman & Friedman と組んで FDE 型のエンタープライズ AI サービス会社（報道で総額 $1.5B 規模）を立ち上げた。コンサル・SIer・PE を「実装の通り道」として、規制業種・大企業・PE 保有の中堅市場へ Claude を一気に押し込む攻勢の全体像と、各社の認定規模・活用製品・狙う市場を比較整理する一般リサーチ。2026年8月26日発表のSalesforce「Claudeforce」（両社が互いの顧客となる双方向パートナーシップ、Claude in Salesforce・Salesforce in Claudeの相互統合）、2026年9月21日発表のAccentureが「初の組み込み外部評価者」に就任（導入支援ではなくモデル安全性検証への参加）も追記した。"
+excerpt: "2026年5〜6月、Anthropic は PwC・KPMG・DXC・TCS という Big Four / 大手 SIer との大型連携を相次いで発表し、さらに Blackstone・Goldman Sachs・Hellman & Friedman と組んで FDE 型のエンタープライズ AI サービス会社（報道で総額 $1.5B 規模）を立ち上げた。コンサル・SIer・PE を「実装の通り道」として、規制業種・大企業・PE 保有の中堅市場へ Claude を一気に押し込む攻勢の全体像と、各社の認定規模・活用製品・狙う市場を比較整理する一般リサーチ。2026年8月26日発表のSalesforce「Claudeforce」（両社が互いの顧客となる双方向パートナーシップ、Claude in Salesforce・Salesforce in Claudeの相互統合）、2026年9月21日発表のAccentureが「初の組み込み外部評価者」に就任（導入支援ではなくモデル安全性検証への参加）も追記した。2026-10-09更新: 9月30日のClaude for Government GA（FedRAMP High・席課金なしの上限額方式）、10月1日のBarclaysの全社展開（Claude Code開発者50%目標）、10月2日のClaude Frontier Academy（$100M・1万人育成）も追記。"
 draft: false
 ---
 
@@ -188,6 +188,38 @@ UST・LTM に続き Cognizant も加わったことで、大手SIer/コンサル
 これまでのAccentureとの関係（Claude Partner Networkメンバーとしての導入支援、第3部参照）に加え、**評価・検証という新しい役割**が追加された形です。
 
 出典: [Accenture-Anthropic Partnership（2026-09-21）](https://en.cryptonomist.ch/2026/09/21/accenture-anthropic-partnership/)
+
+### 【2026-10-09追記】9月30日〜10月2日の3件 — 政府向けGA・Barclays・Frontier Academy
+
+導入支援パートナーの拡大が続く中、直近の3日間で「**公共部門**」「**大手金融の本格展開**」「**導入人材の育成**」という、これまでの提携とは別の軸の発表が重なりました。
+
+**1. Claude for Government が一般提供（GA）に — 2026年9月30日（PT）**
+
+米国の連邦・州政府機関向けに、**FedRAMP High 認可環境**で Claude のコーディング・エージェント業務を提供する **Claude for Government** が、7月開始の公開ベータを経て GA となりました。
+
+- **提供範囲**: Claude Desktop（ファイル直接操作）、スキル・プラグイン・プロジェクト。**Claude Code CLI と Claude for Microsoft 365 はアーリーアクセス**
+- **課金構造が民間と異なる**: **席課金なし**。機関は**固定単位で利用分を購入し、上限額（not-to-exceed）を超えない**方式。管理者がユーザー階層ごとに支出上限・利用可能モデルを設定でき、残高が減る前にアラートも出る
+- **管理機能**: 部門階層とサブ機関への配分、自機関のIdPによるSSO、SCIMグループ連携でのレート制限・モデル制限、管理操作の監査ログ、Anthropic側の機微な操作への**2名承認**
+- **データの扱い**: 会話履歴は**機関管理の端末にローカル保存**され、利用状況エクスポートには計測データのみが含まれる
+- **入手方法**: claude.com/solutions/government から申請。既存顧客は会話履歴をアプリ内ツールで取り込める
+
+本記事のテーマ（民間のコンサル・SIer・PEを介した展開）とは別に、**規制の厳しい公共部門を直接取りに行く動き**として位置付けられます。
+
+**2. Barclays が Claude を全社規模に拡大 — 2026年10月1日**
+
+英大手銀行 **Barclays** は、Claude を「ソフトウェア開発・レガシー刷新・日常業務の効率化」に広げると発表しました。
+
+| 項目 | 内容 |
+|:---|:---|
+| Claude Code の導入目標 | **2026年末までに開発者の50%**、**2027年に多数派のソフトウェアエンジニア** |
+| Global Markets のメール処理 | Claude が分類・補強・振り分けを担い、**1日約12万通** |
+| 社員向けナレッジ検索（Colleague Knowledge Assistant） | 2025年から稼働。**1万6,000人超が利用、累計100万検索超**。英国の2,000万人超のリテール顧客対応を支援 |
+
+**3. Claude Frontier Academy — 2026年10月2日**
+
+**$1億（$100M）を投じ、2027年末までに1万人のエンジニア**を育成するプログラムです。導入先企業が推薦したエンジニアが、複数日の対面研修のあと12週間のレジデンシーで、自社の本物のClaudeプロジェクトを主導します（既存の没入型プログラム Basecamp の上に積み上げる位置付けです）。第1期の参加組織は **Accenture・Bain・Capgemini・Commonwealth Bank of Australia・Deloitte・McKinsey・Morgan Stanley・Novo Nordisk** で、サンフランシスコ・ニューヨーク・ロンドンで始まります。これは本記事の第3部で触れた「FDE（Forward Deployed Engineer）」を**Anthropic自身が量産する仕組み**とも読めます。プログラムの構成と認定バッジは [Anthropic Academy & 認定資格ガイド](/mdTechKnowledge/blog/anthropic-academy-certification-guide/) にまとめています。
+
+出典: [Claude for Government is now generally available（claude.com）](https://claude.com/blog/claude-for-government-is-now-generally-available)（2026-09-30） / [Barclays scales Claude（Anthropic）](https://www.anthropic.com/news/barclays-scales-claude)（2026-10-01） / [Claude Frontier Academy（Anthropic）](https://anthropic.com/news/claude-frontier-academy)（2026-10-02）
 
 ---
 
