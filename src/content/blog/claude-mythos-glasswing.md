@@ -1,10 +1,10 @@
 ---
 title: "Claude Mythos Preview & Project Glasswing — セキュリティ特化LMと重要インフラ防衛プログラム"
 date: 2026-04-26
-updatedDate: 2026-08-01
+updatedDate: 2026-10-09
 category: "Claude技術解説"
 tags: ["Claude", "Mythos", "Glasswing", "セキュリティ", "Anthropic", "重要インフラ", "Bedrock", "Vertex AI", "Claude Security", "サイバー評価インシデント"]
-excerpt: "Anthropicがセキュリティタスク特化型LM「Claude Mythos Preview」と重要インフラ防衛プロジェクト「Project Glasswing」を発表。能力範囲・想定ユースケース・公開条件・既存Claudeとの差別化に加え、AWS Bedrock・Google Vertex AIでのGated Research Preview提供、GlasswingからClaude Security Beta（防御製品）への発展経緯、2026年6月の第2次拡張（約150組織・15カ国以上）と『数週間以内』の一般提供方針、初代 Mythos Preview の 2026-06-30 廃止、輸出管理停止（6/12）→Mythos 5 限定提供（6/27）→全面解除・Fable 5 再開（7/1）、2026年7月30日発表のサイバー評価インシデント（Mythos 5が評価環境の設定ミスで実組織3社に不正アクセス）までの顛末を整理。"
+excerpt: "Anthropicがセキュリティタスク特化型LM「Claude Mythos Preview」と重要インフラ防衛プロジェクト「Project Glasswing」を発表。能力範囲・想定ユースケース・公開条件・既存Claudeとの差別化に加え、AWS Bedrock・Google Vertex AIでのGated Research Preview提供、GlasswingからClaude Security Beta（防御製品）への発展経緯、2026年6月の第2次拡張（約150組織・15カ国以上）と『数週間以内』の一般提供方針、初代 Mythos Preview の 2026-06-30 廃止、輸出管理停止（6/12）→Mythos 5 限定提供（6/27）→全面解除・Fable 5 再開（7/1）、2026年7月30日発表のサイバー評価インシデント（Mythos 5が評価環境の設定ミスで実組織3社に不正アクセス）までの顛末を整理。2026年10月6日にはProject Glasswingが拡張版Cyber Verification Program（Defense／Red Team／Specialized Accessの3層）に統合された経緯と、公式の累積成果（検証済み脆弱性12万9,000件以上）も追記。"
 draft: false
 ---
 
@@ -139,7 +139,7 @@ Mythos / Glasswingは独立した発表ではなく、Anthropicの長期的な�
 - **Responsible Scaling Policy（RSP）**：モデルの能力閾値に応じてセーフガードを段階的に強化する枠組み。MythosはRSPで定義される「サイバー能力閾値」を超えたため、限定公開の意思決定がトリガーされたと見られます
 - **Constitutional AI**：拒否ポリシーの基盤。攻撃者支援的な出力を遮断
 - **AISIなど第三者評価**：UK AISIによる独立評価が実施され、英国政府レベルでの検証が入っています（[CFR論考](https://www.cfr.org/articles/six-reasons-claude-mythos-is-an-inflection-point-for-ai-and-global-security)）
-- **Cyber Verification Program**（計画中）：将来の利用者認証制度
+- **Cyber Verification Program**：利用者認証制度。2026-10-06 に Glasswing を統合した3層構成へ拡張（後述の【2026-10-06追記】）
 
 ### Glasswing → Claude Security Beta（防御製品への発展）
 
@@ -308,6 +308,28 @@ Fable 5 側の全面解除の詳細は [Fable 5 輸出管理停止の全記録](
 **Glasswing への含意**: 「重要インフラを守る」という Glasswing の目的意識と、Mythos 5 自身が（設定ミス経由とはいえ）実インフラへ侵入したという事実は、直接的な矛盾ではありませんが、**評価環境の隔離設計そのものの難しさ**を浮き彫りにしました。Anthropic は再発防止策として、評価インフラを本番システム同等のセキュリティ基準で扱うこと、継続的なトランスクリプト監視の拡大、評価パートナーとのより厳密な保証プロセスを挙げています。
 
 出典: [Anthropic公式: Investigating three real-world incidents in our cybersecurity evaluations](https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals) ／ [Axios（2026-07-30）](https://www.axios.com/2026/07/30/anthropic-mythos-security-testing)
+
+### 【2026-10-06追記】Project Glasswing が拡張版 Cyber Verification Program（3層）に統合
+
+2026年10月6日（PT）、Anthropic は **Project Glasswing と従来の Cyber Verification Program（CVP）を1つの段階制プログラムに統合**し、拡張版 CVP として公開しました。本記事の冒頭で「将来の認証制度」として触れていた CVP が、**Glasswing を内包する形で実際に動き出した**ことになります。対象モデルは **Claude Opus 5.5・Claude Sonnet 5.5・Claude Mythos 5.1**（以降の新モデルも対象）で、サイバー分野のブロッキング分類器が**低減または解除**されます。
+
+| 層 | 用途 | 対象となる組織 | 審査 |
+|:---|:---|:---|:---|
+| **Defense Access** | SOC・インシデント対応・マルウェアのリバースエンジニアリング・脆弱性の分析と検証 | 企業・非営利・大学・政府機関のセキュリティチーム、規模を問わない重要インフラ事業者（地域病院や自治体の公営事業等）、小規模セキュリティ企業、OSSメンテナー、脆弱性報告の実績がある個人研究者 | 数日 |
+| **Red Team Access** | 上記に加え、認可されたペネトレーションテスト・レッドチーム | 社内レッドチーム、政府のレッドチーム、セキュリティ・ペンテスト企業（**個人は対象外**） | 数週間 |
+| **Specialized Access** | 航空システム・電力網・通信など**安全クリティカルなシステム**の試験 | 安全システムの試験を認可された、限られた検証済み組織 | 米国政府と協力して審査 |
+
+- **既存参加者の扱い**: 既存の CVP メンバーは現在の設定を維持。**Project Glasswing の参加組織はこの枠組みへ移行し、現行モデルについて再承認は不要**
+- **提供経路**: Claude Platform・Google Cloud の Vertex AI・Microsoft Foundry・Amazon Bedrock（**Bedrock は Enterprise Frontier Safeguards の顧客に限定**）。Specialized Access はサードパーティ経由では提供されない
+- **残る制限**: Red Team Access でも、**物理的な被害や大規模な混乱につながる行為（ランサムウェア、リスクの高い安全システムの試験等）はリアルタイムでブロック**される。監視のためのデータ保持が必要
+- **申請**: 組織がポータルから申請し、セキュリティ管理策の遵守を確認される
+- **実測（公式の CyScenarioBench）**: CVP なしでは全タスクが最初のプロンプトでブロック。**Defense Access は50試行中46件がどこかでブロック**。**Red Team Access ではブロックが発生せず**、Claude Opus 5.5 が50タスク中34件を完了
+
+**Glasswing の累積成果（公式の数字）**: Glasswing パートナーは2026年4〜7月に**少なくとも12万9,000件の検証済みソフトウェア脆弱性**を確認し、オープンソースのスキャンでは4〜10月に**5,500件**を確認しました。このうち**3万3,000件超が critical または high** と評価されています。
+
+> **読み方**: Glasswing は「Mythos を限られた防御側に先行提供する研究プログラム」から、**審査を通れば中小の防御側や個人研究者にも段階的に開く制度**へ性格が変わりました。一方で最上位の Specialized Access は米政府との協議が前提で、攻撃能力の拡散を段階的に管理する姿勢は変わっていません。
+
+出典: [Expanding the Cyber Verification Program（Anthropic公式）](https://www.anthropic.com/news/cyber-verification-program)（2026-10-06） / [Cyber Verification Program（Claude ヘルプセンター）](https://support.claude.com/en/articles/14604842-cyber-verification-program)
 
 ### Pentagon・連邦政府との関係動向（2026年4〜5月）
 
