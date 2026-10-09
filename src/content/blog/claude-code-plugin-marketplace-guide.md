@@ -1,10 +1,10 @@
 ---
 title: "Claude Code Plugin Marketplace ガイド — slash/hooks/サブエージェント/skills を束ねて配布・導入する"
 date: 2026-06-21
-updatedDate: 2026-10-03
+updatedDate: 2026-10-09
 category: "Claude技術解説"
 tags: ["Claude Code", "プラグイン", "Marketplace", "slash commands", "hooks", "サブエージェント", "skills", "MCP", "design"]
-excerpt: "Claude Code のプラグインは、slash commands・hooks・サブエージェント・skills・MCP サーバーを1つのパッケージに束ねて配布・導入できる仕組みです（2025年10月 公開ベータ）。/plugin コマンドでの検索・インストール、公式マーケットプレイス claude-plugins-official とサードパーティ/自前マーケットプレイスの追加方法、plugin.json の構成、作成の流れまでを公式ドキュメントベースで整理します。2026-08-17（v2.1.234）追加のバンドルスキル`/design`（Research Preview）、2026-09-04（v2.1.261）追加の`/skill-doctor`（未使用スキルとコンテキストコストの可視化）、2026-09-11（v2.1.269）追加の`claude plugin eval`（プラグインのevalスイート実行・ノープラグインベースラインとのスコア比較）も追記。 2026-09-29更新: 2026-09-23に公開された Claude Marketplace（2,000以上のコネクタ・プラグイン、3セクション構成）と、9/25に開設されたプラグイン申請窓口を追記。2026-10-03更新: `claude plugin configure`（v2.1.285）とClaude Mods・組み込みMod「You Should Know」（v2.1.287）を追記。"
+excerpt: "Claude Code のプラグインは、slash commands・hooks・サブエージェント・skills・MCP サーバーを1つのパッケージに束ねて配布・導入できる仕組みです（2025年10月 公開ベータ）。/plugin コマンドでの検索・インストール、公式マーケットプレイス claude-plugins-official とサードパーティ/自前マーケットプレイスの追加方法、plugin.json の構成、作成の流れまでを公式ドキュメントベースで整理します。2026-08-17（v2.1.234）追加のバンドルスキル`/design`（Research Preview）、2026-09-04（v2.1.261）追加の`/skill-doctor`（未使用スキルとコンテキストコストの可視化）、2026-09-11（v2.1.269）追加の`claude plugin eval`（プラグインのevalスイート実行・ノープラグインベースラインとのスコア比較）も追記。 2026-09-29更新: 2026-09-23に公開された Claude Marketplace（2,000以上のコネクタ・プラグイン、3セクション構成）と、9/25に開設されたプラグイン申請窓口を追記。2026-10-03更新: `claude plugin configure`（v2.1.285）とClaude Mods・組み込みMod「You Should Know」（v2.1.287）を追記。2026-10-09更新: Modsの仕組み（イベントハンドラ・設定hookとの使い分け・動作環境・`--safe-mode`/`allowManagedModsOnly`・信頼の判断）と組み込みMod一覧、v2.1.288〜295のMod関連追加（`agent.spawn`・`claude plugin install --marketplace`・`$.ui.notify`等）を追記。"
 draft: false
 ---
 
@@ -268,6 +268,76 @@ my-plugin/
 本記事の「プラグインを作る」で解説した `plugin.json` ベースの拡張とは別の層にあたるため、既存のプラグイン開発に影響はありません。
 
 出典: [Claude Code CHANGELOG（v2.1.287）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
+
+## 【2026-10-09追記】Mods の仕組みと使いどころ／v2.1.288〜295 のプラグイン関連の追加
+
+公式の「Mods overview」で、Mods の位置付けがかなり明確になりました。上の【2026-10-01追記】を補う形でまとめます。
+
+### Mods とは何か
+
+**Mod は「Claude Code の見た目と振る舞いを変えるプラグイン」**です。JavaScript または TypeScript のイベントハンドラ（公式は “hook” と呼び、設定ファイルに書く従来の hooks は “settings hook” と区別する）で構成され、ツール呼び出し・送信したプロンプト・画面の描画といったイベントが起きるたびに Claude Code が呼び出します。ハンドラはイベントを**観察**・**書き換え**・**横取り（Answer）**できます。
+
+- **自前の UI を描く**: トランスクリプトの横の**ペイン**、プロンプト上の**バンド**（タブ・ボタン・テキスト入力つき）
+- **Claude Code 自身の画面を差し替える**: ツール呼び出しの行、スピナー、質問ダイアログなど（権限プロンプトだけは変更不可）
+- **ツール呼び出しやリクエストに割り込む**: 呼び出しを保留してユーザーに質問する、ツールを実行せずに応答する、別モデルへ送る、など
+- **コマンドを足す**: Claude のターンを介さず即座に自前関数を実行する `/command`
+- **hook 間でデータを共有する**: 同じファイル内の変数を共有できる（例: 一方がツール呼び出し数を数え、他方がスピナー脇に表示）
+
+最小の Mod は `.claude-plugin/plugin.json`・`hooks/hooks.json`・`hooks/register.js` の3ファイルで、`register(on)` の中で `on('tool.call', …)` のようにイベントを購読します。
+
+### 設定 hook・スキル・MCP との使い分け
+
+| | Mod | 設定 hook | スキル | MCP サーバー |
+|:---|:---|:---|:---|:---|
+| 実体 | プラグイン内の関数（Claude Code と同一プロセス） | シェルコマンド／HTTP／プロンプトを lifecycle イベントで実行 | Claude が読む `SKILL.md` | ツールを提供する外部プロセス |
+| UI を描けるか | **可** | 不可 | 不可 | 不可 |
+| 書くもの | JavaScript / TypeScript | スクリプト＋`settings.json` | Markdown | 任意言語のサーバー |
+| 向く場面 | ペイン・バンド・独自コマンド・イベントの書き換え | 既存スクリプトでイベントをブロック／許可／記録 | 同じ指示を毎回貼っている | 外部システムへの到達 |
+
+### 動作環境とオン／オフ
+
+| 実行場所 | hook は動く | 描画は出る |
+|:---|:---:|:---:|
+| ターミナルの `claude`（エディタ内蔵端末・JetBrains プラグイン含む） | はい | はい |
+| Desktop アプリの Code タブ（WSL セッションを除く） | はい | はい（ターミナル専用要素を除く） |
+| VS Code 拡張のチャットパネル | はい | いいえ |
+| `claude -p`・Agent SDK | はい | いいえ |
+| クラウドセッション | プラグインがクラウドに届く場合は可 | いいえ |
+
+- **既定でオン**。ターミナルは v2.1.287 以降、Desktop アプリは v2.1.286 以降で動作
+- **止め方**: 1つだけなら `/plugin` の Installed タブで無効化／アンインストール。全 Mod を1セッションだけ止めるなら `--safe-mode`（他のカスタマイズも無効化）。全セッションで止めるなら `~/.claude/settings.json` の `"disableAllHooks": true`（設定 hook と独自ステータスラインも止まる）
+- **組織管理**: 管理者は managed settings で Mod の可否を制御でき、**`allowManagedModsOnly`** で組織管理の Mod 以外の読み込みを止められます
+- **信頼の判断**: Mod は**自分の権限で動くコード**です。ファイルの読み書き、プロセス起動、ネットワーク通信、環境変数・設定ファイル（API キー含む）の読み取り、プロンプトやツール呼び出しの書き換え、**ユーザーに聞く前のツール承認**、自分のプランや API キーでのモデル呼び出しが可能で、**サンドボックスでは隔離されません**。入れる前に `claude plugin validate ./some-mod` で、その Mod が扱うイベント（`hooks:`）と Claude Code に依頼する操作（`calls:`）を一覧できます
+
+### 組み込み Mod
+
+`/plugin` の Installed タブに **Built-in** として並びます（更新・アンインストール不可）。
+
+| `/plugin` での名前 | 内容 |
+|:---|:---|
+| `cc-plugin-agents-md` | `AGENTS.md` をプロジェクト指示として読み込む |
+| `cc-plugin-diff` | `/diff` を引き継ぎ、差分ペインを描く |
+| `cc-plugin-plugin-authoring` | Mod 作成用の `plugin-authoring` スキルを提供（コードは含まない） |
+| `cc-plugin-sec-default` | ユーザーが入れた Mod から、組織管理の設定を守るガード |
+| `cc-plugin-telemetry` | Claude Code と組み込み Mod の分析記録を送信 |
+| `cc-plugin-you-should-know` | 長いタスク中に見落としがちな点を教えるサイドエージェント（**既定は無効**。`/plugin enable cc-plugin-you-should-know@builtin`） |
+
+試してみたい場合、Anthropic は `claude-code-playground` リポジトリの `claude-code/mods` にサンプル（`token-weather`＝コンテキスト残量の予報、`blast-radius`＝`rm -rf` や force push を保留して影響範囲を表示、`replay-theater`＝直前ターンの編集を再生する `/replay`）を無保証で公開しています。
+
+### v2.1.288〜295 でのプラグイン／Mod 関連の追加
+
+| バージョン | 追加・変更 |
+|:---|:---|
+| **v2.1.288** | `$.ui.selection()` — フルスクリーンモードで最後に選択したテキストと該当トランスクリプト行を取得 |
+| **v2.1.289** | `agent.spawn`（チームメイト向け）。プラグインフックイベント全体で単一のエージェント ID。`$.agent.list()` に idle・waiting 状態を追加 |
+| **v2.1.290** | `turn.step` に `serverToolUses`（アドバイザー等 API 側実行のツール呼び出し）、`tool.check` に `agentId`・`ceiling`（組織が要求する承認レベル）、`claude plugin validate` に gating フックの `.catch` 有無の一覧 |
+| **v2.1.292** | **`claude plugin install --marketplace <source>`** — 必要ならマーケットプレイスを追加し、`marketplace add` と同じポリシー検査のうえでそこからインストール。`prompt.autocomplete` イベント、`$.model.complete` のプロンプトキャッシュ（ブロックに `cache: true`）、`agent.spawn` が workflow エージェントも扱う。`claude plugin test` 内の失敗した `expect` をテスト失敗として扱う |
+| **v2.1.293** | `$.tool.register` に `isDeferred`（`false` でツール検索を介さず最初からスキーマを掲載） |
+| **v2.1.295** | `$.ui.notify`（ネイティブ通知）、`Button` が子要素（文字列・`Text`）を持てる、`claude plugin validate` が README のインストール行不足を助言、`claude plugin install` / `enable` / `disable` / `marketplace add` が書き込み先の設定ファイルが読み込まれない場合に警告 |
+
+とくに **v2.1.292 の `--marketplace` 付きインストール**は、本記事前半の「`/plugin marketplace add` → `/plugin install`」の2手順を1コマンドにまとめられます（例: `claude plugin install <plugin> --marketplace <source>`）。組織のポリシー検査は従来どおり適用されます。
+
+出典: [Mods overview（公式ドキュメント）](https://code.claude.com/docs/en/plugins/mods/overview) / [Claude Code CHANGELOG（v2.1.288〜v2.1.295）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 ---
 
