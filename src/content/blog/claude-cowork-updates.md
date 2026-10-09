@@ -3,8 +3,8 @@ title: "Claude Cowork アップデートまとめ"
 date: 2026-04-26
 category: "Claude技術解説"
 tags: ["Claude", "Cowork", "エージェント", "Claude Desktop", "Computer Use", "KPMG", "Claude for Legal", "Finance Agents"]
-excerpt: "AnthropicのデスクトップAIエージェント機能「Claude Cowork」のリリースから2026年4月GA移行・Live Artifacts・Amazon Bedrock対応・Claude for Small Business・PwC 拡大パートナーシップ・KPMG Digital Gateway（276,000人 / 138 か国 / 2026-05-19）・Claude for Legal（20+ MCPコネクタ・12 practice-area プラグイン、2026-05-12）・Finance Agents 10 テンプレート（2026年5月）・Cowork 5時間制限2倍キャンペーン（2026年6月）・エンタープライズ向けコネクタ一括認可EMA（Okta／2026-06-18ベータ）・Cowork の Web/iOS/Android 展開とリモートセッション（2026-07-07）・Claude for Teachers 米国K-12教育者向け無料プログラム（2026-07-14）・Chrome サイドパネルの完全 Cowork セッション化（会話とスキル/コネクタを desktop/web/mobile と共有、ブラウザ内クリック・フォーム入力等の実アクション対応、Max/Team から展開、2026-08-12）・Claude Tag が新体験へ完全移行（チャンネルメモリ・スタンディングインストラクション・ambient mode、2026-08-03）・Cowork Built-in Browser（デスクトップアプリ専用の隔離ブラウザでナビゲート・クリック・入力、ユーザーのタブ/パスワードは非共有、2026-08-26）・Smart Reports（Enterprise向けベータ、チームの利用状況・コスト・スキル候補を自動分析）・CoworkとChatが1つのClaudeに統合（Claude Docs/Claude Slides新設・Design会話内対応、Pro/Maxから数週間かけてロールアウト、2026-09-16）・Claude Tagがチャンネルでの個人コネクタに対応（レビューモード/オートモード、Teamプランでロールアウト中、2026-09-24）までのアップデートをリリース順に整理。"
-updatedDate: 2026-10-03
+excerpt: "AnthropicのデスクトップAIエージェント機能「Claude Cowork」のリリースから2026年4月GA移行・Live Artifacts・Amazon Bedrock対応・Claude for Small Business・PwC 拡大パートナーシップ・KPMG Digital Gateway（276,000人 / 138 か国 / 2026-05-19）・Claude for Legal（20+ MCPコネクタ・12 practice-area プラグイン、2026-05-12）・Finance Agents 10 テンプレート（2026年5月）・Cowork 5時間制限2倍キャンペーン（2026年6月）・エンタープライズ向けコネクタ一括認可EMA（Okta／2026-06-18ベータ）・Cowork の Web/iOS/Android 展開とリモートセッション（2026-07-07）・Claude for Teachers 米国K-12教育者向け無料プログラム（2026-07-14）・Chrome サイドパネルの完全 Cowork セッション化（会話とスキル/コネクタを desktop/web/mobile と共有、ブラウザ内クリック・フォーム入力等の実アクション対応、Max/Team から展開、2026-08-12）・Claude Tag が新体験へ完全移行（チャンネルメモリ・スタンディングインストラクション・ambient mode、2026-08-03）・Cowork Built-in Browser（デスクトップアプリ専用の隔離ブラウザでナビゲート・クリック・入力、ユーザーのタブ/パスワードは非共有、2026-08-26）・Smart Reports（Enterprise向けベータ、チームの利用状況・コスト・スキル候補を自動分析）・CoworkとChatが1つのClaudeに統合（Claude Docs/Claude Slides新設・Design会話内対応、Pro/Maxから数週間かけてロールアウト、2026-09-16）・Claude Tagがチャンネルでの個人コネクタに対応（レビューモード/オートモード、Teamプランでロールアウト中、2026-09-24）・Claude for Google Workspace（Docs/Sheets/Slidesのサイドバー＋コネクタ、公開ベータ、2026-10-06）・Claude Desktop v2.16120.0〜v2.31226.0のCowork関連更新（スケジュールタスクの既定がAutomatically approveに、macOS 14以降必須、11月10日のUnified Claude全組織オン）までのアップデートをリリース順に整理。"
+updatedDate: 2026-10-09
 draft: false
 ---
 
@@ -501,6 +501,48 @@ Docs・Slides・Design（会話内）で作った成果物は、いずれも**1�
 > **注**: 本発表のブログ記事ではメモリ機能の変更（リアルタイム更新化等）やSmart Reports・アドバイザープラグインへの言及はなく、一次ソースで確認できた範囲は上記の統合内容とロールアウト計画のみです。
 
 出典: [Claude Cowork and chat are now one Claude（公式ブログ、2026-09-16）](https://claude.com/blog/cowork-is-now-claude)
+
+## 【2026-10-09追記】Claude for Google Workspace（10/6 公開ベータ）と Claude Desktop の Cowork 関連更新（9/29〜10/8）
+
+### Claude for Google Workspace — Docs・Sheets・Slides にサイドバーで常駐（2026年10月6日）
+
+2026年10月6日（PT）、Google の **Docs・Sheets・Slides** の中で Claude を使える **Claude for Google Workspace** が公開ベータで始まりました。Microsoft 365 向けの [Excel・PowerPoint アドイン](/mdTechKnowledge/blog/claude-excel-powerpoint-addin/) の Google 版にあたります。構成は2つです。
+
+1. **サイドバーのアドオン**: ファイルを開いたまま、横で Claude と対話しながら編集する
+2. **Google Docs / Sheets / Slides のコネクタ**: Claude のチャットから、ファイルを作成・編集する（9月29日の Desktop v2.16120.0 で、新規チャットの Output ピッカーから Google Docs・Sheets・Slides を作れるようになった流れとつながる）
+
+| アプリ | サイドバーでできること（公式の例） |
+|:---|:---|
+| **Docs** | 文章の修正・見出しの整形をその場で。大きな変更は提案カードで承認 |
+| **Sheets** | 数式の作成・デバッグ、ピボットテーブルとネイティブグラフ、新規タブ。結合やデータクレンジングは Python 経由 |
+| **Slides** | デッキのレイアウトとテーマに沿ったスライド作成、要素の重なりや読みやすさの指摘 |
+
+- **対象プラン**: 公式ブログは「全有料プラン」、ヘルプセンターは **Pro・Max・Team・Enterprise**。Marketplace アプリをインストールできる Google アカウントが必要
+- **対応ブラウザ**: **Chrome・Edge・Safari**。**Firefox は非対応**（サイドバーは開くが操作が完了しない）
+- **導入**: Google Workspace Marketplace からインストールし、ファイル内の **Extensions > Claude > Open Claude** から起動。管理者は Google Admin コンソールからドメインまたは特定グループに配布できる。組織が Marketplace アプリを禁止している場合は、管理者が Claude を許可リストに入れるか管理者インストールを行う
+- **Team / Enterprise**: コネクタは、まず**オーナーまたはプライマリオーナーが有効化**する必要がある
+- **権限とデータ**: Claude のアクセスは**既存の Google 共有権限と同じ**。送信した内容はモデルの学習に使われず、30日以内に削除（組織の保持設定を除く）。チャット履歴はファイルごとにブラウザ内に保存。Enterprise の統制（Compliance API・CMEK・OpenTelemetry）が適用される。編集は**バージョン履歴に自分の名前で残り、元に戻せる**
+- **制限（ヘルプセンター）**: 操作できるのは**開いているファイルだけ**（既定では Drive・Gmail・カレンダーに触れない）、1操作あたり**最大6分**、Connected Sheets（BigQuery）は読めない、トリガーは作れない、Web 画像の挿入は毎回承認が必要。Web 検索は既定オフで、会話ごとに有効化できる
+
+> **Cowork との関係**: Cowork が「デスクトップでローカルファイルを扱うエージェント」なのに対し、これは「Google のドキュメントの中に Claude が入る」形です。社内ドキュメントが Google Workspace 中心の組織では、Cowork と併用する入口が増えたことになります。
+
+出典: [Claude now works in Google Docs, Sheets, and Slides（Claude 公式、2026-10-06）](https://claude.com/resources/articles/claude-now-works-in-google-docs-sheets-and-slides) / [Use Claude in Google Docs, Sheets, and Slides（ヘルプセンター）](https://support.claude.com/en/articles/16951679-use-claude-in-google-docs-sheets-and-slides)
+
+### Claude Desktop の更新（9月29日〜10月8日）— Cowork に関わる変更
+
+公式の Desktop チェンジログから、Cowork（とそれに隣接する Code タブ）に関わる主な変更を整理します。
+
+| バージョン（日付） | 主な変更 |
+|:---|:---|
+| **v2.16120.0（9/29）** | 新規チャットの Output ピッカーから、Google Drive 接続時に Google Docs・Sheets・Slides を作成可能に。**組織のツールポリシーで「Restrict to Ask」の接続ツールは、「Skip all approvals」モードでも承認を求める**（新規タスクのみ）。ファイルペインで**動画出力のインライン再生**。Max effort は現在のセッションのみに適用（新規セッションは Max で始まらない）。worktree のクリーンアップはセッションのアーカイブまで保持 |
+| **v2.19675.0（10/1）** | **macOS 13 以前の computer use を廃止**（スクリーンショットが取れないため。macOS 14 以降が必須。設定画面には理由を表示）。**Claude が作成するスケジュールタスクは、組織が許す場合「Automatically approve」が既定に**（ツールを確認なしで使い、危険と判断したときだけ一時停止）。Code タブの Files ペインで**行コメント**（+ をクリック、またはテキスト選択から Add comment。次のメッセージと一緒に送信）。社内ネットワークのプロキシ（1語のホスト名、PAC ファイル取得失敗）での通信失敗を修正 |
+| **v2.19675.1（10/5）** | 3P 向け: プロジェクトに**後から追加したフォルダ**への Chat の読み取り専用アクセスを追加。`.zip` / `.skill` でアップロードしたスキルが `SKILL.md` しか保持されない問題を修正。他の文字体系・句読点を含むスキル名が Cowork / Code セッションで見つからない問題を修正 |
+| **v2.26454.0（10/6）** | **macOS の computer use が `~/.vimrc` や `~/.aws` など、ホームフォルダの隠しファイル・フォルダを編集・保存しない**ように変更。スケジュールタスクをクラウドへ移した際にローカルに別の一時停止タスクが残り、有効化すると二重実行になり得る問題を修正。Keynote の「新規スライド」など文書メニュー操作が、アプリがバックグラウンドのとき使えない問題を修正 |
+| **v2.31226.0（10/8）** | Cowork: macOS の computer use の安定化（応答しないアプリへの入力、無効と誤報されるメニュー等）。組織の承認ポリシーが「ask」のツールをスケジュールタスクが飛ばしていた問題を修正（承認プロンプトを表示して待つ）。スケジュールタスクの**サンドボックスが起動できなかった場合の通知**を修正。3P 向け: **Unified Claude（チャットと Cowork を1つにした体験）を有効化する `desktopHome` 設定を追加。未設定の組織は 11月10日に全組織で Unified Claude がオンになる**まで従来の分離体験を維持 |
+
+> **運用上の注意**: スケジュールタスクの既定が「Automatically approve」になる変更（10/1）は、**無人実行で確認なしに使えるツールが増える**ことを意味します。組織で承認を厳格に運用している場合は、管理者設定でこの既定が許されているかを確認してください。
+
+出典: [Claude Desktop チェンジログ（公式）](https://claude.com/docs/cowork/changelog)
 
 ---
 
