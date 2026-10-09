@@ -607,13 +607,11 @@ permission_policy: "auto"
 
 クラウド環境のネットワークを `limited` にしている場合、これまでサンドボックス（bash 等）への通信先だけを絞っていた **`allowed_hosts` が、`web_search` と `web_fetch` にも適用される**ようになりました。
 
-| 状況 | 結果 |
-|:---|:---|
-| `allowed_hosts` に一致しないホストの URL を `web_fetch` | エージェントに **`url_not_allowed`** のエラー結果が返る |
-| `web_search` の結果に一致しないホストが含まれる | そのホストの結果は**除外**される |
-| `allowed_hosts` が空 | `web_fetch` も `web_search` も**ページ・検索結果を返さない** |
-| `allow_package_managers` / `allow_mcp_servers` | これらを有効にしても、Webツール向けのホストは**追加されない** |
-| `unrestricted` ネットワーク・セルフホスト環境 | Webツールは**制限されない** |
+- `allowed_hosts` に一致しないホストの URL を `web_fetch` → エージェントに **`url_not_allowed`** のエラー結果が返る
+- `web_search` の結果に一致しないホストが含まれる → そのホストの結果は**除外**される
+- `allowed_hosts` が空 → `web_fetch` も `web_search` も**ページ・検索結果を返さない**
+- `allow_package_managers` / `allow_mcp_servers` → これらを有効にしても、Webツール向けのホストは**追加されない**
+- `unrestricted` ネットワーク・セルフホスト環境 → Webツールは**制限されない**
 
 Webツールに特定ホストを使わせたい場合は、そのホストを `allowed_hosts` に追加します（**同時にサンドボックスからもそのホストへ到達可能**になる点に注意）。`allowed_hosts` のエントリは、`*.` で始まらない限り**完全一致の1ホスト**です。`docs.example.com` は `["example.com"]` に含まれません。
 
