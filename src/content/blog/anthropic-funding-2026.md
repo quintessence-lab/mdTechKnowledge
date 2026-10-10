@@ -1,7 +1,7 @@
 ---
 title: "Anthropic 大型資本調達ラウンド — Amazon $5B/$100B AWSコミット・Google 最大$40B 投資・Series G $380B → Series H $965B評価額（OpenAI超）の戦略的意義"
 date: 2026-04-26
-updatedDate: 2026-09-21
+updatedDate: 2026-10-10
 category: "一般リサーチ"
 tags: ["Anthropic", "Amazon", "Google", "AWS", "GCP", "Trainium", "TPU", "投資", "クラウドインフラ", "Claude", "Series G", "Series H", "CoreWeave", "Blackstone", "Goldman Sachs", "合弁会社", "EPAM", "Dragoneer", "Greenoaks", "Sequoia", "Altimeter", "Gates Foundation", "公益", "IPO", "S-1", "SEC", "Micron", "Samsung", "SK hynix", "Fluidstack", "データセンター", "HBM", "半導体", "Apollo", "プライベートクレジット", "Decart"]
 excerpt: "2026年4月にAnthropicが立て続けに発表したAmazon・Googleからの巨額投資ラウンドと、Series G $380B評価額調達・年間収益ランレート $30B 突破（OpenAI 逆転）・CoreWeave との計算インフラ個別契約を整理。2026年5月3日発表のBlackstone・H&F・Goldman Sachs との$1.5Bエンタープライズ AI サービス合弁会社、5月7日発表のEPAM Systems との戦略的多年契約、5月8日 Fortune 報道『単一四半期で80倍成長』、5月12日 Bloomberg 報道の$30B 調達ラウンド合意確定（評価額 $900B 超、ARR $45B）、5月14日 Gates Foundation との $200M／4年 grant partnership（医療・K-12教育・経済モビリティ）まで追補。さらに2026年5月28日発表の Series H — $65B 調達・post-money $965B 評価額（OpenAI を上回り AI スタートアップ史上最高）・年率 run-rate revenue $47B 到達・ハイパースケーラー既コミット $15B（Amazon $5B 含む）、6月1日（PT）に SEC へ機密ドラフト S-1 を提出した IPO 申請開始、Google製カスタムTPUのリース資金を賄うApollo/Blackstoneのプライベートクレジット（第1弾$35B完了・2026年8月時点で第2弾最低$36B打診中）に加え、2026年7月末のGoogle支援$15Bデット調達、8月13日のDecart AI買収交渉（$6B・未確定）、8月時点で収益ランレート$65B突破・Q2収益$11.5B（前年同期比約15倍）、8月18日報道のIPO前リボルビング・クレジットファシリティが目標$10Bを超過見込み（主要行に約$1.25Bずつコミット要請）、9月4日報道の累計調達総額$130B超・IPO評価額ターゲット$2兆規模、SPV経由で60日間に$71Bのチップリース債務を積み上げ（オフバランスシート、Broadcomがシニアトランシェ保証）・Fortune10のうち8社がClaude顧客化まで追補。"
@@ -486,7 +486,7 @@ Bloombergは、Anthropicが**イスラエル発のAIスタートアップ Decart
 | 買収額（報道） | 約**$6B（60億ドル）** |
 | Decartの事業 | **GPU効率化ソフトウェア**、リアルタイム動画生成（Lucyモデル）、自動運転・eコマース向け**シミュレーション環境/世界モデル** |
 | 直近の資金調達 | 2026年5月、Radical Ventures主導で**$300M調達**（評価額**$4B**） |
-| ステータス | **交渉中・未確定**（破談の可能性あり） |
+| ステータス | **不成立**（2026年9月上旬、Bloomberg が「Anthropic がデューデリジェンス後に撤退」と報道。本項は8月13日時点の報道を記録したもの。経緯は [Anthropic の買収・買収交渉まとめ](/mdTechKnowledge/blog/anthropic-acquisitions-2026/) を参照） |
 | 意義 | 成立すればAnthropic**史上最大規模のM&A**（2026年に入り5件目の買収交渉） |
 
 Decartのチップ効率化・推論最適化技術は、Anthropic自身の推論コスト削減（→ [カスタムシリコン戦略](/mdTechKnowledge/blog/anthropic-tpu-compute-partnership/) 参照）とも重なる領域であり、急増する推論需要を既存インフラでどう吸収するかという文脈での買収検討とみられています。
