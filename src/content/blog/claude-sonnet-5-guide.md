@@ -1,7 +1,7 @@
 ---
 title: "Claude Sonnet 5 完全ガイド — Opus 4.8 に迫る性能を低価格で回す新デフォルトモデル"
 date: 2026-07-03
-updatedDate: 2026-09-29
+updatedDate: 2026-10-10
 category: "Claude技術解説"
 tags: ["Claude", "Sonnet 5", "Anthropic", "AIモデル", "エージェント", "コーディング"]
 excerpt: "2026年6月30日（PT）リリースのClaude Sonnet 5は、Free/Pro/Claude Codeの新デフォルトモデル。agentic codingベンチ63.2%でOpus 4.8（69.2%）に迫りつつ、価格$2/$10という破格の低価格を実現した（当初は2026-08-31までの導入価格→**2026-08-10に恒久化を発表**、9月からの$3/$15への値上げは撤回）。エージェント自律実行・ツールユース・コンピュータ使用を強化した後継モデルの実力を、Sonnet 4.6・Opus 4.8との比較で総点検する。2026-09-22追記: Claude Code v2.1.280でPro・Team StandardプランのデフォルトがSonnetからOpus（5.5）へ再変更された点を追記（Claude.aiのFree/Proチャットは引き続きSonnet 5既定）。 【2026-09-29追記】後継のClaude Sonnet 5.5（2026-09-28 PT、同価格$2/$10で出力30%超高速）の概要・公式ベンチマーク・5つのAPI破壊的変更と、Sonnet 5がLegacy扱いになった点を追記。"
@@ -270,7 +270,7 @@ Free / Pro プランおよび Claude Code ユーザーは、**特別な操作な
 
 | 項目 | Sonnet 5.5 |
 |---|---|
-| 価格（入力 / 出力） | $2 / $10 per MTok（Sonnet 5 と同額。キャッシュ書込 $2.50・$4、読取 $0.20、Batch 50%引きも同じ） |
+| 価格（入力 / 出力） | $2 / $10 per MTok（Sonnet 5 と同額。キャッシュ書込 $2.50・$4 と Batch 50%引きも同じ。キャッシュ読取は発売時 $0.20 で、2026-10-07 に Sonnet 5 の半額の $0.10 へ値下げ） |
 | 速度 | 出力の生成が Sonnet 5 より **30%以上速い**（Sonnet として過去最速） |
 | コンテキスト / 最大出力 | 1M / 128K（Batch API はベータヘッダーで 300K） |
 | 知識カットオフ | 2026年6月 |
@@ -293,7 +293,7 @@ Free / Pro プランおよび Claude Code ユーザーは、**特別な操作な
 Terminal-Bench 4.0 では Opus 5.5 を上回り、GDPval-AA では Opus 5.5 と2点差です。一方、FrontierCode では Opus 5.5 との差が大きく残っています。公式は「Opus 5.5 は慎重な判断を要する複雑な作業向け、Sonnet 5.5 は範囲の明確な日常タスクやバグ修正に最も強い」と役割を分けています。
 
 - **安全性**: **Sonnet として初めて、最上位モデル向けに作られたサイバー分野の safeguard とフォールバックを搭載**しました。リスクの高いサイバーセキュリティのタスクは、目に見える形で Sonnet 5 に切り替わります。生物分野の safeguard は Sonnet 5 と同じです。Preserved Thinking（蒸留対策）も適用されます。
-- **API の破壊的変更は5点**です。① thinking を切るには `disabled` ではなく `between_tools` を使う（`disabled` と `enabled`＋`budget_tokens` は400エラー）、② `tool_choice` の `any` / `tool` が使えない、③ thinking ブロックがモデルと会話に紐付く、④ Claude API と Google Cloud で `computer_20251124` が使えない、⑤ advisor tool で Opus 4.8・Opus 4.7・Sonnet 5 を助言役に指定できない。Sonnet 5 からの移行では、Opus 5.5 と同様にモデル ID の差し替えだけでは済みません。
+- **API の破壊的変更は5点**です。① thinking を切るには `disabled` ではなく `between_tools` を使う（`disabled` と `enabled`＋`budget_tokens` は400エラー）、② `tool_choice` の `any` / `tool` が使えない、③ thinking ブロックがモデルと会話に紐付く、④ Claude API と Google Cloud で `computer_20251124` が使えない、⑤ advisor tool で Opus 4.8・Opus 4.7・Sonnet 5・Haiku 5.5 を助言役に指定できない（Haiku 5.5 は10月7日のリリース後に追加）。Sonnet 5 からの移行では、Opus 5.5 と同様にモデル ID の差し替えだけでは済みません。
 - **Claude Code**: v2.1.284 で追加されました。Anthropic API では `sonnet` エイリアスが Sonnet 5.5 を指します（Bedrock・Google Cloud・Claude Platform on AWS では旧 Sonnet のまま）。**Claude Code の既定モデルは Opus 5.5 のまま**です。
 - **提供範囲**: Claude API・Amazon Bedrock・Claude Platform on AWS・Google Cloud・Microsoft Foundry、claude.ai の全プラン、GitHub Copilot（Pro 以上）。
 - **Haiku 5.5** は「数週間以内」に Claude 5.5 ファミリーに加わると予告されています。

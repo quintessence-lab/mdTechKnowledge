@@ -575,7 +575,7 @@ Anthropic 公式 Python SDK のメジャーバージョン **v1.0** がリリー
 
 ### Claude Sonnet 5.5（`claude-sonnet-5-5`）リリース
 
-**2026年9月28日**、Claude Sonnet 5.5 が Claude API・Amazon Bedrock（`anthropic.claude-sonnet-5-5`）・Claude Platform on AWS・Google Cloud・Microsoft Foundry で提供開始されました。価格は Sonnet 5 と同じ **$2/$10 per MTok**（キャッシュ読取 $0.20、Batch 50%引き）、コンテキストは 1M、最大出力は 128K（Batch API はベータヘッダー `output-300k-2026-03-24` で 300K）です。モデル一覧では Sonnet 5 が Legacy に移りました。キャッシュ可能な最小プロンプト長は 512 トークン（Sonnet 5 は 1,024）です。
+**2026年9月28日**、Claude Sonnet 5.5 が Claude API・Amazon Bedrock（`anthropic.claude-sonnet-5-5`）・Claude Platform on AWS・Google Cloud・Microsoft Foundry で提供開始されました。価格は Sonnet 5 と同じ **$2/$10 per MTok**（キャッシュ読取は発売時 $0.20 で、2026-10-07 に $0.10 へ値下げ。Batch 50%引き）、コンテキストは 1M、最大出力は 128K（Batch API はベータヘッダー `output-300k-2026-03-24` で 300K）です。モデル一覧では Sonnet 5 が Legacy に移りました。キャッシュ可能な最小プロンプト長は 512 トークン（Sonnet 5 は 1,024）です。
 
 ### Sonnet 5 からの破壊的変更は5点
 
@@ -585,7 +585,7 @@ Opus 5.5（第20章）の4点とは内容が異なります。
 2. **`tool_choice` の `any` / `tool` が使えない**（400エラー。`auto` と strict tool use に置き換える）
 3. **thinking ブロックがモデルと会話に紐付く**: 2026-08-31以降に作成したアカウントでは、履歴を書き換えてからブロックを再送すると400エラー。Sonnet 5.5 の thinking ブロックは、生成したアカウント（またはリンクされたアカウント）でしか使えない
 4. **Claude API と Google Cloud で `computer_20251124` が使えない**（`computer_toolset_20260801` へ移行。Bedrock は旧ツールのまま使える）
-5. **advisor tool で Opus 4.8・Opus 4.7・Sonnet 5 を助言役に指定できない**
+5. **advisor tool で Opus 4.8・Opus 4.7・Sonnet 5・Haiku 5.5 を助言役に指定できない**（Haiku 5.5 は2026-10-07のリリース後に追加）
 
 エラーにはならない変化として、Opus 5.5 と同じく、ツール呼び出しの間のテキストが `thinking` ブロックで返ります。temperature・top_p・top_k を既定以外にすると400エラーになる点も同じです。
 
