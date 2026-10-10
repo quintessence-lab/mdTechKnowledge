@@ -1,7 +1,7 @@
 ---
 title: "Anthropic コンピュートインフラ & TPUパートナーシップ — Google・BroadcomとのマルチギガワットTPU契約（2027年稼働）"
 date: 2026-04-29
-updatedDate: 2026-09-01
+updatedDate: 2026-10-10
 category: "一般リサーチ"
 tags: ["Anthropic", "Google", "Broadcom", "TPU", "AIインフラ", "コンピュート", "パートナーシップ", "SpaceX", "xAI", "Colossus", "GPU", "Akamai", "Fluidstack", "データセンター", "米国インフラ投資", "AMD", "Volta", "カスタムシリコン", "Riot Platforms"]
 excerpt: "2026年4月6日発表のGoogle・BroadcomとのマルチギガワットTPU契約（2027年稼働）に加え、2026年5月のSpaceX xAI Colossus 1データセンター全容量契約（300MW超・GPU22万台超）、Akamai Technologies $1.8B・7年間クラウドコンピュート契約を収録。Anthropicのマルチクラウド・マルチベンダーインフラ戦略を整理。あわせて2025年11月発表の$50B米国AIインフラ投資（Fluidstackと組みテキサス州・ニューヨーク州にデータセンターを建設、2026年中に順次稼働）、2026年6月のMicron戦略協定（HBM/DRAM/SSD複数年供給）、2026年7月のTeraWulf 20年リース（$19B・ケンタッキー州Hawesville・最大401MW・2027年後半稼働）、2026年7月22日のAMD戦略提携（最大$5B投資・Instinct MI450 GPU最大2GW）、2026年8月4日のVolta Infra Holdings契約（$10B・6年間・ノルウェー133MW・Nvidia Vera Rubin）、2026年8月5日のAnthropic自社カスタムシリコン設計チーム公式確認（元OpenAI Clive Chan主導、推論コスト50%削減目標）、2026年8月10日のRiot Platforms契約（$9.1B・20年・テキサス州Rockdale 191MW・ビットコイン採掘業者からの転換）、2026年8月21日の元Google TPUチーフ Amir Salek氏のコンピュートチーム参加（Google第1〜7世代TPUを主導、James Bradbury配下）、2026年8月26日のNscale契約（$45B・6年・ウェストバージニア州460MW・Nvidia Vera Rubin・2027年後半稼働）も収録。"
@@ -204,6 +204,8 @@ TPU契約（長期・2027年稼働の本命レーン）に対し、本契約は*
 ---
 
 ## 第9章: Akamai Technologies — $1.8Bクラウドコンピュート契約（2026-05-08）
+
+> **【2026-10-10追記】** 本契約は2026年9月24日に**拡大**されました。Akamai は **7年間・$11.6B** の契約（最大でさらに$9B拡張可能、合計約$20B）を開示し、Anthropic にワラント（非議決権の転換優先株、普通株7.7百万株相当・最大約5%）を付与しています。Akamai が提供するのは CPU 中心のクラウドです。以下は5月時点（$1.8B）の報道に基づく記述です。最新の条件は [Anthropic のコンピュート契約の全体像](/mdTechKnowledge/blog/anthropic-compute-deals-2026/) の出典欄を参照してください。
 
 ### 契約の概要
 
