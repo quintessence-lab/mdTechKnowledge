@@ -1,7 +1,7 @@
 ---
 title: "Anthropic モデル廃止スケジュール & 移行ガイド — 1Mコンテキストβ廃止・Sonnet/Opus 4 廃止の対応"
 date: 2026-05-02
-updatedDate: 2026-10-03
+updatedDate: 2026-10-11
 category: "Claude技術解説"
 tags: ["Claude", "Anthropic", "API", "モデル廃止", "移行", "1Mコンテキスト", "Sonnet 4", "Opus 4", "Opus 4.1", "Opus 4.8", "Sonnet 4.5", "Sonnet 5.5", "extended thinking", "Agent SDK", "課金"]
 excerpt: "2026年4月30日に1Mコンテキストβ（context-1m-2025-08-07）が廃止、2026年6月15日にSonnet 4 (claude-sonnet-4-0)とOpus 4 (claude-opus-4-0)が廃止された（リタイア済み）。本稿では緊急度の高い2件の廃止について、影響範囲・移行手順・extended thinkingの変更点・テストスニペット・ロールバック戦略まで体系的に整理する。【2026-06-08更新】6/15は同日にAgent SDK／claude -p（headless）の課金分離（独立クレジットプール: Pro $20／Max 5x $100／Max 20x $200、ロールオーバーなし）も発生（§10）。さらに2026-06-05にOpus 4.1（claude-opus-4-1-20250805）がDeprecated通知され、2026-08-05リタイア・移行先claude-opus-4-8に確定。【2026-06-16更新】6/15のSonnet 4／Opus 4リタイアは実施済み。旧モデルID指定はエラー化するため移行完了の確認を推奨。【2026-08-06更新】Opus 4.1も予定通り8/5にリタイア完了を公式ページで確認、未移行はエラーになる。【2026-09-30更新】Claude Sonnet 4.5（claude-sonnet-4-5-20250929）の廃止を新たに通知、Claude APIでのリタイアは2026年11月30日・移行先はClaude Sonnet 5.5。"
@@ -545,6 +545,34 @@ Opus 4.8 では **手動の extended thinking（`budget_tokens` 指定）が非�
 > **【2026-06-29】GitHub Copilot でも Opus 4.8 fast mode が Preview 開始**（[GitHub Changelog](https://github.blog/changelog/2026-06-29-claude-opus-4-8-fast-mode-is-now-in-preview-for-github-copilot/)）。Copilot 経由で 4.7 fast 相当を使っていた場合の受け皿も 4.8 に揃いつつあります。
 
 出典: [Fast mode — Claude Platform Docs](https://platform.claude.com/docs/en/build-with-claude/fast-mode) ／ [Release notes](https://platform.claude.com/docs/en/release-notes/overview)
+
+---
+
+## 12. 【2026-10-11追記】Claude Haiku 4.5 → Haiku 5.5 移行時の破壊的変更
+
+2026-10-07（PT）に **Claude Haiku 5.5**（`claude-haiku-5-5`）がリリースされました。これは廃止ではなく新モデルの追加ですが、公式リリースノートが「**Haiku 4.5 向けに書いたコードは Haiku 5.5 で壊れうる**」と警告しているため、モデルIDを差し替える前に次の変更を確認してください。
+
+**400 エラーになるもの**（公式リリースノートの記載）
+
+- 手動の extended thinking（`budget_tokens`）
+- サンプリングパラメーター `temperature` / `top_p` / `top_k`
+- assistant メッセージの prefill
+- `computer_20250124` ツール。Claude API と Google Cloud では `computer_toolset_20260801`、Amazon Bedrock では `computer_20251124` に切り替える
+- `system`・`tools`・過去のターンを変更した後に、thinking ブロックを送り返すリクエスト
+
+**挙動が変わるもの**
+
+- **Adaptive thinking が既定で ON**。レスポンスが `thinking` ブロックから始まることがあり、そのテキストは `thinking.display` を `"summarized"` にしない限り省略される
+- 同じ文章が **より多いトークン数**に数えられる（新トークナイザー）。公式リリースノートは「より多いトークンに数えられる」とのみ記しています（Haiku 5.5 ガイド記事では約30%増としています）。入力の見積もりやコンテキスト上限の余裕を見直す
+- **Amazon Bedrock では Haiku 5.5 の structured outputs が使えない**
+
+本章の元になった Issue には「5件」と書かれていましたが、公式の記載には上記のとおり thinking ブロック再送の 400 と Bedrock の制約も含まれます。件数は第三者の解説記事によって数え方が揺れるため、公式の列挙を基準にしてください。
+
+移行の流れは、第5章の `budget_tokens` → adaptive thinking + `effort` の方針と同じです。`temperature` などのサンプリング指定と prefill を使っているコードを先に洗い出し、検索には第6章のリポジトリ全体検索の考え方が使えます。Haiku 5.5 の価格（$0.10/$0.50、100Kトークン超は $0.50/$2.50）と性能は別記事 [Claude Sonnet 5.5 / Haiku 5.5 ガイド](/mdTechKnowledge/blog/claude-sonnet-5-5-haiku-5-5-guide/) を参照してください。
+
+> **Haiku 4.5 の扱い**: 本章の時点で Haiku 4.5 の廃止は公式に告知されていません。第7章で「軽い分類は Haiku 4.5 に寄せる」と書いた方針も、現在は Haiku 5.5 への移行が選択肢になります。
+
+出典: [Claude Platform リリースノート（2026-10-07）](https://platform.claude.com/docs/en/release-notes/overview)
 
 ---
 
