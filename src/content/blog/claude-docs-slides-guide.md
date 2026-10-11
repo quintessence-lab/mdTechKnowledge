@@ -1,6 +1,7 @@
 ---
 title: "Claude Docs & Slides 解説 — Claude と一緒に書く「生きたドキュメント」とスライド、Claude Code からの操作まで"
 date: 2026-09-27
+updatedDate: 2026-10-11
 category: "Claude技術解説"
 tags: ["Claude", "Claude Docs", "Claude Slides", "Artifacts", "Cowork", "Claude Code", "MCP", "コネクタ", "共同編集", "ベータ"]
 excerpt: "2026年9月16日、Claude のチャットと Cowork が「one Claude」に統合されたのと同時に、新しいアーティファクトとして Claude Docs と Claude Slides が登場した（どちらもベータ）。Docs は Claude が目の前で下書きし、判断の理由をコメントで残す「生きたドキュメント」で、複数タブ・表・チャート・ダイアグラムを持ち、人と Claude が同時に編集できる。コメントで @Claude とメンションすれば、そのスレッドの中で Claude が直接書き直す。Slides はノートやレポート、チャットの内容からスライドを起こし、各スライドを直接編集して Claude の中でそのまま発表でき、PowerPoint と PDF に書き出せる。本記事は作り方・編集・コメント・構成要素と、バージョン履歴がない、コメントのみの権限がない、モバイルは閲覧のみ、Team / Enterprise は組織外に共有できない、CMEK / ZDR / HIPAA 構成では使えない、といった現時点の制限を整理する。さらに、Claude Code から MCP コネクタ経由で Docs を作成・編集できることを実機で確認し、その仕組みと注意点を解説する。Free プランで使えるかは公式情報どうしで食い違っている点も明記した。"
@@ -101,6 +102,7 @@ Docs は自動保存され、**Artifacts タブ**に入ります。会話をま�
 - **Team / Enterprise では組織外に共有できない**（Pro / Max はリンクで誰とでも共有可）
 - **CMEK・ZDR・HIPAA 対応構成の組織では使えない**
 - **Compliance API に Docs 内の編集やコメントが記録されない**（アーティファクト単位の記録はある）
+  - 【2026-10-08 追記】Compliance API は Claude Docs のドキュメントを **Word ファイルとしてダウンロード**できるようになりました（ベータ）。あわせて chat エンドポイントが統合 Claude の chat も返すようになりました（Claude Enterprise 向けベータ、既存の Compliance Access Key で利用可）。取得できるのは文書の内容で、**Docs 内の編集やコメントの履歴が記録される**という意味ではありません（公式リリースノートに履歴への言及はなく、本記事の時点でも上記の制限は変わらないと読めます）
 - **モバイルは閲覧のみ**
 - 保存データはアーティファクト1つあたり 20MB まで、テキストのみ
 
@@ -155,6 +157,7 @@ Docs は自動保存され、**Artifacts タブ**に入ります。会話をま�
 
 ## 出典
 
+- [Claude Platform Release notes（2026-10-08）](https://platform.claude.com/docs/en/release-notes/overview)（Compliance API の chat エンドポイント拡張と Docs の Word ダウンロード）
 - [Claude Cowork and chat are now one Claude — Claude Blog](https://claude.com/blog/cowork-is-now-claude)（2026-09-16、発表・位置づけ・展開予定）
 - [Get started with Claude Docs — Claude Help Center](https://support.claude.com/en/articles/16923645-get-started-with-claude-docs)（作り方・編集・コメント・書き出し・既知の制限・対象プラン）
 - [What are artifacts and how do I use them? — Claude Help Center](https://support.claude.com/en/articles/17153992-what-are-artifacts-and-how-do-i-use-them)（Slides の書き出し・プラン別の表・20MB 上限・レガシー）
