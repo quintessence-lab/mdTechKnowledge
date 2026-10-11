@@ -1,10 +1,10 @@
 ---
 title: "Claude Code Dynamic Workflows 完全ガイド — 最大1000サブエージェントを束ねる自動オーケストレーション"
 date: 2026-05-30
-updatedDate: 2026-09-22
+updatedDate: 2026-10-11
 category: "Claude技術解説"
 tags: ["Claude Code", "Dynamic Workflows", "マルチエージェント", "オーケストレーション", "並列処理", "ultracode", "v2.1.160", "v2.1.172", "v2.1.212", "v2.1.218", "v2.1.228", "ネストサブエージェント", "Research Preview"]
-excerpt: "Claude Code v2.1.154（2026-05-28 PT）で追加された Dynamic Workflows（Research Preview）を徹底解説。プロンプトに ultracode と書くだけで Claude が JavaScript スクリプトを自動生成し、同時最大16・総計最大1000サブエージェントをファンアウト実行する仕組み、3つの起動方法、/workflows での監視・停止、ultracode と effort レベルの正確な関係、コストと暴走防止、既存機能との棲み分けまで網羅。トリガー語が v2.1.160 で workflow から ultracode へ改称された点、v2.1.202 の `/config` サイズ設定、v2.1.212 のセッション全体サブエージェント上限（既定200・Dynamic Workflowsの1000/runとは別軸）と `/fork` の再設計、v2.1.218 でのデフォルトサイズガイドライン medium（15エージェント未満）化、v2.1.219 の `workflowSizeGuideline` 設定キー追加、v2.1.228 での200件セッション上限の廃止（同時実行数・生成階層の上限は継続）、v2.1.269 の`CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS`環境変数（既定の同時16を1〜256で明示調整可能に）も反映。"
+excerpt: "Claude Code v2.1.154（2026-05-28 PT）で追加された Dynamic Workflows（Research Preview）を徹底解説。プロンプトに ultracode と書くだけで Claude が JavaScript スクリプトを自動生成し、同時最大16・総計最大1000サブエージェントをファンアウト実行する仕組み、3つの起動方法、/workflows での監視・停止、ultracode と effort レベルの正確な関係、コストと暴走防止、既存機能との棲み分けまで網羅。トリガー語が v2.1.160 で workflow から ultracode へ改称された点、v2.1.202 の `/config` サイズ設定、v2.1.212 のセッション全体サブエージェント上限（既定200・Dynamic Workflowsの1000/runとは別軸）と `/fork` の再設計、v2.1.218 でのデフォルトサイズガイドライン medium（15エージェント未満）化、v2.1.219 の `workflowSizeGuideline` 設定キー追加、v2.1.228 での200件セッション上限の廃止（同時実行数・生成階層の上限は継続）、v2.1.269 の`CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS`環境変数（既定の同時16を1〜256で明示調整可能に）、v2.1.296 の`CLAUDE_CODE_WORKFLOW_SUBAGENT_MODEL`環境変数（Workflow内の全エージェントを1モデルに固定）と、2026-10-09 に Managed Agents API へ追加された Dynamic workflows（ベータ）との対応関係も補足。"
 draft: false
 ---
 
@@ -350,6 +350,39 @@ Dynamic Workflows は単体で完結する機能ではなく、Claude Code の�
 
 ---
 
+## 15. 【2026-10-11追記】v2.1.296 のモデル固定環境変数と、Managed Agents API 版 Dynamic workflows
+
+### v2.1.296 — `CLAUDE_CODE_WORKFLOW_SUBAGENT_MODEL`
+
+**Claude Code v2.1.296** で環境変数 **`CLAUDE_CODE_WORKFLOW_SUBAGENT_MODEL`** が追加されました。CHANGELOG の説明は「Workflow の全エージェントを1つのモデルで実行し、それ以外のサブエージェントは各自のモデルのままにする」です。
+
+- 数百体を束ねる Workflow の実行モデルを一括で指定でき、第9章で触れたコストの膨張を抑える手段になります（例: 量産実行は軽量モデルに固定する）
+- 通常のサブエージェント（`Agent` ツールで起動するもの）には影響しません。第4章の `Agent(model:opus)` 構文がモデル単位の**権限制御**であるのに対し、こちらは Workflow の**実行モデルそのものの固定**です
+- どのモデル名を指定できるか、`/model` の設定との優先順位は CHANGELOG に記載がないため、本記事では断定しません
+
+同じ v2.1.296 では、サブエージェント定義に **`autoCompactWindow`**（メイン会話より早くオートコンパクトさせる）も追加されています。Workflow script が深くネストした値を黙って切り詰める問題も修正されました。
+
+### Managed Agents API 側の Dynamic workflows（ベータ）
+
+2026-10-09（JST、公式リリースノートでは October 9）、Claude Managed Agents にも **Dynamic workflows** が**ベータ**で追加されました。名前は同じですが、動く場所が違います。
+
+- **Claude Code 版（本記事の主題）**: ローカルの Claude Code セッションが JavaScript スクリプトを生成し、`/workflows` で監視する
+- **Managed Agents 版**: エージェントが書いた workflow を**サーバーがバックグラウンドで実行**する。1回の実行が「workflow run」で、API クライアントは `workflow_run.*` イベントを追って状況を知る
+
+Managed Agents 版の要点（公式ドキュメント Workflow runs より）:
+
+- 有効化はエージェントの `multiagent` フィールドに `{"type": "multiagent_20261001", "workflows": {"type": "enabled"}}` を指定する。ベータヘッダーは `managed-agents-2026-04-01`
+- run を開始できるのはエージェントだけで、クライアントから送るイベントでは終了できない（セッションのアーカイブで終わることはある）。いつ run を始めるかは、システムプロンプトで指示する
+- イベントは `workflow_run.created`（フェーズ一覧を含む）、`status_running`、`status_idle`、`phase_started` / `phase_ended`、`status_ended`、`error`
+- run の寿命は既定で24時間。run 専用の料金はなく、使われたトークンは各モデルの単価で通常どおり課金される。セッションの予算に達すると開いている run はすべて一時停止する
+- 上限は、run 全体で workflow が起動するエージェントが **1,000**（超えると `thread_limit_error`）、1セッションで同時に開ける run が既定 **10**
+
+Claude Code 版の「総計最大1000」と数字は一致しますが、別の仕組みの別の上限です。両者は連携しておらず、Claude Code の `/workflows` で Managed Agents の run を見ることはできません。
+
+出典: [Claude Platform リリースノート（2026-10-09）](https://platform.claude.com/docs/en/release-notes/overview) / [Managed Agents: Workflow runs](https://platform.claude.com/docs/en/managed-agents/workflow-runs) / [Claude Code CHANGELOG（v2.1.296）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
+
+---
+
 ## まとめ
 
 - **Dynamic Workflows ＝ サブエージェントを束ねる自動生成 JavaScript スクリプト**。制御フローを model-driven から **code-driven** に移すことで、1つのコンテキストに収まらない大規模タスクを捌く。
@@ -367,6 +400,7 @@ Dynamic Workflows は単体で完結する機能ではなく、Claude Code の�
 ## 参考資料
 
 - [Claude Code 公式ドキュメント: Workflows](https://code.claude.com/docs/en/workflows)
+- [Managed Agents 公式ドキュメント: Workflow runs](https://platform.claude.com/docs/en/managed-agents/workflow-runs)
 - [Claude Code 公式ドキュメント: Model configuration（effort レベル）](https://code.claude.com/docs/en/model-config)
 - [Anthropic 公式ブログ: Introducing Dynamic Workflows in Claude Code](https://claude.com/blog/introducing-dynamic-workflows-in-claude-code)
 - [TechCrunch: Anthropic releases Opus 4.8 with new Dynamic Workflow tool](https://techcrunch.com/2026/05/28/anthropic-releases-opus-4-8-with-new-dynamic-workflow-tool/)
