@@ -1,7 +1,7 @@
 ---
 title: "MCPサーバーとClaudeの接続パターン解説 — Browser / Claude Code Terminal / Claude Code Web"
 date: 2026-04-26
-updatedDate: 2026-09-27
+updatedDate: 2026-10-17
 category: "Claude技術解説"
 tags: ["MCP", "Claude", "Claude Code", "アーキテクチャ", "接続パターン", "GitHub MCP", "ステートレス"]
 excerpt: "MCPサーバーとClaudeの3つの主要接続パターン（Browser / Claude Code Terminal / Claude Code Web）を図解。GitHub MCPを例にアクセス経路の違い・認証フロー・運用上の選択基準を整理。**2026-07-28に正式リリースされたMCP新仕様**によるステートレス化（Mcp-Session-Id 廃止、スティッキー LB・共有セッションストア不要化）が各パターンへ与える実務影響と自社 MCP サーバー移行チェックリスト、2026-08-22公開の新ロードマップ（5優先領域）が接続パターンに与える影響、2026-09-22 に Claude API の MCP コネクタへ加わった`mcp-client-2026-09-15`（リモートMCPサーバーが返したツール一覧を`mcp_tool_listing`ブロックとして記録・固定。ローカルstdioは対象外・HTTP公開が前提）も収録。"
@@ -742,6 +742,32 @@ MCP サーバーはツールを**いつでも変更できます**。会話の途
 詳しい仕様は [MCP アーキテクチャ詳細](/mdTechKnowledge/blog/mcp-architecture/) の同名節、Inline tools 側の詳細は [Anthropic Messages API 新機能まとめ](/mdTechKnowledge/blog/anthropic-messages-api-new-features-2026/) の第20章を参照してください。
 
 出典: [MCP connector — Claude Platform ドキュメント](https://platform.claude.com/docs/en/agents-and-tools/mcp-connector) / [Anthropic Platform リリースノート（2026-09-22）](https://platform.claude.com/docs/en/release-notes/overview)
+
+---
+
+## 16. 【2026-10-17追記】2026-07-28 プロトコルがデフォルトに — claude.ai・ローカル・クラウドの全パターンで
+
+第13章で整理した 2026-07-28 仕様（ステートレス化）が、Claude Code の既定の挙動になりました。パターンごとの現状です（Claude Code CHANGELOG より）。
+
+- **パターン1（claude.ai のコネクタ）**: v2.1.295（2026-10-08 PT）で、claude.ai コネクタがプロトコル 2026-07-28 をデフォルトで交渉するように
+- **パターン2（Claude Code、端末）**: v2.1.292（2026-10-06 PT）で、**ローカル（stdio）MCP サーバー**との接続がデフォルトで 2026-07-28 を交渉するように（Bedrock・Vertex・Foundry も対象）
+- **パターン3（Claude Code on the Web・クラウド）**: v2.1.299 で、クラウドセッションと Remote Control のコネクタがデフォルトで 2026-07-28 を交渉するように
+
+どれも、フラグを取得しないインストールでの既定です。旧方式に戻す場合は環境変数 `MCP_PROTOCOL_NEGOTIATION=legacy` を使います。これで、ローカルでもクラウドでも**ステートレスなプロトコルが実質的なデフォルト**になりました。
+
+自社運用の MCP サーバーがある場合は、第13章のチェックリスト（セッション ID ヘッダーの廃止、`ttlMs`・`cacheScope` の付与など）を、もう「準備」ではなく「今の既定の挙動への対応」として扱ってください。v2.1.302 では、これらを省略したサーバーのツールが表示されない問題への救済も入りました。
+
+**関連: Managed Agents の `web_fetch` が「既出 URL のみ」に（2026-10-07 PT）**
+
+MCP とは別の話ですが、接続先の制御として押さえておく変更です。Claude Managed Agents の `web_fetch` ツールは、**そのセッション内にすでに現れた URL**（ユーザーのメッセージ本文、`web_search` の結果、先に `web_fetch` が返したページの中）だけを取得するようになりました。データ持ち出し（exfiltration）のリスクを減らすための変更です。
+
+- Claude 自身の出力、エージェントのシステムプロンプト、添付文書、`bash`・`read`・MCP ツールの出力にだけ現れる URL は「既出」に数えられず、`url_not_in_prior_context` エラーが返る
+- 取得させたい URL は、`user.message` イベントの本文で渡す
+- MCP サーバーが返した URL をそのまま `web_fetch` に渡せないことを意味するので、MCP ツール経由で得た URL を後続処理で取得させる設計は見直しが必要
+
+詳細は [Claude Managed Agents 簡易ガイド](/mdTechKnowledge/blog/claude-managed-agents-guide/) の「【2026-10-07追記】」の章を参照してください。
+
+出典: [Claude Code CHANGELOG](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md) ／ [Anthropic Platform リリースノート（2026-10-07）](https://platform.claude.com/docs/en/release-notes/overview)
 
 ---
 
