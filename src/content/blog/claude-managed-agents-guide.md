@@ -1,7 +1,7 @@
 ---
 title: "Claude Managed Agents 簡易ガイド — アーキテクチャ・比較・ユースケース"
 date: 2026-04-08
-updatedDate: 2026-10-09
+updatedDate: 2026-10-17
 category: "Claude技術解説"
 tags: ["Claude", "Managed Agents", "Agent SDK", "Claude Code", "API", "マルチエージェント", "Memory", "Enterprise", "Self-hosted sandboxes", "MCP tunnels", "Cloudflare", "Modal", "Vercel", "Daytona", "Cloudflare Environments", "Webhooks", "microVM", "V8 Isolate", "Scheduled deployments", "Vault環境変数"]
 excerpt: "Claude Managed Agentsの3層アーキテクチャ（Session/Harness/Sandbox）、p50 TTFT 60%削減のパフォーマンス改善、Memory機能、Dreaming・Outcomes・Multi-agent orchestration、エンタープライズ向けRBAC・OpenTelemetry、2026年5月19日発表のSelf-hosted sandboxes（Cloudflare/Daytona/Modal/Vercel対応、Public Beta）とMCP tunnels（Research Preview、プライベートネットワーク内MCPサーバーへの outbound-only E2E接続）、料金体系（$0.08/session-hour）、Cloudflare Environments（brain/hands 分離・Linux microVM と V8 Isolate を選択可能・ブラウザ/メール/アウトバウンドプロキシ/Cloudflare Mesh・Workers VPC）に加え、2026年8月1日のDreaming Opus 5対応、8月7日のセッション予算（budget_reached）・マルチエージェントrosterへのアドバイザー追加・推論ジオ制御（inference_geo）・GitHubリポジトリからのスキル自動ロード、8月19日のweb検索/取得ドメイン制限・self-hosted sandboxへのmemory store接続・Console session viewer再設計、8月26日のAdmin APIが全主要SDKで`client.beta.organization`として利用可能になった件、2026年9月のCompliance APIによるCowork/Claude Codeローカルセッショントランスクリプト対応（関連情報）、2026年9月10日追加の権限ポリシー`auto`オプション（サーバー側での自動評価・`evaluation`/`evaluated_permission`フィールド）、セッション予算`max_list_cost`の詳細仕様（公開リスト価格ベースの課金・リクエスト間判定によるオーバーシュート・budget_reached時の挙動）、2026年10月7日のlimitedネットワークにおけるallowed_hostsのweb_search/web_fetchへの適用・web_fetchの「既出URLのみ取得」制限までを1ページに整理。"
@@ -635,6 +635,34 @@ Webツールに特定ホストを使わせたい場合は、そのホストを `
 なお、同日付で **Dreams（リサーチプレビュー）が Claude Opus 5.5・Fable 5.1・Sonnet 5.5 に対応**したことも告知されています（10月1日）。
 
 出典: [Platform リリースノート（2026-10-07）](https://platform.claude.com/docs/en/release-notes/overview) / [Environment networking](https://platform.claude.com/docs/en/managed-agents/environments#networking) / [Restrict web search and web fetch domains](https://platform.claude.com/docs/en/managed-agents/tools-web-restrictions)
+
+## 【2026-10-17追記】Dynamic workflows（ベータ）と OpenTelemetry export（ベータ）
+
+### Dynamic workflows — エージェントがワークフローを書いて走らせる（10月9日）
+
+**2026年10月9日**、Managed Agents のエージェントが、多数のエージェントをフェーズに分けて走らせ結果を統合する**ワークフロー（プログラム）を自分で書いて実行**できるようになりました（ベータ、ベータヘッダー `managed-agents-2026-04-01`）。
+
+- 有効化: エージェントの `multiagent` フィールドに `{"type": "multiagent_20261001", "workflows": {"type": "enabled"}}` を指定する。いつ run を始めるかはシステムプロンプトで指示する
+- 実行: サーバーがバックグラウンドで走らせる。1回の実行が workflow run で、セッションのイベントストリームに `workflow_run.*` イベント（`created`・`status_running`・`status_idle`・`phase_started`・`phase_ended`・`status_ended`・`error`）が流れる
+- 用途: 数百件の文書のレビューのように、1つの会話に収まらない作業
+- 主な上限: 1つの run で同時に動くスレッドは 64（公式は「この数字は保証されず変わりうる」と注記）、run 全体でワークフローが起動するエージェントは 1,000、1セッションで同時に開ける run は既定 10、run の寿命は既定 24 時間。run 専用の料金はなく、トークンは各モデルの単価で通常どおり課金され、セッションの予算に達すると開いている run は一時停止する
+
+Claude Code の Dynamic Workflows とは別の仕組みです。違いと上限の詳細は [Claude Code Dynamic Workflows 完全ガイド](/mdTechKnowledge/blog/claude-code-dynamic-workflows-guide/) の第15章と、[Agent Teams と Dynamic Workflows は何が違うのか](/mdTechKnowledge/blog/agent-teams-vs-dynamic-workflows/) を参照してください。
+
+### OpenTelemetry export — セッションのトレースを自社基盤へ（10月14日）
+
+**2026年10月14日**、Messages API のリクエストと Managed Agents のセッションを OpenTelemetry でトレースできるようになりました（ベータ）。
+
+- 方法は2つで、併用もできます。**SDK トレース**（コードで有効化。Python・TypeScript・C#・Go・Java・PHP・Ruby の SDK がスパンを出す。管理者権限は不要）と、**API トレース**（Claude Console で送信先を追加。API 側がスパンを出し、SDK を使わないクライアントも対象。管理者権限が必要。対象は Claude Platform と Claude Platform on AWS）
+- Managed Agents では、セッション内の各ターン、モデルのリクエスト、API が実行するツール、アウトカム評価がスパンになる。SDK 側では、自分で実行するカスタムツールも `anthropic.custom_tool_use` として記録される
+- スパンの属性は OpenTelemetry の GenAI セマンティック規約に沿っているため、対応するプラットフォームがそのまま解釈できる。OTLP を受けられる基盤なら送信でき、Datadog・Grafana Cloud・Honeycomb・Langfuse・LangSmith・New Relic・Sentry・Splunk などが連携先として案内されている
+- **コンテンツモード**: 既定は `metadata_only`（識別子・時刻・状態・トークン数など）。`content`（Full content）にするとプロンプトと応答もスパンに入る。1スパンの内容は既定で最大 0.75MB で、超えると切り詰められて `anthropic.content.truncated` が `true` になる
+- 注意: 観測基盤側がその内容を自前のアクセス権と保持期間で保管する。HIPAA・FERPA・K-12 の制限がある組織では、送信先にはメタデータだけが出る。**Managed Agents はゼロデータ保持の対象外**で、OpenTelemetry を使ってもデータ保持は変わらない
+- スパンの配信は best effort で、使用量の正確な集計には Usage API を使う。セッション全体は `anthropic.session.id`、1スレッドは `gen_ai.conversation.id` でスパンをまとめる
+
+出典: [OpenTelemetry for the Claude API](https://platform.claude.com/docs/en/manage-claude/opentelemetry) ／ [Workflow runs](https://platform.claude.com/docs/en/managed-agents/workflow-runs) ／ [Anthropic Platform リリースノート](https://platform.claude.com/docs/en/release-notes/overview)
+
+---
 
 ## APIアクセスとレート制限
 
