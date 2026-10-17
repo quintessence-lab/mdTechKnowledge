@@ -1,7 +1,7 @@
 ---
 title: "Claude Code Auto Mode 完全ガイド — --dangerously-skip-permissions を卒業する自律型権限管理"
 date: 2026-06-21
-updatedDate: 2026-09-21
+updatedDate: 2026-10-17
 category: "Claude技術解説"
 tags: ["Claude Code", "Auto Mode", "permission mode", "dangerously-skip-permissions", "分類器", "classifier", "claudeignore", "安全運用"]
 excerpt: "Claude Code の Auto Mode（自律型権限管理）は、すべてを無条件に許可する --dangerously-skip-permissions の安全な代替として 2026-03-24 に登場した。モデルベースの2段階トランスクリプト分類器（Sonnet 4.6 による高速フィルター＋思考連鎖による精査）で各アクションを起動前に評価し、連続3拒否・累計20拒否で自動停止する。2026-08-14 からは Pro/Max/Team プランの新規セッションで Auto Mode が既定の権限モードになった（人間の目視13.6%に対し分類器89%の危険コマンド捕捉率が論拠。Enterprise/API/Bedrock/Vertex/Foundry はオプトイン継続）。2026-08-25のv2.1.246では`/permissions`にAuto modeタブが追加され、分類器ルールをGUIから閲覧・編集可能になった。2026-08-27のv2.1.248では`--restricted`フラグが追加され、実行系ツール・WebFetchをそもそも起動時から除去する、Auto Modeとは別系統の静的な制限モードが利用可能に。2026-09-01のv2.1.257ではContainment Escapeルールが追加され、クラウドメタデータ認証情報取得・egress回避・クロステナントアクセスが環境の明示許可なしには自動承認されなくなった。2026-09-14のv2.1.271ではBash/PowerShell/Monitorへコマンド単位の`allowed_domains`が追加され、2026-09-18のv2.1.278では分類器の実行場所がデフォルトでサーバー側に変更（オーバーヘッド課金なし、`CLAUDE_CODE_AUTO_MODE_SERVER=0`でopt-out可）された。本記事では権限モードの全体像、分類器の仕組み、エスカレーション停止、.claudeignore 連携、卒業の手順までを公式情報ベースで整理する。"
@@ -223,6 +223,26 @@ Auto Mode の安全性は、その後のバージョンアップでさらに強�
 分類器の判定ロジック自体（2段階トランスクリプト分類器、FPR/FNRの実測値等）は変わらず、**実行場所とコスト構造のみの変更**です。詳細は[公式ドキュメント](https://code.claude.com/docs/en/auto-mode-classifier-billing)を参照してください。
 
 参考: [Claude Code CHANGELOG（v2.1.278）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
+
+---
+
+## 5.11. 【2026-10-17】v2.1.292〜v2.1.302 — UNC パス読み取りのセキュリティ修正と、分類器まわりの更新
+
+**セキュリティ修正（v2.1.292、2026-10-06 PT）**
+
+CHANGELOG の「Security」として、**PreToolUse フックの承認と auto mode が、ネットワーク（UNC）パスからのファイル読み取りで権限プロンプトを回避してしまう問題**が修正されました。
+
+- 影響: Windows で `\\server\share\...` のようなネットワークパスを読むとき、フックで承認済みの場合や auto mode のときに、本来出るはずの権限確認が出ないことがあった
+- なぜ重要か: UNC パスへのアクセスは、接続先のサーバーに認証情報（NTLM）が送られる経路になりうる。過去にも v2.1.233 で NT デバイスプレフィックス（`\\?\`）経由の UNC 検証すり抜けが「NTLM 認証情報の漏えい経路」として塞がれている
+- 対応: 該当バージョンより前のものは v2.1.292 以降に更新する。auto mode の信頼境界は、分類器だけでなく「ネットワーク越しの読み取りは確認を挟む」という前提に支えられている
+
+**auto mode まわりのその後の変更**
+
+- **v2.1.301**: OpenTelemetry の `tool_decision` イベントに `classifier_verdict`・`permission_mode` を追加。auto mode の分類器による判定と、権限ルールによる判定を区別できる。`OTEL_LOG_TOOL_DETAILS=1` のときは `classifier_category`（分類器のブロックが一致した組み込みルール名）も出る（v2.1.302 で、ほとんどのブロックで出ない問題を修正）
+- **v2.1.302**: 環境変数 **`CLAUDE_CODE_AUTO_MODE_MODEL`** で、**クライアント側 auto mode の分類器が使うモデル**を選べる。**サーバー側 auto mode のモデルは変わらない**。サーバー側分類器では、会話が長すぎて安全確認できない場合に、ツール呼び出しを全部拒否せず会話を圧縮してから確認するよう改善
+- **v2.1.299**: SDK・ヘッドレスのセッションが、ホストが auto mode 非対応のモデルへ切り替えた後も auto mode のままになる問題を修正。MCP サーバー名が `constructor`/`toString` のとき、auto mode とバイパスモードで毎回権限確認が出る問題を修正
+
+出典: [Claude Code CHANGELOG（v2.1.292・v2.1.299・v2.1.301・v2.1.302）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 ---
 
