@@ -1,7 +1,7 @@
 ---
 title: "Claude Fable 5.1 / Mythos 5.1 完全ガイド — 何がアップデートされ、誰が使うべきか"
 date: 2026-09-03
-updatedDate: 2026-09-27
+updatedDate: 2026-10-17
 category: "Claude技術解説"
 tags: ["Claude Fable 5.1", "Claude Mythos 5.1", "Anthropic", "AIモデル", "Fable 5", "tool_choice", "thinking", "プロンプトキャッシュ", "Claude"]
 excerpt: "2026年9月1日、Anthropicは Claude Fable 5 / Mythos 5 の後継モデル Claude Fable 5.1（claude-fable-5-1）・Claude Mythos 5.1（claude-mythos-5-1）をリリースし、Fable 5.1がFableファミリーの既定モデルになった。価格は入出力ともFable 5と同額（$10/$50 per MTok）だが、キャッシュ読み取りが$0.25/MTokへ90%削減。API仕様面ではtool_choiceの`any`/`tool`指定が非対応化（400エラー）、thinking blocksの保持ルール変更、thinking display新モード「updates」（ベータ）が追加された。EU AI Act Article 50対応のテキストウォーターマーク（2026年8月2日以降リリースのモデルに適用、検出APIは規制当局・メディア・研究機関等に限定したprivate preview）も実装された。Mythos 5.1向けにはLife Sciences Verification Program（米国政府連携の招待制ベータ、ライフサイエンス研究向けに生物学セーフガードを緩和）も新設された。本記事は、Fable 5からの変更点を整理したうえで、既存Fable 5利用者が移行前に確認すべき破壊的変更と、Fable 5.1が向くユースケース・向かないユースケースを解説する。"
@@ -104,6 +104,24 @@ Mythos 5.1向けに、**Life Sciences Verification Program（LSVP）**が新設�
 ## サブスクプラン上の扱い
 
 Claude.ai / Claude Code / Coworkのサブスクプラン（Pro/Max/Team）での扱いについて、本記事執筆時点でFable 5.1固有のアナウンスはありません。価格がFable 5と同額であることから、[Fable 5のプラン別扱い](/mdTechKnowledge/blog/claude-fable-5-pro-plan-availability/)（Max/Team Premiumは週間上限50%として恒久組み込み、Pro/Team StandardはUsage Credits）と同枠組みが引き継がれると見られますが、公式発表があり次第、本記事を更新します。
+
+## 【2026-10-17追記】Dreams（リサーチプレビュー）が Fable 5.1 に対応
+
+**2026年10月1日**、Claude Managed Agents の **Dreams**（リサーチプレビュー）が、**Claude Fable 5.1・Claude Opus 5.5・Claude Sonnet 5.5** を選べるようになりました（公式リリースノート）。
+
+Dreams は、エージェントのメモリストアを Claude に整理させる機能です。
+
+- **仕組み**: 既存のメモリストアと、過去のセッション（1〜100件）のトランスクリプトを読み、重複の統合・古い項目や矛盾した項目の更新・新しい知見の追加をした**新しいメモリストア**を出力する。入力のストアは書き換えられないので、結果を確認して破棄もできる
+- **非同期ジョブ**: 通常は数分〜数時間。`instructions`（最大 4,096 文字）で「コーディング規約に集中する」のような方針を与えられる
+- **モデル指定**: 作成時の `model` に使うモデルを渡す。リサーチプレビュー中に使えるのは `claude-opus-5-5`・`claude-fable-5-1`・`claude-opus-5`・`claude-fable-5`・`claude-opus-4-8`・`claude-opus-4-7`・`claude-sonnet-5-5`・`claude-sonnet-5`・`claude-sonnet-4-6`
+- **課金**: 選んだモデルの通常の API トークン単価。入力セッションの数と長さにほぼ比例して増えるので、まず少数のセッションで試す。Fable 5.1 は単価が高い（$10/$50）ため、整理の品質を見ながら Sonnet 5.5 などと比べる価値がある
+- **利用条件**: リサーチプレビューで、アクセスの申請が必要。ベータヘッダーは `managed-agents-2026-04-01` に加えて `dreaming-2026-04-21` が要る
+
+Fable 5.1 の長い文脈への強さを、メモリの再編成に使うかどうかは運用判断です。公式は各モデルの品質差には触れていないため、本記事でも優劣は断定しません。
+
+出典: [Dreams — Managed Agents](https://platform.claude.com/docs/en/managed-agents/dreams) ／ [Anthropic Platform リリースノート（2026-10-01）](https://platform.claude.com/docs/en/release-notes/overview)
+
+---
 
 ## まとめ
 
