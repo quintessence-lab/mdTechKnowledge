@@ -1,10 +1,10 @@
 ---
 title: "Claude Code Plugin Marketplace ガイド — slash/hooks/サブエージェント/skills を束ねて配布・導入する"
 date: 2026-06-21
-updatedDate: 2026-10-09
+updatedDate: 2026-10-17
 category: "Claude技術解説"
 tags: ["Claude Code", "プラグイン", "Marketplace", "slash commands", "hooks", "サブエージェント", "skills", "MCP", "design"]
-excerpt: "Claude Code のプラグインは、slash commands・hooks・サブエージェント・skills・MCP サーバーを1つのパッケージに束ねて配布・導入できる仕組みです（2025年10月 公開ベータ）。/plugin コマンドでの検索・インストール、公式マーケットプレイス claude-plugins-official とサードパーティ/自前マーケットプレイスの追加方法、plugin.json の構成、作成の流れまでを公式ドキュメントベースで整理します。2026-08-17（v2.1.234）追加のバンドルスキル`/design`（Research Preview）、2026-09-04（v2.1.261）追加の`/skill-doctor`（未使用スキルとコンテキストコストの可視化）、2026-09-11（v2.1.269）追加の`claude plugin eval`（プラグインのevalスイート実行・ノープラグインベースラインとのスコア比較）も追記。 2026-09-29更新: 2026-09-23に公開された Claude Marketplace（2,000以上のコネクタ・プラグイン、3セクション構成）と、9/25に開設されたプラグイン申請窓口を追記。2026-10-03更新: `claude plugin configure`（v2.1.285）とClaude Mods・組み込みMod「You Should Know」（v2.1.287）を追記。2026-10-09更新: Modsの仕組み（イベントハンドラ・設定hookとの使い分け・動作環境・`--safe-mode`/`allowManagedModsOnly`・信頼の判断）と組み込みMod一覧、v2.1.288〜295のMod関連追加（`agent.spawn`・`claude plugin install --marketplace`・`$.ui.notify`等）を追記。"
+excerpt: "Claude Code のプラグインは、slash commands・hooks・サブエージェント・skills・MCP サーバーを1つのパッケージに束ねて配布・導入できる仕組みです（2025年10月 公開ベータ）。/plugin コマンドでの検索・インストール、公式マーケットプレイス claude-plugins-official とサードパーティ/自前マーケットプレイスの追加方法、plugin.json の構成、作成の流れまでを公式ドキュメントベースで整理します。2026-08-17（v2.1.234）追加のバンドルスキル`/design`（Research Preview）、2026-09-04（v2.1.261）追加の`/skill-doctor`（未使用スキルとコンテキストコストの可視化）、2026-09-11（v2.1.269）追加の`claude plugin eval`（プラグインのevalスイート実行・ノープラグインベースラインとのスコア比較）も追記。 2026-09-29更新: 2026-09-23に公開された Claude Marketplace（2,000以上のコネクタ・プラグイン、3セクション構成）と、9/25に開設されたプラグイン申請窓口を追記。2026-10-03更新: `claude plugin configure`（v2.1.285）とClaude Mods・組み込みMod「You Should Know」（v2.1.287）を追記。2026-10-09更新: Modsの仕組み（イベントハンドラ・設定hookとの使い分け・動作環境・`--safe-mode`/`allowManagedModsOnly`・信頼の判断）と組み込みMod一覧、v2.1.288〜295のMod関連追加（`agent.spawn`・`claude plugin install --marketplace`・`$.ui.notify`等）を追記。 2026-10-01（v2.1.287）に加わった新しい拡張タイプ「Mods」（TypeScript/JavaScript の関数でプロンプトの書き換え・UI の追加・組み込み機能の置き換えができる）の仕組みと、v2.1.299〜302 までの追加も反映。"
 draft: false
 ---
 
@@ -338,6 +338,25 @@ my-plugin/
 とくに **v2.1.292 の `--marketplace` 付きインストール**は、本記事前半の「`/plugin marketplace add` → `/plugin install`」の2手順を1コマンドにまとめられます（例: `claude plugin install <plugin> --marketplace <source>`）。組織のポリシー検査は従来どおり適用されます。
 
 出典: [Mods overview（公式ドキュメント）](https://code.claude.com/docs/en/plugins/mods/overview) / [Claude Code CHANGELOG（v2.1.288〜v2.1.295）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
+
+---
+
+## 【2026-10-17追記】Mods のその後 — v2.1.296〜v2.1.302 の追加
+
+Mods（v2.1.287 で登場。仕組みは上の【2026-10-01追記】【2026-10-09追記】を参照）は、その後も毎週のように機能が足されています。Claude Code の CHANGELOG から、Mod とプラグインに関わる変更を整理します。
+
+- **v2.1.296**: `/plugin` で、同名の別プラグインが有効なためにフックが除外されているプラグインに注記が出る。`$.agent.register` が、再読み込みや削除の後も動き続けていた Mod のフックから成功してしまう問題を修正（呼び出しは拒否される）。`$.http.fetch` が `Content-Length` 4 MiB 超の `HEAD` を拒否する問題を修正。名前が `constructor` などのマーケットプレイスの追加で内部エラーになる問題を修正
+- **v2.1.299**: `$.prompt.media`（managed settings で入れた Mod の `prompt.submit` フックが、添付の画像・文書のバイト列を読める）と `$.session.identity()`（サインインの方法、組織、メール）を追加。`Text` に `size`・`weight`・`mono`・`tabular` を追加（`bold` は `weight` に置き換えられ非推奨）、`Box` に名前付きの余白（`xs`〜`xl`）を追加。スキルのフロントマター・ソース・プラグイン名・ファイルパスを Mod の `skill.prompt` フックが受け取れる。`session.append` に `queue` を追加。`/plugin` と `claude plugin validate` で、組織が管理する環境でスキップされる Mod のフックが分かる。リモートで無効化された Mod は、ターンの合間にアンロードされる
+- **v2.1.300**: `virtualText`（プロンプト欄に表示するだけで、下書きにも送信文にも入らないテキスト）、`prompt.change` フック（履歴の呼び出し・クリア・取り消し・プラグインによる埋め込みなど、タイピング以外でプロンプト欄が変わったとき）、`$.ui.view({ agentId })`（エージェントのトランスクリプトをメイン画面に表示）、RTL 文字列用の `dir` を追加。`agent.spawn` フックが、ワークフローエージェントの `prompt` と `model` を**書き換えられる**ようになった（従来は拒否のみ）
+- **v2.1.301**: Mod の `Input` に `rows`（複数行入力。Enter で送信、Shift+Enter かバックスラッシュ＋Enter で改行）。質問ダイアログの上に描く木構造が、VS Code とデスクトップ・モバイルアプリでは Markdown と最大 48 行を扱える（ターミナルは 12 行のプレーン表示）。Mod フックの `.catch` は、フックが例外を投げたかタイムアウトしたときだけ実行する挙動に変更。`$.env.set` は設定または解除後に `{}` で、書き込めないときは理由つきの `{ deny }` で解決する
+- **v2.1.302**: 起動が速くなった（多数のプラグインを有効にしているとき、特に Windows で）。プラグインのマーケットプレイスが、git の reftable 形式のリポジトリで毎回再クローンされる問題を修正
+
+運用上の注意点を2つ挙げます。
+
+- **managed settings 経由の Mod は、できることが広い**（添付メディアの読み取り、サインイン情報の参照）。組織で配る場合は、配布する Mod の中身をレビューし、`/plugin` の注記に出る「スキップされるフック」を確認する
+- プラグインのテストは `claude plugin test`、評価は `claude plugin eval` で行う（v2.1.299 で `--disallow-tools` が追加され、Agent などの組み込みツールを評価から外せる）
+
+出典: [Claude Code CHANGELOG（v2.1.296〜v2.1.302）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md) ／ [Mods overview（公式ドキュメント）](https://code.claude.com/docs/en/plugins/mods/overview)
 
 ---
 
