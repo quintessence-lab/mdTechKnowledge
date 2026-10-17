@@ -4,7 +4,7 @@ date: 2026-04-26
 category: "Claude技術解説"
 tags: ["Claude", "Cowork", "エージェント", "Claude Desktop", "Computer Use", "KPMG", "Claude for Legal", "Finance Agents"]
 excerpt: "AnthropicのデスクトップAIエージェント機能「Claude Cowork」のリリースから2026年4月GA移行・Live Artifacts・Amazon Bedrock対応・Claude for Small Business・PwC 拡大パートナーシップ・KPMG Digital Gateway（276,000人 / 138 か国 / 2026-05-19）・Claude for Legal（20+ MCPコネクタ・12 practice-area プラグイン、2026-05-12）・Finance Agents 10 テンプレート（2026年5月）・Cowork 5時間制限2倍キャンペーン（2026年6月）・エンタープライズ向けコネクタ一括認可EMA（Okta／2026-06-18ベータ）・Cowork の Web/iOS/Android 展開とリモートセッション（2026-07-07）・Claude for Teachers 米国K-12教育者向け無料プログラム（2026-07-14）・Chrome サイドパネルの完全 Cowork セッション化（会話とスキル/コネクタを desktop/web/mobile と共有、ブラウザ内クリック・フォーム入力等の実アクション対応、Max/Team から展開、2026-08-12）・Claude Tag が新体験へ完全移行（チャンネルメモリ・スタンディングインストラクション・ambient mode、2026-08-03）・Cowork Built-in Browser（デスクトップアプリ専用の隔離ブラウザでナビゲート・クリック・入力、ユーザーのタブ/パスワードは非共有、2026-08-26）・Smart Reports（Enterprise向けベータ、チームの利用状況・コスト・スキル候補を自動分析）・CoworkとChatが1つのClaudeに統合（Claude Docs/Claude Slides新設・Design会話内対応、Pro/Maxから数週間かけてロールアウト、2026-09-16）・Claude Tagがチャンネルでの個人コネクタに対応（レビューモード/オートモード、Teamプランでロールアウト中、2026-09-24）・Claude for Google Workspace（Docs/Sheets/Slidesのサイドバー＋コネクタ、公開ベータ、2026-10-06）・Claude Desktop v2.16120.0〜v2.31226.0のCowork関連更新（スケジュールタスクの既定がAutomatically approveに、macOS 14以降必須、11月10日のUnified Claude全組織オン）までのアップデートをリリース順に整理。"
-updatedDate: 2026-10-09
+updatedDate: 2026-10-17
 draft: false
 ---
 
@@ -543,6 +543,29 @@ Docs・Slides・Design（会話内）で作った成果物は、いずれも**1�
 > **運用上の注意**: スケジュールタスクの既定が「Automatically approve」になる変更（10/1）は、**無人実行で確認なしに使えるツールが増える**ことを意味します。組織で承認を厳格に運用している場合は、管理者設定でこの既定が許されているかを確認してください。
 
 出典: [Claude Desktop チェンジログ（公式）](https://claude.com/docs/cowork/changelog)
+
+---
+
+## 【2026-10-17追記】Dashboards・Motion の追加と Desktop の更新（10/9〜10/15）
+
+### Docs・Slides・Design のベータ終了と、Dashboards・Motion（10月8日 PT）
+
+Cowork と同じ「one Claude」の中で使うアーティファクトに動きがありました（公式の案内ページ「Claude Dashboards and Motion」より）。
+
+- **Docs・Slides・Design** はベータを終了し、**Free を含む全プランで利用可能**になりました。Docs・Slides・Design は 10月15日にデフォルトで有効化されます（管理者はそれ以前でも有効化可能）
+- **Claude Dashboards**（有料プランのベータ）: データウェアハウス（Redshift・BigQuery・ClickHouse・Databricks・Snowflake）や Salesforce などのコネクタにつなぎ、平易な質問からダッシュボードを作ります
+- **Claude Motion**（Team / Enterprise のベータ）: プロンプトから短いアニメーション解説を作り、MP4 で出力します。動画生成モデルは使わず、コードで動かすアニメーションです
+- Dashboards と Motion は**デフォルトで無効**で、管理者が「Organization settings > Artifacts」で有効にします
+
+詳しくは [Claude Design 解説](/mdTechKnowledge/blog/claude-design-overview/) と [Claude Docs & Slides 解説](/mdTechKnowledge/blog/claude-docs-slides-guide/) にまとめています。Google Workspace 側の動きは、直前の「【2026-10-09追記】」の章を参照してください。
+
+### Claude Desktop の更新（10月9日〜10月15日）— Cowork に関わる変更
+
+- **v2.31226.1（10/9）**: Cowork に利用者向けの変更なし（同梱 Claude Code 2.1.295）
+- **v2.37337.1（10/13）**: 「ワークスペースのディスクが一杯」のメッセージを、整理すれば作業を続けられる量が空くよう改善。オフラインやネットワーク制限下でアーティファクトのチャート・表・ダイアグラムが空白のままになる問題を、ライブラリをアプリに同梱して修正。管理者がローカル VM を無効にしている PC で、Cowork タスクがクラウドではなくその PC で起動しようとする問題を修正。送信できなかったメッセージが送信済みに見える問題、スケジュールタスクが初回実行後に編集できない問題、新規タスクの最初のメッセージがアプリ再読み込みで失われる問題も修正（同梱 2.1.295）
+- **v2.42304.0（10/15）**: macOS の computer use が、Homebrew のフォルダやシェルの起動ファイルなど、隠し・保護されたフォルダにファイルを保存しない、また隠し・保護された名前を文書に付けないよう変更。HIPAA 制限下の組織では、設定の Import でサードパーティアプリのローカル MCP サーバーを提示しないよう変更。バックグラウンドアプリのビジーなページに文字が二重に入力される問題、Windows でワークスペースが接続タイムアウトで起動しないことがある問題なども修正（同梱 Claude Code 2.1.299）
+
+出典: [Claude Desktop チェンジログ（公式）](https://claude.com/docs/cowork/changelog) ／ [Claude Dashboards and Motion — Claude](https://claude.com/resources/articles/dashboards-and-motion)
 
 ---
 
