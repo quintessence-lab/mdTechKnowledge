@@ -1,7 +1,7 @@
 ---
 title: "Claude Design 解説 — Opus 4.7搭載のビジュアル生成新プロダクト"
 date: 2026-04-26
-updatedDate: 2026-08-25
+updatedDate: 2026-10-17
 category: "Claude技術解説"
 tags: ["Claude", "Claude Design", "Anthropic Labs", "デザイン", "Opus 4.7", "Claude Code", "/design"]
 excerpt: "2026年4月17日リサーチプレビュー開始のClaude Design。Opus 4.7の高解像度ビジョンで、プレーン英語からプロトタイプ・スライド・ワンページャー・デザインシステムを生成。Pro/Max/Team/Enterprise向け。Figma株7%下落の市場インパクトも整理。2026年8月には/designコマンドとしてClaude Code CLI/Desktopに統合（research preview）。"
@@ -9,6 +9,8 @@ draft: false
 ---
 
 ## はじめに
+
+> **【2026-10-17追記】本記事の「リサーチプレビュー」「Free は不可」は、2026年10月8日（PT）時点で古くなっています。** Docs・Slides・Design はベータを終了し、Free を含む全プランで使えるようになりました。経緯と、同日に加わった Dashboards・Motion は本記事の第「【2026年10月】」章を参照してください。
 
 2026年4月17日、Anthropic Labsは**Claude Design**をリサーチプレビューとして公開しました。プレーンな英語で「こういうものを作りたい」と伝えるだけで、プロトタイプ・スライド・ワンページャー・デザインシステムを生成できる新プロダクトで、最新の**Claude Opus 4.7**の高解像度ビジョン能力を全面的に活用しています。
 
@@ -118,6 +120,8 @@ Claude Designの中核は、**Claude Opus 4.7のビジョン能力**です。Opu
 | **Team** | リサーチプレビューで利用可 |
 | **Enterprise** | リサーチプレビューで利用可 |
 
+> 上の表は 2026年4〜8月時点の記録です。2026-10-08 以降は全プラン（Free 含む）で利用できます。
+
 注目点は、`/code`系のクラウド機能（CCR・Routinesなど）が**Max以上**を要求するのに対し、Claude Designは**Proから利用可能**なことです。デザインタスクをより広いユーザー層に開いている設計と読めます。ただしリサーチプレビューのため段階的ロールアウトであり、有効化のタイミングはアカウントによって異なります。
 
 ---
@@ -188,11 +192,35 @@ Claude Codeの実行環境については、関連記事「[Claude Codeの実行
 
 ---
 
+## 【2026年10月】ベータ終了と「Claude の中への統合」、Dashboards・Motion の追加
+
+2026年10月8日（PT）、Anthropic は Claude の新しいアーティファクト群をまとめて更新しました（公式の案内ページ「Claude Dashboards and Motion」より）。
+
+**Docs・Slides・Design がベータを終了**
+- ベータを終了し、**Free を含むすべてのプランで利用可能**になりました。Claude で作られた文書・スライド・デザインは累計 4,500 万件以上とされています
+- Enterprise 向けにアーティファクトの **CMEK 対応**と、管理者が選ぶアーティファクトテンプレートが加わりました
+- 管理者設定: Docs・Slides・Design は **10月15日にデフォルトで有効化**されます（それ以前でも管理者が即時に有効化可能）
+
+**Claude Design は「Claude の会話の中」に統合**
+- Design はすべての Claude の会話の中で使えるようになり、独立したサイトは取り込まれていきます
+- 独立版の **claude.ai/design は 12月14日まで**使えます。Claude Code v2.1.302 の `/design-sync` と `/design-login` にも「2026年12月14日までに終了する」という通知が入りました
+- 管理者はアーティファクトのページから「Migrate team design systems」でチームのデザインシステムを移行できます。独立版のデザインシステムはサイト閉鎖まで変わりません
+- 閉鎖後は、独立版のチャットとプロジェクトコメントが利用できなくなり、独立版プロジェクトの公開リンクも機能しなくなります。必要な内容は閉鎖前に移してください
+
+**新しく加わった2つのベータ**
+- **Claude Dashboards**（有料プランのベータ）: 平易な質問から Claude がデータにクエリを投げてダッシュボードを作ります。各数値はその背後のクエリにリンクし、各チャートに最終更新時刻が出ます。接続先は Amazon Redshift・BigQuery・ClickHouse・Databricks・Snowflake と、Salesforce などの CRM・コネクタです。深い分析は BI ツール（Amplitude・Grafana・Hex・Mixpanel・Omni・Perplexity・PostHog・Sigma へのハンドオフ）に渡す想定で、公式は Dashboards を「素早い探索的な質問向き」と位置づけています。Looker・Tableau・monday.com・Databricks Genie は「近日対応」とされています
+- **Claude Motion**（Team / Enterprise のベータ）: プロンプトから短いアニメーション解説を作り、エディターまたは Claude への依頼で編集して MP4 でダウンロードできます。動画生成モデルは使わず、テキスト・チャート・図形・画像を動かす**コードのアニメーション**なので、文字・数値・タイミングを自由に編集できます。生成映像や AI 生成の人物は出ません
+- どちらも**デフォルトでは無効**で、管理者が「Organization settings > Artifacts」で有効化します
+
+出典: [Claude Dashboards and Motion — Claude](https://claude.com/resources/articles/dashboards-and-motion) ／ [Claude Code CHANGELOG（v2.1.302）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
+
+---
+
 ## まとめ
 
 - Claude Designは2026年4月17日にAnthropic Labsが公開したビジュアル生成プロダクト
 - **Opus 4.7の高解像度ビジョン**でプロトタイプ・スライド・ワンページャー・デザインシステムを生成
-- **Pro/Max/Team/Enterprise**で利用可能（リサーチプレビュー）
+- 2026年4月の公開時は Pro/Max/Team/Enterprise 向けのリサーチプレビュー。**2026年10月8日にベータを終了し、Free を含む全プランで利用可能に**（独立版 claude.ai/design は12月14日まで）
 - 発表当日にFigma株が約7%、Adobeが2.7%下落するなど市場インパクトは大きい
 - Anthropicの公式ポジションは「Canva/Figmaの補完」だが、**「ブリーフから初版まで」のレイヤーを単一ツールで埋める**点で破壊的
 - Claude Code・Coworkとは独立した別プロダクトで、生成物をClaude Codeで本実装に繋ぐ連携も可能
