@@ -1,7 +1,7 @@
 ---
 title: "Claude Opus 5.5 完全ガイド — Fable 5.1 級の性能を40%安く・4つの破壊的変更・Opus 5 からの移行"
 date: 2026-09-26
-updatedDate: 2026-09-29
+updatedDate: 2026-10-17
 category: "Claude技術解説"
 tags: ["Claude", "Opus 5.5", "Anthropic", "ベンチマーク", "API", "thinking", "Preserved Thinking", "移行ガイド", "Effort Control", "computer use", "Claude Code", "Artificial Analysis"]
 excerpt: "2026-09-22（PT）リリースの Claude Opus 5.5（claude-opus-5-5）を、公式発表・公式 API docs・システムカード・独立検証（Artificial Analysis）で徹底解説。単価は $4/$20 で Opus 5 比20%減、キャッシュ読取は $0.20 で60%減、タスクあたりのトークン削減も合わせて典型ワークロードの総コストは40%減。そのうえで Terminal-Bench 4.0 66.4%・GDPval-AA v2.1 1846 Elo など主要ベンチで Fable 5.1 と GPT-6 Astra を上回り、出力も Opus 5 より30%超速い。一方で API は Opus 5 から4つの破壊的変更（thinking の無効化不可・tool_choice の any/tool 不可・thinking ブロックのモデル紐付け・Claude API と Google Cloud での computer_20251124 廃止）があり、既定 effort が medium に下がった点、2026-08-31 以降作成の API アカウントで Preserved Thinking（蒸留対策）により会話の途中改変が400になる点など、モデルIDの差し替えだけでは済まない。Claude Code v2.1.280 で既定 Opus になり、Pro / Team Standard の既定モデルも Sonnet から Opus に変わった。移行チェックリストと、システムカードが示す回帰点（貼り付けテキスト内の悪意ある指示に従いやすい等）も整理する。"
@@ -50,7 +50,7 @@ Opus 5（2026-07-24）の後継で、Anthropic は **「Fable 5.1 と同等の�
 - **「40%減」は単価だけの話ではありません**。公式の説明は「1トークンあたりの単価が Opus 5 より安く、1タスクあたりのトークンも少ないため、合わせて40%のコスト減になる」です。比較条件は**既定設定・典型的なワークロード**です。
 - **単価そのものは入出力とも20%減**、**キャッシュ読取は60%減**です。キャッシュ読取の $0.20 は入力単価の0.05倍で、ほかのモデル（0.1倍）より割安な設定になっています。
 - **1M コンテキスト全域が通常単価**で、長文の割増はありません。推論を米国内に限定する `inference_geo: "us"` を指定すると1.1倍になります。
-- **fast mode は research preview**で、Claude API のみ（Managed Agents を含む）の提供です。Bedrock・Claude Platform on AWS・Google Cloud・Foundry では使えず、利用にはアカウント担当経由の申請か waitlist 登録が必要です。Batch とは併用できません。
+- **fast mode は 2026-10-15（PT）にリサーチプレビューを終了**しました（Opus 5.5 のみ。アクセス申請は不要になり、`fast-mode-2026-02-01` ベータヘッダーも不要。送り続けても動く）。Start・Build・Scale の各ティアに既定のレート制限が設定されています。Claude API（Managed Agents を含む）に加え、Azure でホストされる **Claude in Microsoft Foundry** でも使えます。Bedrock・Claude Platform on AWS・Google Cloud では使えません（2026-10-15 時点の公式リリースノート）。Batch とは併用できません。**Opus 5 と Opus 4.8 の fast mode はリサーチプレビューのまま**で、ベータヘッダーを送り続ける必要があります。
 
 他社を含めた単価の比較は [AIトークン単価の価格破壊が止まらない](/mdTechKnowledge/blog/llm-token-price-comparison-2026/) を参照してください。
 
@@ -217,11 +217,11 @@ Fable 5.1 で導入された**蒸留対策（anti-distillation）の safeguard**
 
 | プラットフォーム | 提供 | 備考 |
 |:---|:---:|:---|
-| Claude API | ○ | 全顧客。fast mode もここだけ |
+| Claude API | ○ | 全顧客。fast mode も利用可（Foundry でも利用可） |
 | Amazon Bedrock | ○ | 旧 computer use ツールが引き続き動く |
 | Claude Platform on AWS | ○ | computer use のツール版は未確認 |
 | Google Cloud | ○ | 新しい computer use ツールセットが必須 |
-| Microsoft Foundry | ○ | computer use のツール版は未確認 |
+| Microsoft Foundry | ○ | computer use のツール版は未確認。Azure ホストのデプロイは fast mode も利用可（2026-10-15〜） |
 
 Priority Tier は Opus 5.5 では非対応です。
 
@@ -252,7 +252,7 @@ Pro プランで既定が Opus になったことで、**同じ使い方でも�
 
 **【2026-09-29更新】Claude Sonnet 5.5 は2026年9月28日（PT）にリリースされました。** Sonnet 5 と同じ $2/$10 で、出力が30%以上速くなっています。Terminal-Bench 4.0 では 70.6% と Opus 5.5（66.4%）を上回り、GDPval-AA でも Opus 5.5 と2点差です。公式は「Opus 5.5 は慎重な判断を要する複雑な作業向け、Sonnet 5.5 は範囲の明確な日常タスクやバグ修正に最も強い」と役割を分けています。詳しくは [Claude Sonnet 5 完全ガイド](/mdTechKnowledge/blog/claude-sonnet-5-guide/) の追記を参照してください。
 
-**Haiku 5.5** は「大量処理とコスト重視の用途向けに、数週間以内に Claude 5.5 ファミリーに加わる」と予告されています。**日付・価格・仕様は未公表**です。Claude の軽量級は Haiku 4.5（$1/$5）のまま他社の最新軽量級より出力単価が高い状態なので、Haiku 5.5 の価格が次の注目点になります。
+**【2026-10-17更新】Haiku 5.5 も 2026年10月7日（PT）にリリースされました。** 価格は $0.10/$0.50 で、100,000 トークンを超えるプロンプトは $0.50/$2.50 です。詳細は [Claude Sonnet 5.5 / Haiku 5.5 完全ガイド](/mdTechKnowledge/blog/claude-sonnet-5-5-haiku-5-5-guide/) を参照してください。以下は予告時点（9月29日）の記述です: Haiku 5.5 は「大量処理とコスト重視の用途向けに、数週間以内に Claude 5.5 ファミリーに加わる」と予告されていました。
 
 ## まとめ
 
