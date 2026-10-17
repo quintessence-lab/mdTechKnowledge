@@ -1,7 +1,7 @@
 ---
 title: "Anthropic、SEC へ機密ドラフト S-1 提出 — 『公式発表に数字はない』IPOプロセスとPBC上場の論点"
 date: 2026-06-06
-updatedDate: 2026-10-09
+updatedDate: 2026-10-17
 category: "一般リサーチ"
 tags: ["Anthropic", "IPO", "S-1", "SEC", "Public Benefit Corporation", "Long-Term Benefit Trust", "上場", "資本市場", "OpenAI", "SpaceX", "メガIPO"]
 excerpt: "2026年6月1日、Anthropic は SEC へ Form S-1 の機密ドラフト登録届出書を提出し IPO 手続きを開始した。本記事は『公式発表は Rule 135 準拠の定型文で具体的な数値を一切含まない』という事実の確認から始め、機密提出（confidential filing）の仕組み、評価額$965B・年次ランレート$47Bの出典の切り分け、未定事項（株式数・価格・市場・ティッカー）、想定主幹事、2026メガIPO 3社（SpaceX/OpenAI/Anthropic）の横比較、そして PBC × Long-Term Benefit Trust という独特のガバナンスが上場でどう論点化するかを整理する。2026-08追記: 8〜9月のロードショー本格化・10月Nasdaq上場・$60B超調達という観測報道、評価額ターゲット$2兆観測・収益ランレート$65B突破・Q2収益$11.5B（いずれも報道・投資家推計ベース、公式未確認）を追記。公開S-1提出は2026年8月末見込みだが8月26日時点でSEC EDGAR未掲載という状況、2026年9月3日確定間近の$15Bプレクレジットファシリティ（Morgan Stanley主導、目標$10Bから拡大）とIPO開始時期の10月中旬への延期、Q2調整済み営業利益$559M超の実績確定・Q3も2四半期連続黒字化見通しを株主に通知・粗利率80%超（分配前・学習コスト控除前）、2026年9月25日報道の創業者7名が合計50.1%の議決権確保を株主に要請（LTBTは取締役会指名権を維持）、上場先をNasdaqに選択・IPO本格始動が10月から11月へ後ろ倒し（報道ベース）、IPO富がもたらす新しい政治献金ネットワークの形成も追記した。2026-10-09更新: 10月1日報道の投資家向けデー（10/14・サンフランシスコ本社）とロードショー開始（早ければ11月9日の週）・感謝祭前の上場観測（評価額$1.8兆〜$2兆は投資家側の見積もり）を追記。"
@@ -358,6 +358,26 @@ CEO の Daniela Amodei は IPO に先立つインタビュー（TechCrunch, 6/4�
 出典: [Bloomberg: Anthropic Is Said to Plan Pre-IPO Investor Day as Listing Nears（2026-10-01）](https://www.bloomberg.com/news/articles/2026-10-01/anthropic-is-said-to-plan-pre-ipo-investor-day-as-listing-nears) / [Yahoo Finance（StockTwits転載）: Anthropic Reportedly Sends Investors IPO Invitations Ahead Of Potential Thanksgiving Debut（2026-10-02）](https://finance.yahoo.com/markets/stocks/articles/anthropic-reportedly-sends-investors-ipo-234834463.html) / [Implicator.ai: Anthropic Could Start IPO Roadshow Week of Nov. 9（2026-10-02）](https://www.implicator.ai/anthropic-could-start-ipo-roadshow-week-of-nov-9-putting-debut-before-thanksgiving/)
 
 ---
+
+### 【2026-10-17追記】投資家向けデー直前の状況 — 公開 S-1 は未確認、当日の内容は一次情報なし
+
+10月12日付の FinanceFeeds の整理（二次媒体）と、追加の検索結果から、2026-10-17 時点で確認できることを切り分けます。
+
+**確認できていること（出典つき）**
+- 10月1日の Bloomberg 報道のとおり、**10月14日にサンフランシスコ本社で、選定された機関投資家向けの会合**が予定されていた（Anthropic はコメントを控えている）。公開の IPO 説明会でも、確定したロードショーでもない
+- FinanceFeeds によれば、**10月11日の時点で、EDGAR に公開版の S-1 は見つからなかった**。Anthropic が機密ドラフトを提出したと発表した 6月1日から 132 日目にあたる
+- 日程（ロードショー開始が 11月9日の週、取引開始が感謝祭の 11月26日より前）は、引き続き **Bloomberg 報道であり、Anthropic は確認していない**。FinanceFeeds によれば、以前の Reuters 報道では「マーケティング開始は 10月中旬ごろ」とされていたので、見込みの日程は後ろにずれている
+- 上場先（Nasdaq か NYSE か）、ティッカー、価格帯は未発表。評価額は会社の発表値として 5月28日の Series H の $965B（ポストマネー）があり、IPO 時の評価額は FT などが $1.8 兆〜$3 兆の範囲を報じているが、**Anthropic が目標を示したわけではない**
+- 調達額について、NYT が 8月に「$1,000 億超になり得る」と報じている（関係者を情報源とする報道で、会社が確認した目標ではない）
+
+**確認できていないこと**
+- 10月14日の会合の**実際の内容や結果**を伝える報道は、本記事の作成時に一次情報も信頼できる二次情報も見つかりませんでした。Issue には「10/14 に投資家向けプレゼンが報道された」とありますが、予定の報道と、実施後の報道は別物です。確認でき次第、追記します
+- FinanceFeeds は SEC の「ロードショーの 15 日以上前までに公開提出」という規則から、**10月23日（金）ごろが実務上の提出期限**になるという計算を示しています。これは同媒体自身の算出で、公式の日程ではありません
+
+**この記事での扱い**: 公開 S-1 が EDGAR に出た時点で、第3章の「報じられている数字」を、S-1 の記載（収益、損失、リスク要因、LTBT の説明など）に置き換えて再構成する予定です。それまでは、本記事の数字はすべて「報道ベース」として読んでください。
+
+出典: [FinanceFeeds: Anthropic's 14 October investor day nears but its S-1 still isn't public（2026-10-12）](https://financefeeds.com/anthropics-14-october-investor-day-nears-but-its-s-1-still-isnt-public-the-ipo-timeline-explained) ／ [Bloomberg: Anthropic Is Said to Plan Pre-IPO Investor Day as Listing Nears（2026-10-01）](https://www.bloomberg.com/news/articles/2026-10-01/anthropic-is-said-to-plan-pre-ipo-investor-day-as-listing-nears)
+
 
 ## まとめ
 
