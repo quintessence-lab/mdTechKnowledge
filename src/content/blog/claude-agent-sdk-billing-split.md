@@ -1,7 +1,7 @@
 ---
 title: "【6/15施行は撤回】Claude Agent SDK / claude -p 課金分離ガイド — 当日に一時停止、現状と再開への備え"
 date: 2026-06-06
-updatedDate: 2026-06-17
+updatedDate: 2026-10-17
 category: "Claude技術解説"
 tags: ["Claude", "Anthropic", "Agent SDK", "claude -p", "課金", "クレジットプール", "Claude Code", "GitHub Actions", "料金", "一時停止"]
 excerpt: "2026年6月15日に施行予定だった『Agent SDK クレジットプール』への課金分離は、施行予定日当日に Anthropic が公式に一時停止（pause）した。現在 Agent SDK・claude -p（headless）・GitHub Actions は従来どおりサブスク枠から消費され、別クレジットプールは未稼働。本記事は『何が起きたのか（撤回の経緯）』『当初発表されていた設計の中身』『再開に備えて把握しておくべきこと』を公式ヘルプセンター記事（一次ソース）ベースで整理する。【2026-06-17更新】施行は撤回・一時停止。慌てて設定する必要はないが、再開に備えた棚卸しは有効。"
@@ -13,6 +13,7 @@ draft: false
 > - **2026年6月15日に施行予定だった**「Agent SDK クレジットプール」への課金分離は、**施行予定日当日に Anthropic が公式に一時停止（pause）**しました。
 > - 一次ソースである公式サポート記事の冒頭に、こう明記されています — **"We're pausing the changes to Claude Agent SDK usage described below. For now, nothing has changed."**（以下に記載の Agent SDK 利用に関する変更を一時停止します。現時点では何も変わっていません）
 > - **現在、Agent SDK・`claude -p`（headless）・Claude Code GitHub Actions・サブスク認証のサードパーティアプリは、従来どおりサブスクリプションの利用上限から消費**されます。独立クレジットプールは**稼働していません**。
+> - **【2026-10-17追記】別の形での進展があります。** 2026-10-07（PT）、Claude **Max・Team プランに月次の API クレジットが付与**されました。6/15 の設計（Agent SDK 専用の月額クレジットプール）とは別物で、Agent SDK の利用がサブスク枠から API クレジット側に移ったわけではありません。詳細は第11章。
 > - したがって、**いま慌ててクレジットを claim する・usage credits を設定する必要はありません**（claim の対象自体が現在は提供されていません）。
 > - ただし **「撤回＝完全に白紙」ではありません**。Anthropic は「サブスク利用の実態により合う形で計画を更新中で、何かが発効する前に改めて告知する」と表明しており、**形を変えて再開する可能性**があります。当初設計の理解と、自分の自動実行のトークン量の把握はしておくと、再開時に慌てずに済みます。
 >
@@ -176,6 +177,33 @@ draft: false
 | 「対話型 Claude Code も有料クレジットになる」 | ❌ 当初設計でも対象外。現在ももちろん従来どおり |
 | 「余ったクレジットは翌月に繰り越せる」 | ❌ 当初設計では**ロールオーバーなし**（再開時も同様の見込み） |
 | 「チームでクレジットを共有できる」 | ❌ 当初設計では**ユーザー単位**でプール・共有不可 |
+
+---
+
+## 11. 【2026-10-17追記】Max・Team の月次 API クレジット — 6/15 設計とは別の形で実現
+
+**2026年10月7日（PT）**、Anthropic は Claude **Max と Team プランに、月次の API クレジットを付与**すると公式に発表しました（Platform リリースノート、ヘルプセンターのリリースノート、「API credits for Max and Team plans」）。本記事の冒頭で扱った「プログラマティック利用を別枠で見る」という方向が、**撤回された設計とは別の形**で現れたものです。
+
+**6/15 の設計との違い**
+
+- 6/15 の設計は、サブスクで賄っていた Agent SDK・`claude -p`・GitHub Actions を、専用のクレジットプール（API 従量レート）に移すものでした。**今回の API クレジットは、その移行ではありません**
+- 今回のクレジットは、自分のアプリやエージェントを **Claude Platform（Console）上で動かす**ための資金です。**Claude Code は対象外**で、Claude アプリ内の追加使用（extra usage）も対象外です
+- 対象は Claude API・Claude Managed Agents・Claude Agent SDK・プレイグラウンド。Agent SDK は対象に含まれますが、これは **Console の API クレジットで Agent SDK を動かせる**という意味で、サブスク認証の Agent SDK の課金が変わったという意味ではありません。サブスクの利用上限の扱いは、本記事の冒頭に書いたとおり従来どおりです
+- Pro と Free と Enterprise は対象外です
+
+**金額と条件**（公式ドキュメントより）
+
+- Max 5x は月 $100、Max 20x は月 $200
+- Team は Standard シートが月 $20、Premium シートが月 $100。全シート分が**ひとつの残高にまとめられ、上限は月 $500**。割引 Team プラン（非営利・研究者向け）も同額
+- 受け取るには Claude Console の組織を 1 つリンクする（Max は「Settings > Billing」、Team は「Organization settings > Billing」。Team は Primary Owner か Owner、Console 側は Owner・Admin・Billing のいずれかの役割が必要）。1つのプランが紐づけられる Console 組織は1つで、自分では変更できない
+- 新規加入者は、対象プランで 7 日経過してから受け取れる
+- 請求サイクルごとに更新され（年額プランは毎月）、**未使用分は期限切れで繰り越しなし**。使うときはクレジットが先に消費され、購入済みクレジットはその後
+- クレジットが尽きると、購入または自動リロードを設定するまで API リクエストは止まります。**プランに課金されることはありません**
+- Claude Platform on AWS・Amazon Bedrock・Google Cloud・Microsoft Foundry では使えない
+
+費用面での位置づけは [【2026年9月版】Claude 全プラン費用比較](/mdTechKnowledge/blog/claude-plans-cost-comparison-2026-09/) の第8章にまとめています。
+
+出典: [API credits for Max and Team plans](https://platform.claude.com/docs/en/about-claude/api-credits-for-subscribers) ／ [Anthropic Platform リリースノート（2026-10-07）](https://platform.claude.com/docs/en/release-notes/overview)
 
 ---
 
