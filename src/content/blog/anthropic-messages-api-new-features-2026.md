@@ -1,7 +1,7 @@
 ---
 title: "Anthropic Messages API 新機能まとめ（2026年5〜10月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・Opus5対応・Browser use tool・Fable 5.1/Mythos 5.1・Opus 5.5対応"
 date: 2026-06-20
-updatedDate: 2026-10-10
+updatedDate: 2026-10-17
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ", "Compliance API", "EU AI Act", "Browser use tool", "Python SDK", "Fable 5.1", "Mythos 5.1", "Haiku 5.5", "Models API"]
 excerpt: "2026年5〜10月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）、9月1日の Fable 5.1/Mythos 5.1リリースに伴うtool_choice制限・thinking保持ルール変更・キャッシュ90%値下げ・Per-Message Effort（9月3日Google Cloud対応拡大）、9月14日のOn-demand conversation compaction（任意タイミングでの会話圧縮ベータ）・9月18日のCompliance APIがClaude in Chromeセッションに対応、9月22日のClaude Opus 5.5リリース（thinking無効化不可・tool_choice any/tool廃止等のAPI破壊的変更）・Inline tools beta（会話途中でのツール定義変更）、9月23日のCache Diagnostics GA化、9月24日のRefusal課金の再開（bio/frontier_llm/reasoning_extractionの3カテゴリは出力前の拒否でも課金）・Compliance API Activity Feedが名称・タイトルを返さなくなった破壊的変更・Claude for Microsoft 365セッションのGA化まで、対応モデル・betaヘッダー・コード例つきで横断解説する。 2026-09-29更新: Claude Sonnet 5.5（9/28）のリリースと5つのAPI破壊的変更を第22章に追加。2026-10-03更新: Claude Sonnet 4.5の廃止通知（9/30、リタイアは11/30・移行先Sonnet 5.5）を第23章に追加。2026-10-09更新: Claude Haiku 5.5（10/7、$0.10/$0.50・Haiku 4.5からの破壊的変更）・Sonnet 5.5のキャッシュ読取半額化・Models APIの`line`/`thinking.types.disabled`/`server_tools`フィールドを第24章に追加。"
@@ -667,6 +667,37 @@ Haiku 4.5 向けのコードは、モデル ID を差し替えるだけでは動
 - **Dreams（リサーチプレビュー）が Opus 5.5・Fable 5.1・Sonnet 5.5 に対応**（10月1日）
 
 出典: [Anthropic Platform リリースノート（2026-10-01〜10-08）](https://platform.claude.com/docs/en/release-notes/overview) / [Claude Haiku 5.5 モデルページ](https://platform.claude.com/docs/en/models/haiku-5-5/overview) / [What's new in Claude Haiku 5.5](https://platform.claude.com/docs/en/models/haiku-5-5/whats-new-haiku-5-5)
+
+## 25. 2026年10月9〜15日のアップデート — Managed Agents の Dynamic workflows・OpenTelemetry export・Opus 5.5 fast mode の正式提供
+
+### OpenTelemetry export（ベータ、10月14日）
+
+**Messages API のリクエストと Claude Managed Agents のセッションを、自社のオブザーバビリティ基盤でトレース**できるようになりました（ベータ）。
+
+- **SDK 側**: Claude SDK が Python・TypeScript・C#・Go・Java・PHP・Ruby でスパンを出力する
+- **API 側**: Claude Console で **OpenTelemetry の送信先（destination）を追加**すると、API からもスパンが得られる
+- Claude Code でも同時期に OpenTelemetry まわりの拡張が続いている（`api_request` イベントへのキャッシュ書き込みの寿命別トークン数、`tool_decision` への auto mode クラシファイア判定の追加など。[Claude Code バージョン履歴まとめ](/mdTechKnowledge/blog/claude-code-version-history/) の v2.1.300〜301）
+
+### Managed Agents の Dynamic workflows（ベータ、10月9日）
+
+Managed Agents のエージェントが**ワークフロー（多数のエージェントをフェーズに分けて走らせ、結果を統合するプログラム）を自分で書いて実行**できるようになりました。ベータヘッダーは `managed-agents-2026-04-01`、有効化はエージェントの `multiagent` フィールドに `{"type": "multiagent_20261001", "workflows": {"type": "enabled"}}` を指定します。サーバーがバックグラウンドで走らせ、`workflow_run.*` イベントで追跡します。Claude Code の Dynamic Workflows との違いは [Claude Code Dynamic Workflows 完全ガイド](/mdTechKnowledge/blog/claude-code-dynamic-workflows-guide/) の第15章にまとめています。
+
+### Claude Opus 5.5 の fast mode が正式提供に（10月15日）
+
+- Opus 5.5 の **fast mode がリサーチプレビューを終了**し、アクセス申請が不要になった
+- リクエストに **`fast-mode-2026-02-01` ベータヘッダーが不要**になった（送り続けても動く）
+- Start・Build・Scale の利用ティアに、fast mode の既定のレート制限が設定された
+- **Opus 5 と Opus 4.8 の fast mode はリサーチプレビューのまま**で、ベータヘッダーを送り続ける必要がある
+- **Claude in Microsoft Foundry**（Azure でホストされるデプロイ）でも Opus 5.5 の fast mode が使えるようになった
+
+### その他（10月14〜15日）
+
+- **Compliance API が「Instructions for Claude」を返すように**（ベータ、Claude Enterprise 向け、10月15日）: claude.ai の「Instructions for Claude」と Cowork の「Global instructions」に各メンバーが保存したテキストを返す。`GET /v1/compliance/organizations/{org_uuid}/user_preferences` を、既存の Compliance Access Key と `read:compliance_user_data` スコープで呼ぶ
+- **Managed Agents の scheduled deployments が Claude Platform on AWS で利用可能に**（10月14日）
+
+出典: [Anthropic Platform リリースノート（2026-10-09〜10-15）](https://platform.claude.com/docs/en/release-notes/overview)
+
+---
 
 ## まとめ — どの機能をいつ使うか
 
