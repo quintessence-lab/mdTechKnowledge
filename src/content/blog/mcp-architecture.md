@@ -1,7 +1,7 @@
 ---
 title: "MCP (Model Context Protocol) アーキテクチャ詳細"
 date: 2026-04-26
-updatedDate: 2026-09-27
+updatedDate: 2026-10-17
 category: "Claude技術解説"
 tags: ["MCP", "Claude Code", "JSON-RPC", "GitHub", "OAuth", "プロトコル", "Claude for Legal", "ステートレス", "SEP-2577", "SEP-2663", "Sampling", "非推奨ポリシー", "MCP Apps", "Extensions", "JSON Schema 2020-12", "W3C Trace Context"]
 excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness/エンタープライズSSO・監査トレイル・ガバナンス成熟化（貢献者ラダー/委任モデル/憲章）・新コアメンテナー）、MCP Apps（SEP-1865）、**2026-07-28 に正式リリースされたMCP新仕様**（プロトコルステートレス化＝Mcp-Session-Id 廃止、MCP Apps の HTML UI、Tasks Extension 再設計）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、Claude for Legal で公開された20+ MCPコネクタ、約20万サーバーに影響した重大脆弱性事案、さらに新仕様で制定された SEP-2577 の非推奨ポリシー（Active/Deprecated/Removed の3段階・最低12ヶ月）と Sampling/Roots/Logging の deprecated 化、**2026-08-22 公開の新ロードマップ**（Agentic Messaging・HTTP-native transport 全面化・Agent Identity/DPoP/WIF・ツールプリミティブ改善・SDK DX の5優先領域と SEP 加速レビュー）、**2026-08-24 に GA となった Enterprise-managed authorization for MCP connectors**（Datadog・Notion・Slackが新規対応、公開MCPサーバー950以上）、**Claude Code v2.1.259の`managedMcpServers`マネージド設定・無人ホスト向け`--permission-prompts none`**、2026-09-22 に Claude API の MCP コネクタへ加わった**`mcp-client-2026-09-15`（サーバーが返したツール一覧を`mcp_tool_listing`ブロックとして記録・固定。Inline toolsと併用すると会話途中でMCPツールセットを追加可能）**までの参照リンクを網羅"
@@ -1452,6 +1452,28 @@ MCPサーバーをプラグイン経由で利用する際、依存関係が未�
 出典: [Claude Code CHANGELOG（v2.1.259）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 参考: [Claude Code Changelog](https://code.claude.com/docs/en/changelog) / [Claude Code リリース履歴 (releasebot)](https://releasebot.io/updates/anthropic/claude-code)
+
+---
+
+## 【2026-10-17追記】Claude Code が MCP 2026-07-28 をデフォルト交渉に — 4,096 文字上限への引き上げ
+
+2026-07-28 仕様の正式公開から約2か月半で、Claude Code の既定の挙動が仕様に追いつきました。Claude Code の CHANGELOG から、MCP に関わる変更を時系列で整理します。
+
+- **v2.1.292（2026-10-06 PT）**: **ローカル（stdio）MCP サーバーとの接続で、プロトコルバージョン 2026-07-28 をデフォルトで交渉**するようになった。Bedrock・Vertex・Foundry を含むすべてのインストールが対象。旧挙動に戻すには環境変数 `MCP_PROTOCOL_NEGOTIATION=legacy`
+- **v2.1.295（2026-10-08 PT）**: **claude.ai コネクタ**も 2026-07-28 をデフォルトで交渉するように（フラグを取得しないインストールが対象。`MCP_PROTOCOL_NEGOTIATION=legacy` で無効化）
+- **v2.1.296**: 最初にモデルへ渡す**ツール説明と、MCP サーバーの指示（instructions）の既定の上限を 2,048 文字から 4,096 文字に引き上げ**
+- **v2.1.299**: **クラウドセッションと Remote Control のコネクタ**も 2026-07-28 をデフォルトで交渉するように。あわせて、`api.anthropic.com` の Anthropic ファーストパーティ MCP サーバーのツール説明とサーバー指示は、4,096 文字で切られずに全文が Claude に届くよう変更
+- **v2.1.302**: MCP サーバーが 2026-07-28 を交渉しながら `resultType`・`ttlMs`・`cacheScope` を省略すると、ツールが表示されない、またはすべての呼び出しが失敗する問題を修正
+
+実務への影響は次のとおりです。
+
+- ローカルの stdio サーバーも含めて、Claude Code の既定が**ステートレス版のプロトコル**になった。自作サーバーが旧仕様のままだと、交渉結果の違いで挙動が変わりうる。問題が出たら、まず `MCP_PROTOCOL_NEGOTIATION=legacy` で切り分ける
+- 2026-07-28 仕様のサーバーを作るときは、list 系の応答に `ttlMs` と `cacheScope` を付ける（v2.1.302 の修正は、これらを省略するサーバーに対する Claude Code 側の救済）
+- 説明文を長めに書くツールは、4,096 文字までは最初から Claude に見える。それ以上は、ツール検索（tool search）経由で読み込まれる分に別の上限（16,384 文字）がある
+
+なお、Issue には「Anthropic が MCP を Linux Foundation 傘下の Agentic AI Foundation に寄贈する発表」という記述がありましたが、Claude Code の CHANGELOG と Anthropic Platform リリースノートの 10月分には該当する記載がなく、本記事の時点では一次情報で確認できていません。
+
+出典: [Claude Code CHANGELOG（v2.1.292〜v2.1.302）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 ---
 
