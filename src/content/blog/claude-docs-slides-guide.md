@@ -1,7 +1,7 @@
 ---
 title: "Claude Docs & Slides 解説 — Claude と一緒に書く「生きたドキュメント」とスライド、Claude Code からの操作まで"
 date: 2026-09-27
-updatedDate: 2026-10-11
+updatedDate: 2026-10-17
 category: "Claude技術解説"
 tags: ["Claude", "Claude Docs", "Claude Slides", "Artifacts", "Cowork", "Claude Code", "MCP", "コネクタ", "共同編集", "ベータ"]
 excerpt: "2026年9月16日、Claude のチャットと Cowork が「one Claude」に統合されたのと同時に、新しいアーティファクトとして Claude Docs と Claude Slides が登場した（どちらもベータ）。Docs は Claude が目の前で下書きし、判断の理由をコメントで残す「生きたドキュメント」で、複数タブ・表・チャート・ダイアグラムを持ち、人と Claude が同時に編集できる。コメントで @Claude とメンションすれば、そのスレッドの中で Claude が直接書き直す。Slides はノートやレポート、チャットの内容からスライドを起こし、各スライドを直接編集して Claude の中でそのまま発表でき、PowerPoint と PDF に書き出せる。本記事は作り方・編集・コメント・構成要素と、バージョン履歴がない、コメントのみの権限がない、モバイルは閲覧のみ、Team / Enterprise は組織外に共有できない、CMEK / ZDR / HIPAA 構成では使えない、といった現時点の制限を整理する。さらに、Claude Code から MCP コネクタ経由で Docs を作成・編集できることを実機で確認し、その仕組みと注意点を解説する。Free プランで使えるかは公式情報どうしで食い違っている点も明記した。"
@@ -13,6 +13,7 @@ draft: false
 > - **2026年9月16日**、チャットと Cowork の統合（one Claude）と同時に、**Claude Docs** と **Claude Slides** が新しいアーティファクトとして登場した。どちらも**ベータ**。
 > - **Docs**: Claude と一緒に書く「生きたドキュメント」。複数タブ・表・チャート・ダイアグラムを持ち、**人と Claude が同時に編集**できる。コメントで **@Claude** と呼べば、そのスレッドの中で Claude が直接書き直す。
 > - **Slides**: ノートやレポート、チャットの内容からスライドを起こす。各スライドを直接編集でき、**Claude の中でそのまま発表**できる。PowerPoint と PDF に書き出せる。
+> - **【2026-10-08 更新】Docs・Slides・Design はベータを終了し、Free を含む全プランで利用可能になりました**（詳細は第7章）。以下は 9月27日時点の記述を残しています。
 > - **制限**: バージョン履歴がない、コメントのみの権限がない、**モバイルは閲覧のみ**、**Team / Enterprise は組織外に共有できない**、CMEK / ZDR / HIPAA 構成では使えない。
 > - **Claude Code から MCP コネクタ経由で Docs を作成・編集できる**（本記事で実機確認）。ただし公開ドキュメントはまだない。
 
@@ -31,7 +32,7 @@ draft: false
 | 人の編集 | 直接入力（自動保存・リアルタイム反映） | 各スライドを直接編集 |
 | 書き出し | Word・PDF・Markdown・Google Docs | PowerPoint・PDF |
 | その他 | コメントで @Claude を呼べる | Claude の中でそのまま発表できる |
-| 提供状況 | ベータ | ベータ |
+| 提供状況 | ベータ（2026-10-08 に終了） | ベータ（2026-10-08 に終了） |
 
 ヘルプセンターのリリースノートは、Docs・Slides・Design を**「どの会話からでも頼める新しいアーティファクト（テンプレート）」**として位置づけています。アーティファクト全体の仕組み（共有の範囲・アクセスレベル・管理者設定・レガシーとの違い）は [Claude のアーティファクトは統合された？](/mdTechKnowledge/blog/claude-artifacts-unified-2026-09/) で詳しく解説しています。
 
@@ -84,7 +85,9 @@ Docs は自動保存され、**Artifacts タブ**に入ります。会話をま�
 | リリースノート | 「Free を含むすべてのプランで利用可能」 |
 | Artifacts ヘルプの表 | テンプレートから始める機能は Free では使えない |
 
-**Free プランで使えるかは、一次情報どうしで矛盾しています**。実際に使えるかは、自分の画面で `/docs` が出るかで確認してください。利用には、設定の Capabilities で「Cloud code execution and file creation」がオンになっている必要があります。使った分はプランの利用上限にカウントされ、長いドキュメントや多数のソースを使う依頼ほど多く消費します。
+> **【2026-10-08 追記】この矛盾は解消しました。** 公式の案内ページ「Claude Dashboards and Motion」は、Docs・Slides・Design について「ベータではなくなり、Free を含むすべてのプランで利用可能」と述べています。以下は 9月27日時点の記録です。
+
+**Free プランで使えるかは、一次情報どうしで矛盾していました**。実際に使えるかは、自分の画面で `/docs` が出るかで確認してください。利用には、設定の Capabilities で「Cloud code execution and file creation」がオンになっている必要があります。使った分はプランの利用上限にカウントされ、長いドキュメントや多数のソースを使う依頼ほど多く消費します。
 
 ### 4-2. プラットフォーム
 
@@ -140,12 +143,27 @@ Docs は自動保存され、**Artifacts タブ**に入ります。会話をま�
 
 > Claude Code で調べた結果を、そのままチームの Docs に書き込む、といった使い方ができます。Claude Code 側のアーティファクトとの違いは [Claude の「アーティファクト」は3種類ある](/mdTechKnowledge/blog/claude-three-artifact-types/) も参照してください。
 
+## 7. 【2026-10-17追記】ベータ終了と、Dashboards・Motion を含む製品ライン
+
+2026年10月8日（PT）、Anthropic は Docs・Slides・Design のベータ終了と、2つの新しいアーティファクトの追加を同時に発表しました（公式の案内ページ「Claude Dashboards and Motion」）。
+
+- **Docs・Slides・Design**: ベータを終了し、**Free を含むすべてのプランで利用可能**。Claude で作られた文書・スライド・デザインは累計 4,500 万件以上。Enterprise 向けに CMEK 対応と、管理者が選ぶアーティファクトテンプレートが加わった。Docs・Slides・Design は **10月15日にデフォルト有効化**（それ以前でも管理者が即時有効化できる）。編集は Claude のモバイルアプリでも可能と案内されている
+- **Claude Dashboards**（有料プランのベータ）: データウェアハウスや CRM に接続し、平易な質問からライブダッシュボードを作る。数値はクエリに、チャートは最終更新時刻に紐づく
+- **Claude Motion**（Team / Enterprise のベータ）: プロンプトから短いアニメーション解説を作り、MP4 で出力する。動画生成モデルではなく、文字・数値・タイミングを編集できるコードのアニメーション
+- Dashboards と Motion は**デフォルトで無効**で、管理者が「Organization settings > Artifacts」で有効にする
+
+Docs・Slides との使い分けの目安は次のとおりです。文章と共同編集は Docs、発表資料は Slides、画面やデザインは Design、データの現況は Dashboards、説明動画は Motion です。Dashboards と Motion の詳細は [Claude Design 解説](/mdTechKnowledge/blog/claude-design-overview/) の「【2026年10月】」章にまとめています。
+
+なお、本記事の第5章に書いた制限（バージョン履歴がない、コメントのみの権限がない、モバイルは閲覧のみ など）が、ベータ終了後にどう変わったかは、公式の案内ページには書かれていません。変更がなければ上記の制限は残っていると読めますが、断定はせず、利用前にヘルプで確認してください。
+
+出典: [Claude Dashboards and Motion — Claude](https://claude.com/resources/articles/dashboards-and-motion)
+
 ## まとめ
 
 - **Claude Docs と Slides は、Claude で作ったものを「そのまま仕上げて共有する」ための場所**。2026年9月16日に one Claude とともに登場し、どちらもベータ。
 - **Docs は人と Claude の同時編集と、コメントでの @Claude 呼び出し**が特徴。Slides は直接編集と Claude 内での発表ができる。
 - **バージョン履歴がない、モバイルは閲覧のみ、Team / Enterprise は組織外に共有できない**など、仕事で使うには制限を理解しておく必要がある。
-- **Free プランの扱いと Slides の Google Slides 書き出しは、公式情報どうしで食い違っている**。
+- **Free プランの扱いは、2026-10-08 のベータ終了で「全プラン対応」に解消した**（Slides の Google Slides 書き出しの食い違いは未確認のまま）。
 - **Claude Code からは MCP コネクタで Docs を操作できる**が、公開ドキュメントはまだない。
 
 ## 関連記事
