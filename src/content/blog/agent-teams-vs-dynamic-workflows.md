@@ -1,7 +1,7 @@
 ---
 title: "Agent Teams と Dynamic Workflows は何が違うのか — 『独立セッション』と『サブエージェント』の決定的な差"
 date: 2026-06-05
-updatedDate: 2026-08-25
+updatedDate: 2026-10-17
 category: "Claude技術解説"
 tags: ["Claude Code", "Agent Teams", "Dynamic Workflows", "サブエージェント", "マルチエージェント", "セッション", "オーケストレーション"]
 excerpt: "Claude Code の Agent Teams と Dynamic Workflows は、どちらも『複数エージェント』だが本質が異なる。前者は対等な独立セッション同士が双方向通信するチーム、後者は1セッションがサブエージェントをコードで束ねて並列実行する仕組み。両者の構造・通信方向・永続性・セッションまたぎの可否を1対1で比較し、Dynamic Workflowsが『サブエージェントの扱い』である理由を明確にする。2026年8月追記: フォークモードのデフォルト化（会話とキャッシュを引き継ぐforkサブエージェント）とクロスセッションメッセージングによる制約の変化を反映。"
@@ -180,6 +180,23 @@ Week 33（2026-08-10〜14 PT、v2.1.232）で、**フォークモードがイン
 本記事の構図で言えば、**fork は「サブエージェント」側の進化**です。親に従属し、終われば結果を親に返す構造は変わりませんが、「文脈ゼロから始まる」という従来のサブエージェントの弱点が解消され、Agent Teams を立てるほどではない“文脈込みのサイドタスク”を軽量にさばけるようになりました。
 
 参考: [What's new Week 33](https://code.claude.com/docs/en/whats-new/2026-w33) / [サブエージェント（公式ドキュメント）](https://code.claude.com/docs/en/sub-agents)
+
+---
+
+## 8. 【2026-10-17追記】第三の系統 — Managed Agents の Dynamic workflows（ベータ）
+
+2026年10月9日、**Claude Managed Agents にも Dynamic workflows が追加**されました（ベータ）。名前は同じでも、本記事で比べてきた2つとは動く場所と仕組みが違うため、比較軸に**第三の系統**が加わります。
+
+- **本質**: エージェントが「多数のエージェントをフェーズに分けて走らせ、結果を統合するプログラム」を**自分で書き**、**サーバーがバックグラウンドで実行**する。実行の単位は workflow run で、API クライアントは `workflow_run.*` イベントで追跡する
+- **動く場所**: Claude Code のセッションではなく、Managed Agents のセッション（サーバー側）。ローカルの `/workflows` では見えない
+- **有効化**: エージェントの `multiagent` に `{"type": "multiagent_20261001", "workflows": {"type": "enabled"}}` を指定（ベータヘッダー `managed-agents-2026-04-01`）
+- **規模と上限（公式ドキュメント）**: 1つの run で同時に動くスレッドは 64（保証されない数字）、run 全体で起動できるエージェントは 1,000、1セッションで同時に開ける run は既定 10、run の寿命は既定 24 時間
+- **料金**: run 専用の料金はなく、トークンは各モデルの単価で課金され、セッションの予算に達すると開いている run は一時停止する。セッション自体の課金（公式の料金ページでは 1セッション時間あたり $0.08）は別途かかる
+- **使い分け**: 手元の開発作業の大量並列化は Claude Code の Dynamic Workflows、アプリケーションに組み込んで API から走らせ、結果をイベントで受け取る処理は Managed Agents 版、と考えると整理しやすい
+
+この記事の「同時最大16・総計最大1000」は Claude Code 版の数字です。Managed Agents 版の「同時 64・総計 1,000」とは別の仕組みの別の上限なので、混同しないでください。詳しくは [Claude Managed Agents 簡易ガイド](/mdTechKnowledge/blog/claude-managed-agents-guide/) と [Claude Code Dynamic Workflows 完全ガイド](/mdTechKnowledge/blog/claude-code-dynamic-workflows-guide/) の第15章を参照してください。
+
+出典: [Workflow runs — Managed Agents](https://platform.claude.com/docs/en/managed-agents/workflow-runs) ／ [Anthropic Platform リリースノート（2026-10-09）](https://platform.claude.com/docs/en/release-notes/overview)
 
 ---
 
