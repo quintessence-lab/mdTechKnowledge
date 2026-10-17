@@ -1,6 +1,7 @@
 ---
 title: "Claude Code Review（GitHub PR 自動レビュー）完全ガイド — セットアップ・課金・REVIEW.md カスタマイズ"
 date: 2026-06-07
+updatedDate: 2026-10-17
 category: "Claude技術解説"
 tags: ["Claude Code", "Code Review", "GitHub", "PR", "自動レビュー", "マルチエージェント", "Team", "Enterprise", "DevOps"]
 excerpt: "Anthropic の Code Review は、GitHub App 経由で PR に自動でインラインコメントを付けるマネージド・マルチエージェント製品（2026年3月9日ローンチ、Team/Enterprise 向け research preview）。手動の /code-review・/ultrareview とは別物。PR が開くと専門エージェント群が並列で diff とコードベースを分析し、ロジックエラー・脆弱性・境界条件・既存バグを 🔴🟡🟣 の重大度付きで指摘する。GitHub App のセットアップ手順、3つのレビューモード、課金（平均 $15–25/review・usage credits・spend cap）、REVIEW.md / CLAUDE.md によるカスタマイズ、/code-review・/ultrareview との違いまでを公式ドキュメント一次ソースで整理する。"
@@ -190,6 +191,27 @@ gh api repos/OWNER/REPO/check-runs/CHECK_RUN_ID \
 | 既定の重点 | **correctness（正しさ）重視**。フォーマット嗜好やテストカバレッジ不足は既定では対象外（`REVIEW.md` で拡張可） |
 | 失敗時 | best-effort で**自動リトライしない**。エラー/タイムアウト時は `@claude review once` で再実行（GitHub の Re-run ボタンは効かない）か新規 push |
 | 対応言語 | 公式ドキュメントに**明示的な対応言語リストはなし**（フルコードベース文脈で動く汎用記述のみ） |
+
+---
+
+## 8. 【2026-10-17追記】`/code-review --max-findings` と、Code Review の `@claude review` 修正
+
+2026年10月に入って、ローカルの `/code-review` と、本記事の GitHub App 版 Code Review の双方に更新がありました（Claude Code CHANGELOG より）。
+
+**ローカル `/code-review` に `--max-findings <n>|all`（v2.1.288、2026-10-02 PT）**
+
+- 通常の上限より多く、または少なく指摘を報告させるオプション。`--max-findings 5` のように件数を指定するか、`--max-findings all` で全件を出す
+- **選んだ値は、`--max-findings default` を渡すまで再利用される**（セッションごとに毎回付け直す必要はない）
+- これは**ローカルの手動レビュー**（§6 の `/code-review`）の話で、GitHub App 版の Code Review の出力件数を調整するものではない。App 版の調整は §5 の REVIEW.md の `Cap the nits` などで行う
+
+**Code Review（GitHub App 版）の修正（v2.1.300）**
+
+- **GitHub 組織のメンバーシップを非公開にしている、書き込み権限のあるユーザーの `@claude review` コメントが無視される問題**が修正され、レビューが開始されるようになった（§3 の手動コマンドが効かない場合の原因のひとつだった）
+- 「paused for this repository」のコメントが管理者を Code Review の設定画面へ誘導していた問題を修正。誰が直せるかと、Git プロバイダーのページへのリンクを示すようになった
+
+あわせて、`/code-review` コマンド自体にも修正が入っています。クラウドセッション・Agent SDK・IDE 連携では、結果が生の JSON 配列で終わっていたのが、番号付きリストで表示されるようになりました（v2.1.296）。
+
+出典: [Claude Code CHANGELOG（v2.1.288・v2.1.296・v2.1.300）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 ---
 
