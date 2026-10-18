@@ -4,3 +4,5 @@ dist/
 .env
 .env.*
 *.log
+research_notes/
+reports/
