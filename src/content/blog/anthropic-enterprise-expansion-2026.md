@@ -1,7 +1,7 @@
 ---
 title: "Anthropic エンタープライズ攻勢2026 — PwC・KPMG・DXC・TCS と Big Four/SIer 連携、$1.5B FDE スタジオまで"
 date: 2026-06-20
-updatedDate: 2026-10-09
+updatedDate: 2026-10-24
 category: "一般リサーチ"
 tags: ["Anthropic", "Claude", "エンタープライズAI", "PwC", "KPMG", "DXC", "TCS", "Forward Deployed Engineer"]
 excerpt: "2026年5〜6月、Anthropic は PwC・KPMG・DXC・TCS という Big Four / 大手 SIer との大型連携を相次いで発表し、さらに Blackstone・Goldman Sachs・Hellman & Friedman と組んで FDE 型のエンタープライズ AI サービス会社（報道で総額 $1.5B 規模）を立ち上げた。コンサル・SIer・PE を「実装の通り道」として、規制業種・大企業・PE 保有の中堅市場へ Claude を一気に押し込む攻勢の全体像と、各社の認定規模・活用製品・狙う市場を比較整理する一般リサーチ。2026年8月26日発表のSalesforce「Claudeforce」（両社が互いの顧客となる双方向パートナーシップ、Claude in Salesforce・Salesforce in Claudeの相互統合）、2026年9月21日発表のAccentureが「初の組み込み外部評価者」に就任（導入支援ではなくモデル安全性検証への参加）も追記した。2026-10-09更新: 9月30日のClaude for Government GA（FedRAMP High・席課金なしの上限額方式）、10月1日のBarclaysの全社展開（Claude Code開発者50%目標）、10月2日のClaude Frontier Academy（$100M・1万人育成）も追記。"
@@ -254,6 +254,21 @@ UST・LTM に続き Cognizant も加わったことで、大手SIer/コンサル
 ### 3-3. Claude Partner Network への収斂
 
 これらの提携は、最終的に Anthropic の **Claude Partner Network** に接続していきます。Accenture・Deloitte・PwC に加え、TCS、そして合弁の新会社も同ネットワークに参加。Anthropic は **「モデル提供者」から、パートナー経由の実装エコシステムを束ねる"プラットフォーマー"** へと立ち位置を広げつつあります。
+
+---
+
+## 【2026-10-24追記】シンガポール拠点の開設と政府との MOU（10月14日）
+
+Anthropic は **2026年10月14日**、**シンガポールに拠点を開設**し、シンガポール政府と覚書（MOU）を結んだと発表しました。アジア太平洋で**5つ目の拠点**です。
+
+- **MOU の相手**: デジタル開発情報省（MDDI）。Singapore International Cyber Week の場で、同省の事務次官と Anthropic 共同創業者の Ben Mann 氏が署名しました。
+- **内容**: ①AI の安全性・セキュリティ・モデル評価、②AI の普及と影響に関する研究、③官民での責任ある導入。
+- **具体策**: シンガポールの AI 安全・セキュリティ・保証の機関との技術交流（評価・試験基準・インシデント対応）、AI スキル強化、中小企業の責任ある AI 導入の支援、公務員の AI 能力構築、Anthropic Economic Index の研究・データの共有、シンガポールの AI ルール整備への技術・政策面の知見提供。
+- **発表に含まれる数字**: 人口比での claude.ai 利用はシンガポールが121か国中2位（規模から予測される水準の約6倍）。GovTech Singapore では1,500人超のエンジニア・技術職が Claude Code を採用。Grab の営業支援「BriX」は四半期あたり約4万時間を削減。
+
+位置づけとしては、第1〜3部で扱った「大企業・SI・金融との協業」に加え、**政府との協力関係を拠点開設とセットで築く**動きです。
+
+出典: [Anthropic opens Singapore office and signs MOU with the Government of Singapore（Anthropic）](https://www.anthropic.com/news/singapore-office-opening)（2026-10-14）
 
 ---
 
