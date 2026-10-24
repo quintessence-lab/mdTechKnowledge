@@ -1,7 +1,7 @@
 ---
 title: "Claude Codeのコンテキスト管理入門 — /compact・/clear・メモリ・セッション復元の使い分け"
 date: 2026-04-29
-updatedDate: 2026-06-26
+updatedDate: 2026-10-24
 category: "Claude技術解説"
 tags: ["Claude Code", "コンテキスト", "/compact", "/clear", "メモリ", "セッション", "初心者向け"]
 excerpt: "Claude Codeのコンテキストとは何か、ターミナル間やClaude.aiとの共有可否、/compactのトークン消費、端末再起動後のセッション復元、/clearとの違い、長期保存メモリの活用までを初心者向けに整理。日常運用で迷いやすい使い分けを表で比較。"
@@ -222,6 +222,18 @@ Read(file_path="huge.md", offset=100, limit=50)
 | 「再起動するとすべて消える」 | JSONLログがディスクに残る。`claude --resume` で復元可 |
 | 「`/clear`で特定の発言だけ消せる」 | 全削除のみ。部分削除は `/compact <focus>` で代用 |
 | 「メモリを書いておけば毎回詳細まで思い出せる」 | メモリは要約として読まれる。詳細はソースを参照する設計が安全 |
+
+---
+
+## 8.4. 【2026-10-24追記】アイドルコンパクション（v2.1.299・v2.1.302）
+
+長時間放置した会話は、プロンプトキャッシュ（有効期限1時間）が切れると、次のメッセージで全体を再処理することになります。v2.1.299 で、これを避ける**アイドルコンパクション**がターミナルに追加されました。
+
+- **200K トークン以上の会話**を約54分放置すると、キャッシュ失効前に自動で圧縮される（次のメッセージで全体を再処理しなくて済む）
+- 最小トークン数は環境変数 `CLAUDE_CODE_IDLE_COMPACT_MIN_TOKENS` で変更できる（既定200K）
+- 無効化は `settings.json` の `"idleCompaction": false`。v2.1.302 で `/config` に **`Idle compaction` の行**が追加され、画面からもオン/オフできる。自動圧縮後に表示される通知にも、止め方が書かれるようになった
+
+出典: [Claude Code CHANGELOG（v2.1.299・v2.1.302）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 ---
 
