@@ -1,7 +1,7 @@
 ---
 title: "Anthropic、SEC へ機密ドラフト S-1 提出 — 『公式発表に数字はない』IPOプロセスとPBC上場の論点"
 date: 2026-06-06
-updatedDate: 2026-10-17
+updatedDate: 2026-10-24
 category: "一般リサーチ"
 tags: ["Anthropic", "IPO", "S-1", "SEC", "Public Benefit Corporation", "Long-Term Benefit Trust", "上場", "資本市場", "OpenAI", "SpaceX", "メガIPO"]
 excerpt: "2026年6月1日、Anthropic は SEC へ Form S-1 の機密ドラフト登録届出書を提出し IPO 手続きを開始した。本記事は『公式発表は Rule 135 準拠の定型文で具体的な数値を一切含まない』という事実の確認から始め、機密提出（confidential filing）の仕組み、評価額$965B・年次ランレート$47Bの出典の切り分け、未定事項（株式数・価格・市場・ティッカー）、想定主幹事、2026メガIPO 3社（SpaceX/OpenAI/Anthropic）の横比較、そして PBC × Long-Term Benefit Trust という独特のガバナンスが上場でどう論点化するかを整理する。2026-08追記: 8〜9月のロードショー本格化・10月Nasdaq上場・$60B超調達という観測報道、評価額ターゲット$2兆観測・収益ランレート$65B突破・Q2収益$11.5B（いずれも報道・投資家推計ベース、公式未確認）を追記。公開S-1提出は2026年8月末見込みだが8月26日時点でSEC EDGAR未掲載という状況、2026年9月3日確定間近の$15Bプレクレジットファシリティ（Morgan Stanley主導、目標$10Bから拡大）とIPO開始時期の10月中旬への延期、Q2調整済み営業利益$559M超の実績確定・Q3も2四半期連続黒字化見通しを株主に通知・粗利率80%超（分配前・学習コスト控除前）、2026年9月25日報道の創業者7名が合計50.1%の議決権確保を株主に要請（LTBTは取締役会指名権を維持）、上場先をNasdaqに選択・IPO本格始動が10月から11月へ後ろ倒し（報道ベース）、IPO富がもたらす新しい政治献金ネットワークの形成も追記した。2026-10-09更新: 10月1日報道の投資家向けデー（10/14・サンフランシスコ本社）とロードショー開始（早ければ11月9日の週）・感謝祭前の上場観測（評価額$1.8兆〜$2兆は投資家側の見積もり）を追記。"
@@ -378,6 +378,22 @@ CEO の Daniela Amodei は IPO に先立つインタビュー（TechCrunch, 6/4�
 
 出典: [FinanceFeeds: Anthropic's 14 October investor day nears but its S-1 still isn't public（2026-10-12）](https://financefeeds.com/anthropics-14-october-investor-day-nears-but-its-s-1-still-isnt-public-the-ipo-timeline-explained) ／ [Bloomberg: Anthropic Is Said to Plan Pre-IPO Investor Day as Listing Nears（2026-10-01）](https://www.bloomberg.com/news/articles/2026-10-01/anthropic-is-said-to-plan-pre-ipo-investor-day-as-listing-nears)
 
+
+### 【2026-10-24追記】10月18日の発表 — 株式の5%を Public Benefit Fund へ
+
+Anthropic は **2026年10月18日**、新設する **Public Benefit Fund** に**自社株式の5%を拠出する**と発表しました（**株主承認が前提**）。IPO 準備の最中に、公益ミッションの実行手段を明示した形です。
+
+- **構造**: Anthropic の完全子会社となる **LLC**。501(c)(3) などではなく LLC とした理由は、非営利団体への大型寄付、特定の人々への直接給付など「**給付の形を調整できる**」ためと説明されています。
+- **増資の仕組み**: 会社評価額がある基準値から **50%上昇するごとに、取締役会の裁量で2%を追加**できる。基準値は発表では明示されていません。
+- **政治利用の禁止**: このLLCが保有する株式は、国内外を問わず**ロビー活動や政治献金には使わない**。
+- **全体像**: 共同創業者による持ち株の80%の寄付誓約、従業員の持ち株寄付マッチング制度（従業員の約半数が参加）と合わせて、**株式の約20%が公益目的に充てられる**見込みと説明されています（評価額に連動する追加分を除く）。
+- **未定の点**: ファンドの構造・ガバナンス・評価額の節目は「今後数か月のうちに」説明し、公益に関するレポートで進捗を報告するとされています。
+
+**確認できていない点**: IPO の上場時期（「11月」とする報道）や評価額（報道により $1.5T〜$2T 超と食い違い）は、この発表には含まれず、一次情報では確認できていません。本記事では数字として採用しません。
+
+出典: [Investing in the public benefit（Anthropic）](https://www.anthropic.com/news/public-benefit-fund)（2026-10-18）
+
+---
 
 ## まとめ
 
