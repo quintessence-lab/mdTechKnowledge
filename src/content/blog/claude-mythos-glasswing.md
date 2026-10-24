@@ -1,7 +1,7 @@
 ---
 title: "Claude Mythos Preview & Project Glasswing — セキュリティ特化LMと重要インフラ防衛プログラム"
 date: 2026-04-26
-updatedDate: 2026-10-09
+updatedDate: 2026-10-24
 category: "Claude技術解説"
 tags: ["Claude", "Mythos", "Glasswing", "セキュリティ", "Anthropic", "重要インフラ", "Bedrock", "Vertex AI", "Claude Security", "サイバー評価インシデント"]
 excerpt: "Anthropicがセキュリティタスク特化型LM「Claude Mythos Preview」と重要インフラ防衛プロジェクト「Project Glasswing」を発表。能力範囲・想定ユースケース・公開条件・既存Claudeとの差別化に加え、AWS Bedrock・Google Vertex AIでのGated Research Preview提供、GlasswingからClaude Security Beta（防御製品）への発展経緯、2026年6月の第2次拡張（約150組織・15カ国以上）と『数週間以内』の一般提供方針、初代 Mythos Preview の 2026-06-30 廃止、輸出管理停止（6/12）→Mythos 5 限定提供（6/27）→全面解除・Fable 5 再開（7/1）、2026年7月30日発表のサイバー評価インシデント（Mythos 5が評価環境の設定ミスで実組織3社に不正アクセス）までの顛末を整理。2026年10月6日にはProject Glasswingが拡張版Cyber Verification Program（Defense／Red Team／Specialized Accessの3層）に統合された経緯と、公式の累積成果（検証済み脆弱性12万9,000件以上）も追記。"
@@ -380,6 +380,17 @@ Mythos の限定公開方針は、米連邦政府（特に Pentagon）との関�
 | **下院国土安全保障委員会（立法府）** | 非公開ブリーフィングで独自評価を開始。ライブデモで能力を直接確認 |
 
 Mythos / Glasswing は単一の「政府との関係」ではなく、**省庁・機関・立法府それぞれが独立した評価・利用判断を行う多層的な状況** に入っています。今後のセキュリティ立法、AI輸出管理、調達ポリシーへの波及に注目が必要です。
+
+### 【2026-10-24追記】Anthropic Cyber Mission（10月8日）
+
+Anthropic は **2026年10月8日**、サイバー防御を長期で支援する **Anthropic Cyber Mission** を発表しました。防御側にツール・研究・リソースを提供する取り組みで、最初の対象は**重要インフラ**と**オープンソースソフトウェア**です。
+
+- **Critical Infrastructure Defense Program（CIDP）**: 電力網・水道・交通などの制御系（OT）を守る事業者に、最先端の Claude モデル、現地に入るエンジニア、脅威リサーチを提供します。創設パートナーは **Accenture・Booz Allen・CrowdStrike・Deloitte・Dragos・Hitachi・Insane Cyber・Nozomi Networks・Palo Alto Networks・PwC・Rockwell Automation** の11社で、第1段階は少数のコホートです。
+- **Glasswing の統合**: Glasswing のパートナーは多数の脆弱性を見つけたものの、検証・優先順位付け・修正が遅いことが課題でした。Glasswing は拡張された **Cyber Verification Program に統合**され、より多くの防御側が最も高性能なモデルを使えるようになっています。
+- **OSS Scanner（オプトイン、無料）**: Google の OSS-Fuzz に着想を得た無料サービス。登録したプロジェクトは Anthropic の最高性能のモデルによる定期スキャンを受け、報告には PoC・説明・修正案（可能な場合）が付きます。**報告はモデル生成で人手のレビューを経ておらず、不正確なものもあり得る**とされ、Anthropic は真陽性率が90%を超えると見込んでいます。量をさばけないプロジェクトには、人が検証した開示を引き続き行います。
+- **Defender Advantage Fund（0xDAF）**: 8月に立ち上げ。パイロットを支援し、OSS Scanner の無料提供を続けます。6月には州・地方・部族・準州政府向けの防御プログラムを開始し、半数超の州などに届いたと説明されています。
+
+出典: [Introducing the Anthropic Cyber Mission（Anthropic）](https://www.anthropic.com/news/anthropic-cyber-mission)（2026-10-08）
 
 ## 6. 開発者・企業へのインパクト
 
