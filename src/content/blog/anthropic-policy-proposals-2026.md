@@ -1,6 +1,7 @@
 ---
 title: "Anthropic の政策提言を読む — 『2028: Two Scenarios for Global AI Leadership』（5月）と『We Must Pace the Frontier』（9月）"
 date: 2026-10-10
+updatedDate: 2026-10-24
 category: "一般リサーチ"
 tags: ["Anthropic", "政策提言", "AI政策", "輸出管理", "Dario Amodei", "We Must Pace the Frontier", "2028", "第三者評価", "一般リサーチ"]
 excerpt: "Anthropic が2026年に公表した2つの政策文書を、一次情報の原文に基づいて要約と解釈に分けて整理する。2026年5月14日の政策論文『2028: Two Scenarios for Global AI Leadership』は、民主主義国が2028年に12〜24か月のリードを持つシナリオと、中国共産党主導の AI エコシステムが肉薄するシナリオを対比し、輸出管理の抜け穴封じ・蒸留攻撃対策・米国 AI の輸出振興の3つを提言する。2026年9月の Dario Amodei のエッセイ『We Must Pace the Frontier』は、再帰的自己改善の加速と OpenAI-Hugging Face のエージェント群インシデントを背景に、埋め込み型第三者評価者・民主主義国内の協調・国際協調の3ステップを提案し、Anthropic が第1ステップを一方的にコミットした。何が書かれていて、何が書かれていないか（Anthropic 自身の訓練の減速は述べていない等）、Altman らの反応と批判も含めて整理する。"
@@ -148,6 +149,21 @@ Dario Amodei は、**「AI モデルの能力を向上させるペースを落�
 - **Elon Musk（SpaceX）**: X で「Dario is right」と投稿（TechCrunch）。
 - **批判**: AI 推進派から Amodei を「ドゥーマー」と呼ぶ声がある。ジャーナリストの Brian Merchant は、このような提案が主に Anthropic と OpenAI の利益になる「規制の虜」だと論じています。産業界の批評家は、終末論的な警告が AI が既に引き起こしている害から目をそらさせると指摘します。NYT は、協調的な一時停止が**反トラストの審査**を招くことへの企業側の懸念を報じたとされます（TechCrunch の引用）。
 - **会社としての続報**: Claude Opus 5.5 の発表（9月下旬）は、リリースを「ペース調整を呼びかけて以来の最初のリリース」と位置付け、安全の取り組みを「現行モデルの安全慣行」と「将来のモデルへの備え」の2つの時間軸で説明し、公共政策がより大きな役割を果たすべきだと述べています。Accenture との発表（導入支援ではなく、組み込みの外部評価）にも言及しています（詳細は [Anthropic エンタープライズ攻勢2026](/mdTechKnowledge/blog/anthropic-enterprise-expansion-2026/)）。
+
+### 4-1. 【2026-10-24追記】独立評価者の続報（10月15日）
+
+Anthropic は **2026年10月15日**に「An update on independent evaluators」を公表し、第三者評価者の受け入れが具体的に進んでいることを示しました。
+
+- **METR（非営利）**: 最も深く組み込まれた評価者。**METR の従業員6名が「従業員に準じるアクセス」**を持ち、会社の端末・オフィス・社内ツールを、Anthropic 自身のリスク評価チームとほぼ同等の水準で使えます。顧客データ・弁護士依頼者間の秘匿特権情報・モデルのアーキテクチャは共有の対象外です。このチームは強制力のある契約のもとで働き、他の METR スタッフとは遮断されます。
+- **公開の権限**: METR は、リスクの水準・インシデント・慣行についての分析を公開できます。**Anthropic は公開を拒否できません**が、機密 IP など**あらかじめ定めた区分の編集（redaction）**は求められます。区分に何が入るかは Anthropic が決め、METR は得たアクセスの水準を明示できます。
+- **ほかの評価者**: SecureBio（8月のリスクレポートの化学・生物兵器の章を審査中）。Accenture と Faculty は評価・レッドチーミング・アライメント評価・セーフガード試験・能力構築にわたる提携を計画。Hugging Face などとも初期協議中。
+- **アクセスの3段階**: Tier 1 は範囲を絞った調査（アクセスは Anthropic が選び、公開に承認が必要）、Tier 2 は Anthropic の承認なしに公開でき、より広いアクセス、Tier 3 は METR の形態で公開権限は Tier 2 に近い。
+- **評価者の条件**: 専門性、独立性（株式や財務・運営上の依存がない）、十分なアクセス、公開の自由。
+- **背景**: Anthropic は前月、より強い独立した第三者評価へのコミットメントを表明し、独立した外部評価者・監査人との提携を約束する White House の Accord on Super Intelligence に署名したと説明しています。
+
+第3章で「約束できる範囲が小さい」とされた第三者評価者の受け入れが、**公開権限の線引きまで含めた運用**として示された、という位置づけです。
+
+出典: [An update on independent evaluators（Anthropic）](https://www.anthropic.com/news/an-update-on-independent-evaluators)（2026-10-15）
 
 ## 5. 読み方（本記事の解釈）
 
