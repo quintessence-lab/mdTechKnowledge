@@ -1,7 +1,7 @@
 ---
 title: "Claude Code Dynamic Workflows 完全ガイド — 最大1000サブエージェントを束ねる自動オーケストレーション"
 date: 2026-05-30
-updatedDate: 2026-10-11
+updatedDate: 2026-10-24
 category: "Claude技術解説"
 tags: ["Claude Code", "Dynamic Workflows", "マルチエージェント", "オーケストレーション", "並列処理", "ultracode", "v2.1.160", "v2.1.172", "v2.1.212", "v2.1.218", "v2.1.228", "ネストサブエージェント", "Research Preview"]
 excerpt: "Claude Code v2.1.154（2026-05-28 PT）で追加された Dynamic Workflows（Research Preview）を徹底解説。プロンプトに ultracode と書くだけで Claude が JavaScript スクリプトを自動生成し、同時最大16・総計最大1000サブエージェントをファンアウト実行する仕組み、3つの起動方法、/workflows での監視・停止、ultracode と effort レベルの正確な関係、コストと暴走防止、既存機能との棲み分けまで網羅。トリガー語が v2.1.160 で workflow から ultracode へ改称された点、v2.1.202 の `/config` サイズ設定、v2.1.212 のセッション全体サブエージェント上限（既定200・Dynamic Workflowsの1000/runとは別軸）と `/fork` の再設計、v2.1.218 でのデフォルトサイズガイドライン medium（15エージェント未満）化、v2.1.219 の `workflowSizeGuideline` 設定キー追加、v2.1.228 での200件セッション上限の廃止（同時実行数・生成階層の上限は継続）、v2.1.269 の`CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS`環境変数（既定の同時16を1〜256で明示調整可能に）、v2.1.296 の`CLAUDE_CODE_WORKFLOW_SUBAGENT_MODEL`環境変数（Workflow内の全エージェントを1モデルに固定）と、2026-10-09 に Managed Agents API へ追加された Dynamic workflows（ベータ）との対応関係も補足。"
@@ -380,6 +380,16 @@ Managed Agents 版の要点（公式ドキュメント Workflow runs より）:
 Claude Code 版の「総計最大1000」と数字は一致しますが、別の仕組みの別の上限です。両者は連携しておらず、Claude Code の `/workflows` で Managed Agents の run を見ることはできません。
 
 出典: [Claude Platform リリースノート（2026-10-09）](https://platform.claude.com/docs/en/release-notes/overview) / [Managed Agents: Workflow runs](https://platform.claude.com/docs/en/managed-agents/workflow-runs) / [Claude Code CHANGELOG（v2.1.296）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
+
+---
+
+## 16. 【2026-10-24追記】v2.1.299〜v2.1.307 — fork subagents の既定化、MCP allow ルールの厳密化、Workflow resume の修正
+
+- **fork subagents が既定でオン**（v2.1.302）: `subagent_type: "fork"` が `claude -p`・Agent SDK・デスクトップアプリ・VS Code でも既定で有効になりました（ターミナルでは従来から既定）。無効化は `CLAUDE_CODE_FORK_SUBAGENT=0`。`claude mcp serve` は fork を提供しません。v2.1.307 では、同時に起動した fork それぞれに「どの起動が自分の担当か」を伝えるようになり、fork 同士が互いの作業を始めようとする挙動が減りました。
+- **MCP の allow ルールは名指ししたサーバーだけに適用**（v2.1.299）: `mcp__a` が、名前が `a__b` や `a_` のサーバーを許可しなくなりました。サーバーの正規化後の名前全体を使い、`mcp__<server>__*` と書きます。ワークフローのエージェントに MCP ツールを許可している場合は、ルールの書き方を見直してください。
+- **Workflow resume の修正**（v2.1.305）: 再開時に、完了済みの `pipeline()` / `parallel()` のエージェントを再実行せず、run の journal から結果を返すようになりました。
+
+出典: [Claude Code CHANGELOG（v2.1.299・v2.1.302・v2.1.305・v2.1.307）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 ---
 
