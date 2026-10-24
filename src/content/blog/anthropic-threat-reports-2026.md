@@ -1,6 +1,7 @@
 ---
 title: "Anthropic 脅威レポートまとめ — AI 主導のスパイ活動から ATT&CK 分析、2026年9月レポートと Alibaba の蒸留攻撃まで"
 date: 2026-09-27
+updatedDate: 2026-10-24
 category: "Claude技術解説"
 tags: ["Anthropic", "脅威インテリジェンス", "サイバーセキュリティ", "MITRE ATT&CK", "蒸留攻撃", "Alibaba", "GTG-1002", "Claude Code", "AI悪用", "Preserved Thinking"]
 excerpt: "Anthropic が公表した脅威インテリジェンス関連の3本を時系列で整理する。起点は2025年11月の『初の AI 主導サイバースパイ活動の阻止』で、中国の国家支援グループ（GTG-1002）が Claude Code を侵入テストの指揮役として使い、作戦の80〜90%を AI が実行した。2026年6月には、1年分・832アカウントの悪用を MITRE ATT&CK にマッピングし、中リスク以上の割合が33%から56%に増えたこと、そして『AI によるオーケストレーションは ATT&CK で表現できない』ことを示した。2026年9月のレポートは、2025年12月〜2026年8月の悪用をサイバー・影響工作・監視・詐欺・生物・通常兵器・蒸留の7分野で公開し、『高度な攻撃に高度な攻撃者はもう要らない』と結論づけた。蒸留の分野では中国の7つのラボを挙げ、Alibaba を『これまでに測定した最大の蒸留攻撃』（2026年5〜7月に1億5,100万回超）と帰属している。6月に報じられた上院宛て書簡の数値（2,880万回）とは期間も規模も異なる点、Alibaba の否定声明の原文は確認できない点も明記した。"
@@ -171,6 +172,21 @@ Anthropic の推奨と、レポートの内容から導ける実務上の対策�
 - **非公式の Claude 再販業者を使わない**: 偽の再販業者が資格情報を盗む事例が出ている
 - **パッチ適用を早める**: 公開された脆弱性が AI で短時間に悪用される前提に立つ
 - **脅威情報を共有する**: レポートには侵害の痕跡（IOC）の CSV が添付されている
+
+## 7. 【2026-10-24追記】防御側の取り組み — Anthropic Cyber Mission
+
+脅威レポートが示す攻撃側の変化に対し、Anthropic は防御側の支援を組織横断のプログラムとして打ち出しています。
+
+Anthropic は **2026年10月8日**、サイバー防御を長期で支援する **Anthropic Cyber Mission** を発表しました。防御側にツール・研究・リソースを提供する取り組みで、最初の対象は**重要インフラ**と**オープンソースソフトウェア**です。
+
+- **Critical Infrastructure Defense Program（CIDP）**: 電力網・水道・交通などの制御系（OT）を守る事業者に、最先端の Claude モデル、現地に入るエンジニア、脅威リサーチを提供します。創設パートナーは **Accenture・Booz Allen・CrowdStrike・Deloitte・Dragos・Hitachi・Insane Cyber・Nozomi Networks・Palo Alto Networks・PwC・Rockwell Automation** の11社で、第1段階は少数のコホートです。
+- **Glasswing の統合**: Glasswing のパートナーは多数の脆弱性を見つけたものの、検証・優先順位付け・修正が遅いことが課題でした。Glasswing は拡張された **Cyber Verification Program に統合**され、より多くの防御側が最も高性能なモデルを使えるようになっています。
+- **OSS Scanner（オプトイン、無料）**: Google の OSS-Fuzz に着想を得た無料サービス。登録したプロジェクトは Anthropic の最高性能のモデルによる定期スキャンを受け、報告には PoC・説明・修正案（可能な場合）が付きます。**報告はモデル生成で人手のレビューを経ておらず、不正確なものもあり得る**とされ、Anthropic は真陽性率が90%を超えると見込んでいます。量をさばけないプロジェクトには、人が検証した開示を引き続き行います。
+- **Defender Advantage Fund（0xDAF）**: 8月に立ち上げ。パイロットを支援し、OSS Scanner の無料提供を続けます。6月には州・地方・部族・準州政府向けの防御プログラムを開始し、半数超の州などに届いたと説明されています。
+
+出典: [Introducing the Anthropic Cyber Mission（Anthropic）](https://www.anthropic.com/news/anthropic-cyber-mission)（2026-10-08）
+
+Glasswing と Cyber Verification Program の経緯や段階別アクセスは、[Claude Mythos Preview & Project Glasswing](/blog/claude-mythos-glasswing/) を参照してください。
 
 ## まとめ
 
