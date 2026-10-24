@@ -1,7 +1,7 @@
 ---
 title: "MCP (Model Context Protocol) アーキテクチャ詳細"
 date: 2026-04-26
-updatedDate: 2026-10-17
+updatedDate: 2026-10-24
 category: "Claude技術解説"
 tags: ["MCP", "Claude Code", "JSON-RPC", "GitHub", "OAuth", "プロトコル", "Claude for Legal", "ステートレス", "SEP-2577", "SEP-2663", "Sampling", "非推奨ポリシー", "MCP Apps", "Extensions", "JSON Schema 2020-12", "W3C Trace Context"]
 excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness/エンタープライズSSO・監査トレイル・ガバナンス成熟化（貢献者ラダー/委任モデル/憲章）・新コアメンテナー）、MCP Apps（SEP-1865）、**2026-07-28 に正式リリースされたMCP新仕様**（プロトコルステートレス化＝Mcp-Session-Id 廃止、MCP Apps の HTML UI、Tasks Extension 再設計）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、Claude for Legal で公開された20+ MCPコネクタ、約20万サーバーに影響した重大脆弱性事案、さらに新仕様で制定された SEP-2577 の非推奨ポリシー（Active/Deprecated/Removed の3段階・最低12ヶ月）と Sampling/Roots/Logging の deprecated 化、**2026-08-22 公開の新ロードマップ**（Agentic Messaging・HTTP-native transport 全面化・Agent Identity/DPoP/WIF・ツールプリミティブ改善・SDK DX の5優先領域と SEP 加速レビュー）、**2026-08-24 に GA となった Enterprise-managed authorization for MCP connectors**（Datadog・Notion・Slackが新規対応、公開MCPサーバー950以上）、**Claude Code v2.1.259の`managedMcpServers`マネージド設定・無人ホスト向け`--permission-prompts none`**、2026-09-22 に Claude API の MCP コネクタへ加わった**`mcp-client-2026-09-15`（サーバーが返したツール一覧を`mcp_tool_listing`ブロックとして記録・固定。Inline toolsと併用すると会話途中でMCPツールセットを追加可能）**までの参照リンクを網羅"
@@ -1471,7 +1471,9 @@ MCPサーバーをプラグイン経由で利用する際、依存関係が未�
 - 2026-07-28 仕様のサーバーを作るときは、list 系の応答に `ttlMs` と `cacheScope` を付ける（v2.1.302 の修正は、これらを省略するサーバーに対する Claude Code 側の救済）
 - 説明文を長めに書くツールは、4,096 文字までは最初から Claude に見える。それ以上は、ツール検索（tool search）経由で読み込まれる分に別の上限（16,384 文字）がある
 
-なお、Issue には「Anthropic が MCP を Linux Foundation 傘下の Agentic AI Foundation に寄贈する発表」という記述がありましたが、Claude Code の CHANGELOG と Anthropic Platform リリースノートの 10月分には該当する記載がなく、本記事の時点では一次情報で確認できていません。
+> **【2026-10-24 訂正・追記】** 上記の「Anthropic が MCP を Linux Foundation 傘下の Agentic AI Foundation（AAIF）に寄贈した」という点は、10月17日時点では Claude Code の CHANGELOG と Platform リリースノートに記載がなく未確認としていましたが、**2026年10月22日付の Anthropic 公式記事「Donating Agent Skills to the Agentic AI Foundation」で確認できました**。同記事は Agent Skills（オープン標準）を、名称・ロゴ・GitHub 組織・agentskills.io ドメインとともに AAIF（Linux Foundation 傘下。Block・OpenAI とともに前年に共同設立）へ寄贈したと述べ、その中で MCP もすでに AAIF へ寄贈済みであることに触れています。Lead Maintainers は David Soria Parra 氏と Mahesh Murag 氏、Anthropic・Google・OpenAI などのエンジニアが個人としてメンテナンスします。Agent Skills は2025年12月の公開以降、ChatGPT・Cursor・GitHub Copilot・VS Code など70以上のエージェントプラットフォームが統合したとされ、ロードマップ案はバージョン付きリリース・正式な提案プロセス・セキュリティガイダンスです。
+
+出典: [Donating Agent Skills to the Agentic AI Foundation（Anthropic）](https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation)（2026-10-22）
 
 出典: [Claude Code CHANGELOG（v2.1.292〜v2.1.302）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
