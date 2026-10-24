@@ -1,7 +1,7 @@
 ---
 title: "Claude Managed Agents 簡易ガイド — アーキテクチャ・比較・ユースケース"
 date: 2026-04-08
-updatedDate: 2026-10-17
+updatedDate: 2026-10-24
 category: "Claude技術解説"
 tags: ["Claude", "Managed Agents", "Agent SDK", "Claude Code", "API", "マルチエージェント", "Memory", "Enterprise", "Self-hosted sandboxes", "MCP tunnels", "Cloudflare", "Modal", "Vercel", "Daytona", "Cloudflare Environments", "Webhooks", "microVM", "V8 Isolate", "Scheduled deployments", "Vault環境変数"]
 excerpt: "Claude Managed Agentsの3層アーキテクチャ（Session/Harness/Sandbox）、p50 TTFT 60%削減のパフォーマンス改善、Memory機能、Dreaming・Outcomes・Multi-agent orchestration、エンタープライズ向けRBAC・OpenTelemetry、2026年5月19日発表のSelf-hosted sandboxes（Cloudflare/Daytona/Modal/Vercel対応、Public Beta）とMCP tunnels（Research Preview、プライベートネットワーク内MCPサーバーへの outbound-only E2E接続）、料金体系（$0.08/session-hour）、Cloudflare Environments（brain/hands 分離・Linux microVM と V8 Isolate を選択可能・ブラウザ/メール/アウトバウンドプロキシ/Cloudflare Mesh・Workers VPC）に加え、2026年8月1日のDreaming Opus 5対応、8月7日のセッション予算（budget_reached）・マルチエージェントrosterへのアドバイザー追加・推論ジオ制御（inference_geo）・GitHubリポジトリからのスキル自動ロード、8月19日のweb検索/取得ドメイン制限・self-hosted sandboxへのmemory store接続・Console session viewer再設計、8月26日のAdmin APIが全主要SDKで`client.beta.organization`として利用可能になった件、2026年9月のCompliance APIによるCowork/Claude Codeローカルセッショントランスクリプト対応（関連情報）、2026年9月10日追加の権限ポリシー`auto`オプション（サーバー側での自動評価・`evaluation`/`evaluated_permission`フィールド）、セッション予算`max_list_cost`の詳細仕様（公開リスト価格ベースの課金・リクエスト間判定によるオーバーシュート・budget_reached時の挙動）、2026年10月7日のlimitedネットワークにおけるallowed_hostsのweb_search/web_fetchへの適用・web_fetchの「既出URLのみ取得」制限までを1ページに整理。"
@@ -661,6 +661,15 @@ Claude Code の Dynamic Workflows とは別の仕組みです。違いと上限�
 - スパンの配信は best effort で、使用量の正確な集計には Usage API を使う。セッション全体は `anthropic.session.id`、1スレッドは `gen_ai.conversation.id` でスパンをまとめる
 
 出典: [OpenTelemetry for the Claude API](https://platform.claude.com/docs/en/manage-claude/opentelemetry) ／ [Workflow runs](https://platform.claude.com/docs/en/managed-agents/workflow-runs) ／ [Anthropic Platform リリースノート](https://platform.claude.com/docs/en/release-notes/overview)
+
+
+### 【2026-10-24追記】セキュリティ設定の点検と、`/claude-api` スキルの更新
+
+- Claude Code v2.1.304 で **`/claude-api managed-agents-secure`** が追加されました。Managed Agents のエージェント設定を Anthropic が公開しているセキュリティガイドと照合するコマンドで、**照合のみで設定は変更しません**。
+- v2.1.309 では `/claude-api` スキルが、Managed Agents のサブエージェントチームを `coordinator` ではなく **`multiagent_20261001`（dynamic workflows が既定でオン）**で組むよう変更されました。
+- 2026-10-20 の Platform リリースノートで、**Managed Agents の `web_fetch` が組織の Web fetch 制限（許可/ブロックドメイン）を強制する**ようになりました。リダイレクト先の URL も、組織のリストとエージェントツールの `allowed_domains` / `blocked_domains` の両方を通る必要があります。Web 検索も組織の設定に従い、両方で許可された結果だけがエージェントに返ります。
+
+出典: [Claude Code CHANGELOG（v2.1.304・v2.1.309）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md) ／ [Claude Platform リリースノート](https://platform.claude.com/docs/en/release-notes/overview)
 
 ---
 
