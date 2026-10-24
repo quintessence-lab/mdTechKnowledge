@@ -1,7 +1,7 @@
 ---
 title: "Claude Code Review（GitHub PR 自動レビュー）完全ガイド — セットアップ・課金・REVIEW.md カスタマイズ"
 date: 2026-06-07
-updatedDate: 2026-10-17
+updatedDate: 2026-10-24
 category: "Claude技術解説"
 tags: ["Claude Code", "Code Review", "GitHub", "PR", "自動レビュー", "マルチエージェント", "Team", "Enterprise", "DevOps"]
 excerpt: "Anthropic の Code Review は、GitHub App 経由で PR に自動でインラインコメントを付けるマネージド・マルチエージェント製品（2026年3月9日ローンチ、Team/Enterprise 向け research preview）。手動の /code-review・/ultrareview とは別物。PR が開くと専門エージェント群が並列で diff とコードベースを分析し、ロジックエラー・脆弱性・境界条件・既存バグを 🔴🟡🟣 の重大度付きで指摘する。GitHub App のセットアップ手順、3つのレビューモード、課金（平均 $15–25/review・usage credits・spend cap）、REVIEW.md / CLAUDE.md によるカスタマイズ、/code-review・/ultrareview との違いまでを公式ドキュメント一次ソースで整理する。"
@@ -10,7 +10,7 @@ draft: false
 
 > ## 要点
 >
-> - **Code Review** は、**GitHub App として常駐し、PR に自動でインラインコメント**を付けるマネージド製品（2026年3月9日ローンチ、**research preview**）。
+> - **Code Review** は、**GitHub App として常駐し、PR に自動でインラインコメント**を付けるマネージド製品（2026年3月9日ローンチ。**2026年10月15日に research preview を卒業し、Team / Enterprise 向けに一般提供**。第9章参照）。
 > - 対象は **Team / Enterprise プランのみ**。**Zero Data Retention（ZDR）有効組織では利用不可**。
 > - PR が開く（または毎push／手動コメント）と、**Anthropic インフラ上で専門エージェント群が並列起動**し、ロジックエラー・セキュリティ脆弱性・境界条件・既存バグなどを検査して**インラインコメント＋要約**を投稿。
 > - 重大度は **🔴 Important / 🟡 Nit / 🟣 Pre-existing** の3段階。**PR を承認もブロックもしない**（チェックランは neutral）。
@@ -184,7 +184,7 @@ gh api repos/OWNER/REPO/check-runs/CHECK_RUN_ID \
 
 | 項目 | 内容 |
 |:---|:---|
-| 対象プラン | **Team / Enterprise のみ**（Pro/Max/個人は対象外）。research preview（仕様・価格変更あり） |
+| 対象プラン | **Team / Enterprise のみ**（Pro/Max/個人は対象外）。2026-10-15 に research preview を卒業（一般提供）。仕様・価格は以降も変わり得る |
 | ZDR | **Zero Data Retention 有効組織では利用不可** |
 | 対応 VCS | **GitHub（github.com）のみ**。セルフホストは GitHub Enterprise Server 連携が別途必要 |
 | プライバシー | コードは **Anthropic のクラウドで処理**される（フルコードベース文脈で分析するマネージドサービス） |
@@ -212,6 +212,39 @@ gh api repos/OWNER/REPO/check-runs/CHECK_RUN_ID \
 あわせて、`/code-review` コマンド自体にも修正が入っています。クラウドセッション・Agent SDK・IDE 連携では、結果が生の JSON 配列で終わっていたのが、番号付きリストで表示されるようになりました（v2.1.296）。
 
 出典: [Claude Code CHANGELOG（v2.1.288・v2.1.296・v2.1.300）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
+
+---
+
+## 9. 【2026-10-24追記】一般提供（GA）とレビューレベル（Quick / Standard / Deep）
+
+### 一般提供への移行（2026年10月15日）
+
+Anthropic の発表（2026-10-15）で、Code Review は **research preview を卒業し、Claude Team / Enterprise 組織向けに一般提供**となりました。
+
+- **速度**: 多くのレビューが preview 時の約20分から **6〜10分**（約3倍速）で完了
+- **クレジットのプロモーション**: 対象の Enterprise 組織は、2027年1月15日までに申請すると **Code Review クレジットを最低 $10,000 分**受け取れる（受け取り後30日で失効、条件あり）
+- **制限（公式ドキュメント）**: **Zero Data Retention を有効にした組織、HIPAA 構成を適用した組織は利用不可**（Anthropic の BAA の対象外）。顧客管理の暗号鍵（CMEK）を使う組織も未対応
+
+なお、第7章の「対象プラン」の表記は上記のとおり更新済みです。
+
+### レビューレベル — 深さとコストを選ぶ
+
+v2.1.304 で、レビューの徹底度を選ぶ**レビューレベル**が加わりました。徹底度を上げるほどコストも上がります。
+
+- **Quick**: 軽めのパス。最速・最低コスト
+- **Standard**: 深さ・速度・コストのバランス。**既定**
+- **Deep**: 最も徹底。時間もコストも最大
+
+Owner が**組織全体で1つのレベル**を選び、**リポジトリごとに別のレベル**も指定できます（定型的なコードベースは Quick、重要なコードベースは Deep など）。レビューに使うモデルは Code Review 側が選び、管理画面では選べません。
+
+### 管理設定・コマンドの追加
+
+- **組織内の全リポジトリを対象にするオプション**（後から追加したリポジトリも含む。v2.1.304）
+- 管理者が Code Review を有効にした直後の1〜2分に開かれた PR が黙ってスキップされる問題の修正（再試行されてレビューされる。v2.1.304）
+- **`@claude review stop`**（`off` / `pause` も可）で、`@claude review always` の購読を新しいレビューを始めずに終了（v2.1.307）
+- 再レビューが、ブロッキングの指摘が未解決のうちは LGTM で始まらないよう変更（v2.1.305）
+
+出典: [Code Review is now generally available（Claude ブログ）](https://claude.com/blog/code-review-is-now-generally-available) ／ [Code Review（Claude Code ドキュメント）](https://code.claude.com/docs/en/code-review) ／ [Claude Code CHANGELOG（v2.1.304・v2.1.305・v2.1.307）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 ---
 
