@@ -1,7 +1,7 @@
 ---
 title: "Claude for Small Business 完全ガイド — Cowork トグルで7コネクタ・15ワークフロー・15スキル"
 date: 2026-05-18
-updatedDate: 2026-09-21
+updatedDate: 2026-10-30
 category: "Claude技術解説"
 tags: ["Claude", "Cowork", "SMB", "中小企業", "ワークフロー自動化", "コネクタ", "PayPal", "Shopify", "Salesforce"]
 excerpt: "2026年5月14日（JST）GAローンチした Claude for Small Business を解説。Claude Cowork のトグルで有効化し、QuickBooks/PayPal/HubSpot/Canva/DocuSign/Google Workspace/Microsoft 365 の7コネクタ（＋業種別アプリ向けの拡張枠）と連携。財務・営業・HR・CS の15ワークフロー＋15スキルを追加料金なしで提供。米国10都市の無料ワークショップ（AI Fluency for Small Business）も併走。2026-09-15追記: ワークフロー43本・コネクタ総数37（新規27統合、Shopify/Salesforce/TikTok/Atlassian/Zoom/Xero/Gusto/Square/Stripe/Zapier等）へ拡大、累計インストール90万件突破、週次月曜ブリーフ等の主要ワークフロー例、Claude SMBツアー再開（米国10都市）を追記。"
@@ -202,6 +202,19 @@ GA時点では「7コネクタ・15ワークフロー・15スキル」だった 
 パートナーTenexと共同で、**米国10都市**（ボストン・ピッツバーグ・デトロイト・ミネアポリス・フェニックス・メンフィス・サバンナ・ベントンビル・タンパ・ローリー）で無料半日ワークショップを実施する「Claude SMBツアー」が今秋再開。認定を受けた**150超の団体が「Claude SMB Trainer」**として自コミュニティで**750件超のワークショップ**を実施予定で、**14の統合パートナーが無料ウェビナー**を開催します。
 
 出典: [Claude for Small Business launches new workflows, integrations, and training programs（公式ブログ、2026-09-15）](https://claude.com/blog/claude-for-small-business-launches-new-workflows-integrations-and-training-programs)
+
+---
+
+## 8.6. 【2026-10-30追記】Google Workspace が Docs・Sheets・Slides に対応（10/6 ベータ）
+
+第3章の「7 コネクタ」のうち Google Workspace は、2026年10月6日の発表で **Docs・Sheets・Slides との連携が加わりました**（いずれもベータ）。
+
+- **Claude for Google Workspace アドオン**: 開いている Doc・Sheet・Slide の横のサイドバーに Claude が表示され、ファイルを読み、選択範囲を見て、その場で編集できます。**すべての有料プランでパブリックベータ**です。既定では編集のたびに承認を求めます（承認なしで適用するモードもあります）。
+- **Docs・Sheets・Slides コネクタ**: チャットから Google ファイルを作成・編集できます（ベータ）。Team・Enterprise では Owner による有効化が必要です。Claude のアクセスは既存の Google 共有設定に従います。
+- **Small Business との関係**: 第8.5章のとおり、現在の Small Business は43ワークフロー・37のパートナーコネクタで、Google Workspace はその1つです。ただし Docs・Sheets・Slides の対応が Small Business のワークフロー側でどう使われるかは、公式の説明では確認できていません。
+- 「7コネクタ」という本記事のタイトル表記は GA 時点（2026年5月）の数字で、現在のコネクタ数は第8.5章の37です。
+
+出典: [Claude now works with Google Docs, Sheets, and Slides（claude.com、2026-10-06）](https://claude.com/resources/articles/claude-now-works-in-google-docs-sheets-and-slides)
 
 ---
 
