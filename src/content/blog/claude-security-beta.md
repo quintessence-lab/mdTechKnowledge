@@ -1,7 +1,7 @@
 ---
 title: "Claude Security Beta — Anthropic エンタープライズセキュリティ製品の全貌（2026年5月発表）"
 date: 2026-05-02
-updatedDate: 2026-09-27
+updatedDate: 2026-10-30
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude Security", "Opus 4.7", "セキュリティ", "脆弱性スキャン", "エンタープライズ", "脅威インテリジェンス", "MITRE ATT&CK", "サイバー攻撃", "サイバー評価インシデント", "Inference hooks", "DLP"]
 excerpt: "2026年5月1日、Anthropic は Claude Opus 4.7 を中核に据えたエンタープライズ向けセキュリティ製品 Claude Security のパブリックベータを発表した。コードベース脆弱性スキャン・パッチ生成、CrowdStrike / Microsoft Security / Palo Alto Networks / SentinelOne / TrendAI / Wiz などの技術パートナー、Accenture / BCG / Deloitte / Infosys / PwC などのサービスパートナー連携を含め、全体像を整理する。さらに2026年6月3日公開の脅威インテリジェンスレポート（禁止832アカウントの MITRE ATT&CK マッピング、マルウェア生成67.3%、中リスク以上が33%→56%へ）、2025年11月に阻止された AI 主導サイバースパイ活動の事例、2026年7月30日発表のサイバー評価インシデント（評価環境の設定ミスでClaudeが実組織3社に不正アクセス）、そして2026年8月5日発表のInference hooks（Claude Enterprise beta。DLPサーバーへ推論前にプロンプトを問い合わせ、Netskope/Palo Alto/Proofpoint/Zscaler等と統合）、2026年9月2日発表のEnterprise Frontier Safeguards（EFS。ゼロデータリテンションと不正利用検出を両立する新アーキテクチャ、顧客所有クラウドへのデータ保持、100社超と共同開発・秋以降段階ロールアウト）、2026年9月17日発表のLife Sciences Verification Program（LSVP。検証済みの生命科学組織に生物学関連の安全策を緩和する信頼アクセス。Standard Use／High-risk Useの2種の許可、リアルタイムのブロックから事後監視への移行、30日データ保持必須、Enterprise/Team・API向けベータ）も追補する。"
@@ -398,6 +398,22 @@ EFS が「ゼロデータリテンションでも不正利用を検出する」�
 - **PHI を扱う場合の別組織運用**と、**30日のデータ保持が必須**である点は、契約・コンプライアンス部門と事前に確認してください。
 
 出典: [Introducing the Life Sciences Verification Program — Anthropic 公式（2026-09-17）](https://www.anthropic.com/news/life-sciences-verification-program)
+
+## 【2026-10-30追記】継続スキャン・修正追跡・API と MCP コネクタ
+
+Claude Security の製品ページ（日付表記なし）には、これまでの記述に加えて、運用面の機能が次のように載っています。
+
+- **継続スキャン**: 最初に深いベースラインスキャンを行い、その後はコードの変更に合わせてスキャンを続けます。スキャンを手動で予約する必要はなく、変更はリスクと複雑さに応じて再スキャンされるとのことです。
+- **修正追跡**: 各検出には修正パッチの提案が付きます。修正が出荷されると Claude が「fixed」と判断し、脆弱性が積み上がらないようにします。ページは「open / fixed / reopened」という状態一覧を定義してはいませんが、API で検出を解決（resolve）したり再オープン（reopen）したりできると書かれています。
+- **Claude Security API**: 検出をチケット管理・脆弱性管理・レポートのツールに取り込み、解決・再オープンも行えます。新しい検出は webhook で通知されます。
+- **MCP コネクタ**: Claude と Claude Code から MCP コネクタとして使え、エンジニアは1つのセッション内で検出の確認・修正の開始・解決のマークまで進められます。
+- **提供範囲**: 「Claude Enterprise 向けのパブリックベータ」。管理者が管理コンソールで有効化します。**Claude Code 用の Claude Security プラグインは、すべての Claude Code ユーザー向けのベータ**です。**Claude Mythos 系モデルによるスキャンは、claude.ai 上の Claude Security アプリでのみ**実行されます。
+
+Issue では「2026-10-21 にエンタープライズ向けパブリックベータが拡張された」とされていましたが、この日付は公式ページ・リリースノートで確認できなかったため、本記事では日付を断定していません。
+
+出典: [Claude Security（claude.com）](https://claude.com/product/claude-security)
+
+---
 
 ## 既存セキュリティ事案との関係性
 
