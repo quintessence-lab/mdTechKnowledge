@@ -1,7 +1,7 @@
 ---
 title: "Claude Code Auto Mode 完全ガイド — --dangerously-skip-permissions を卒業する自律型権限管理"
 date: 2026-06-21
-updatedDate: 2026-10-24
+updatedDate: 2026-10-30
 category: "Claude技術解説"
 tags: ["Claude Code", "Auto Mode", "permission mode", "dangerously-skip-permissions", "分類器", "classifier", "claudeignore", "安全運用"]
 excerpt: "Claude Code の Auto Mode（自律型権限管理）は、すべてを無条件に許可する --dangerously-skip-permissions の安全な代替として 2026-03-24 に登場した。モデルベースの2段階トランスクリプト分類器（Sonnet 4.6 による高速フィルター＋思考連鎖による精査）で各アクションを起動前に評価し、連続3拒否・累計20拒否で自動停止する。2026-08-14 からは Pro/Max/Team プランの新規セッションで Auto Mode が既定の権限モードになった（人間の目視13.6%に対し分類器89%の危険コマンド捕捉率が論拠。Enterprise/API/Bedrock/Vertex/Foundry はオプトイン継続）。2026-08-25のv2.1.246では`/permissions`にAuto modeタブが追加され、分類器ルールをGUIから閲覧・編集可能になった。2026-08-27のv2.1.248では`--restricted`フラグが追加され、実行系ツール・WebFetchをそもそも起動時から除去する、Auto Modeとは別系統の静的な制限モードが利用可能に。2026-09-01のv2.1.257ではContainment Escapeルールが追加され、クラウドメタデータ認証情報取得・egress回避・クロステナントアクセスが環境の明示許可なしには自動承認されなくなった。2026-09-14のv2.1.271ではBash/PowerShell/Monitorへコマンド単位の`allowed_domains`が追加され、2026-09-18のv2.1.278では分類器の実行場所がデフォルトでサーバー側に変更（オーバーヘッド課金なし、`CLAUDE_CODE_AUTO_MODE_SERVER=0`でopt-out可）された。本記事では権限モードの全体像、分類器の仕組み、エスカレーション停止、.claudeignore 連携、卒業の手順までを公式情報ベースで整理する。"
@@ -253,7 +253,7 @@ v2.1.304 で **`/auto-mode-setup`** が追加されました。プロジェク�
 - 手元の環境に合わせて auto mode の判断材料を整えたいときに、手書きで設定を書く代わりに使う入口
 - auto mode の分類器モデルを切り替えたい場合は、5.11 の `CLAUDE_CODE_AUTO_MODE_MODEL`（v2.1.302）を参照
 
-あわせて v2.1.307 では `claude_code.safety_event` の OpenTelemetry イベントが追加され、権限ルール・auto mode・安全チェック・フック・サンドボックスが止めた／確認した／差し戻したツール呼び出しごとに記録できます。v2.1.307 では、`/permissions` の「Recently denied」から承認した再試行コマンドを auto mode のローカル分類器が無視する問題も修正されました。
+あわせて v2.1.307 では `claude_code.safety_event` の OpenTelemetry イベントが追加され、権限ルール・auto mode・安全チェック・フック・サンドボックスが止めた／確認した／差し戻したツール呼び出しごとに記録できましたが、**v2.1.312 で Claude Code はこのイベントの送信を停止しました**（CHANGELOG の記載のみで、理由は書かれていません）。v2.1.307 では、`/permissions` の「Recently denied」から承認した再試行コマンドを auto mode のローカル分類器が無視する問題も修正されました。
 
 出典: [Claude Code CHANGELOG（v2.1.304・v2.1.307）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
