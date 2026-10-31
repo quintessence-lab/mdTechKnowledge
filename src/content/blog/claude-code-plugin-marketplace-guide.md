@@ -1,7 +1,7 @@
 ---
 title: "Claude Code Plugin Marketplace ガイド — slash/hooks/サブエージェント/skills を束ねて配布・導入する"
 date: 2026-06-21
-updatedDate: 2026-10-17
+updatedDate: 2026-10-31
 category: "Claude技術解説"
 tags: ["Claude Code", "プラグイン", "Marketplace", "slash commands", "hooks", "サブエージェント", "skills", "MCP", "design"]
 excerpt: "Claude Code のプラグインは、slash commands・hooks・サブエージェント・skills・MCP サーバーを1つのパッケージに束ねて配布・導入できる仕組みです（2025年10月 公開ベータ）。/plugin コマンドでの検索・インストール、公式マーケットプレイス claude-plugins-official とサードパーティ/自前マーケットプレイスの追加方法、plugin.json の構成、作成の流れまでを公式ドキュメントベースで整理します。2026-08-17（v2.1.234）追加のバンドルスキル`/design`（Research Preview）、2026-09-04（v2.1.261）追加の`/skill-doctor`（未使用スキルとコンテキストコストの可視化）、2026-09-11（v2.1.269）追加の`claude plugin eval`（プラグインのevalスイート実行・ノープラグインベースラインとのスコア比較）も追記。 2026-09-29更新: 2026-09-23に公開された Claude Marketplace（2,000以上のコネクタ・プラグイン、3セクション構成）と、9/25に開設されたプラグイン申請窓口を追記。2026-10-03更新: `claude plugin configure`（v2.1.285）とClaude Mods・組み込みMod「You Should Know」（v2.1.287）を追記。2026-10-09更新: Modsの仕組み（イベントハンドラ・設定hookとの使い分け・動作環境・`--safe-mode`/`allowManagedModsOnly`・信頼の判断）と組み込みMod一覧、v2.1.288〜295のMod関連追加（`agent.spawn`・`claude plugin install --marketplace`・`$.ui.notify`等）を追記。 2026-10-01（v2.1.287）に加わった新しい拡張タイプ「Mods」（TypeScript/JavaScript の関数でプロンプトの書き換え・UI の追加・組み込み機能の置き換えができる）の仕組みと、v2.1.299〜302 までの追加も反映。"
@@ -333,7 +333,7 @@ my-plugin/
 | **v2.1.290** | `turn.step` に `serverToolUses`（アドバイザー等 API 側実行のツール呼び出し）、`tool.check` に `agentId`・`ceiling`（組織が要求する承認レベル）、`claude plugin validate` に gating フックの `.catch` 有無の一覧 |
 | **v2.1.292** | **`claude plugin install --marketplace <source>`** — 必要ならマーケットプレイスを追加し、`marketplace add` と同じポリシー検査のうえでそこからインストール。`prompt.autocomplete` イベント、`$.model.complete` のプロンプトキャッシュ（ブロックに `cache: true`）、`agent.spawn` が workflow エージェントも扱う。`claude plugin test` 内の失敗した `expect` をテスト失敗として扱う |
 | **v2.1.293** | `$.tool.register` に `isDeferred`（`false` でツール検索を介さず最初からスキーマを掲載） |
-| **v2.1.295** | `$.ui.notify`（ネイティブ通知）、`Button` が子要素（文字列・`Text`）を持てる、`claude plugin validate` が README のインストール行不足を助言、`claude plugin install` / `enable` / `disable` / `marketplace add` が書き込み先の設定ファイルが読み込まれない場合に警告 |
+| **v2.1.295** | `$.ui.notify`（ネイティブ通知）、`Button` が子要素（文字列・`Text`）を持てる、`claude plugin validate` が README のインストール行不足を助言、`claude plugin install` / `enable` / `disable` / `marketplace add` が書き込み先の設定ファイルが読み込まれない場合に警告。フック全般では、コマンド・HTTP フックに **`onFailure: "block"`** を追加（起動できない・タイムアウト・想定外の終了コードのとき、通過させずアクションをブロックする） |
 
 とくに **v2.1.292 の `--marketplace` 付きインストール**は、本記事前半の「`/plugin marketplace add` → `/plugin install`」の2手順を1コマンドにまとめられます（例: `claude plugin install <plugin> --marketplace <source>`）。組織のポリシー検査は従来どおり適用されます。
 
