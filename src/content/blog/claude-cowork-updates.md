@@ -128,11 +128,26 @@ Claude CoworkはAnthropicが提供するデスクトップAIエージェント�
 |------|------|
 | 7月14日（PT）/ 7月15日（JST） | **Claude for Teachers 発表**。米国の検証済み K-12 教育者を対象に、**Claude Code と Cowork を含むプレミアムアクセスを1年間無料**（〜2027年6月30日）で提供。 |
 
-- **対象**: 米国の個人教育者（検証済み K-12 教員）限定。学校・学区単位の専用プランは別途開発中。
+- **対象**: 発表時点では米国の個人教育者（検証済み K-12 教員）限定。学校・学区向けは8月28日に提供開始（下記）。
 - **提供内容**: プレミアム Claude へのフルアクセスに加え、**Teaching Skills ライブラリ**（レッスンプラン作成・学習者別の差別化対応・クラスデータ分析など学習科学ベースの機能）と、**Learning Commons コネクタ**経由でのカリキュラム接続（全50州の学習指導要領・OpenSciEd・Illustrative Mathematics 教材に対応）。
 - **Cowork/Claude Code の位置づけ**: 本プログラムには Claude Code と Cowork のアクセスが含まれており、教師は "Claude can carry work forward on its own" という自律実行機能（本記事で扱う Cowork のリモートセッション等）を教材準備・採点補助等に活用できる。
 
 > **意味**: ChatGPT for Teachers・Microsoft Elevate for Educators・Google AI Educator Series と並ぶ、教育市場向けの無料提供競争の一環。Cowork/Claude Code が「業務ツール」から「教育現場のワークフロー」にも広がっている事例。
+
+**【2026-10-31追記】学校・学区向けの無料 Enterprise（2026年8月28日）**
+
+2026年8月28日、Claude for Teachers は**米国の K-12 の学校・学区向けに、無料の Enterprise 版**として提供が始まりました。学校・学区が、教員と職員を1つの K-12 規約のもとでまとめて管理できます。
+
+| 項目 | 内容 |
+|------|------|
+| 無料期間 | **2027年6月30日までに申し込んだ組織は、1年間無料** |
+| 申し込み条件 | 管理者の認証、K-12 規約と学生データのプライバシー契約への同意、メールドメインとシングルサインオンの接続 |
+| データの扱い | 学校・学区単位の **K-12 規約とデータ処理契約（DPA）**を提供。公式は「**FERPA に沿った約束**」と説明。**Claude for Teachers のデータはモデルの学習に使われない** |
+| 管理機能 | SSO、ロールベースのアクセス制御、ドメインの申請。職員の追加・削除、ポリシー設定、学校ごとの利用状況の確認。学区のドメインで認証済みの教員を管理アカウントへ移す「ドメインキャプチャ」 |
+| 利用上限 | 個人の Claude for Teachers アカウントと同じ。超過課金は既定でオフで、管理者が有効にした場合のみ |
+| 新スキル | 授業準備のスキルと、理解度を確認するスキル（開始時は数学のみ）。生徒向け教材のアクセシビリティ改善 |
+
+**参考**: [Claude for Teachers, now available for schools and districts（Claude 公式ブログ、2026-08-28）](https://claude.com/blog/claude-for-teachers-now-available-for-schools-and-districts)
 
 **参考**: [Anthropic 公式: Claude for Teachers](https://www.anthropic.com/news/claude-for-teachers) ／ [Chalkbeat（2026-07-14）](https://www.chalkbeat.org/2026/07/14/anthropic-launches-claude-for-teachers-as-ai-companies-battle-for-classrooms/)
 

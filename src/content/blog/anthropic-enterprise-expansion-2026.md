@@ -1,7 +1,7 @@
 ---
 title: "Anthropic エンタープライズ攻勢2026 — PwC・KPMG・DXC・TCS と Big Four/SIer 連携、$1.5B FDE スタジオまで"
 date: 2026-06-20
-updatedDate: 2026-10-24
+updatedDate: 2026-10-31
 category: "一般リサーチ"
 tags: ["Anthropic", "Claude", "エンタープライズAI", "PwC", "KPMG", "DXC", "TCS", "Forward Deployed Engineer"]
 excerpt: "2026年5〜6月、Anthropic は PwC・KPMG・DXC・TCS という Big Four / 大手 SIer との大型連携を相次いで発表し、さらに Blackstone・Goldman Sachs・Hellman & Friedman と組んで FDE 型のエンタープライズ AI サービス会社（報道で総額 $1.5B 規模）を立ち上げた。コンサル・SIer・PE を「実装の通り道」として、規制業種・大企業・PE 保有の中堅市場へ Claude を一気に押し込む攻勢の全体像と、各社の認定規模・活用製品・狙う市場を比較整理する一般リサーチ。2026年8月26日発表のSalesforce「Claudeforce」（両社が互いの顧客となる双方向パートナーシップ、Claude in Salesforce・Salesforce in Claudeの相互統合）、2026年9月21日発表のAccentureが「初の組み込み外部評価者」に就任（導入支援ではなくモデル安全性検証への参加）も追記した。2026-10-09更新: 9月30日のClaude for Government GA（FedRAMP High・席課金なしの上限額方式）、10月1日のBarclaysの全社展開（Claude Code開発者50%目標）、10月2日のClaude Frontier Academy（$100M・1万人育成）も追記。"
@@ -204,6 +204,13 @@ UST・LTM に続き Cognizant も加わったことで、大手SIer/コンサル
 - **入手方法**: claude.com/solutions/government から申請。既存顧客は会話履歴をアプリ内ツールで取り込める
 
 本記事のテーマ（民間のコンサル・SIer・PEを介した展開）とは別に、**規制の厳しい公共部門を直接取りに行く動き**として位置付けられます。
+
+**【2026-10-31追記】調達と契約の背景**
+
+- **契約・課金の当事者は Anthropic**: 7月7日の公開ベータ発表の時点で、Anthropic が契約と課金の当事者になるとされ、機関はクラウド事業者と別に契約する必要がありません（[公式ブログ](https://claude.com/blog/bringing-claude-code-and-claude-cowork-to-government)）。
+- **GSA OneGov の「1機関 $1」契約（2025年8月12日）**: 米国一般調達局（GSA）は Anthropic と OneGov 契約を結び、**行政・立法・司法の3府の機関に Claude for Enterprise と Claude for Government を、1機関 $1 で最長1年**提供すると発表しました。行政府の機関は GSA の Multiple Award Schedule（MAS）で調達でき、立法府・司法府はそれぞれの契約手段を使います（[GSA 発表](https://www.gsa.gov/about-us/newsroom/news-releases/gsa-strikes-onegov-deal-with-anthropic-08122025)）。2026年8月の新しい施策ではなく、2025年8月の契約です。その後の条件の変更（期限・単位）は報道によって記載が食い違っており、GSA の現行条件は確認できていません。
+- **連邦機関での使用禁止と差止命令（2026年3月26日）**: 2月に表面化した国防総省との契約上の対立（Anthropic は自律兵器や米国民の監視への利用を認めない立場）を受け、大統領が全連邦機関に Anthropic の技術の使用停止を指示し、国防総省は Anthropic を「サプライチェーン・リスク」に指定しました。サンフランシスコの連邦地裁（Rita F. Lin 判事）は3月26日、この指示と指定を**本案の判断まで一時的に差し止める予備的差止命令**を出しています（[NPR](https://www.npr.org/2026/03/26/nx-s1-5762971/judge-temporarily-blocks-anthropic-ban)）。その後の控訴などの経過は、本記事では追えていません。
+- 一部の報道にある商務省・HHS・アイダホ国立研究所の採用例は、一次情報で確認できなかったため載せていません。
 
 **2. Barclays が Claude を全社規模に拡大 — 2026年10月1日**
 
