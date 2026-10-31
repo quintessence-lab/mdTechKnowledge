@@ -1,24 +1,57 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-10-30
+updatedDate: 2026-10-31
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート", "Opus 5.5", "Sonnet 5.5", "Haiku 5.5", "Claude Mods"]
-excerpt: "Claude Code v2.0.59〜v2.1.312 のバージョン履歴。v2.1.312の`claude_code.safety_event`送信停止・フック同時実行数の上限・`oidc.user_id_claim`、v2.1.311の`ultrathink`のxhigh実行・署名付きモデル設定、v2.1.310のBedrock/Vertex/FoundryでのMonitorツールとクラウドセッション権限のカスタムロール、v2.1.309のサンドボックス/権限チェック修正・`claude ultrareview`のワークスペースtrust要求、v2.1.307の`/claude-api api-version`・`claude_code.safety_event`・`@claude review stop`、v2.1.305の`sandbox.allowNestedUserNamespaces`、v2.1.304のCode Reviewレビューレベル(Quick/Standard/Deep)・`/auto-mode-setup`・`/claude-api managed-agents-secure`、v2.1.302のauto modeクラシファイア用モデル指定`CLAUDE_CODE_AUTO_MODE_MODEL`・スタンドアロン版Claude Designの2026-12-14終了予告、v2.1.301のvimの`%`モーション・OpenTelemetry `tool_decision`への`classifier_verdict`追加、v2.1.300の`prompt.change`/`agent.spawn`書き換えmodフック、v2.1.299のアイドルコンパクション・`CLAUDE_CODE_DISABLE_FILE_MENTIONS`、v2.1.296のWorkflow全エージェントのモデル固定`CLAUDE_CODE_WORKFLOW_SUBAGENT_MODEL`・サブエージェントの`autoCompactWindow`・Readツールの`allow_large`、v2.1.295のフック`onFailure: \"block\"`・OSC 7501対応・`$.ui.notify`、v2.1.293のClaude Haiku 5.5追加（既定Haiku化）、v2.1.292の`claude plugin install --marketplace`・Agentツールの`effort`パラメータ・stdio MCPのプロトコル2026-07-28既定化・UNCパス読み取りのセキュリティ修正、v2.1.290の`claude attach`/`logs`部分名指定・`/claude-api managed-agents-onboard`・WebFetch切り捨て修正、v2.1.289のmod `agent.spawn`、v2.1.287のClaude Mods追加（プラグインがより深い動作を変更可能に）・組み込みMod「You Should Know」・Opus 5.5/Sonnet 5.5の1Mコンテキストデフォルト化、v2.1.288の`/code-review --max-findings`・Ctrl+Fセッション検索・部分レスポンス継続と「Prompt is too long」の重大バグ修正、v2.1.285の`claude --desktop`・`claude plugin configure`・`allowedProviders`設定、v2.1.284のClaude Sonnet 5.5追加（APIの既定Sonnet化）・権限モード未設定時のauto mode既定化・Ultracodeの独立トグル化・auto modeの「Yes, but ask again next time」・Claude apps gatewayの支出上限の金額表示、v2.1.283の`availableModelsMatch`/`deniedModels`マネージド設定（モデル許可の厳密化・特定モデルのブロック）・`/doctor prompt-audit`（旧モデル向けプロンプトの監査）・ゲートウェイヒントヘッダー`x-claude-code-prompt-id`、v2.1.282のmaxProseWidth設定・anthropic-skills/claude-ai名前空間スキルの読み込み停止（破壊的変更）、v2.1.281のMCP URL-mode elicitation・`/insights`のauto mode推奨表示、v2.1.280のClaude Opus 5.5追加・Pro/Team Standardの既定モデルOpus化・PermissionRequestフックの破壊的変更、v2.1.278のauto modeサーバーサイド分類器デフォルト化、v2.1.277のAGENTS.mdサポート、v2.1.275のCtrl+Enter即時送信・claude.aiスキル/プラグイン同期、v2.1.273のLLMゲートウェイ向けリクエストヘッダー・Remote Controlフォーク機能、v2.1.271のRemoteセッションfast mode対応・Bash/PowerShell/Monitorのper-command allowed_domains、v2.1.269の`claude plugin eval`・`/output-style`コマンド、v2.1.267の`maxEffortLevel`設定、v2.1.265のツール結果1GBキャップ、v2.1.263のバグ修正・安定性改善、v2.1.261の`/skill-doctor`・bashOutputMaxChars設定、v2.1.260の`/diff`差分パネル・`/advisor`テキスト形式、v2.1.259の`managedMcpServers`マネージド設定・並行セッション`~/.claude.json`巻き戻り修正、v2.1.258のmacOS 12起動失敗修正、v2.1.257のClaude Fable 5.1追加・既定モデル化、v2.1.252のバグ修正、v2.1.251の`PreModelSwitch`/`PostModelSwitch`フックイベント・Remote Controlへのツール呼び出しライブ配信、v2.1.248の`--restricted`フラグ・`experimental.cacheTtl`、v2.1.247の`SendFeedback`ツール・`/claude-api cost-optimize`、v2.1.246の`/permissions`Auto modeタブ追加、v2.1.245のLinux glibc 2.44クラッシュ修正、v2.1.243の`/usage`Loops内訳・`modelPicker`/`promptCacheTtl`/`modelPricing`設定、v2.1.239の`/claude-api upgrade`スキル（anthropic SDK 0.x→1.x自動移行）・Bedrockストリーミング二重課金修正・Alpine/muslアドオン対応、v2.1.238の`keybindingFlavor`設定（readline流Ctrl+W）・plugin marketplace `headersHelper`・self-hosted-runnerのgraceful shutdown/動的Proxy-Authorization・長時間セッションメモリリーク修正、v2.1.237の組み込み「Concise」出力スタイル・LLMゲートウェイ利用時のプロンプトキャッシュ修正、v2.1.236の`ANTHROPIC_DEFAULT_MODEL`環境変数・cross-session `notify_when_idle`通知・macOSサンドボックスワイルドカードread-deny改善、v2.1.235のオプションスペルチェック（aspell/hunspell/ispell）、v2.1.234の`CLAUDE_CODE_PROJECT_DIR_NAME`環境変数・`selection:clear`キーバインド・GitLab MRバッジのフッター/ステータスライン表示、v2.1.233のGitLab MR URL対応・`forward_user_identity`設定・Bashツールmemory cgroup（`CLAUDE_CODE_TOOL_MEMORY_LIMIT`）・`CLAUDE_CODE_WEBFETCH_CACHE_TTL_MS`、v2.1.232のサブエージェントforkデフォルト化・`@`による他セッションの名前メンション・GitLab対応強化（トークンマスキング/marketplace）・Fable 5の/advisor復帰・PowerShell/Git Bash権限バイパス修正、v2.1.229のremote-control --continue・plugin marketplace `command`ソース・SSE keepalive ping・workflowプレフィックススタガー、v2.1.228のclaude.ai同期スキルセキュリティ強化・Write上書きルール変更、v2.1.227のMaxプランFable誤課金促し修正、v2.1.224のSelf-Hosted Runner（自社インフラでのセッション実行）・200体サブエージェント上限撤廃・cross-session SendMessage・archiveプラグインソース、v2.1.225のcross-session SendMessage名前指定開始、v2.1.223のBashパーミッションバイパス・権限プロンプト隠蔽対策・workflowサンドボックス脱出の3件セキュリティ修正、`/review`の`/code-review`エイリアス化・Focus view（ツール実行折り畳みUI）・sandbox credential masking・worktree隔離のgitコマンド修正・Remote Control自動起動制限・ultraplan機能削除・Claude Opus 5 追加・デフォルト Opus モデル昇格・`sandbox.network.strictAllowlist`・`DirectoryAdded` hook・ネストサブエージェントフォワーディング・`workflowSizeGuideline` 設定キー・`/config key=value` でプロンプトから設定変更・auto モードでの破壊的 git コマンドのブロック・Bun 1.4 ランタイム・接続断時の部分レスポンス保持・WSL2/Windows Terminal スクロール修正・権限ルールのツールパラメータマッチング構文 `Agent(model:opus)`・ネスト `.claude/skills` の自動ロード・auto モードのサブエージェント起動前評価・会話言語でのセッションタイトル生成・`enforceAvailableModels` マネージド設定・`wheelScrollAccelerationEnabled`・サブエージェントが自身のサブエージェントを生成可能（最大5階層）・Claude Fable 5 へのアクセス追加・`--safe-mode` フラグ（カスタマイズ無効化でトラブルシュート）・`/cd` コマンド（プロンプトキャッシュを壊さない作業ディレクトリ変更）・`disableBundledSkills` 設定・fallbackModel 設定（最大3つのフォールバックモデル）・deny ルールの glob 対応・クロスセッションメッセージング堅牢化・既定思考モデルの thinking 無効化・requiredMinimumVersion/requiredMaximumVersion マネージド設定・/plugin list（--enabled/--disabled フィルタ）・バックグラウンドセッションの自動バージョン更新（コールドリスタート不要）・Dynamic Workflows トリガー語 workflow→ultracode 変更・シェル起動ファイル書き込み前プロンプト・acceptEdits モードでのビルドツール設定ファイル保護・/usage カテゴリ別内訳・allowAllClaudeAiMcps・/simplify→/code-review リネーム・claude agents --json・/resume バックグラウンドセッション対応・plugin パネル最終更新日・/model セッション単位化・plugin dependency enforcement・claude project purge・Agent View Research Preview・/goal コマンド・Plugin Marketplace・/tui・ANTHROPIC_BEDROCK_SERVICE_TIER・PR URL から /resume 検索・worktree.baseRef設定・.claude/skills plugin 自動ロード・Bedrock/Vertex/Foundry での auto mode opt-in など主要マイルストーンを解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.316 のバージョン履歴。冒頭で2025年12月〜2026年10月の主要マイルストーン（Agent Teams・Agent View・Dynamic Workflows・Self-Hosted Runner・Claude Mods・Opus 5.5/Sonnet 5.5/Haiku 5.5 などのモデル世代交代）を年表で整理し、最新のv2.1.316（`CLAUDE_CODE_SUBAGENT_EFFORT`・`CLAUDE_CODE_DISABLE_ULTRATHINK`・Opus 4.8のfast mode非推奨化）、v2.1.314（`permissions.blockWritesOutsideWorkingDirectories`・VS Code/Desktopのアイドルコンパクション）以降も全バージョンを一覧で解説。"
 draft: false
 ---
 
-**最終更新**: 2026-10-30
-**現在の最新バージョン**: 2.1.312
+**最終更新**: 2026-10-31
+**現在の最新バージョン**: 2.1.316
 
 ---
 
-## 主要マイルストーン一覧
+## 主要マイルストーン（年表）
 
-> **【2026-08-19まで再延長】Claude Code 週間利用上限 +50% プロモーション**（バージョン非依存）: 当初 7/19 までの予定でしたが、**2026年7月18日発表で 8月19日まで再延長**されました（GPT-5.6 Sol 等の競合の価格圧力への対応と見られています）。Pro / Max / Team・legacy 席課金型 Enterprise 対象、CLI・IDE・Desktop・Web すべての Claude Code 利用に適用。有効化操作不要、期限後は自動的に通常水準へ戻る。Claude（web/desktop/mobile）・Cowork の上限は対象外。詳細は [Rate Limits API 完全ガイド](/mdTechKnowledge/blog/anthropic-rate-limits-api-guide/) を参照。
+約11か月で 2.0.60 から 2.1.316 まで進みました。全バージョンを読む前に、流れを変えた節目だけを時系列で示します。日付は npm 公開日（UTC）です。
+
+| 時期 | バージョン | 節目 | 意味 |
+|------|-----------|------|------|
+| 2025-12 | 2.0.60 / 2.0.64 | **バックグラウンドエージェント**・名前付きセッション（`/rename`） | 「1つの会話で1つの作業」から複数作業の並行へ |
+| 2025-12 | 2.0.74 | **LSP ツール** | 言語サーバー経由で定義ジャンプ・型情報を取得 |
+| 2026-01 | 2.1.0 | **スキル統合**・Plan モード・Agent Teams 基盤 | 2.1 系の始まり。拡張の単位がスキルに統一 |
+| 2026-02 | 2.1.32 | **Claude Opus 4.6**・**自動メモリ**・**Agent Teams** | 複数エージェントの協調と、セッションをまたぐ記憶 |
+| 2026-03 | 2.1.71 / 2.1.75 | **`/loop`・Cron スケジューリング**、Opus 4.6 の **1M コンテキスト** | 定期実行と長大コンテキストが標準機能に |
+| 2026-04 | 2.1.94 / 2.1.111 | 既定 effort を high に、**Opus 4.7 の xhigh**・`/effort`・**`/ultrareview`** | 思考量（effort）を利用者が細かく選ぶ時代に |
+| 2026-05 | 2.1.139 | **Agent View**（Research Preview） | 複数の実行中セッションを1画面で監視 |
+| 2026-05 | 2.1.140 系 / 2.1.157 | **Plugin Marketplace**・`.claude/skills` の plugin 自動ロード | プラグイン配布の仕組みが整う |
+| 2026-05 | 2.1.154 | **Opus 4.8 既定化**・**Dynamic Workflows**（最大1000サブエージェント） | 1つの指示を大量の並列サブエージェントに展開 |
+| 2026-06 | 2.1.170 | **Claude Fable 5** へのアクセス | Mythos クラスのモデルが一般利用可能に |
+| 2026-06 | 2.1.197 | **Claude Sonnet 5 を既定モデルに** | 1M コンテキストの Sonnet が標準 |
+| 2026-07 | 2.1.219 | **Claude Opus 5** 追加・既定 Opus に | Opus 5 世代へ移行 |
+| 2026-08 | 2.1.224 | **Self-Hosted Runner**・**クロスセッション `SendMessage`**・サブエージェント200体上限の撤廃 | 自社インフラでのクラウドセッション実行と、セッション間の連携 |
+| 2026-08 | 2.1.232 | **サブエージェント fork の既定化** | 会話とキャッシュを引き継ぐ分岐が標準に |
+| 2026-09 | 2.1.257 | **Claude Fable 5.1** 追加・Fable の既定に | Fable 世代の更新 |
+| 2026-09 | 2.1.278 | **auto mode のサーバーサイド分類器を既定化** | 権限判断を Anthropic 側の分類器で行う方式へ |
+| 2026-09 | 2.1.280 | **Claude Opus 5.5** 追加・Pro/Team Standard の既定も Opus に | 全有料プランで既定が Opus に統一 |
+| 2026-09 | 2.1.284 | **Claude Sonnet 5.5** 追加、権限モード未設定時は **auto mode が既定** | 承認プロンプト中心の操作から auto mode 中心へ |
+| 2026-10 | 2.1.287 | **Claude Mods**（プラグインが UI・動作をより深く変更）、Opus 5.5/Sonnet 5.5 の 1M 既定化 | 拡張の範囲が UI・フックの書き換えまで広がる |
+| 2026-10 | 2.1.293 | **Claude Haiku 5.5** 追加・既定 Haiku に | 5.5 世代（Opus/Sonnet/Haiku）が出そろう |
+| 2026-10 | 2.1.304 | **Code Review のレビューレベル**（Quick/Standard/Deep）・`/auto-mode-setup` | 組織単位のレビュー運用と auto mode の初期設定 |
+| 2026-10 | 2.1.311 / 2.1.316 | **`ultrathink` で xhigh 実行**、`CLAUDE_CODE_SUBAGENT_EFFORT`、**Opus 4.8 の fast mode 非推奨化**（11/30 廃止） | effort 制御の細分化と旧モデル機能の整理 |
+
+> **期限切れの告知について**: 以前ここに掲載していた「週間利用上限 +50% プロモーション」は 2026-08-19 で終了しています。利用上限の現行情報は [Rate Limits API 完全ガイド](/mdTechKnowledge/blog/anthropic-rate-limits-api-guide/) を参照してください。
+
+## 全バージョン一覧（新しい順）
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.316（2026-10-30 PT）** | **`CLAUDE_CODE_SUBAGENT_EFFORT`**（他に指定がないときサブエージェントが使う effort。従来はセッションの値を継承）、**`CLAUDE_CODE_DISABLE_ULTRATHINK`**（`ultrathink` キーワードを無効化）、**Opus 4.8 の fast mode を 2026-10-30 付で非推奨化**（2026-11-30 に廃止。廃止後は通常の Opus 4.8 に切り替わらずエラーになるため Opus 5.5 へ移行）、Claude apps gateway にグループ共有の月次予算 **`pooled_budget`**・複数ポリシーを重ねて適用する **`managed.policy_mode: layered`**・Bedrock guardrail 用の `guardrail.input_tagging`、Team/Enterprise のサーバー管理設定を承認プロンプトなしで適用（検証できない保存コピーは拒否）、`--restricted` セッションが Read 許可ルールの範囲で作業ディレクトリ外のファイルをアップロードした問題の修正、gateway が要求内の全モデルを `availableModels`/`deniedModels` で検査しなかった問題の修正、VS Code で `ultrathink` が xhigh 実行に、クラウドセッションに MCP のフォーム入力カード、Code Review 分析ページに重大度別の指摘カード |
+| **2.1.315** | 公式 CHANGELOG に記載なし（npm では 2026-10-30 に公開） |
+| **2.1.314（2026-10-29 PT）** | **`permissions.blockWritesOutsideWorkingDirectories`**（どの権限モードでも Write/Edit/NotebookEdit が作業ディレクトリ外を拒否）、**VS Code と Desktop の Code タブにアイドルコンパクション**（200K トークン超で放置した会話を要約し、キャッシュ切れ後の次のメッセージで使う）、Claude apps gateway の upstream に IdP グループで振り分ける `groups` と `guardrail_trace`、管理者が effort に上限を設けた組織で「Invalid effort level」が続く問題を修正（effort を下げて再試行）、`claude -p` が起動失敗時に終了コード0・出力なしで終わる問題を修正（エラー表示して1で終了）、Foundry で既定モデルのデプロイがない場合に同系統の旧モデルへフォールバック、PreCompact フックの出力を1件1万文字で打ち切り、「上限で自動継続」が3回を超えて続く問題の修正、Monitor ツールが起動するシェルコマンドにも Bash 向けフックが適用、クラウドのスケジュールタスクが claude.ai で有効化したプラグインを読み込む、セットアップスクリプトが失敗してもクラウドセッションを開始 |
+| **2.1.313** | 欠番（npm・CHANGELOG とも記載なし） |
 | **2.1.312** | Claude apps gateway に **`oidc.user_id_claim`**（`sub` 以外の id_token クレーム、たとえば Microsoft Entra ID の `oid` で利用者を識別）、フルスクリーンで「to send now」ヒントのクリック送信、**`claude_code.safety_event` の OpenTelemetry イベント送信を停止**（v2.1.307 で追加したものを取りやめ）、prompt/agent フックは**セッションあたり同時最大24件**（待機が長いものは別に最大12件）、サブエージェントの `autoCompactWindow` が `CLAUDE_CODE_AUTO_COMPACT_WINDOW` の窓を**下げる**ように変更（上げはしない）、Bedrock/Vertex/Foundry/Mantle で未知のモデル名（カスタムデプロイ名・推論プロファイル ARN）に短い system prompt を使う変更（`CLAUDE_CODE_SIMPLE_SYSTEM_PROMPT=0` で従来どおり）、フラグされたメッセージ後の自動モデル切り替えが未知のモデル名にも適用（`CLAUDE_CODE_DISABLE_REFUSAL_FALLBACK=1` で無効化）、利用上限の表記を「session limit」から「**5-hour limit**」へ、Code Review が遅れて届いた push イベントでも最新コミットをレビューするよう修正 |
 | **2.1.311** | **`ultrathink` が Opus 5.5・Sonnet 5.5・Haiku 5.5・Fable 5.1（Anthropic API 経由）で xhigh effort で実行**（Claude の作業中に入力するとそのターンの残りが引き上げられる。キーワードが effort を上げられる場所だけで虹色表示）、標準コンテキストのセッションが 200K 超で「Usage credits required for 1M context」と止まる問題を修正（コンパクションして続行）、`--hold-idle-file` と `--max-hold-min`（self-hosted-runner）、Bedrock/Mantle/Vertex/Foundry で署名付きモデル設定を downloads.claude.ai から読み込む変更（`CLAUDE_CODE_MODEL_CATALOG=off` で無効化）、API が再試行不可とした要求を再試行して数分（無人リトライモードでは無期限）止まる問題を修正、コンパクション時に要約がない返答なら一度だけ再要求、`DISABLE_COMPACT` は設定ファイル・mod から「オフにする」方向のみ可能に、Pro/Max の起動時間短縮、Claude Tag の分析に Skills ビュー |
 | **2.1.310** | **Bedrock/Vertex/Foundry、およびテレメトリや非必須通信を無効にした環境でも Monitor ツールとプラグインの monitors を利用可**（長い前景 sleep もブロック）、`effort-2025-11-24` ベータ値や会話途中の system メッセージを拒否するゲートウェイで再試行する修正、"Prompt is too long" 後のコンパクションが base64/SVG などの密なテキストで保持しすぎる問題の修正、Linux の `/sandbox` が Ubuntu の AppArmor によるユーザー名前空間の制限を案内、Windows で Git Bash が無い場合に PreToolUse/PermissionRequest フックが素通りする問題の修正、**クラウドセッションと Remote Control の権限を Enterprise のカスタムロールに追加**（Owner がロール単位でアクセスを制御） |
@@ -216,7 +249,7 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-> **※ 詳細記載は 2.1.176 まで**。2.1.177 以降の各バージョン（〜最新 2.1.207）は上記「主要マイルストーン一覧」を参照してください。
+> **※ 詳細記載は 2.1.176 まで**。2.1.177 以降の各バージョン（〜最新 2.1.316）は上記「全バージョン一覧」を参照してください。
 
 ### 2.1.176（2026-06-12 PT）— **会話言語でのセッションタイトル生成 / `availableModels` 強制の堅牢化**
 
@@ -1247,6 +1280,11 @@ Anthropic は影響を受けた全利用者に対し、利用制限（rate limit
 ### セキュリティ対応
 | バージョン | 内容 |
 |-----------|------|
+| 2.1.316 | `--restricted` セッションが Read 許可ルールの範囲で作業ディレクトリ外のファイルをアップロードした問題を修正 |
+| 2.1.309 | サンドボックス内 Bash がシェル起動ファイルをサンドボックス外で実行していた問題、`--mcp-config` の MCP 設定ファイル書き換え、複合コマンドの権限チェック誤信頼など多数修正 |
+| 2.1.292 | UNC パス読み取りのセキュリティ修正 |
+| 2.1.232 | PowerShell / Git Bash 経由の権限バイパス修正 |
+| 2.1.223 | Bash 権限バイパス・権限プロンプト隠蔽・workflow サンドボックス脱出の3件を修正 |
 | 2.1.101 | LSP バイナリ検出の POSIX `which` コマンドインジェクション修正 |
 | 2.1.98 | Bash ツール権限バイパス修正、複合コマンド安全チェックバイパス修正、ネットワークリダイレクト修正 |
 | 2.1.90 | PowerShell バイパス・TOCTOU・deny ルール劣化修正、DNS キャッシュ プライバシー |
@@ -1257,6 +1295,10 @@ Anthropic は影響を受けた全利用者に対し、利用制限（rate limit
 ### パフォーマンス改善
 | バージョン | 内容 |
 |-----------|------|
+| 2.1.314 | 多数のサブエージェントを走らせる長い headless/SDK ターンで、親セッションが各サブエージェントのツール結果を保持しないよう改善 |
+| 2.1.299 | アイドルコンパクション（放置した長い会話を要約し、キャッシュ切れ後の再読み込みを削減） |
+| 2.1.257 | 長い会話のレンダリング性能改善、キー入力ごとの再描画削減 |
+| 2.1.238 | 長時間セッションのメモリリーク修正 |
 | 2.1.90 | MCP スキーマ キャッシュ最適化、SSE 線形処理化、セッション並列読み込み |
 | 2.1.86 | JSON エスケープ不要化でトークン削減 |
 | 2.1.74 | Streaming API メモリ リーク修正 |
@@ -1266,6 +1308,9 @@ Anthropic は影響を受けた全利用者に対し、利用制限（rate limit
 ### Windows 対応
 | バージョン | 内容 |
 |-----------|------|
+| 2.1.316 | Git Bash でエイリアス・関数が失われる問題、Grep/Glob がタイムアウト後に戻らない問題を修正 |
+| 2.1.310 | Git Bash が無い環境で PreToolUse/PermissionRequest フックが素通りする問題を修正 |
+| 2.1.287 | 起動時にシェルツールの競合を警告 |
 | 2.1.89 | CRLF 二重化修正、Shift+Enter 修正、PowerShell stderr 誤報告修正 |
 | 2.1.84 | PowerShell ツール追加（プレビュー） |
 | 2.1.2 | Winget インストール サポート |
