@@ -4,7 +4,7 @@ date: 2026-04-26
 category: "Claude技術解説"
 tags: ["Claude", "Cowork", "エージェント", "Claude Desktop", "Computer Use", "KPMG", "Claude for Legal", "Finance Agents"]
 excerpt: "AnthropicのデスクトップAIエージェント機能「Claude Cowork」のリリースから2026年4月GA移行・Live Artifacts・Amazon Bedrock対応・Claude for Small Business・PwC 拡大パートナーシップ・KPMG Digital Gateway（276,000人 / 138 か国 / 2026-05-19）・Claude for Legal（20+ MCPコネクタ・12 practice-area プラグイン、2026-05-12）・Finance Agents 10 テンプレート（2026年5月）・Cowork 5時間制限2倍キャンペーン（2026年6月）・エンタープライズ向けコネクタ一括認可EMA（Okta／2026-06-18ベータ）・Cowork の Web/iOS/Android 展開とリモートセッション（2026-07-07）・Claude for Teachers 米国K-12教育者向け無料プログラム（2026-07-14）・Chrome サイドパネルの完全 Cowork セッション化（会話とスキル/コネクタを desktop/web/mobile と共有、ブラウザ内クリック・フォーム入力等の実アクション対応、Max/Team から展開、2026-08-12）・Claude Tag が新体験へ完全移行（チャンネルメモリ・スタンディングインストラクション・ambient mode、2026-08-03）・Cowork Built-in Browser（デスクトップアプリ専用の隔離ブラウザでナビゲート・クリック・入力、ユーザーのタブ/パスワードは非共有、2026-08-26）・Smart Reports（Enterprise向けベータ、チームの利用状況・コスト・スキル候補を自動分析）・CoworkとChatが1つのClaudeに統合（Claude Docs/Claude Slides新設・Design会話内対応、Pro/Maxから数週間かけてロールアウト、2026-09-16）・Claude Tagがチャンネルでの個人コネクタに対応（レビューモード/オートモード、Teamプランでロールアウト中、2026-09-24）・Claude for Google Workspace（Docs/Sheets/Slidesのサイドバー＋コネクタ、公開ベータ、2026-10-06）・Claude Desktop v2.16120.0〜v2.31226.0のCowork関連更新（スケジュールタスクの既定がAutomatically approveに、macOS 14以降必須、11月10日のUnified Claude全組織オン）までのアップデートをリリース順に整理。"
-updatedDate: 2026-10-30
+updatedDate: 2026-10-31
 draft: false
 ---
 
@@ -579,7 +579,7 @@ Anthropic は **2026年10月23日**、Chat と Cowork が1つになった「統�
 - **支出の管理**: 支出上限は組織・グループ・メンバーの各レベルで設定でき、グループには共有の月間予算（pooled group budget）を持たせられます。公式は、Opus 5.5 が代表的な負荷で Opus 5 より約40%、Sonnet 5.5 が多くの作業で Sonnet 5 より最大約30%安く動くと説明しています。
 - **対象外**: **Zero Data Retention、HIPAA 対応構成、顧客管理の暗号鍵（CMEK）を使う組織は、現在の構成のまま**です。
 
-**関連する別製品**: 10月21日に研究プレビューが始まった **Claude Duet**（プロアクティブに動く別アプリ）は、Cowork とは別系統です（[使い分けの記事](/blog/claude-access-methods-overview/)を参照）。**Claude Tag API**（Claude Enterprise 向けベータ、ベータヘッダー `experimental-claude-tag-2026-10-21`）は管理者が Claude Tag の設定をプログラムから扱うための API で、詳細は [Messages API 新機能まとめ](/blog/anthropic-messages-api-new-features-2026/) の第26章にあります。
+**関連する別製品**: 10月21日に研究プレビューが始まった **Claude Duet**（プロアクティブに動く別アプリ）は、Cowork とは別系統です（[使い分けの記事](/blog/claude-access-methods-overview/)、詳細は [Claude Duet 完全ガイド](/mdTechKnowledge/blog/claude-duet-guide/) を参照）。**Claude Tag API**（Claude Enterprise 向けベータ、ベータヘッダー `experimental-claude-tag-2026-10-21`）は管理者が Claude Tag の設定をプログラムから扱うための API で、詳細は [Messages API 新機能まとめ](/blog/anthropic-messages-api-new-features-2026/) の第26章にあります。
 
 出典: [Claude Cowork and chat come together for Enterprise（claude.com、2026-10-23）](https://claude.com/resources/articles/unified-claude-enterprise) ／ [Set up and manage the new unified Claude experience for your Enterprise organization（サポート）](https://support.claude.com/en/articles/17444462-set-up-and-manage-the-new-unified-claude-experience-for-your-enterprise-organization)
 

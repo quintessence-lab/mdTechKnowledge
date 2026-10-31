@@ -1,7 +1,7 @@
 ---
 title: "【重要Tips】Claude Cowork / ブラウザ / Claude Code（端末） / Claude Code Web の使い分け早わかり"
 date: 2026-05-03
-updatedDate: 2026-10-30
+updatedDate: 2026-10-31
 category: "Claude技術解説"
 tags: ["Claude", "Claude Cowork", "Claude Code", "初心者向け", "アクセス方法", "使い分け", "課金", "Agent SDK"]
 excerpt: "Claude を使う4つの主要な入り口（Claude Cowork / ブラウザ / Claude Code 端末 / Claude Code Web）について、アクセスURL・実行場所・対象ユーザー・適した用途を初心者向けに整理。2026/6/15予定だったインタラクティブ利用／プログラマティック利用の課金プール分離（施行当日に一時停止・現在は従来どおりサブスク枠）に加え、2026年7月7日のCowork Web/モバイル展開とリモートセッション（PCを閉じてもクラウド側で継続実行）、2026年8月26日のCowork Built-in Browser（デスクトップアプリ専用の隔離ブラウザ）も解説。"
@@ -281,6 +281,8 @@ GitHub と連携し、リポジトリをクローンしてコード編集や PR 
 - **限界（公式の記載）**: スレッドの読み違いや緊急度の誤判定があり得ます。チケット予約のような私的な用事は苦手で、ブラウザの画面を見せることはまだできません。バックグラウンドの確認や大きな作業（財務モデルやスライドなど）は、プランの利用上限を消費します。
 
 使い分けの目安としては、**自分から指示して進める作業は Cowork・Claude Code、予定や連絡の見張りを任せたい個人用途は Duet**、という位置づけです。Duet は研究プレビューで対象も限られるため、本記事の4系統の早見表には加えていません。
+
+詳しい仕組み・承認と安全性・使い分けは [Claude Duet 完全ガイド](/mdTechKnowledge/blog/claude-duet-guide/) にまとめています。
 
 出典: [Claude Duet（claude.com）](https://claude.com/resources/articles/claude-duet) ／ [Claude apps リリースノート（2026-10-21）](https://support.claude.com/en/articles/12138966-release-notes)
 
