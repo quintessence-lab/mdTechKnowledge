@@ -1,7 +1,7 @@
 ---
 title: "Anthropic モデル廃止スケジュール & 移行ガイド — 1Mコンテキストβ廃止・Sonnet/Opus 4 廃止の対応"
 date: 2026-05-02
-updatedDate: 2026-10-11
+updatedDate: 2026-10-31
 category: "Claude技術解説"
 tags: ["Claude", "Anthropic", "API", "モデル廃止", "移行", "1Mコンテキスト", "Sonnet 4", "Opus 4", "Opus 4.1", "Opus 4.8", "Sonnet 4.5", "Sonnet 5.5", "extended thinking", "Agent SDK", "課金"]
 excerpt: "2026年4月30日に1Mコンテキストβ（context-1m-2025-08-07）が廃止、2026年6月15日にSonnet 4 (claude-sonnet-4-0)とOpus 4 (claude-opus-4-0)が廃止された（リタイア済み）。本稿では緊急度の高い2件の廃止について、影響範囲・移行手順・extended thinkingの変更点・テストスニペット・ロールバック戦略まで体系的に整理する。【2026-06-08更新】6/15は同日にAgent SDK／claude -p（headless）の課金分離（独立クレジットプール: Pro $20／Max 5x $100／Max 20x $200、ロールオーバーなし）も発生（§10）。さらに2026-06-05にOpus 4.1（claude-opus-4-1-20250805）がDeprecated通知され、2026-08-05リタイア・移行先claude-opus-4-8に確定。【2026-06-16更新】6/15のSonnet 4／Opus 4リタイアは実施済み。旧モデルID指定はエラー化するため移行完了の確認を推奨。【2026-08-06更新】Opus 4.1も予定通り8/5にリタイア完了を公式ページで確認、未移行はエラーになる。【2026-09-30更新】Claude Sonnet 4.5（claude-sonnet-4-5-20250929）の廃止を新たに通知、Claude APIでのリタイアは2026年11月30日・移行先はClaude Sonnet 5.5。"
@@ -576,6 +576,34 @@ Opus 4.8 では **手動の extended thinking（`budget_tokens` 指定）が非�
 
 ---
 
+## 13. 【2026-10-31追記】API version 2026-10-21 への移行 — 破壊的変更の要点
+
+2026-10-21 に、2023-06-01 以来の新しい API バージョン `2026-10-21` が公開されました（[リリースノート](https://platform.claude.com/docs/en/release-notes/overview)）。モデルの廃止ではありませんが、**旧版向けのコードが 400 エラーになる変更を含む**ため、移行ガイドの要点をここにまとめます。詳細な一覧は [Claude Messages API 新機能ガイド](/mdTechKnowledge/blog/anthropic-messages-api-new-features-2026/) の第27章にあります。
+
+**切り替え方**
+
+- SDK を使う場合: 各言語の新しいメジャーバージョンに上げると `2026-10-21` を送ります（Python 2.0.0／TypeScript 1.0.0／C# 13.0.0／Go 2.0.0／Java 3.0.0／PHP 1.0.0／Ruby 2.0.0／`ant` CLI 2.0.0）。
+- SDK を使わない場合: `anthropic-version: 2026-10-21` ヘッダーを送ります。
+- **Amazon Bedrock では `2026-10-21` は Claude 4.7 以降のモデルのみ**です。それ以前のモデルを呼んでいる場合は、今のバージョンのままにするか、先に 4.7 以降へ移します。
+
+**API バージョンに依存する破壊的変更（`2026-10-21` で 400 エラー）**
+
+- `temperature`・`top_p`・`top_k` を送ると、既定値でも 400 エラー。Claude 4.7 以降のように既定値しか受け付けないモデルでは挙動は変わりませんが、Sonnet 4.6 のように他の値を受け付けるモデルで `temperature` を下げていた場合は、その効果が失われます。非既定値に依存するリクエストは、パラメータを外すか `2023-06-01` のままにします。
+- `assistant` メッセージに `document` ブロックを直接置く、`user` メッセージの `text` ブロックに `citations` を付ける、のどちらも 400 エラー。
+- Admin API と Claude Enterprise Analytics API の応答で、一部フィールドの旧名が消える（例: API キーの `workspace_id` → `scope`）。
+
+**SDK・CLI の変更（API バージョンとは別）**
+
+- API キーは `Authorization: Bearer` で送られる（従来は `X-Api-Key`）。ヘッダーを読み書きするプロキシ／ゲートウェイは要確認。
+- クライアントが保持する認証情報は1つ。
+- SDK・CLI のライセンスは **MIT から Apache 2.0** へ（新バージョン以降。旧バージョンは MIT のまま）。
+
+第5・12章のとおり、サンプリング指定は Opus 4.8 や Haiku 5.5 でもすでに 400 になる項目です。モデル移行と合わせて、リポジトリ全体で `temperature` などの指定を洗い出しておくと、`2026-10-21` への移行も一度で済みます。
+
+出典: [Migrating to API version 2026-10-21](https://platform.claude.com/docs/en/api/migration-2026-10-21)、[Claude Platform リリースノート（2026-10-21）](https://platform.claude.com/docs/en/release-notes/overview)
+
+---
+
 ## まとめ
 
 - **2026-04-30**: `context-1m-2025-08-07` ベータヘッダーが廃止 → **ヘッダー削除＋Sonnet 4.6（900k標準）への移行**
@@ -587,6 +615,7 @@ Opus 4.8 では **手動の extended thinking（`budget_tokens` 指定）が非�
 - **6/15のリタイアは完了済み**で旧モデル戻しは不可。未移行ならフォールバックを挟んで即時に移行を完了させること
 - **6/15予定だった課金分離は施行当日に一時停止**: Agent SDK・`claude -p`・GitHub Actions など自動実行系を独立クレジットプール（Pro $20／Max 5x $100／Max 20x $200）へ分離する予定だったが、**2026-06-15 に一時停止**され当面はサブスク枠のまま（恒久撤回ではない・将来再導入の可能性あり。§10）
 - **Opus 4.7 fast mode は 2026-07-24 削除**: `speed:"fast"` を使う場合は **Opus 4.8 へ移行**（モデルID差し替えのみ・fast 料金も安い）。削除後 4.7 はエラー化（§11）
+- **API version `2026-10-21` は 2026-10-21 に公開**: `temperature`/`top_p`/`top_k` が 400、SDK は Bearer 認証・Apache 2.0 へ（§13）
 
 廃止スケジュールは「ただの作業」ではなく、**モデル選定全体を見直す好機**でもあります。Sonnet/Opusを単純に1段上のバージョンへ置き換えるだけでなく、Haiku 4.5への部分シフトや`effort`レベル設計を再検討することで、コスト・品質・速度のバランスをより最適化できます。
 
