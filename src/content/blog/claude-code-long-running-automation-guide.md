@@ -1,7 +1,7 @@
 ---
 title: "Claude Code を長期間動かし続けて定期実行する — Agent View ピン留め＋Auto Mode＋/loop と Routines の使い分け"
 date: 2026-06-21
-updatedDate: 2026-10-09
+updatedDate: 2026-10-31
 category: "Claude技術解説"
 tags: ["Claude Code", "Agent View", "loop", "Routines", "Auto Mode", "バックグラウンドセッション", "定期実行", "自動化", "Claude Code Projects"]
 excerpt: "Claude Code を1週間のように長期間起動し続け、/loop で定期的にタスクを実行したい——この運用を実現する3つの方法（ローカルの /loop、Agent View のバックグラウンドセッション＋Ctrl+Tピン留め、クラウドの Routines）を、PC の電源・再起動への依存性で比較する。とくに『端末は常時起動、再起動時は手動復帰』を許容できる場合の Agent View ピン留め＋Auto Mode＋/loop の動きを、自動停止の回避・スリープ/再起動の挙動・課金の線引きまで含めて解説する。2026-10-09追記: 関連タスクが増え続ける仕事を1つの会話で並列スレッドに調整させる第4の選択肢『Claude Code Projects（Pro/Maxのベータ）』の構成・提供範囲・使用量の仕組みも整理。"
@@ -204,6 +204,8 @@ claude agents --json | jq '.[] | select(.status=="needs_input") | {name, cwd}'
 - 1時間以上アイドルだったスレッドへ追加依頼すると、そのスレッドの会話全体を読み直すため、新しい作業は**新規スレッドで始めるほうが安い**場合がある
 
 > **この記事の文脈での位置付け**: 「端末を常時起動して `/loop` を回す」運用をしていて、実は**やりたいのは定期実行ではなく、増え続ける関連タスクの捌き**である場合は、Projects のほうが目的に合います。逆に、**決まった作業を決まった間隔で回す**だけなら、従来どおり Agent View＋`/loop` か Routines が適しています。Projects は新機能のため、**ベータの制約（個人専用・組織管理なし・CLI 非対応）を許容できるか**が採用の分かれ目です。
+
+Projects の作り方・スレッドの操作・プロジェクトメモリ・使用量の抑え方・制限事項は、独立記事 [Claude Code Projects（ベータ）完全ガイド](/mdTechKnowledge/blog/claude-code-projects-guide/) で詳しく解説しています。
 
 出典: [Let Claude coordinate ongoing work with Projects（Claude Code 公式ドキュメント）](https://code.claude.com/docs/en/claude-projects) / [Projects redesigned: from folder to conversation（Claude 公式、2026-09-17）](https://claude.com/resources/articles/projects-redesigned)
 
