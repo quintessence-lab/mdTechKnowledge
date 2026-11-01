@@ -1,7 +1,7 @@
 ---
 title: "Claude Opus 4.8 完全ガイド — System Card準拠ベンチ詳説・Effort 5段階の正準対応・4.7→4.8実務移行"
 date: 2026-05-30
-updatedDate: 2026-07-25
+updatedDate: 2026-11-01
 category: "Claude技術解説"
 tags: ["Claude", "Opus 4.8", "Anthropic", "Effort Control", "ベンチマーク", "API", "アライメント", "Fast mode"]
 excerpt: "2026-05-28（PT）リリースの新フラッグシップ Claude Opus 4.8 を System Card 準拠で徹底解説。SWE-bench Pro 69.2%・HLE・GDPval Elo の正確な読み方、Effort 5段階（low/medium/high/xhigh/max）と claude.ai/Claude Code/API の名称対応、Fast mode の経済性、near-Mythos アライメントの正確な意味、claude-opus-4-8 への実務移行（budget_tokens の罠）まで網羅。Fast mode は標準比2倍単価で約2.5倍速、かつ従来モデルのFast mode比で約3倍安（$10/$50・公式値）という2軸を整理。2026-07-24 に後継 Claude Opus 5（同価格・Max新デフォルト・thinking disabled×xhigh/maxで400エラーの破壊的変更）がリリースされた点も追記。"
@@ -209,6 +209,8 @@ Opus 4.8 では、**「評価されていると認識し、採点方法を推論
 → 単価は2倍でも2.5倍速になるため、**スループット単価（時間あたり処理量）で見ると Fast mode が有利になる**ケースが対話的ワークロードで生じます。さらに**世代比では従来モデルの Fast mode より約3倍安く**なっており、Fast mode 利用そのもののコスト効率も改善しています（[Anthropic 公式](https://www.anthropic.com/news/claude-opus-4-8)）。
 
 ---
+
+> **【2026-11-01追記】Opus 4.8 の fast mode は廃止が決まっています。** 2026-10-30 に非推奨化され、**2026-11-30 に削除**される予定です（Claude Platform リリースノート、Claude Code v2.1.316）。削除後は `claude-opus-4-8` ＋ `speed: "fast"` のリクエストが**エラー**になり、標準の Opus 4.8 にはフォールバックしません。fast mode を続けるには **Claude Opus 5.5**（fast mode は入力 $8 / 出力 $40 per MTok）へ移行してください。Opus 4.8 の standard 速度での提供は変わりません。詳細は [Anthropic モデル廃止スケジュール & 移行ガイド](/mdTechKnowledge/blog/anthropic-model-deprecation-migration/) の第14章を参照。
 
 ## 7. マルチクラウド／可用性
 
