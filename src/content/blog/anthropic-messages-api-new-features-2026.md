@@ -1,7 +1,7 @@
 ---
 title: "Anthropic Messages API 新機能まとめ（2026年5〜10月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・Opus5対応・Browser use tool・Fable 5.1/Mythos 5.1・Opus 5.5対応"
 date: 2026-06-20
-updatedDate: 2026-10-30
+updatedDate: 2026-11-01
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ", "Compliance API", "EU AI Act", "Browser use tool", "Python SDK", "Fable 5.1", "Mythos 5.1", "Haiku 5.5", "Models API"]
 excerpt: "2026年5〜10月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）、9月1日の Fable 5.1/Mythos 5.1リリースに伴うtool_choice制限・thinking保持ルール変更・キャッシュ90%値下げ・Per-Message Effort（9月3日Google Cloud対応拡大）、9月14日のOn-demand conversation compaction（任意タイミングでの会話圧縮ベータ）・9月18日のCompliance APIがClaude in Chromeセッションに対応、9月22日のClaude Opus 5.5リリース（thinking無効化不可・tool_choice any/tool廃止等のAPI破壊的変更）・Inline tools beta（会話途中でのツール定義変更）、9月23日のCache Diagnostics GA化、9月24日のRefusal課金の再開（bio/frontier_llm/reasoning_extractionの3カテゴリは出力前の拒否でも課金）・Compliance API Activity Feedが名称・タイトルを返さなくなった破壊的変更・Claude for Microsoft 365セッションのGA化まで、対応モデル・betaヘッダー・コード例つきで横断解説する。 2026-09-29更新: Claude Sonnet 5.5（9/28）のリリースと5つのAPI破壊的変更を第22章に追加。2026-10-03更新: Claude Sonnet 4.5の廃止通知（9/30、リタイアは11/30・移行先Sonnet 5.5）を第23章に追加。2026-10-09更新: Claude Haiku 5.5（10/7、$0.10/$0.50・Haiku 4.5からの破壊的変更）・Sonnet 5.5のキャッシュ読取半額化・Models APIの`line`/`thinking.types.disabled`/`server_tools`フィールドを第24章に追加。"
@@ -762,6 +762,25 @@ Managed Agents のエージェントが**ワークフロー（多数のエージ
 - **ライセンスが Apache 2.0**（旧版は MIT のまま）。
 
 出典: [Migrating to API version 2026-10-21（Claude Platform ドキュメント）](https://platform.claude.com/docs/en/api/migration-2026-10-21)
+
+---
+
+## 28. 【2026-11-01追記】2026年10月28日のアップデート — リクエストサイズ上限が 32 MB から 128 MB へ
+
+**2026-10-28（PT）**、first-party の Claude API で、**Messages API と Token Counting API の最大リクエストサイズが 32 MB から 128 MB に引き上げられました**（公式リリースノート）。画像・PDF などを base64 で大量に載せるリクエストで、サイズ超過（`413 request_too_large`）を避けやすくなります。
+
+公式の「Request size limits」では、現在のエンドポイント別の上限は次のとおりです。
+
+| エンドポイント | 最大リクエストサイズ |
+|---|---|
+| Messages、Token Counting | **128 MB** |
+| Message Batches API | 256 MB |
+| Files API | 500 MB |
+| Sessions、Agents、Environments（Managed Agents） | 32 MB |
+
+**プラットフォームごとに上限が違う点に注意**: この引き上げは **first-party の Claude API** が対象です。同じ公式ページによると、Amazon Bedrock は 20 MB、Claude Models on Google Cloud（Google managed）は 30 MB、**Claude Platform on AWS・Claude Models on Google Cloud（Anthropic managed）・Microsoft Foundry は Messages と Token Counting で 32 MB** です（各プラットフォームのドキュメントで最新値を確認してください）。複数経路で同じコードを動かしている場合は、最も小さい上限に合わせて設計するか、Files API でファイルを事前アップロードして参照する方法を検討します。
+
+出典: [Claude Platform リリースノート（2026-10-28）](https://platform.claude.com/docs/en/release-notes/overview) ／ [API overview — Request size limits](https://platform.claude.com/docs/en/api/overview#request-size-limits)
 
 ---
 
