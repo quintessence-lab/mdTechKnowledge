@@ -1,7 +1,7 @@
 ---
 title: "Claude 単価総覧（2026年10月版）— 全モデルのAPI料金・キャッシュ・Batch・fast mode・ツール料金を1ページで"
 date: 2026-10-10
-updatedDate: 2026-10-31
+updatedDate: 2026-11-01
 category: "Claude技術解説"
 tags: ["Claude", "料金", "トークン単価", "Haiku 5.5", "Sonnet 5.5", "Opus 5.5", "Fable 5.1", "プロンプトキャッシュ", "Batch API", "コスト比較", "Anthropic"]
 excerpt: "Claude API の料金を、公式 pricing ページ（2026年10月10日確認）に基づいて1ページに総覧する。現行ラインナップ（Fable 5.1 $10/$50・Opus 5.5 $4/$20・Sonnet 5.5 $2/$10・2026-10-07リリースの Haiku 5.5 $0.10/$0.50）と前世代・退役済みモデルの標準単価、5分／1時間キャッシュ書込と読取（モデルごとに0.1×／0.05×／0.025×）、Batch API の50%オフ、fast mode、米国内限定推論の1.1倍、Haiku 5.5 の100Kトークン超2段階価格、新トークナイザーの約30%増、Web検索 $10/1,000回・コード実行・Managed Agents セッション時間などのツール料金、Max／Team プランに付く月次 API クレジットまでを整理する。『どのモデルをいくらで使うか』を見積もるための試算例と、2026年7月以降の価格改定の時系列も付けた。"
@@ -97,6 +97,8 @@ Batch は即時応答が不要な大量処理（夜間の一括分類・要約�
 
 いずれも標準単価の2倍で、出力が最大2.5倍速くなります。**Claude API（直接）**に加え、2026-10-22 に始まった **Claude Models on Google Cloud（Anthropic managed）**でも Opus 5.5 で利用できます（公式リリースノート。この提供形態の fast mode 単価は、リリースノートでは示されていません）。Bedrock・Foundry・Claude Platform on AWS では使えません。**Batch API とは併用できません**。キャッシュとデータ所在地の倍率は重ねて適用されます。
 
+**【2026-11-01追記】Opus 4.8 の fast mode は 2026-10-30 に非推奨化され、2026-11-30 に削除される予定です**（公式リリースノート）。削除後、`claude-opus-4-8` に `speed: "fast"` を付けたリクエストはエラーになります。fast mode を続けるには Opus 5.5 へ移行します（上の表のとおり、Opus 5.5 のほうが fast mode も安価です）。経緯は [Anthropic モデル廃止スケジュール & 移行ガイド](/mdTechKnowledge/blog/anthropic-model-deprecation-migration/) の第14章にあります。
+
 ### 3-4. データ所在地（米国内限定推論）
 
 Claude 4.6 以降で `inference_geo: "us"` を指定すると、**入力・出力・キャッシュ書込・キャッシュ読取のすべてが1.1倍**になります（Haiku 5.5 は100K超の高い単価にも適用）。グローバルルーティング（既定）は標準単価です。Bedrock と Google Cloud はパートナー側の独自のリージョン価格になります。
@@ -163,6 +165,7 @@ Managed Agents では、米国内限定推論の1.1倍や fast mode の割増が
 | 2026-09-30 | Sonnet 4.5 の廃止を予告（API退役は 2026-11-30） |
 | 2026-10-07 | **Haiku 5.5 リリース**（$0.10/$0.50）。**Sonnet 5.5 のキャッシュ読取が $0.20 → $0.10 に値下げ**。Max・Team プランに月次 API クレジット付与 |
 | 2026-10-22 | **Claude Models on Google Cloud（Anthropic managed）** 開始。Google Cloud IAM で認証し、請求は Google Cloud Marketplace 経由（Claude Consumption Unit、1 CCU = $0.01）。Opus 5.5 の fast mode に対応 |
+| 2026-10-30 | **Opus 4.8 の fast mode を非推奨化**（削除は 2026-11-30。削除後は `speed: "fast"` がエラー。移行先は Opus 5.5） |
 
 ## 7. サブスクのAPIクレジットとの関係
 
