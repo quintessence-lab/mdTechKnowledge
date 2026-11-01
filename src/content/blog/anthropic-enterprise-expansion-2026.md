@@ -1,7 +1,7 @@
 ---
 title: "Anthropic エンタープライズ攻勢2026 — PwC・KPMG・DXC・TCS と Big Four/SIer 連携、$1.5B FDE スタジオまで"
 date: 2026-06-20
-updatedDate: 2026-10-31
+updatedDate: 2026-11-01
 category: "一般リサーチ"
 tags: ["Anthropic", "Claude", "エンタープライズAI", "PwC", "KPMG", "DXC", "TCS", "Forward Deployed Engineer"]
 excerpt: "2026年5〜6月、Anthropic は PwC・KPMG・DXC・TCS という Big Four / 大手 SIer との大型連携を相次いで発表し、さらに Blackstone・Goldman Sachs・Hellman & Friedman と組んで FDE 型のエンタープライズ AI サービス会社（報道で総額 $1.5B 規模）を立ち上げた。コンサル・SIer・PE を「実装の通り道」として、規制業種・大企業・PE 保有の中堅市場へ Claude を一気に押し込む攻勢の全体像と、各社の認定規模・活用製品・狙う市場を比較整理する一般リサーチ。2026年8月26日発表のSalesforce「Claudeforce」（両社が互いの顧客となる双方向パートナーシップ、Claude in Salesforce・Salesforce in Claudeの相互統合）、2026年9月21日発表のAccentureが「初の組み込み外部評価者」に就任（導入支援ではなくモデル安全性検証への参加）も追記した。2026-10-09更新: 9月30日のClaude for Government GA（FedRAMP High・席課金なしの上限額方式）、10月1日のBarclaysの全社展開（Claude Code開発者50%目標）、10月2日のClaude Frontier Academy（$100M・1万人育成）も追記。"
@@ -278,6 +278,30 @@ Anthropic は **2026年10月14日**、**シンガポールに拠点を開設**�
 出典: [Anthropic opens Singapore office and signs MOU with the Government of Singapore（Anthropic）](https://www.anthropic.com/news/singapore-office-opening)（2026-10-14）
 
 ---
+
+## 【2026-11-01追記】米国 GSA との OneGov 契約を拡大（10月27日）
+
+2026年10月27日、米国一般調達局（GSA）が、Anthropic との **OneGov 契約の拡大**を発表しました。10月24日追記のシンガポール政府との MOU と並び、**政府調達を正面から取りに行く**動きです。
+
+GSA の発表で確認できる内容:
+
+- **割引**: **トークン課金の利用に 40% 割引**（"40% discount on token-based usage"）。政府が利用できる**すべての Claude モデル**が対象で、FedRAMP 認可環境（機微な非機密情報の業務向け）も含まれます。
+- **対象機関**: 連邦（行政・立法・司法）に加え、**州・地方・部族政府**まで。
+- **調達経路**: 直接契約、再販業者経由、主要クラウドプラットフォーム経由。
+- **最低発注額なし**（"No minimum orders"）。使った分だけ支払う形です。
+- GSA は OneGov 全体で、開始以来 **18億ドル超**の節約（うち AI 関連の契約で約16億ドル）と説明しています。
+
+**報道ベースの情報（GSA のページでは確認できていません）**
+
+- Anthropic 側の投稿では、この割引で政府が約 **$1B（10億ドル）** を節約できる見積もりとされ、報道は**Anthropic 自身の推計で、独立した検証はない**と伝えています。算出方法も示されていません。
+- 報道では、2025年8月の最初の OneGov 契約（連邦機関に Claude を名目 $1 で提供）の期限が 10月31日で、新契約はこれを置き換える位置づけ、割引期間は 2029年1月31日までと伝えられています。GSA のページには期間の明記がありません。
+
+位置づけとしては、本記事の第1〜3部の「民間の大企業・SI との提携」に対し、**公共部門を価格（40%割引・最低発注なし）で広く開く**施策です。
+
+出典: [GSA, Anthropic Reach OneGov Agreement on Discounted, Consumption-Based Pricing for Claude（GSA、2026-10-27）](https://www.gsa.gov/about-gsa/newsroom/news-releases/gsa-anthropic-reach-onegov-agreement-on-discounted-consumptionbased-pricing-10272026) ／ 報道: [Anthropic gives US governments 40% off Claude in new GSA deal（TNW）](https://thenextweb.com/news/anthropic-gsa-onegov-40-percent-claude-discount)
+
+---
+
 
 ## まとめ
 
