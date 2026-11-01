@@ -1,7 +1,7 @@
 ---
 title: "Anthropic モデル廃止スケジュール & 移行ガイド — 1Mコンテキストβ廃止・Sonnet/Opus 4 廃止の対応"
 date: 2026-05-02
-updatedDate: 2026-10-31
+updatedDate: 2026-11-01
 category: "Claude技術解説"
 tags: ["Claude", "Anthropic", "API", "モデル廃止", "移行", "1Mコンテキスト", "Sonnet 4", "Opus 4", "Opus 4.1", "Opus 4.8", "Sonnet 4.5", "Sonnet 5.5", "extended thinking", "Agent SDK", "課金"]
 excerpt: "2026年4月30日に1Mコンテキストβ（context-1m-2025-08-07）が廃止、2026年6月15日にSonnet 4 (claude-sonnet-4-0)とOpus 4 (claude-opus-4-0)が廃止された（リタイア済み）。本稿では緊急度の高い2件の廃止について、影響範囲・移行手順・extended thinkingの変更点・テストスニペット・ロールバック戦略まで体系的に整理する。【2026-06-08更新】6/15は同日にAgent SDK／claude -p（headless）の課金分離（独立クレジットプール: Pro $20／Max 5x $100／Max 20x $200、ロールオーバーなし）も発生（§10）。さらに2026-06-05にOpus 4.1（claude-opus-4-1-20250805）がDeprecated通知され、2026-08-05リタイア・移行先claude-opus-4-8に確定。【2026-06-16更新】6/15のSonnet 4／Opus 4リタイアは実施済み。旧モデルID指定はエラー化するため移行完了の確認を推奨。【2026-08-06更新】Opus 4.1も予定通り8/5にリタイア完了を公式ページで確認、未移行はエラーになる。【2026-09-30更新】Claude Sonnet 4.5（claude-sonnet-4-5-20250929）の廃止を新たに通知、Claude APIでのリタイアは2026年11月30日・移行先はClaude Sonnet 5.5。"
@@ -604,6 +604,28 @@ Opus 4.8 では **手動の extended thinking（`budget_tokens` 指定）が非�
 
 ---
 
+## 14. 【2026-11-01追記】Opus 4.8 の fast mode を非推奨化 — 2026-11-30 に削除、Opus 5.5 へ移行
+
+§11 の Opus 4.7 に続き、**Claude Opus 4.8 の fast mode**（`speed: "fast"`）も廃止が始まりました。モデル自体（Opus 4.8 の standard 速度）の提供は変わりません。
+
+| 項目 | 内容 |
+|---|---|
+| 非推奨化 | **2026-10-30**（Claude Platform リリースノート。Claude Code の CHANGELOG では v2.1.316） |
+| 削除予定 | **2026-11-30** |
+| 削除後の挙動 | `claude-opus-4-8` に `speed: "fast"` を付けたリクエストは**エラー**（Claude Code の CHANGELOG は「標準の Opus 4.8 にはフォールバックしない」と明記）。Opus 4.6 のようなフォールバックではなく、Opus 4.7 と同じエラー型 |
+| 移行先 | **Claude Opus 5.5**（高速化を維持するには移行） |
+
+**移行時に見る点**
+
+- fast mode の単価は、Claude Code の公式ドキュメント（fast mode）では **Opus 5.5 が入力 $8 / 出力 $40**、Opus 5 と Opus 4.8 が **$10 / $50**（per MTok）です。Opus 5.5 は標準単価も下がっているため（$4 / $20）、移行すると fast mode も安くなります。
+- Claude Code では、v2.1.280 以降で **fast mode の既定モデルが Opus 5.5** です。`/fast` を使うだけの利用者は、削除日の前に Claude Code を更新しておけば影響は小さくなります。
+- API で `claude-opus-4-8` ＋ `speed: "fast"` を直接指定している実装は、モデル ID を `claude-opus-5-5` に変更します（移行ガイドは Opus 5.5 の migration guide の「Migrating from Claude Opus 4.8」）。Opus 5.5 特有の変更点は別途確認してください。
+- fast mode は引き続き Claude API（Anthropic 直接）と、サブスクの usage credits が対象です。Amazon Bedrock・Google Cloud の Agent Platform・Microsoft Foundry・Claude Platform on AWS では使えません（Claude Code 公式ドキュメント）。
+
+出典: [Claude Platform リリースノート（2026-10-30）](https://platform.claude.com/docs/en/release-notes/overview) ／ [Claude Code CHANGELOG（v2.1.316）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md) ／ [Speed up responses with fast mode（Claude Code）](https://code.claude.com/docs/en/fast-mode)
+
+---
+
 ## まとめ
 
 - **2026-04-30**: `context-1m-2025-08-07` ベータヘッダーが廃止 → **ヘッダー削除＋Sonnet 4.6（900k標準）への移行**
@@ -616,6 +638,7 @@ Opus 4.8 では **手動の extended thinking（`budget_tokens` 指定）が非�
 - **6/15予定だった課金分離は施行当日に一時停止**: Agent SDK・`claude -p`・GitHub Actions など自動実行系を独立クレジットプール（Pro $20／Max 5x $100／Max 20x $200）へ分離する予定だったが、**2026-06-15 に一時停止**され当面はサブスク枠のまま（恒久撤回ではない・将来再導入の可能性あり。§10）
 - **Opus 4.7 fast mode は 2026-07-24 削除**: `speed:"fast"` を使う場合は **Opus 4.8 へ移行**（モデルID差し替えのみ・fast 料金も安い）。削除後 4.7 はエラー化（§11）
 - **API version `2026-10-21` は 2026-10-21 に公開**: `temperature`/`top_p`/`top_k` が 400、SDK は Bearer 認証・Apache 2.0 へ（§13）
+- **Opus 4.8 fast mode は 2026-10-30 に非推奨化、2026-11-30 削除**: `speed:"fast"` は削除後エラー。**Opus 5.5 へ移行**（§14）
 
 廃止スケジュールは「ただの作業」ではなく、**モデル選定全体を見直す好機**でもあります。Sonnet/Opusを単純に1段上のバージョンへ置き換えるだけでなく、Haiku 4.5への部分シフトや`effort`レベル設計を再検討することで、コスト・品質・速度のバランスをより最適化できます。
 
