@@ -1,7 +1,7 @@
 ---
 title: "Anthropic Enterprise Analytics API 完全ガイド — 組織別利用データの照会と活用"
 date: 2026-05-02
-updatedDate: 2026-09-30
+updatedDate: 2026-11-01
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Admin API", "Analytics", "エンタープライズ", "FinOps", "Slack連携", "Workload Identity Federation", "OIDC", "Spend Limits API", "RBAC", "ユーザー管理"]
 excerpt: "2026年4月、Anthropic は Claude / Claude Code Remote / Claude Cowork の組織別利用データをプログラム照会できる Enterprise Analytics API を拡張した。Rate Limits API との位置付けの違い、エンドポイント構造、認証、レスポンス、Python/curl 実装例、Slackボット連携、運用ユースケース、制限事項までをまとめて解説する。さらに2026年6月の Workload Identity Federation（WIF＝OIDCトークンによるAPIキー不要認証）対応と、Admin API に追加された issuers / service accounts / federation rules エンドポイントも解説する。 さらに 2026-07-14 Beta のユーザー管理API（組織ロール5種・APIで割当可能なのは user/managed のみ・シート消費・SSO/SCIM併用時の制約）と、Enterprise 専用の Spend Limits API（上限の階層解決・ユーザー単位上書き・増額申請の承認/却下・金額は最小単位の文字列）、2026年8月のAdmin API GA化（8/19ユーザー管理ベータヘッダー不要化、8/26 `client.beta.organization`として全主要SDKから利用可能に）、2026-09-01の`anthropic-version`ヘッダーがAdmin API・Enterprise Analytics API・Compliance APIでも必須化された変更、2026-09-10のSmart Reports（Enterprise beta、利用実態の定性分析）、2026-09-24のClaude for Microsoft 365ローカルセッションのGA化・Compliance API Activity Feedがファイル名/タイトルを返さなくなった破壊的変更も収録。"
@@ -631,6 +631,34 @@ organization（組織全体の既定）   ┘
 > **カーソルの注意**: 両APIとも不透明カーソルでページングしますが、**カーソルは発行時のクエリ条件に紐づいています**。`user_ids[]` や `status[]` を途中で変えて古いカーソルを渡すと 400（*cursor does not match current query parameters*）になります。条件を変えるときは**先頭ページから取り直し**てください。
 
 出典: [Spend Limits API — Anthropic 公式ドキュメント](https://platform.claude.com/docs/en/manage-claude/spend-limits-api)
+
+## 【2026-11-01追記】Usage and Cost Analytics API（ベータ）— 使用量とコストの新しい照会 API
+
+2026-10-29（PT）、Claude Developer Platform に **Usage and Cost Analytics API** がベータで登場しました（公式リリースノート）。本記事で扱ってきた Enterprise Analytics API の使用量・コストの照会と、Console 組織向けの Admin API の使用量・コストレポートを、**同じエンドポイント・パラメータ・応答で扱える**ようにするものです。
+
+| 項目 | 内容（公式ドキュメント） |
+|---|---|
+| エンドポイント | `GET /v1/organizations/analytics/usage`（トークン数・リクエスト数）、`GET /v1/organizations/analytics/cost`（USD のコスト） |
+| ベータヘッダー | `anthropic-beta: analytics-usage-cost-2026-08-24` と `anthropic-version` を毎回送る（SDK・`ant` CLI は自動送信） |
+| 対象 | **Claude Console 組織と Claude Enterprise 組織の両方**。同じ API で扱える |
+| 認証 | Console は Admin API キー、または `org:admin` スコープの OAuth トークンなど。Enterprise は claude.ai で主オーナーが作成する **`read:analytics` スコープのキー** |
+| 切り口 | モデル、ワークスペース、API キー、サービス階層、リクエストの背後にある**ユーザー／サービスアカウント（`actor`）**など。`group_by[]` は最大5次元 |
+| 時間バケット | `time_bucket_width` に `1m`・`1h`・`1d`（任意）。1リクエストは最大31日、`1m` は最大24時間。`starting_at` は 2026-01-01 以降かつ直近365日以内 |
+| データの鮮度 | 通常は**4時間以内**に反映、最大24時間。月次の確定は月末から約7日後まで改訂されうる |
+
+**既存の API との位置づけ（公式の整理）**
+
+- 旧 **Usage and Cost API**（`usage_report`／`cost_report`）は**レガシー**になりましたが、引き続きサポートされます。新規の連携は新 API が推奨です。
+- Claude Enterprise Analytics API のうち、**`usage_report`・`cost_report`・`user_usage_report`・`user_cost_report`** の4つもレガシー扱いになり、引き続きサポートされます。本記事の他のエンドポイント（アクティビティ、Compliance 系など）の位置づけは、今回のリリースノートでは変わっていません。
+- 新 API は、旧 Enterprise のレポートで「各バケットの上位100グループまで」だった制約をなくし、**データのある全組み合わせを返し**、指標で順位付けできます。`actor` と他の次元の組み合わせでの集計もできます。
+- **鮮度が下がる点に注意**: 旧 Usage and Cost API は「通常5分以内」でしたが、新 API は「通常4時間以内、最大24時間」です。リアルタイムの支出監視には旧 API のほうが向く場面があります。
+- 移行時の主な差: ベータヘッダーが必要、`bucket_width` → `time_bucket_width`（既定値なし）、`limit` はバケット数ではなく**行数**（1〜1,000、既定20）、Enterprise の `user_ids[]` → `actor_ids[]`、`exclude_deleted_users` は `group_by[]=actor` が必須。
+
+Claude Code のユーザー別コストは、`products[]=claude_code` と `group_by[]=actor` を指定して取得できます（公式の FAQ）。
+
+出典: [Usage and Cost Analytics API（Claude Platform ドキュメント）](https://platform.claude.com/docs/en/manage-claude/usage-cost-analytics-api) ／ [Usage and Cost API（レガシー）](https://platform.claude.com/docs/en/manage-claude/usage-cost-api) ／ [Claude Platform リリースノート（2026-10-29）](https://platform.claude.com/docs/en/release-notes/overview)
+
+---
 
 ## まとめ — Rate Limits API との両輪で運用する
 
