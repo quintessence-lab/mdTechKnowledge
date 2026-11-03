@@ -4,7 +4,7 @@ date: 2026-04-26
 category: "Claude技術解説"
 tags: ["Claude", "Cowork", "エージェント", "Claude Desktop", "Computer Use", "KPMG", "Claude for Legal", "Finance Agents"]
 excerpt: "AnthropicのデスクトップAIエージェント機能「Claude Cowork」のリリースから2026年4月GA移行・Live Artifacts・Amazon Bedrock対応・Claude for Small Business・PwC 拡大パートナーシップ・KPMG Digital Gateway（276,000人 / 138 か国 / 2026-05-19）・Claude for Legal（20+ MCPコネクタ・12 practice-area プラグイン、2026-05-12）・Finance Agents 10 テンプレート（2026年5月）・Cowork 5時間制限2倍キャンペーン（2026年6月）・エンタープライズ向けコネクタ一括認可EMA（Okta／2026-06-18ベータ）・Cowork の Web/iOS/Android 展開とリモートセッション（2026-07-07）・Claude for Teachers 米国K-12教育者向け無料プログラム（2026-07-14）・Chrome サイドパネルの完全 Cowork セッション化（会話とスキル/コネクタを desktop/web/mobile と共有、ブラウザ内クリック・フォーム入力等の実アクション対応、Max/Team から展開、2026-08-12）・Claude Tag が新体験へ完全移行（チャンネルメモリ・スタンディングインストラクション・ambient mode、2026-08-03）・Cowork Built-in Browser（デスクトップアプリ専用の隔離ブラウザでナビゲート・クリック・入力、ユーザーのタブ/パスワードは非共有、2026-08-26）・Smart Reports（Enterprise向けベータ、チームの利用状況・コスト・スキル候補を自動分析）・CoworkとChatが1つのClaudeに統合（Claude Docs/Claude Slides新設・Design会話内対応、Pro/Maxから数週間かけてロールアウト、2026-09-16）・Claude Tagがチャンネルでの個人コネクタに対応（レビューモード/オートモード、Teamプランでロールアウト中、2026-09-24）・Claude for Google Workspace（Docs/Sheets/Slidesのサイドバー＋コネクタ、公開ベータ、2026-10-06）・Claude Desktop v2.16120.0〜v2.31226.0のCowork関連更新（スケジュールタスクの既定がAutomatically approveに、macOS 14以降必須、11月10日のUnified Claude全組織オン）までのアップデートをリリース順に整理。"
-updatedDate: 2026-10-31
+updatedDate: 2026-11-03
 draft: false
 ---
 
@@ -597,6 +597,24 @@ Anthropic は **2026年10月23日**、Chat と Cowork が1つになった「統�
 **関連する別製品**: 10月21日に研究プレビューが始まった **Claude Duet**（プロアクティブに動く別アプリ）は、Cowork とは別系統です（[使い分けの記事](/blog/claude-access-methods-overview/)、詳細は [Claude Duet 完全ガイド](/mdTechKnowledge/blog/claude-duet-guide/) を参照）。**Claude Tag API**（Claude Enterprise 向けベータ、ベータヘッダー `experimental-claude-tag-2026-10-21`）は管理者が Claude Tag の設定をプログラムから扱うための API で、詳細は [Messages API 新機能まとめ](/blog/anthropic-messages-api-new-features-2026/) の第26章にあります。
 
 出典: [Claude Cowork and chat come together for Enterprise（claude.com、2026-10-23）](https://claude.com/resources/articles/unified-claude-enterprise) ／ [Set up and manage the new unified Claude experience for your Enterprise organization（サポート）](https://support.claude.com/en/articles/17444462-set-up-and-manage-the-new-unified-claude-experience-for-your-enterprise-organization)
+
+---
+
+## 【2026-11-03追記】Claude Desktop 3P: Unified Claude が 11月10日から既定オン（Cowork を無効にしていても）
+
+Claude Desktop 3P（サードパーティ基盤向けのデスクトップ配備）の管理者向け公式ドキュメント「Unified Claude in Claude Desktop on 3P」に、**既定値が変わる日付**が明記されています。
+
+- **位置づけ**: Unified Claude は Chat と Cowork を1つの体験にまとめるもので、Desktop 3P ではベータです。Code は別のまま残ります。Cowork と同じ機能（bash 実行・サブエージェント・スケジュールタスクなど）を含み、**Chat 体験はなくなります**。
+- **日程**: **2026年11月10日までは任意（オプトイン）**。**11月10日 12:00 PM（太平洋時間）以降に起動した現行バージョンの Claude Desktop** は、未設定の `desktopHome` を `standard`（Unified Claude をオンにする値）として読み、**既定でオン**になります。新規の Enterprise Admin Console 組織は最初からオンです。
+- **注意すべき点**: この既定は、`chatTabEnabled`・`chatAdvancedFileAnalysisEnabled`・`coworkTabEnabled` が `false` でも適用されます。**Cowork を無効にしていた環境でも Cowork がオンになります**。`desktopHome` を設定した場合（`standard` でも `off` でも）や既定オンの間は、これら3つの設定は無視されます。
+- **有効化の方法**: Enterprise Admin Console は Capabilities の「Opt into the new Chat and Cowork unified view」。MDM / ブートストラップ配備は `desktopHome` キーを `standard` にします。認識できない値は `off` として読まれます。11月10日までは、キーを削除すると Unified Claude はオフになります。
+- **セッション保持期間**: `chatSessionRetentionDays` を使っている場合は、**11月10日より前に** `coworkSessionRetentionDays` も設定します（新しい会話は Cowork セッションとして扱われ、Cowork 側の保持期間に従うため）。
+- **VM を起動できない端末**: Cowork の VM を起動できない端末では、非 VM の機能で動作し、ホーム画面から送ったメッセージは Chat の会話として始まります。
+- **機能を絞る方法**: 引き続き `disabledBuiltinTools`、`builtinToolPolicy`、`allowedWorkspaceFolders`、`scheduledTasksEnabled` などで制限できます（例: シェル実行を止めるなら `disabledBuiltinTools` に `"Bash"`）。`isClaudeCodeForDesktopEnabled`（Code の制御）は従来どおり有効です。
+
+**前の節との違い**: 上の「2026-10-30追記」の「既定オン（11月16日）」は、Claude Enterprise（claude.ai 側）の**ロール単位のアクセス制御**の話です。本節は **Desktop 3P の MDM / ブートストラップ配備**の設定で、日付も対象も別です。
+
+出典: [Unified Claude in Claude Desktop on 3P（claude.com ドキュメント）](https://claude.com/docs/third-party/claude-desktop/unified-claude)
 
 ---
 
