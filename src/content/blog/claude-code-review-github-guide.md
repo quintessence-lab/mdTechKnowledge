@@ -1,7 +1,7 @@
 ---
 title: "Claude Code Review（GitHub PR 自動レビュー）完全ガイド — セットアップ・課金・REVIEW.md カスタマイズ"
 date: 2026-06-07
-updatedDate: 2026-10-24
+updatedDate: 2026-11-03
 category: "Claude技術解説"
 tags: ["Claude Code", "Code Review", "GitHub", "PR", "自動レビュー", "マルチエージェント", "Team", "Enterprise", "DevOps"]
 excerpt: "Anthropic の Code Review は、GitHub App 経由で PR に自動でインラインコメントを付けるマネージド・マルチエージェント製品（2026年3月9日ローンチ、Team/Enterprise 向け research preview）。手動の /code-review・/ultrareview とは別物。PR が開くと専門エージェント群が並列で diff とコードベースを分析し、ロジックエラー・脆弱性・境界条件・既存バグを 🔴🟡🟣 の重大度付きで指摘する。GitHub App のセットアップ手順、3つのレビューモード、課金（平均 $15–25/review・usage credits・spend cap）、REVIEW.md / CLAUDE.md によるカスタマイズ、/code-review・/ultrareview との違いまでを公式ドキュメント一次ソースで整理する。"
@@ -245,6 +245,17 @@ Owner が**組織全体で1つのレベル**を選び、**リポジトリごと�
 - 再レビューが、ブロッキングの指摘が未解決のうちは LGTM で始まらないよう変更（v2.1.305）
 
 出典: [Code Review is now generally available（Claude ブログ）](https://claude.com/blog/code-review-is-now-generally-available) ／ [Code Review（Claude Code ドキュメント）](https://code.claude.com/docs/en/code-review) ／ [Claude Code CHANGELOG（v2.1.304・v2.1.305・v2.1.307）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
+
+---
+
+## 10. 【2026-11-03追記】Code Review analytics に「重要度別の指摘件数」カード（v2.1.316）
+
+Claude Code **v2.1.316**（2026-10-31）で、Code Review の analytics ページに **findings-by-severity（重要度別の指摘件数）カード**が追加されました（CHANGELOG）。
+
+- **表示内容**: 期間内の指摘の**合計件数**、重要度で積み上げた**日次チャート**、重要度ごとの**件数**。
+- **使いどころ**（本稿の整理）: §1 の重大度マーカー（🔴 Important / 🟡 Nit / 🟣 Pre-existing）の内訳が時系列で見えるため、`REVIEW.md` で「Nit の上限」や「Important の定義」を調整した前後の効果を、指摘の重要度構成の変化で確認できます。
+
+出典: [Claude Code CHANGELOG（v2.1.316）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 ---
 
