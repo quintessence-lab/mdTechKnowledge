@@ -1,7 +1,7 @@
 ---
 title: "Anthropic Messages API 新機能まとめ（2026年5〜10月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・Opus5対応・Browser use tool・Fable 5.1/Mythos 5.1・Opus 5.5対応"
 date: 2026-06-20
-updatedDate: 2026-11-01
+updatedDate: 2026-11-03
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ", "Compliance API", "EU AI Act", "Browser use tool", "Python SDK", "Fable 5.1", "Mythos 5.1", "Haiku 5.5", "Models API"]
 excerpt: "2026年5〜10月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）、9月1日の Fable 5.1/Mythos 5.1リリースに伴うtool_choice制限・thinking保持ルール変更・キャッシュ90%値下げ・Per-Message Effort（9月3日Google Cloud対応拡大）、9月14日のOn-demand conversation compaction（任意タイミングでの会話圧縮ベータ）・9月18日のCompliance APIがClaude in Chromeセッションに対応、9月22日のClaude Opus 5.5リリース（thinking無効化不可・tool_choice any/tool廃止等のAPI破壊的変更）・Inline tools beta（会話途中でのツール定義変更）、9月23日のCache Diagnostics GA化、9月24日のRefusal課金の再開（bio/frontier_llm/reasoning_extractionの3カテゴリは出力前の拒否でも課金）・Compliance API Activity Feedが名称・タイトルを返さなくなった破壊的変更・Claude for Microsoft 365セッションのGA化まで、対応モデル・betaヘッダー・コード例つきで横断解説する。 2026-09-29更新: Claude Sonnet 5.5（9/28）のリリースと5つのAPI破壊的変更を第22章に追加。2026-10-03更新: Claude Sonnet 4.5の廃止通知（9/30、リタイアは11/30・移行先Sonnet 5.5）を第23章に追加。2026-10-09更新: Claude Haiku 5.5（10/7、$0.10/$0.50・Haiku 4.5からの破壊的変更）・Sonnet 5.5のキャッシュ読取半額化・Models APIの`line`/`thinking.types.disabled`/`server_tools`フィールドを第24章に追加。"
@@ -784,6 +784,68 @@ Managed Agents のエージェントが**ワークフロー（多数のエージ
 
 ---
 
+## 29. 【2026-11-03追記】Message threads（ベータ）— 会話履歴をサーバー側に預け、2ターン目以降は新しいメッセージだけ送る
+
+**2026-11-02（PT）**、Messages API に **Message threads（ベータ）** が追加されました（公式リリースノート）。長い会話やエージェントループで、毎ターン会話全体を送り直す代わりに、**API が会話を短時間サーバー側に保持し、2ターン目以降は新しいメッセージだけを送る**仕組みです。リクエストが小さくなり、会話が長くなっても最初のトークンが出るまでの時間（TTFT）が低く安定します。
+
+- **ベータヘッダー**: `message-threads-2026-08-12`（スレッドの全リクエストに付ける。SDK のスレッドヘルパーは自動で付与）
+- **提供先**: Claude API、Claude Platform on AWS、Claude Models on Google Cloud（Anthropic マネージド）、Claude in Microsoft Foundry（いずれもベータ）
+- **料金・レート制限**: スレッドによる変更はありません（公式）
+
+### 使い方 — `thread` パラメータ
+
+| 段階 | 送るもの |
+|---|---|
+| **create** | 通常どおり会話全体・`system`・`tools` と `"thread": {"type": "create"}`。API が Claude の返信を含めて、レスポンスの `id` の下に保存 |
+| **continue** | 前回以降の新しいメッセージだけと `"thread": {"type": "continue", "previous_message_id": "<前回の id>"}`。`system` と `tools` は**送らない**（create 時の値をスレッドが保持） |
+| **replay** | スレッドは best-effort。`thread_not_found`（404）が返ったら、手元の全会話を新しい create で送り直す |
+
+SDK には `client.beta.messages.thread(...)` のヘルパーがあり、`thread.send(...)` を呼ぶだけで create/continue の切り替え、404 時の再送、`pause_turn` の再開、拒否（refusal）後の新規スレッド化まで面倒を見ます。SDK のベータ版ツールランナーも既定でスレッドを使います（無効化可能）。
+
+### 保持期間
+
+- 最後のリクエストから **5分で失効**し、最後の使用から**遅くとも1時間以内に削除**されます。応答が保存されるたびに5分が延長されます。
+- 内容はメモリ上で、サーバー管理の鍵で暗号化され、永続ストレージには書き込まれません。
+- 一覧・取得・削除の API はありません。**会話の正本は自分のアプリ側で持ち続ける**前提です（再送経路を最初から作っておく）。
+
+### 送るフィールドのルール
+
+| 区分 | フィールド | 規則 |
+|---|---|---|
+| create のみ | `system`、`tools` | continue で送ると（`null` でも）400 エラー |
+| 固定 | `model`、`tool_choice`、`thinking`、`mcp_servers`（認可トークンを除く）、`context_management`、`output_config`、`container` の `skills`、トップレベルの `cache_control`、`anthropic-beta` の値の集合 | 全リクエストで create と同じ値。違うと 400（`thread_fingerprint_mismatch`） |
+| 自由 | `max_tokens`、`stop_sequences`、`stream`、`metadata`、`service_tier` ほか | ターンごとに変更可 |
+
+- スレッドは**追記専用**で、各レスポンスの `id` から continue できるのは**1回だけ**です。過去のメッセージを編集・分岐したいときは新しいスレッドを作ります。
+- **ストリーミング**時は、`message_start` で `id` が届いても、`message_stop` を受け取ってから continue します。
+- **プロンプトキャッシュ**はスレッドが自動でかけるわけではありません。トップレベルの `cache_control` を全リクエストに付けると、各ターンで過去の会話をキャッシュから読み、新しいターンを書き込めます。スレッド付きリクエストの `cache_control` ブレークポイントは**最大4個**です。
+- **フォールバック**（サーバー側）を使うなら、`fallbacks` はスレッドの全リクエストで送るか、全く送らないかのどちらかです。フォールバックモデルが書いた応答は保存されないため、次ターンは新しい create で全会話を送ります。
+
+### エラー
+
+| ステータス | `error_code` | 意味 |
+|---|---|---|
+| 404 | `thread_not_found` | 失効・未保存・別ユーザー/ワークスペースなどで継続できない。全会話を create で再送 |
+| 400 | `thread_fingerprint_mismatch` | 固定フィールドが保存値と違う |
+| 400 | `thread_already_continued` | その `id` は既に1回 continue 済み |
+| 400 | `thread_continue_in_flight` | 同じ `id` からの continue がまだ実行中 |
+| 400 | `thread_unsupported_request` | スレッド非対応の機能・組織設定を使っている |
+
+### 使えない機能・条件
+
+- **Message Batches**、**Token counting**、**Compaction**（オンデマンド含む）、**Context editing**（`clear_thinking_20251015` で `keep: "all"` の場合を除く）。
+- **HIPAA 対応を有効にした組織**、**Inference hooks を有効にした組織**。
+- **ZDR（ゼロデータ保持）の対象外**です。ただし、この機能を使っても他の ZDR 対象機能の利用には影響しません。
+- Fable 5.1 / Mythos 5.1 / Opus 5.5 / Sonnet 5.5 / Haiku 5.5 では、`system` や `tools` を変えると既存の thinking ブロックが無効になり、create が 400 になることがあります。回避するには、送る会話から `thinking` / `redacted_thinking` ブロックを外します。
+
+**対応モデル**: 公式の対応表は、Fable 5.1・Mythos 5.1・Opus 5.5・Sonnet 5.5・Haiku 5.5 から、Opus 4.5 / 4.6 / 4.7 / 4.8、Sonnet 4.5 / 4.6、Haiku 4.5 まで幅広く挙げています（「ベータはすべてのモデルで」と記載）。
+
+**使いどころの目安**（本稿の整理）: 数十ターン以上続くエージェントループや、巨大な `system`・`tools` を毎ターン送っている構成で効果が大きい機能です。一方、短い会話や、ZDR・HIPAA・Inference hooks が前提の組織、バッチ処理では使えない（または効果が小さい）ため、従来どおり全会話を送ります。
+
+出典: [Claude Platform リリースノート（2026-11-02）](https://platform.claude.com/docs/en/release-notes/overview) ／ [Message threads（Claude Platform ドキュメント）](https://platform.claude.com/docs/en/build-with-claude/message-threads)
+
+---
+
 ## まとめ — どの機能をいつ使うか
 
 2026年5〜6月の Messages API 新機能は、「**品質を上げる**」「**コストを下げる**」「**運用を見通せるようにする**」の3方向に効きます。
@@ -807,6 +869,7 @@ Managed Agents のエージェントが**ワークフロー（多数のエージ
 ## 参考資料
 
 - [Claude Platform リリースノート（公式・一次ソース）](https://platform.claude.com/docs/en/release-notes/overview)
+- [Message threads（公式ドキュメント・第29章の出典）](https://platform.claude.com/docs/en/build-with-claude/message-threads)
 - [Web search tool（公式ドキュメント）](https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool)
 - [Improved web search with dynamic filtering（公式ブログ・ベンチ数値の出典）](https://claude.com/blog/improved-web-search-with-dynamic-filtering)
 - [Cache diagnostics（公式ドキュメント・`cache_miss_reason` 6種の出典）](https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics)
