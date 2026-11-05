@@ -1,7 +1,7 @@
 ---
 title: "Anthropic Messages API 新機能まとめ（2026年5〜10月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・Opus5対応・Browser use tool・Fable 5.1/Mythos 5.1・Opus 5.5対応"
 date: 2026-06-20
-updatedDate: 2026-11-03
+updatedDate: 2026-11-05
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ", "Compliance API", "EU AI Act", "Browser use tool", "Python SDK", "Fable 5.1", "Mythos 5.1", "Haiku 5.5", "Models API"]
 excerpt: "2026年5〜10月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）、9月1日の Fable 5.1/Mythos 5.1リリースに伴うtool_choice制限・thinking保持ルール変更・キャッシュ90%値下げ・Per-Message Effort（9月3日Google Cloud対応拡大）、9月14日のOn-demand conversation compaction（任意タイミングでの会話圧縮ベータ）・9月18日のCompliance APIがClaude in Chromeセッションに対応、9月22日のClaude Opus 5.5リリース（thinking無効化不可・tool_choice any/tool廃止等のAPI破壊的変更）・Inline tools beta（会話途中でのツール定義変更）、9月23日のCache Diagnostics GA化、9月24日のRefusal課金の再開（bio/frontier_llm/reasoning_extractionの3カテゴリは出力前の拒否でも課金）・Compliance API Activity Feedが名称・タイトルを返さなくなった破壊的変更・Claude for Microsoft 365セッションのGA化まで、対応モデル・betaヘッダー・コード例つきで横断解説する。 2026-09-29更新: Claude Sonnet 5.5（9/28）のリリースと5つのAPI破壊的変更を第22章に追加。2026-10-03更新: Claude Sonnet 4.5の廃止通知（9/30、リタイアは11/30・移行先Sonnet 5.5）を第23章に追加。2026-10-09更新: Claude Haiku 5.5（10/7、$0.10/$0.50・Haiku 4.5からの破壊的変更）・Sonnet 5.5のキャッシュ読取半額化・Models APIの`line`/`thinking.types.disabled`/`server_tools`フィールドを第24章に追加。"
@@ -846,6 +846,26 @@ SDK には `client.beta.messages.thread(...)` のヘルパーがあり、`thread
 
 ---
 
+## 30. 【2026-11-05追記】テキスト透かし（2026-11-03）と Usage and Cost Analytics API（2026-10-29）
+
+### テキスト透かし（Text watermark）— 2026-11-03（PT）
+
+公式リリースノートによると、**Claude Mythos 5・Claude Opus 4.7・Claude Sonnet 4.6** が生成するテキストに、Anthropic のテキスト透かしが付くようになりました。対象のプラットフォームは、ヘルプセンターの「How Claude marks AI-generated content」に一覧があります。
+
+- **出力への影響**: 公式ドキュメントによると、透かしは出力の意味・品質・読みやすさを変えません。**トークンも不可視文字も追加せず**、あなたや組織に関する情報も含みません。リクエストやレスポンスの扱いを変える必要はありません。
+- **サンプリング設定の注意**: **Sonnet 4.6** では、`temperature`・`top_p`・`top_k` を**既定値以外**にしたリクエストの出力には、透かしが付かない場合があります。透かしを前提にするなら、この3つをすべて省きます（フレームワークやクライアントライブラリが自動で設定する値も含む）。
+- **関連**: 第12章で触れたウォーターマーキングの項目も参照してください。
+
+出典: [Claude Platform リリースノート（2026-11-03）](https://platform.claude.com/docs/en/release-notes/overview) ／ [Text watermark（Claude Platform ドキュメント）](https://platform.claude.com/docs/en/build-with-claude/text-watermark)
+
+### Usage and Cost Analytics API（ベータ）— 2026-10-29（PT）
+
+使用量とコストを取得する新しい分析 API がベータで始まりました。エンドポイントは `/v1/organizations/analytics/usage` と `/v1/organizations/analytics/cost`、ベータヘッダーは `analytics-usage-cost-2026-08-24` です。従来の使用量・コストのエンドポイントはレガシー扱いになりましたが、引き続きサポートされます。詳しい仕様と移行点は [Enterprise Analytics API 完全ガイド](/mdTechKnowledge/blog/anthropic-enterprise-analytics-api/) にまとめています。
+
+出典: [Claude Platform リリースノート（2026-10-29）](https://platform.claude.com/docs/en/release-notes/overview)
+
+---
+
 ## まとめ — どの機能をいつ使うか
 
 2026年5〜6月の Messages API 新機能は、「**品質を上げる**」「**コストを下げる**」「**運用を見通せるようにする**」の3方向に効きます。
@@ -870,6 +890,7 @@ SDK には `client.beta.messages.thread(...)` のヘルパーがあり、`thread
 
 - [Claude Platform リリースノート（公式・一次ソース）](https://platform.claude.com/docs/en/release-notes/overview)
 - [Message threads（公式ドキュメント・第29章の出典）](https://platform.claude.com/docs/en/build-with-claude/message-threads)
+- [Text watermark（公式ドキュメント・第30章の出典）](https://platform.claude.com/docs/en/build-with-claude/text-watermark)
 - [Web search tool（公式ドキュメント）](https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool)
 - [Improved web search with dynamic filtering（公式ブログ・ベンチ数値の出典）](https://claude.com/blog/improved-web-search-with-dynamic-filtering)
 - [Cache diagnostics（公式ドキュメント・`cache_miss_reason` 6種の出典）](https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics)
