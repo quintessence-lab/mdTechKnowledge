@@ -1,21 +1,21 @@
 ---
 title: "Claude Code バージョン履歴まとめ"
 date: 2026-04-01
-updatedDate: 2026-10-31
+updatedDate: 2026-11-05
 category: "Claude技術解説"
 tags: ["Claude Code", "バージョン履歴", "リリースノート", "アップデート", "Opus 5.5", "Sonnet 5.5", "Haiku 5.5", "Claude Mods"]
-excerpt: "Claude Code v2.0.59〜v2.1.316 のバージョン履歴。冒頭で2025年12月〜2026年10月の主要マイルストーン（Agent Teams・Agent View・Dynamic Workflows・Self-Hosted Runner・Claude Mods・Opus 5.5/Sonnet 5.5/Haiku 5.5 などのモデル世代交代）を年表で整理し、最新のv2.1.316（`CLAUDE_CODE_SUBAGENT_EFFORT`・`CLAUDE_CODE_DISABLE_ULTRATHINK`・Opus 4.8のfast mode非推奨化）、v2.1.314（`permissions.blockWritesOutsideWorkingDirectories`・VS Code/Desktopのアイドルコンパクション）以降も全バージョンを一覧で解説。"
+excerpt: "Claude Code v2.0.59〜v2.1.318 のバージョン履歴。冒頭で2025年12月〜2026年11月の主要マイルストーン（Agent Teams・Agent View・Dynamic Workflows・Self-Hosted Runner・Claude Mods・Opus 5.5/Sonnet 5.5/Haiku 5.5 などのモデル世代交代）を年表で整理し、最新のv2.1.318（mod の fork に effort 指定・サインイン期限の表示・`deniedMcpServers` のコネクタ適用）、v2.1.317（メールアドレス送信前の確認・gateway のコストレポート API・Read の「変更なし」スタブ廃止）、v2.1.316（Opus 4.8 の fast mode 非推奨化）を含む全バージョンを一覧で解説。"
 draft: false
 ---
 
-**最終更新**: 2026-10-31
-**現在の最新バージョン**: 2.1.316
+**最終更新**: 2026-11-05
+**現在の最新バージョン**: 2.1.318
 
 ---
 
 ## 主要マイルストーン（年表）
 
-約11か月で 2.0.60 から 2.1.316 まで進みました。全バージョンを読む前に、流れを変えた節目だけを時系列で示します。日付は npm 公開日（UTC）です。
+約11か月で 2.0.60 から 2.1.318 まで進みました。全バージョンを読む前に、流れを変えた節目だけを時系列で示します。日付は npm 公開日（UTC）です。
 
 | 時期 | バージョン | 節目 | 意味 |
 |------|-----------|------|------|
@@ -48,6 +48,8 @@ draft: false
 
 | バージョン | 主な機能追加 |
 |-----------|------------|
+| **2.1.318（2026-11-03 PT）** | mod の `$.model.fork` に **`effort` オプション**（短い副作業だけ `low` で実行。結果に送信した effort を表示）、**サインイン期限の表示**（`claude auth status` に `loginExpiresAt`、`claude -p` の JSON に `credential_expires_at`、期限10日前から `claude -p` のテキスト出力に stderr で警告）、Claude apps gateway の `mantle` upstream に `assume_role`（別 AWS アカウントのロール、開発者別の AWS コスト配賦）、**`deniedMcpServers` の URL 指定が Anthropic 提供サーバーや、クラウドセッション・Self-Hosted Runner のコネクタにも効くように変更**、IDE のターミナルから起動しても IDE 拡張を自動でインストール・更新しなくなった（`/ide` か拡張ビューで導入）、バックグラウンドのサブエージェントが実行するシェルコマンドを3分で自動的にバックグラウンドへ移し、プロンプトキャッシュ切れを防止、クラウドセッションを「リポジトリなし」で開始可能に、`--continue` が以前の会話を失う問題（2.1.314 の回帰）を修正、共有ネットワークのホームディレクトリで `~/.claude.json`・設定・ログイン情報が消えたり空になったりしにくく改善、アイドルコンパクションが要約でない応答で会話を置き換える問題を修正、Dynamic Workflows が利用上限後の再開で完了済みエージェントを再実行する問題を修正、`NODE_EXTRA_CA_CERTS` が空・不正だと全接続が失敗する問題を修正、2.1.288 で入れた「2.1.286 以前に始めた会話の再開時に思考を保持する」修正を削除 |
+| **2.1.317（2026-11-02 PT）** | **Web・シェルのツール呼び出しがアカウントのメールアドレスをネットワークへ送る前に確認**、`/schedule` で頼んでいないコネクタが新しいクラウドのスケジュールタスクに付いたときに警告、OTel のメトリクス・イベント・スパンに `anthropic.plan`・`anthropic.seat_type`・`anthropic.provider`・`anthropic.custom_base_url`、Claude apps gateway の管理 API に **コストレポート `GET /v1/organizations/analytics/cost`**（期間内の支出を合計・開発者別・日別・IdP グループ別に取得）、Agent SDK のフックコールバックに `onFailure: "block"`、Self-Hosted Runner 用の `CLAUDE_CODE_DISABLE_NESTED_SESSION_ID`、**メイン会話と別モデルのサブエージェント・チームメイトは、そのモデルの保存済み effort か既定値を使う**（セッションの effort を継承しない）、実行中のバックグラウンドエージェントへの `SendMessage` が早く届く（実行中のコマンドを止めずにバックグラウンドへ移す）、**Read ツールの「前回の Read から変更なし」スタブを廃止**（再読み込みで内容を返す）、Grep/Glob が時間切れの部分結果を完全な結果として扱う問題を修正、デスクトップアプリでプロジェクト/ローカルの MCP サーバーが初回ターン後に切断される問題を修正、プロンプトの入力を消すための Ctrl+C で実行中のバックグラウンドエージェントがすべて止まる問題を修正、自分の Artifact が200件以上あると `/artifacts` の共有一覧が空になる問題を修正、Windows で一部ボリュームの全ツール呼び出しが拒否される問題と、scratchpad などの一時パスがプロジェクトのパス長に応じて伸びて260文字制限に当たる問題を修正 |
 | **2.1.316（2026-10-30 PT）** | **`CLAUDE_CODE_SUBAGENT_EFFORT`**（他に指定がないときサブエージェントが使う effort。従来はセッションの値を継承）、**`CLAUDE_CODE_DISABLE_ULTRATHINK`**（`ultrathink` キーワードを無効化）、**Opus 4.8 の fast mode を 2026-10-30 付で非推奨化**（2026-11-30 に廃止。廃止後は通常の Opus 4.8 に切り替わらずエラーになるため Opus 5.5 へ移行）、Claude apps gateway にグループ共有の月次予算 **`pooled_budget`**・複数ポリシーを重ねて適用する **`managed.policy_mode: layered`**・Bedrock guardrail 用の `guardrail.input_tagging`、Team/Enterprise のサーバー管理設定を承認プロンプトなしで適用（検証できない保存コピーは拒否）、`--restricted` セッションが Read 許可ルールの範囲で作業ディレクトリ外のファイルをアップロードした問題の修正、gateway が要求内の全モデルを `availableModels`/`deniedModels` で検査しなかった問題の修正、VS Code で `ultrathink` が xhigh 実行に、クラウドセッションに MCP のフォーム入力カード、Code Review 分析ページに重大度別の指摘カード |
 | **2.1.315** | 公式 CHANGELOG に記載なし（npm では 2026-10-30 に公開） |
 | **2.1.314（2026-10-29 PT）** | **`permissions.blockWritesOutsideWorkingDirectories`**（どの権限モードでも Write/Edit/NotebookEdit が作業ディレクトリ外を拒否）、**VS Code と Desktop の Code タブにアイドルコンパクション**（200K トークン超で放置した会話を要約し、キャッシュ切れ後の次のメッセージで使う）、Claude apps gateway の upstream に IdP グループで振り分ける `groups` と `guardrail_trace`、管理者が effort に上限を設けた組織で「Invalid effort level」が続く問題を修正（effort を下げて再試行）、`claude -p` が起動失敗時に終了コード0・出力なしで終わる問題を修正（エラー表示して1で終了）、Foundry で既定モデルのデプロイがない場合に同系統の旧モデルへフォールバック、PreCompact フックの出力を1件1万文字で打ち切り、「上限で自動継続」が3回を超えて続く問題の修正、Monitor ツールが起動するシェルコマンドにも Bash 向けフックが適用、クラウドのスケジュールタスクが claude.ai で有効化したプラグインを読み込む、セットアップスクリプトが失敗してもクラウドセッションを開始 |
@@ -249,7 +251,7 @@ draft: false
 
 ## バージョン別詳細（新しい順）
 
-> **※ 詳細記載は 2.1.176 まで**。2.1.177 以降の各バージョン（〜最新 2.1.316）は上記「全バージョン一覧」を参照してください。
+> **※ 詳細記載は 2.1.176 まで**。2.1.177 以降の各バージョン（〜最新 2.1.318）は上記「全バージョン一覧」を参照してください。
 
 ### 2.1.176（2026-06-12 PT）— **会話言語でのセッションタイトル生成 / `availableModels` 強制の堅牢化**
 
@@ -1280,6 +1282,8 @@ Anthropic は影響を受けた全利用者に対し、利用制限（rate limit
 ### セキュリティ対応
 | バージョン | 内容 |
 |-----------|------|
+| 2.1.318 | `deniedMcpServers` の URL 指定が Anthropic 提供サーバーや、クラウドセッション・Self-Hosted Runner のコネクタにも適用されるように変更 |
+| 2.1.317 | Web・シェルのツール呼び出しがアカウントのメールアドレスをネットワークへ送る前に確認するように変更 |
 | 2.1.316 | `--restricted` セッションが Read 許可ルールの範囲で作業ディレクトリ外のファイルをアップロードした問題を修正 |
 | 2.1.309 | サンドボックス内 Bash がシェル起動ファイルをサンドボックス外で実行していた問題、`--mcp-config` の MCP 設定ファイル書き換え、複合コマンドの権限チェック誤信頼など多数修正 |
 | 2.1.292 | UNC パス読み取りのセキュリティ修正 |
@@ -1295,6 +1299,8 @@ Anthropic は影響を受けた全利用者に対し、利用制限（rate limit
 ### パフォーマンス改善
 | バージョン | 内容 |
 |-----------|------|
+| 2.1.318 | macOS で多数の Bash コマンドを実行中にメモリが増えて止まる問題を修正、バックグラウンドのサブエージェントのシェルコマンドを3分でバックグラウンドへ移しプロンプトキャッシュ切れを防止 |
+| 2.1.317 | プラグインが多い headless セッションのメモリ使用量と起動の遅さを修正 |
 | 2.1.314 | 多数のサブエージェントを走らせる長い headless/SDK ターンで、親セッションが各サブエージェントのツール結果を保持しないよう改善 |
 | 2.1.299 | アイドルコンパクション（放置した長い会話を要約し、キャッシュ切れ後の再読み込みを削減） |
 | 2.1.257 | 長い会話のレンダリング性能改善、キー入力ごとの再描画削減 |
@@ -1308,6 +1314,7 @@ Anthropic は影響を受けた全利用者に対し、利用制限（rate limit
 ### Windows 対応
 | バージョン | 内容 |
 |-----------|------|
+| 2.1.317 | 一部ボリュームで全ツール呼び出しが拒否される問題（作業ディレクトリの判定をフォルダの識別子の比較に変更）、scratchpad などの一時パスがプロジェクトのパス長に応じて伸びて260文字制限に当たる問題を修正 |
 | 2.1.316 | Git Bash でエイリアス・関数が失われる問題、Grep/Glob がタイムアウト後に戻らない問題を修正 |
 | 2.1.310 | Git Bash が無い環境で PreToolUse/PermissionRequest フックが素通りする問題を修正 |
 | 2.1.287 | 起動時にシェルツールの競合を警告 |
