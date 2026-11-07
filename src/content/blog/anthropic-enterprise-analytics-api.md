@@ -1,7 +1,7 @@
 ---
 title: "Anthropic Enterprise Analytics API 完全ガイド — 組織別利用データの照会と活用"
 date: 2026-05-02
-updatedDate: 2026-11-01
+updatedDate: 2026-11-07
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Admin API", "Analytics", "エンタープライズ", "FinOps", "Slack連携", "Workload Identity Federation", "OIDC", "Spend Limits API", "RBAC", "ユーザー管理"]
 excerpt: "2026年4月、Anthropic は Claude / Claude Code Remote / Claude Cowork の組織別利用データをプログラム照会できる Enterprise Analytics API を拡張した。Rate Limits API との位置付けの違い、エンドポイント構造、認証、レスポンス、Python/curl 実装例、Slackボット連携、運用ユースケース、制限事項までをまとめて解説する。さらに2026年6月の Workload Identity Federation（WIF＝OIDCトークンによるAPIキー不要認証）対応と、Admin API に追加された issuers / service accounts / federation rules エンドポイントも解説する。 さらに 2026-07-14 Beta のユーザー管理API（組織ロール5種・APIで割当可能なのは user/managed のみ・シート消費・SSO/SCIM併用時の制約）と、Enterprise 専用の Spend Limits API（上限の階層解決・ユーザー単位上書き・増額申請の承認/却下・金額は最小単位の文字列）、2026年8月のAdmin API GA化（8/19ユーザー管理ベータヘッダー不要化、8/26 `client.beta.organization`として全主要SDKから利用可能に）、2026-09-01の`anthropic-version`ヘッダーがAdmin API・Enterprise Analytics API・Compliance APIでも必須化された変更、2026-09-10のSmart Reports（Enterprise beta、利用実態の定性分析）、2026-09-24のClaude for Microsoft 365ローカルセッションのGA化・Compliance API Activity Feedがファイル名/タイトルを返さなくなった破壊的変更も収録。"
@@ -657,6 +657,47 @@ organization（組織全体の既定）   ┘
 Claude Code のユーザー別コストは、`products[]=claude_code` と `group_by[]=actor` を指定して取得できます（公式の FAQ）。
 
 出典: [Usage and Cost Analytics API（Claude Platform ドキュメント）](https://platform.claude.com/docs/en/manage-claude/usage-cost-analytics-api) ／ [Usage and Cost API（レガシー）](https://platform.claude.com/docs/en/manage-claude/usage-cost-api) ／ [Claude Platform リリースノート（2026-10-29）](https://platform.claude.com/docs/en/release-notes/overview)
+
+---
+
+## 【2026-11-07追記】Admin API にメンバー強制サインアウト（Enterprise・ベータ）と、Console の IP 許可リスト（ベータ）— いずれも 2026-11-05
+
+2026年11月5日（PT）の公式リリースノートに、組織管理に関わる2つのベータ機能が載りました。
+
+### メンバーを「すべての場所から」サインアウトさせる Admin API（Claude Enterprise）
+
+| 項目 | 内容 |
+|---|---|
+| エンドポイント | `POST /v1/organizations/users/{user_id}/sign_out`（本文なし。`user_id` は List members で取得） |
+| ベータヘッダー | `anthropic-beta: admin-user-sign-out-2026-10-08`（ないと 400。SDK・CLI は自動で付与） |
+| 必要なキー | Admin API キーに **`write:members`** スコープ（メールからの検索用に `read:members` の併用を推奨）。キーは作成した組織でのみ有効 |
+| 対象 | Claude Enterprise（claude.ai）組織のメンバー。**メンバーは組織に残り、すぐに再サインインできる** |
+
+**終了するもの**: そのメンバーのサインイン済みセッション（全ブラウザ・全デバイス）、信頼済みデバイスの登録、**この組織向けに発行された OAuth トークン**（Claude Code などのアプリは再サインインが必要）。2段階認証を省略したブラウザの記録と、プッシュ通知の登録も消えます（プッシュ通知の削除は非同期で、200 が返っても完了は保証されません）。
+
+**終了しないもの**（ここが運用上の落とし穴です）:
+- **API キー**（本人が作成した Admin API キーを含む）。claude.ai の Organization settings > API で削除します。
+- **他の組織向けの OAuth トークン**（組織ごとにリクエストが必要）。
+- **Claude Code のクラウドセッションとルーティン**（セルフホスト環境を含む。ルーティンは新しいセッションを起動し続けます）。
+- **Cowork に連携済みのコンピュータ**（連携は残る）。
+- 進行中のサインイン（リクエスト中、または最大5分後に完了しうる）と、端末に保存済みのデータ。
+
+**エラー**: 主オーナーはサインアウトできず `400 cannot_sign_out_primary_owner`。組織がベータ対象外なら `400 organization_not_enrolled_in_beta`。キーに `write:members` がなければ 403、該当メンバーがいなければ 404、レート制限は 429、一時的な障害は 503（再試行で残りのセッションを終了）。200 は再試行しても安全です。
+
+**監査**: 完了したサインアウトは、監査ログのエクスポートに `org_user_trusted_devices_revoked` として記録され、Compliance API の Activity Feed にも出ます。
+
+### Claude Console / Claude Enterprise の IP 許可リスト（ベータ）
+
+組織単位で「許可する IP 範囲」を設定し、**範囲外からのリクエストを拒否**する機能です。API キーが漏れても、攻撃者が使える場所を絞れます。
+
+- **形式**: IPv4 / IPv6 の単一アドレスまたは CIDR（IPv4 は `/8`、IPv6 は `/32` より広い範囲は不可）、**最大1,000件**。パブリックアドレスのみ（`10.0.0.0/8` などのプライベート範囲は不可）。
+- **Claude Platform 組織で対象になるもの**: Console の UI、Messages・Message Batches・Token Counting・Models・Files・Skills、Managed Agents の Agents・Sessions・Environments・Vaults・Memory stores（API キーまたは Workload Identity Federation トークン）、Admin API と Compliance API（その組織だけを対象にするキー）。拒否時は `403 permission_error`（"Your IP address isn't in this organization's allowed range."）。
+- **Claude Enterprise 組織**: 独自の許可リストがあり、ブラウザ・デスクトップ・モバイルの Claude、Claude アカウントでサインインした Claude Code、Claude in Chrome、Office アドイン、Cowork、Remote Tools が対象です。設定できるのはオーナーと主オーナー。
+- **対象外**: Amazon Bedrock 上の Claude、Claude Platform on AWS、Claude Models on Google Cloud、Claude in Microsoft Foundry には適用されません。Enterprise では Claude Design・Claude in Slack・Claude Academy も対象外です。
+- **反映と運用**: 変更の反映に最大15分。サーバー・CI・オフィス・VPN・プロキシの公開 IP を**先にすべて**登録し、日次・週次ジョブの 403 を監視します。管理者が設定画面に任意の IP から入れるチェックボックスは、ロックアウト回避のため選択が推奨されています（ただし管理者セッションが乗っ取られた場合のリスクとのトレードオフ）。
+- **補完策**: 許可リストは「どこから使えるか」を絞るだけで、期間は絞りません。公式は、短いキー有効期限の設定や Workload Identity Federation への移行も併せて推奨しています。
+
+出典: [Claude Platform リリースノート（2026-11-05）](https://platform.claude.com/docs/en/release-notes/overview) ／ [Sign a member out everywhere（公式ドキュメント）](https://platform.claude.com/docs/en/manage-claude/user-management#sign-a-member-out-everywhere) ／ [IP allowlisting（公式ドキュメント）](https://platform.claude.com/docs/en/manage-claude/ip-allowlist)
 
 ---
 
