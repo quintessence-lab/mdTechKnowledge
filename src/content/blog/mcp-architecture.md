@@ -1,7 +1,7 @@
 ---
 title: "MCP (Model Context Protocol) アーキテクチャ詳細"
 date: 2026-04-26
-updatedDate: 2026-10-24
+updatedDate: 2026-11-07
 category: "Claude技術解説"
 tags: ["MCP", "Claude Code", "JSON-RPC", "GitHub", "OAuth", "プロトコル", "Claude for Legal", "ステートレス", "SEP-2577", "SEP-2663", "Sampling", "非推奨ポリシー", "MCP Apps", "Extensions", "JSON Schema 2020-12", "W3C Trace Context"]
 excerpt: "MCPの概要・アーキテクチャ・トランスポート・JSON-RPC・OAuth・プロセスモデルに加え、v2.1仕様（Server Cards・メディアサポート・Tasks primitive）、2026年MCPロードマップ（transport scalability/agent communication/governance/enterprise readiness/エンタープライズSSO・監査トレイル・ガバナンス成熟化（貢献者ラダー/委任モデル/憲章）・新コアメンテナー）、MCP Apps（SEP-1865）、**2026-07-28 に正式リリースされたMCP新仕様**（プロトコルステートレス化＝Mcp-Session-Id 廃止、MCP Apps の HTML UI、Tasks Extension 再設計）、MCP Dev Summit NA、Streamable HTTPスケーラビリティ課題、AAIFガバナンス移管後の動向、Claude for Legal で公開された20+ MCPコネクタ、約20万サーバーに影響した重大脆弱性事案、さらに新仕様で制定された SEP-2577 の非推奨ポリシー（Active/Deprecated/Removed の3段階・最低12ヶ月）と Sampling/Roots/Logging の deprecated 化、**2026-08-22 公開の新ロードマップ**（Agentic Messaging・HTTP-native transport 全面化・Agent Identity/DPoP/WIF・ツールプリミティブ改善・SDK DX の5優先領域と SEP 加速レビュー）、**2026-08-24 に GA となった Enterprise-managed authorization for MCP connectors**（Datadog・Notion・Slackが新規対応、公開MCPサーバー950以上）、**Claude Code v2.1.259の`managedMcpServers`マネージド設定・無人ホスト向け`--permission-prompts none`**、2026-09-22 に Claude API の MCP コネクタへ加わった**`mcp-client-2026-09-15`（サーバーが返したツール一覧を`mcp_tool_listing`ブロックとして記録・固定。Inline toolsと併用すると会話途中でMCPツールセットを追加可能）**までの参照リンクを網羅"
@@ -1476,6 +1476,26 @@ MCPサーバーをプラグイン経由で利用する際、依存関係が未�
 出典: [Donating Agent Skills to the Agentic AI Foundation（Anthropic）](https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation)（2026-10-22）
 
 出典: [Claude Code CHANGELOG（v2.1.292〜v2.1.302）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
+
+---
+
+## 【2026-11-07追記】公式 SDK の更新 — TypeScript SDK 2.4.0 の Skills over MCP と、Ruby SDK 1.9.0
+
+公式 SDK のリリースノートから、最近の動きを2点まとめます。
+
+### TypeScript SDK v2.4.0（2026-10-23）
+
+- **Skills over MCP（SEP-2640）**: スキルのフォルダを MCP で公開・利用する仕組みが入りました。サーバー側は `loadSkills(folder)` でフォルダを読み込み、`skills.attach(server)` でサーバーに付けます。**`attach` は実験的（experimental）**の扱いです。
+- **OAuth のリフレッシュ時 scope（オプトイン）**: Microsoft Entra ID のように、`scope` のないリフレッシュ要求を拒否する認可サーバー向けに、`OAuthClientProvider` に `scopeForRefresh(tokens)` を実装できます。既定の動作は変わりません。
+- **サーバーイベントの転送**: `ServerEvent` が任意の `params` を受け取るようになり、ゲートウェイが `_meta` 付きの変更通知を転送できます。
+
+### Ruby SDK v1.9.0（2026-11-03）
+
+Ruby SDK のリリースノートによると、v1.9.0 で **Skills 拡張（SEP-2640）** に対応しました。
+
+**注意（未確認）**: 「Ruby SDK が Tier 1 に昇格した」という情報は、公式の SDK リリースページと SDK ティア制度のページでは確認できませんでした。ティア制度の公式ページは、各ティアの要件（Tier 1 は適合テスト 100% 合格など）を定めていますが、SDK ごとの現在のティアは載せていません。ティアを判断材料にする場合は、公式の SDK 一覧で最新の状況を確認してください。
+
+出典: [TypeScript SDK リリース（v2.4.0）](https://github.com/modelcontextprotocol/typescript-sdk/releases) ／ [Ruby SDK リリース（v1.9.0）](https://github.com/modelcontextprotocol/ruby-sdk/releases) ／ [SDK Tiering System（MCP 公式）](https://modelcontextprotocol.io/community/sdk-tiers)
 
 ---
 
