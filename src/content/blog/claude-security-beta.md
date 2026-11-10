@@ -1,7 +1,7 @@
 ---
 title: "Claude Security Beta — Anthropic エンタープライズセキュリティ製品の全貌（2026年5月発表）"
 date: 2026-05-02
-updatedDate: 2026-10-30
+updatedDate: 2026-11-10
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude Security", "Opus 4.7", "セキュリティ", "脆弱性スキャン", "エンタープライズ", "脅威インテリジェンス", "MITRE ATT&CK", "サイバー攻撃", "サイバー評価インシデント", "Inference hooks", "DLP"]
 excerpt: "2026年5月1日、Anthropic は Claude Opus 4.7 を中核に据えたエンタープライズ向けセキュリティ製品 Claude Security のパブリックベータを発表した。コードベース脆弱性スキャン・パッチ生成、CrowdStrike / Microsoft Security / Palo Alto Networks / SentinelOne / TrendAI / Wiz などの技術パートナー、Accenture / BCG / Deloitte / Infosys / PwC などのサービスパートナー連携を含め、全体像を整理する。さらに2026年6月3日公開の脅威インテリジェンスレポート（禁止832アカウントの MITRE ATT&CK マッピング、マルウェア生成67.3%、中リスク以上が33%→56%へ）、2025年11月に阻止された AI 主導サイバースパイ活動の事例、2026年7月30日発表のサイバー評価インシデント（評価環境の設定ミスでClaudeが実組織3社に不正アクセス）、そして2026年8月5日発表のInference hooks（Claude Enterprise beta。DLPサーバーへ推論前にプロンプトを問い合わせ、Netskope/Palo Alto/Proofpoint/Zscaler等と統合）、2026年9月2日発表のEnterprise Frontier Safeguards（EFS。ゼロデータリテンションと不正利用検出を両立する新アーキテクチャ、顧客所有クラウドへのデータ保持、100社超と共同開発・秋以降段階ロールアウト）、2026年9月17日発表のLife Sciences Verification Program（LSVP。検証済みの生命科学組織に生物学関連の安全策を緩和する信頼アクセス。Standard Use／High-risk Useの2種の許可、リアルタイムのブロックから事後監視への移行、30日データ保持必須、Enterprise/Team・API向けベータ）も追補する。"
@@ -412,6 +412,25 @@ Claude Security の製品ページ（日付表記なし）には、これまで�
 Issue では「2026-10-21 にエンタープライズ向けパブリックベータが拡張された」とされていましたが、この日付は公式ページ・リリースノートで確認できなかったため、本記事では日付を断定していません。
 
 出典: [Claude Security（claude.com）](https://claude.com/product/claude-security)
+
+---
+
+## 【2026-11-10追記】Claude Enterprise の新しいセキュリティ・管理機能（2026-11-05）— 管理者向けの別機能
+
+**注意**: 以下は、本稿の主題である「Claude Security」（コードの脆弱性スキャン製品）とは**別の機能**です。2026年11月5日（PT）に、Claude Enterprise の**管理者向けセキュリティ・管理機能**がまとめて発表されました（公式ブログ）。一部はベータで、ベータの範囲はヘルプセンターに載っています。
+
+| 機能 | 状態 | 内容 |
+|---|---|---|
+| **セキュリティセンター** | ベータ | チャット・Cowork・Claude Code のセキュリティ設定を1ページに表示し、Anthropic の推奨構成と比較する。監査人向けにレポートとしてダウンロード可。公式は「認証や、法令・標準への適合の保証ではない」と明記 |
+| **Inference hooks** | **GA** | 組織が使っているデータセキュリティツールに Claude をつなぎ、プロンプトとツール呼び出しに DLP やセキュリティポリシーを適用する。プロンプト用フックと、ツール呼び出し前のフックの2種類 |
+| **集中管理** | ベータ | 親組織が `admin.claude.com` の1つの管理コンソールで、SSO・SCIM・ドメイン検証・グループ・Compliance API キーなどを全社で設定できる。親組織の Owner / Admin ロールも追加。**設定は元に戻せない**ため、先に親組織の管理者を決めておくこと |
+| **アクセス制御** | ベータ | Admin API 1回でメンバーを全デバイスからサインアウト（組織には残る）、管理者自身が管理する IP 許可リスト、Claude Desktop の主要設定を端末管理ツールなしで管理（詳細は公式ヘルプ） |
+
+- メンバー強制サインアウト API と IP 許可リストの仕様は、[Enterprise Analytics API 完全ガイド](/mdTechKnowledge/blog/anthropic-enterprise-analytics-api/) の2026-11-07追記にまとめています
+- Cowork の仮想マシンで EDR を動かすベータは、[Cowork アップデートまとめ](/mdTechKnowledge/blog/claude-cowork-updates/) を参照してください
+- **本稿が扱う Claude Security との関係**: Claude Security は「自社コードの脆弱性を見つけて直す」製品、上の機能は「Claude の利用そのものを統制する」機能です。導入判断は別々に行います
+
+出典: [Claude Enterprise のセキュリティ更新（claude.com、2026-11-05）](https://claude.com/resources/articles/claude-enterprise-security-updates) ／ [Claude リリースノート（Anthropic ヘルプセンター）](https://support.claude.com/en/articles/12138966-release-notes)
 
 ---
 
