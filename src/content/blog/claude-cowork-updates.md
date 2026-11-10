@@ -4,7 +4,7 @@ date: 2026-04-26
 category: "Claude技術解説"
 tags: ["Claude", "Cowork", "エージェント", "Claude Desktop", "Computer Use", "KPMG", "Claude for Legal", "Finance Agents"]
 excerpt: "AnthropicのデスクトップAIエージェント機能「Claude Cowork」のリリースから2026年4月GA移行・Live Artifacts・Amazon Bedrock対応・Claude for Small Business・PwC 拡大パートナーシップ・KPMG Digital Gateway（276,000人 / 138 か国 / 2026-05-19）・Claude for Legal（20+ MCPコネクタ・12 practice-area プラグイン、2026-05-12）・Finance Agents 10 テンプレート（2026年5月）・Cowork 5時間制限2倍キャンペーン（2026年6月）・エンタープライズ向けコネクタ一括認可EMA（Okta／2026-06-18ベータ）・Cowork の Web/iOS/Android 展開とリモートセッション（2026-07-07）・Claude for Teachers 米国K-12教育者向け無料プログラム（2026-07-14）・Chrome サイドパネルの完全 Cowork セッション化（会話とスキル/コネクタを desktop/web/mobile と共有、ブラウザ内クリック・フォーム入力等の実アクション対応、Max/Team から展開、2026-08-12）・Claude Tag が新体験へ完全移行（チャンネルメモリ・スタンディングインストラクション・ambient mode、2026-08-03）・Cowork Built-in Browser（デスクトップアプリ専用の隔離ブラウザでナビゲート・クリック・入力、ユーザーのタブ/パスワードは非共有、2026-08-26）・Smart Reports（Enterprise向けベータ、チームの利用状況・コスト・スキル候補を自動分析）・CoworkとChatが1つのClaudeに統合（Claude Docs/Claude Slides新設・Design会話内対応、Pro/Maxから数週間かけてロールアウト、2026-09-16）・Claude Tagがチャンネルでの個人コネクタに対応（レビューモード/オートモード、Teamプランでロールアウト中、2026-09-24）・Claude for Google Workspace（Docs/Sheets/Slidesのサイドバー＋コネクタ、公開ベータ、2026-10-06）・Claude Desktop v2.16120.0〜v2.31226.0のCowork関連更新（スケジュールタスクの既定がAutomatically approveに、macOS 14以降必須、11月10日のUnified Claude全組織オン）までのアップデートをリリース順に整理。"
-updatedDate: 2026-11-03
+updatedDate: 2026-11-10
 draft: false
 ---
 
@@ -615,6 +615,53 @@ Claude Desktop 3P（サードパーティ基盤向けのデスクトップ配備
 **前の節との違い**: 上の「2026-10-30追記」の「既定オン（11月16日）」は、Claude Enterprise（claude.ai 側）の**ロール単位のアクセス制御**の話です。本節は **Desktop 3P の MDM / ブートストラップ配備**の設定で、日付も対象も別です。
 
 出典: [Unified Claude in Claude Desktop on 3P（claude.com ドキュメント）](https://claude.com/docs/third-party/claude-desktop/unified-claude)
+
+---
+
+## 【2026-11-10追記】Personal Finance（ベータ）・Cowork での EDR・Project spend tags（11月5〜6日）
+
+### Personal Finance in Claude（ベータ、2026-11-05）
+
+公式の発表（claude.com、2026-11-05）によると、銀行・クレジットカード・ローン・投資口座を Claude にリンクし、残高や支出を1つのページで見て、自然言語で質問できるベータが始まりました。Cowork 自体の機能ではなく、Claude の個人向け機能として発表されています。
+
+- **提供範囲**: **米国の Pro / Max / Ultra プラン**のみ（他の国は記載なし）。その週からのベータ展開です
+- **接続方法**: **Plaid 経由**。ユーザーが Plaid で自分で銀行にサインインして初めて接続され、Claude が銀行のパスワードを受け取ることはありません
+- **Claude が見るデータ**: 選んだ口座の銀行名・口座名・種類・下4桁・残高・与信枠と、**最大2年分の取引**
+- **読み取り専用**: 「資金の移動・管理・投資はできない」と明記されています
+- **広告なし**: 広告やスポンサー付きの推奨はなく、Claude が自社のクレジットカード・ローン・貯蓄口座を提供することもありません
+- **学習への利用**: Personal Finance ハブ内の会話は、モデルの学習に使われません。ハブ外のチャットはプライバシー設定に従います
+- **リンク解除**: いつでも解除でき、解除後は Claude がその口座のデータを見られなくなります。**すでに Claude が保持したデータが削除されるかは、ページに記載がありません**
+- **制限**: 回答には誤りがありうるため、重要な数字は銀行で確認すること。**投資助言を目的とした製品ではありません**
+
+### Cowork の仮想マシンで EDR を動かす（ベータ、2026-11-05）
+
+Enterprise 向けのセキュリティ更新の「おまけ」として、管理者が組織の **EDR センサーを Cowork の仮想マシン内で動かせる**ベータが載りました。
+
+- **対象**: macOS と Windows の Team・Enterprise。Amazon Bedrock・Google Cloud Vertex AI・Microsoft Foundry 上の Claude デスクトップアプリは MDM 経由
+- **動作**: センサーは**検出モード**で、活動をセキュリティチームに報告しますが、**ブロックはしません**
+
+同じ日に発表された Enterprise のセキュリティセンターなどは [Claude Security ベータの記事](/mdTechKnowledge/blog/claude-security-beta/) にまとめています。
+
+### Project spend tags（ベータ、2026-11-06）
+
+公式ヘルプによると、Claude Enterprise 組織がプロジェクトに、既存の**課金コード・チャージコード・案件番号**などのタグを付け、**タグ別に支出を確認**できます（ベータ）。
+
+| 項目 | 内容 |
+|---|---|
+| 設定できる人 | タグと値の作成は Primary Owner / Owner（Owner 権限のカスタムロール）。プロジェクトへの付与は、そのプロジェクトの「Can edit」権限 |
+| 見る人 | Primary Owner / Owner、または Analytics view と Billing view 権限のカスタムロール |
+| タグの仕様 | 1プロジェクトにつき最大16タグ、タグ名は小文字・スペースなしで変更不可、値は最大256文字。必須タグは**ウェブで新規作成するプロジェクト**にのみ適用 |
+| 見る場所 | Organization settings > Usage > Spend by project（「Group by」でタグを選ぶ）。CSV 出力可。データは前日（UTC）まで |
+| 対象になる作業 | プロジェクト内のチャット、統合された Chat と Cowork、デスクトップの Cowork タスク（プロジェクトを選択した場合）、プロジェクトを設定した Claude Code（ターミナル・デスクトップ） |
+| 対象外 | ウェブ版 Claude Code、Claude for Office、Claude in Chrome、Claude Design、Slack/Teams、Artifacts、音声、API と Console、Bedrock・Vertex・ゲートウェイ・API キー経由の Claude Code |
+
+- **Claude Code** にはプロジェクト選択がないため、`settings.json` の `attributionProject` キーにプロジェクト ID を設定します
+- **支出の見え方**: プロジェクト外は「Not in a project」、タグ値がないプロジェクトは「No tag value」。**席に含まれる利用は集計に入りません**。金額は割引後・クレジット前で、請求書と一致しない場合があります
+- **提供外の組織**: HIPAA 構成、顧客管理の暗号鍵（CMEK）、ゼロデータ保持（Claude Code を含む）、最小データ保持、米国外にデータを置く組織は使えません
+- **API（ベータ）**: Admin API でプロジェクトにタグを設定でき、使用量・コストのレポート API でタグ別に取得できます
+- **このベータにないもの**: チャットやセッション単位のタグ、支出の按分、タグ名・値の名称変更、タグ別の支出上限
+
+出典: [Introducing Personal Finance in Claude（claude.com、2026-11-05）](https://claude.com/resources/articles/introducing-personal-finance-in-claude) ／ [Claude Enterprise のセキュリティ更新（claude.com、2026-11-05）](https://claude.com/resources/articles/claude-enterprise-security-updates) ／ [Track spend by project with tags（Anthropic ヘルプセンター）](https://support.claude.com/en/articles/18251257-track-spend-by-project-with-tags) ／ [Claude リリースノート（Anthropic ヘルプセンター）](https://support.claude.com/en/articles/12138966-release-notes)
 
 ---
 
