@@ -1,7 +1,7 @@
 ---
 title: "Anthropic Messages API 新機能まとめ（2026年5〜10月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・Opus5対応・Browser use tool・Fable 5.1/Mythos 5.1・Opus 5.5対応"
 date: 2026-06-20
-updatedDate: 2026-11-05
+updatedDate: 2026-11-10
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ", "Compliance API", "EU AI Act", "Browser use tool", "Python SDK", "Fable 5.1", "Mythos 5.1", "Haiku 5.5", "Models API"]
 excerpt: "2026年5〜10月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）、9月1日の Fable 5.1/Mythos 5.1リリースに伴うtool_choice制限・thinking保持ルール変更・キャッシュ90%値下げ・Per-Message Effort（9月3日Google Cloud対応拡大）、9月14日のOn-demand conversation compaction（任意タイミングでの会話圧縮ベータ）・9月18日のCompliance APIがClaude in Chromeセッションに対応、9月22日のClaude Opus 5.5リリース（thinking無効化不可・tool_choice any/tool廃止等のAPI破壊的変更）・Inline tools beta（会話途中でのツール定義変更）、9月23日のCache Diagnostics GA化、9月24日のRefusal課金の再開（bio/frontier_llm/reasoning_extractionの3カテゴリは出力前の拒否でも課金）・Compliance API Activity Feedが名称・タイトルを返さなくなった破壊的変更・Claude for Microsoft 365セッションのGA化まで、対応モデル・betaヘッダー・コード例つきで横断解説する。 2026-09-29更新: Claude Sonnet 5.5（9/28）のリリースと5つのAPI破壊的変更を第22章に追加。2026-10-03更新: Claude Sonnet 4.5の廃止通知（9/30、リタイアは11/30・移行先Sonnet 5.5）を第23章に追加。2026-10-09更新: Claude Haiku 5.5（10/7、$0.10/$0.50・Haiku 4.5からの破壊的変更）・Sonnet 5.5のキャッシュ読取半額化・Models APIの`line`/`thinking.types.disabled`/`server_tools`フィールドを第24章に追加。"
@@ -866,6 +866,42 @@ SDK には `client.beta.messages.thread(...)` のヘルパーがあり、`thread
 
 ---
 
+## 31. 【2026-11-10追記】Claude Fable 5.2 / Mythos 5.2（2026-11-09）と、IP 許可リスト・サインアウト API の補足
+
+### Claude Fable 5.2 / Mythos 5.2（2026-11-09 PT）
+
+公式リリースノートによると、**Claude Fable 5.2（`claude-fable-5-2`）** がリリースされました。**Claude Mythos 5.2（`claude-mythos-5-2`）** は同じ能力を、Cyber Verification Program などの Anthropic の検証プログラムを通った組織だけに提供します。公式ドキュメントは、多くの用途ではまず最新の Claude Opus を使い、**高い effort の Opus で評価しても要件に届かない場合に Fable 5.2 へ移る**ことを勧めています。
+
+| 項目 | 内容 |
+|---|---|
+| コンテキスト・出力 | 1M トークン（既定かつ最大）、最大出力 128k トークン |
+| 思考 | 適応型思考が常時オン。`thinking: {"type": "enabled"}`（`budget_tokens` 付き）と `{"type": "disabled"}` は **400 エラー**。`thinking` を省略するか `{"type": "adaptive"}` を送り、深さは effort（`low`〜`max`、API 既定は `high`）で調整 |
+| 強制ツール使用 | `tool_choice` の `any` / `tool` 指定は **400 エラー**（Fable 5.1 からの移行では変更なし。Fable 5 や Opus 5 以前からは破壊的変更）。スキーマ準拠の出力は `strict: true` か JSON 出力で |
+| トークナイザ | Opus 4.7 で導入されたもの |
+| 料金 | 入力 **$8** / 出力 **$40** per MTok（Fable 5.1・Mythos 5.1 は $10 / $50 だったので**下がった**）。5分キャッシュ書き込み $10、1時間 $16、キャッシュ読み取り $0.20。バッチは $4 / $20 |
+| fast mode | Claude API で `speed: "fast"`（ベータヘッダー不要）。出力が最大2.5倍速く、**$16 / $80 per MTok**。Google Cloud・Microsoft Foundry にも提供（Foundry は別モデル `claude-fable-5-2-fast`） |
+| データ保持 | **30日のデータ保持が必須**で、Anthropic が明示的に認めない限りゼロデータ保持（ZDR）では使えない |
+| 提供先 | Claude API、Amazon Bedrock、Claude Platform on AWS、Claude Models on Google Cloud（Anthropic マネージド・Google マネージド）、Claude in Microsoft Foundry |
+
+**Fable 5.1 から壊れうる4つの変更**（公式の「Breaking changes」）:
+
+1. **prefix check が全アカウントで強制**: `system`・`tools`・以前のメッセージを書き換えたうえで、後のターンの思考ブロックを送り返すと **400 エラー**（メッセージは `The block is bound to a different conversation`）。つなぎとして、ベータヘッダー `thinking-binding-controls-2026-08-01` と `thinking.block_binding.prefix_mismatch_behavior: "drop_block"` で該当ブロックを落として続行できますが、出力トークンが増えることがあります。Claude Code・claude.ai・Managed Agents・Agent SDK が組み立てるリクエストでは、変更不要です
+2. **思考ブロックを読めるモデルが限られる**: Fable 5.2 の思考ブロックを読めるのは Fable 5.2 と Mythos 5.2 だけ。他のモデルへ切り替えると、そのターンの思考は失われます（リクエストは成功し、落とされたブロックは課金されません）。Fable 5.2 のフォールバック先は Opus 4.8 と Opus 5 です
+3. **`computer_20251124` ツールは 400 エラー**（Amazon Bedrock を除く全プラットフォーム）。`computer_toolset_20260801` を使います
+4. **advisor ツール**: Fable 5.2 / Mythos 5.2 を executor にすると、advisor も Fable 5.2 か Mythos 5.2 に限られます。他の advisor は 400 エラー。advisor の `model` を変えるのは `tools` の編集にあたるため、新しい会話で行います
+
+そのほか、思考ブロックは**生成したアカウント（またはリンクされたアカウント）でのみ**有効です。**挙動の違い**として、公式は「考えすぎないで」というプロンプトの一文が medium 以上の effort では効きにくいこと、長いマルチステップ作業で途中でターンが終わることがあること（low・medium で多い）、コードの所有者をプロンプトで明示するとよいこと、長いツール呼び出しの間ユーザー向けの文章が少なくなりうること、サブエージェントへの委任が多く費用の大きな部分になりうること、スタイル規則への追従が強いことを挙げています。
+
+**Claude Code**: v2.1.321 で Fable 5.2 が Fable の既定モデルになりました（[バージョン履歴](/mdTechKnowledge/blog/claude-code-version-history/)）。
+
+### IP 許可リストとメンバー強制サインアウト（2026-11-05）
+
+同じ週に、Claude Console の IP 許可リスト（ベータ、最大1,000件）と、Claude Enterprise メンバーを全デバイスからサインアウトさせる Admin API（ベータ）が追加されました。Messages API・Message Batches・Token Counting・Models・Files・Skills などへのリクエストも、許可リスト外の IP からは `403 permission_error` になります。仕様と運用上の注意は [Enterprise Analytics API 完全ガイド](/mdTechKnowledge/blog/anthropic-enterprise-analytics-api/) の2026-11-07追記にまとめています。
+
+出典: [Claude Platform リリースノート（2026-11-09・2026-11-05）](https://platform.claude.com/docs/en/release-notes/overview) ／ [What's new in Claude Fable 5.2（公式ドキュメント）](https://platform.claude.com/docs/en/models/fable-5-2/whats-new-fable-5-2)
+
+---
+
 ## まとめ — どの機能をいつ使うか
 
 2026年5〜6月の Messages API 新機能は、「**品質を上げる**」「**コストを下げる**」「**運用を見通せるようにする**」の3方向に効きます。
@@ -891,6 +927,7 @@ SDK には `client.beta.messages.thread(...)` のヘルパーがあり、`thread
 - [Claude Platform リリースノート（公式・一次ソース）](https://platform.claude.com/docs/en/release-notes/overview)
 - [Message threads（公式ドキュメント・第29章の出典）](https://platform.claude.com/docs/en/build-with-claude/message-threads)
 - [Text watermark（公式ドキュメント・第30章の出典）](https://platform.claude.com/docs/en/build-with-claude/text-watermark)
+- [What's new in Claude Fable 5.2（公式ドキュメント・第31章の出典）](https://platform.claude.com/docs/en/models/fable-5-2/whats-new-fable-5-2)
 - [Web search tool（公式ドキュメント）](https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool)
 - [Improved web search with dynamic filtering（公式ブログ・ベンチ数値の出典）](https://claude.com/blog/improved-web-search-with-dynamic-filtering)
 - [Cache diagnostics（公式ドキュメント・`cache_miss_reason` 6種の出典）](https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics)
