@@ -1,7 +1,7 @@
 ---
 title: "Claude Code Auto Mode 完全ガイド — --dangerously-skip-permissions を卒業する自律型権限管理"
 date: 2026-06-21
-updatedDate: 2026-10-30
+updatedDate: 2026-11-10
 category: "Claude技術解説"
 tags: ["Claude Code", "Auto Mode", "permission mode", "dangerously-skip-permissions", "分類器", "classifier", "claudeignore", "安全運用"]
 excerpt: "Claude Code の Auto Mode（自律型権限管理）は、すべてを無条件に許可する --dangerously-skip-permissions の安全な代替として 2026-03-24 に登場した。モデルベースの2段階トランスクリプト分類器（Sonnet 4.6 による高速フィルター＋思考連鎖による精査）で各アクションを起動前に評価し、連続3拒否・累計20拒否で自動停止する。2026-08-14 からは Pro/Max/Team プランの新規セッションで Auto Mode が既定の権限モードになった（人間の目視13.6%に対し分類器89%の危険コマンド捕捉率が論拠。Enterprise/API/Bedrock/Vertex/Foundry はオプトイン継続）。2026-08-25のv2.1.246では`/permissions`にAuto modeタブが追加され、分類器ルールをGUIから閲覧・編集可能になった。2026-08-27のv2.1.248では`--restricted`フラグが追加され、実行系ツール・WebFetchをそもそも起動時から除去する、Auto Modeとは別系統の静的な制限モードが利用可能に。2026-09-01のv2.1.257ではContainment Escapeルールが追加され、クラウドメタデータ認証情報取得・egress回避・クロステナントアクセスが環境の明示許可なしには自動承認されなくなった。2026-09-14のv2.1.271ではBash/PowerShell/Monitorへコマンド単位の`allowed_domains`が追加され、2026-09-18のv2.1.278では分類器の実行場所がデフォルトでサーバー側に変更（オーバーヘッド課金なし、`CLAUDE_CODE_AUTO_MODE_SERVER=0`でopt-out可）された。本記事では権限モードの全体像、分類器の仕組み、エスカレーション停止、.claudeignore 連携、卒業の手順までを公式情報ベースで整理する。"
@@ -256,6 +256,29 @@ v2.1.304 で **`/auto-mode-setup`** が追加されました。プロジェク�
 あわせて v2.1.307 では `claude_code.safety_event` の OpenTelemetry イベントが追加され、権限ルール・auto mode・安全チェック・フック・サンドボックスが止めた／確認した／差し戻したツール呼び出しごとに記録できましたが、**v2.1.312 で Claude Code はこのイベントの送信を停止しました**（CHANGELOG の記載のみで、理由は書かれていません）。v2.1.307 では、`/permissions` の「Recently denied」から承認した再試行コマンドを auto mode のローカル分類器が無視する問題も修正されました。
 
 出典: [Claude Code CHANGELOG（v2.1.304・v2.1.307）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
+
+---
+
+## 5.13. 【2026-11-10追記】v2.1.319〜v2.1.321 — サーバー側チェックが使えないときは「確認または拒否」に
+
+**Claude Code v2.1.319**（2026-11-05 PT）で、auto mode のサーバー側チェックが使えない環境での挙動が変わりました。5.10 で触れた `CLAUDE_CODE_AUTO_MODE_SERVER=0`（ローカル分類器へ戻す設定）の位置づけも変わるため、ゲートウェイ経由で使っている場合は確認してください。
+
+| 項目 | 内容（CHANGELOG の記述による） |
+|---|---|
+| 新しい既定 | テレメトリや機能フラグを切っている場合（LLM ゲートウェイ経由を含む）、**サーバーが確認できない呼び出しは「確認する」か「拒否する」**。**内蔵の分類器へのフォールバックはなくなった** |
+| 従来動作に戻す | `CLAUDE_CODE_AUTO_MODE_SERVER=0`（Bedrock・Vertex・Foundry は変更なし） |
+| ゲートウェイ経由でサーバー側チェックを有効にする | `CLAUDE_CODE_AUTO_MODE_SERVER=1`。`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS` を設定していても有効になる。**管理設定で後者を設定している場合は、`1` も管理設定で設定する必要がある** |
+| 設定ファイルによる再有効化 | プロジェクトの設定ファイルやプラグインは、外部で切った auto mode のサーバー側チェックを**再び有効にできなくなった** |
+| `claude -p` | 安全確認が使えず auto mode で操作が拒否された場合、テキスト・JSON 出力とも**終了コード 1** を返す（以前は 0） |
+| 理由が出ない拒否 | 権限ルールや `autoMode` 設定が非常に大きいときに理由なく拒否していた問題を修正。理由を説明し、`autoMode` の deny ルールがなければ端末で確認する |
+| `/status` | サーバー側レビューがセッションに届いていないのに「Auto mode server: Enabled」と表示する問題を修正 |
+| 連続操作 | モデル変更と auto mode の要求を続けて送ると誤って拒否される問題を修正 |
+
+**v2.1.321**（2026-11-09 PT）では、会話がコンパクトされた際に auto mode が背景サブエージェントの報告を失う問題の修正、ヘッドレス・デスクトップ・VS Code で一緒に待っている背景サブエージェントの報告を1回のモデル呼び出しで返す改善、`/config` の既定の権限モード表示の修正（「Auto (default)」で Space を押すと Plan ではなく Don't Ask を保存）が入っています。
+
+> **読み方**（本稿の整理）: ゲートウェイ経由で、テレメトリや機能フラグを止めた運用をしている場合、v2.1.319 以降は auto mode が「ローカル分類器で自動判断」ではなく「確認または拒否」に倒れます。無人実行（`claude -p`）が終了コード 1 で止まるようになるため、パイプラインに組み込んでいる場合は、サーバー側チェックを有効にする（`=1`）か、従来動作に戻す（`=0`）かを選んでください。
+
+出典: [Claude Code CHANGELOG（v2.1.319・v2.1.321）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 ---
 
