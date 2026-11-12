@@ -1,19 +1,20 @@
 ---
 title: "Claude 単価総覧（2026年10月版）— 全モデルのAPI料金・キャッシュ・Batch・fast mode・ツール料金を1ページで"
 date: 2026-10-10
-updatedDate: 2026-11-01
+updatedDate: 2026-11-13
 category: "Claude技術解説"
 tags: ["Claude", "料金", "トークン単価", "Haiku 5.5", "Sonnet 5.5", "Opus 5.5", "Fable 5.1", "プロンプトキャッシュ", "Batch API", "コスト比較", "Anthropic"]
-excerpt: "Claude API の料金を、公式 pricing ページ（2026年10月10日確認）に基づいて1ページに総覧する。現行ラインナップ（Fable 5.1 $10/$50・Opus 5.5 $4/$20・Sonnet 5.5 $2/$10・2026-10-07リリースの Haiku 5.5 $0.10/$0.50）と前世代・退役済みモデルの標準単価、5分／1時間キャッシュ書込と読取（モデルごとに0.1×／0.05×／0.025×）、Batch API の50%オフ、fast mode、米国内限定推論の1.1倍、Haiku 5.5 の100Kトークン超2段階価格、新トークナイザーの約30%増、Web検索 $10/1,000回・コード実行・Managed Agents セッション時間などのツール料金、Max／Team プランに付く月次 API クレジットまでを整理する。『どのモデルをいくらで使うか』を見積もるための試算例と、2026年7月以降の価格改定の時系列も付けた。"
+excerpt: "Claude API の料金を、公式 pricing ページ（2026年10月10日確認）に基づいて1ページに総覧する。現行ラインナップ（Fable 5.1 $10/$50・Opus 5.5 $4/$20・Sonnet 5.5 $2/$10・2026-10-07リリースの Haiku 5.5 $0.10/$0.50）と前世代・退役済みモデルの標準単価、5分／1時間キャッシュ書込と読取（モデルごとに0.1×／0.05×／0.025×）、Batch API の50%オフ、fast mode、米国内限定推論の1.1倍、Haiku 5.5 の100Kトークン超2段階価格、新トークナイザーの約30%増、Web検索 $10/1,000回・コード実行・Managed Agents セッション時間などのツール料金、Max／Team プランに付く月次 API クレジットまでを整理する。『どのモデルをいくらで使うか』を見積もるための試算例と、2026年7月以降の価格改定の時系列も付けた。2026-11-13更新: 11/09 リリースの Claude Fable 5.2 / Mythos 5.2（$8/$40、Fable 5.1 比で入出力とも20%減。fast mode $16/$80、Batch $4/$20）を反映。"
 draft: false
 ---
 
 > ## 要点
 >
+> - **【2026-11-13追記】2026-11-09 に Claude Fable 5.2 / Mythos 5.2 が登場**し、最上位の単価が Fable 5.1 の $10/$50 から **$8/$40**（入出力とも20%減）になりました。キャッシュ読取は $0.20、Batch は $4/$20、fast mode は $16/$80 です（公式 pricing ページ）。以下の箇条書きと表は 2026-10-10 時点の整理で、Fable 5.2 の行は本日追加しました。
 > - **現行の4系統**: 最上位 **Fable 5.1（$10/$50）**、主力上位 **Opus 5.5（$4/$20）**、バランス型 **Sonnet 5.5（$2/$10）**、軽量 **Haiku 5.5（$0.10/$0.50）**。単位はすべて per MTok（100万トークン）で、**入力／出力**の順です。
 > - **2026-10-07 に Haiku 5.5 が登場**し、軽量モデルの単価が Haiku 4.5（$1/$5）から **10分の1**になりました。ただし **100,000トークン超のプロンプトは $0.50/$2.50 の2段階価格**で、さらに**新トークナイザーで同じ文章が約30%多いトークン**に数えられます。
 > - Anthropic は Haiku 5.5 を Haiku 4.5 比で**平均約75%安い**と説明しています（100Kトークン以下のプロンプトは約90%安く、100K超は約50%安いという内訳に基づく Anthropic 自身の平均値）。単価の「10分の1」は 100K 以下の場合の話です。
-> - **キャッシュ読取は「入力の0.1倍」が標準**ですが、**Opus 5.5・Sonnet 5.5 は0.05倍**、**Fable 5.1・Mythos 5.1 は0.025倍**です。Sonnet 5.5 は 10/7 に読取が $0.20 → **$0.10** へ下がりました。
+> - **キャッシュ読取は「入力の0.1倍」が標準**ですが、**Opus 5.5・Sonnet 5.5 は0.05倍**、**Fable 5.2・Mythos 5.2・Fable 5.1・Mythos 5.1 は0.025倍**です。Sonnet 5.5 は 10/7 に読取が $0.20 → **$0.10** へ下がりました。
 > - **Batch API は入出力とも一律50%オフ**。キャッシュ・データ所在地の倍率とも**重ねて**効きます（fast mode とは併用不可）。
 > - **サーバーツールの追加料金**は、**Web検索が1,000回あたり $10**。Web fetch は追加料金なし、コード実行は Web検索／fetch と併用なら無料です。
 > - **Max 5x／20x と Team プランには月次 API クレジット**（$100／$200／席あたり $20〜$100）が付きます。Claude Code には使えない点に注意してください。
@@ -22,14 +23,15 @@ draft: false
 
 | モデル | モデルID | 入力 | 出力 | 公式の位置付け |
 |:---|:---|:---:|:---:|:---|
-| **Fable 5.1** | `claude-fable-5-1` | $10 | $50 | 最上位。思考は常時オン。レイテンシは遅め |
+| **Fable 5.2** | `claude-fable-5-2` | $8 | $40 | 最上位（2026-11-09 リリース。Fable 5.1 の後継で20%減）。思考は常時オン |
+| Fable 5.1 | `claude-fable-5-1` | $10 | $50 | 前世代の最上位。Fable 5.2 が後継。思考は常時オン。レイテンシは遅め |
 | **Opus 5.5** | `claude-opus-5-5` | $4 | $20 | 複雑で慎重な判断を要する作業向け。レイテンシは中程度 |
 | **Sonnet 5.5** | `claude-sonnet-5-5` | $2 | $10 | 速度と知能のバランス。範囲の明確な日常タスクやバグ修正向け |
 | **Haiku 5.5** | `claude-haiku-5-5` | $0.10 | $0.50 | 分類・ルーティング・抽出・サブエージェントなど高ボリューム・低レイテンシ向け（最速） |
 
 4モデルとも 1M トークンのコンテキストと 128K の最大出力に対応し、知識カットオフは 2026年6月です（Haiku 5.5 の公式モデル比較表より）。**Fable 5.1 は Haiku 5.5 の出力単価の100倍**にあたります。同じ仕事を毎回最上位に投げるのではなく、**タスクごとに必要な階層を選ぶ**ことが、コスト設計の出発点です。
 
-> 限定提供の **Claude Mythos 5.1**（$10/$50）は、Cyber Verification Program 等の審査を通った組織のみが使えます。詳細は [Claude Mythos Preview & Project Glasswing](/mdTechKnowledge/blog/claude-mythos-glasswing/) を参照してください。
+> 限定提供の **Claude Mythos 5.2**（$8/$40、Fable 5.2 と同一仕様・同額）と **Mythos 5.1**（$10/$50）は、Cyber Verification Program 等の審査を通った組織のみが使えます。詳細は [Claude Mythos Preview & Project Glasswing](/mdTechKnowledge/blog/claude-mythos-glasswing/) を参照してください。
 
 ## 2. 全モデル 標準単価（キャッシュ書込・読取つき）
 
@@ -37,6 +39,8 @@ draft: false
 
 | モデル | 入力 | 5分キャッシュ書込 | 1時間キャッシュ書込 | キャッシュ読取 | 出力 |
 |:---|:---:|:---:|:---:|:---:|:---:|
+| **Fable 5.2** | $8 | $10 | $16 | **$0.20** | $40 |
+| **Mythos 5.2**（限定提供） | $8 | $10 | $16 | **$0.20** | $40 |
 | Fable 5.1 | $10 | $12.50 | $20 | **$0.25** | $50 |
 | Mythos 5.1（限定提供） | $10 | $12.50 | $20 | **$0.25** | $50 |
 | Fable 5 | $10 | $12.50 | $20 | $1 | $50 |
@@ -67,6 +71,7 @@ draft: false
 
 | モデル | Batch 入力 | Batch 出力 |
 |:---|:---:|:---:|
+| Fable 5.2 / Mythos 5.2 | $4 | $20 |
 | Fable 5.1 / Fable 5 / Mythos | $5 | $25 |
 | Opus 5.5 | $2 | $10 |
 | Opus 5 / 4.8 / 4.7 / 4.6 / 4.5 | $2.50 | $12.50 |
@@ -84,7 +89,7 @@ Batch は即時応答が不要な大量処理（夜間の一括分類・要約�
 |:---|:---|
 | 5分キャッシュ書込 | 1.25倍 |
 | 1時間キャッシュ書込 | 2倍 |
-| キャッシュ読取（ヒット） | 標準 **0.1倍**。**Opus 5.5・Sonnet 5.5 は0.05倍**、**Fable 5.1・Mythos 5.1 は0.025倍** |
+| キャッシュ読取（ヒット） | 標準 **0.1倍**。**Opus 5.5・Sonnet 5.5 は0.05倍**、**Fable 5.2・Mythos 5.2・Fable 5.1・Mythos 5.1 は0.025倍** |
 
 5分キャッシュは**1回読めば元が取れ**、1時間キャッシュは**2回読めば元が取れます**（公式の整理）。キャッシュの倍率は Batch 割引・データ所在地の倍率と**重ねて**適用されます。
 
@@ -92,12 +97,15 @@ Batch は即時応答が不要な大量処理（夜間の一括分類・要約�
 
 | モデル | 入力 | 出力 |
 |:---|:---:|:---:|
+| **Fable 5.2 / Mythos 5.2** | $16 | $80 |
 | Opus 5.5 | $8 | $40 |
 | Opus 5 / Opus 4.8 | $10 | $50 |
 
 いずれも標準単価の2倍で、出力が最大2.5倍速くなります。**Claude API（直接）**に加え、2026-10-22 に始まった **Claude Models on Google Cloud（Anthropic managed）**でも Opus 5.5 で利用できます（公式リリースノート。この提供形態の fast mode 単価は、リリースノートでは示されていません）。Bedrock・Foundry・Claude Platform on AWS では使えません。**Batch API とは併用できません**。キャッシュとデータ所在地の倍率は重ねて適用されます。
 
 **【2026-11-01追記】Opus 4.8 の fast mode は 2026-10-30 に非推奨化され、2026-11-30 に削除される予定です**（公式リリースノート）。削除後、`claude-opus-4-8` に `speed: "fast"` を付けたリクエストはエラーになります。fast mode を続けるには Opus 5.5 へ移行します（上の表のとおり、Opus 5.5 のほうが fast mode も安価です）。経緯は [Anthropic モデル廃止スケジュール & 移行ガイド](/mdTechKnowledge/blog/anthropic-model-deprecation-migration/) の第14章にあります。
+
+**【2026-11-13追記】Fable 5.2 / Mythos 5.2 の fast mode**: 上の表のとおり $16/$80 で、標準単価（$8/$40）の2倍です。公式 pricing ページによると、Fable 5.2 は Claude API に加え、Claude Models on Google Cloud（Anthropic managed / Google managed）と Claude in Microsoft Foundry（Anthropic 上でホストするデプロイ）でも fast mode を使えます。Mythos 5.2 の fast mode は Claude API で、審査を通った組織のみです。Opus 4.8 の fast mode は同ページで「deprecated」と表記されています。
 
 ### 3-4. データ所在地（米国内限定推論）
 
@@ -166,6 +174,7 @@ Managed Agents では、米国内限定推論の1.1倍や fast mode の割増が
 | 2026-10-07 | **Haiku 5.5 リリース**（$0.10/$0.50）。**Sonnet 5.5 のキャッシュ読取が $0.20 → $0.10 に値下げ**。Max・Team プランに月次 API クレジット付与 |
 | 2026-10-22 | **Claude Models on Google Cloud（Anthropic managed）** 開始。Google Cloud IAM で認証し、請求は Google Cloud Marketplace 経由（Claude Consumption Unit、1 CCU = $0.01）。Opus 5.5 の fast mode に対応 |
 | 2026-10-30 | **Opus 4.8 の fast mode を非推奨化**（削除は 2026-11-30。削除後は `speed: "fast"` がエラー。移行先は Opus 5.5） |
+| 2026-11-09 | **Fable 5.2 / Mythos 5.2 リリース**。**$8/$40**（Fable 5.1 / Mythos 5.1 比で入出力とも20%減）。キャッシュ読取 $0.20、Batch $4/$20、fast mode $16/$80（公式 pricing ページ） |
 
 ## 7. サブスクのAPIクレジットとの関係
 
@@ -198,5 +207,6 @@ Managed Agents では、米国内限定推論の1.1倍や fast mode の割増が
 
 - [Pricing（Claude Platform 公式ドキュメント）](https://platform.claude.com/docs/en/about-claude/pricing)（2026-10-10 確認）
 - [Claude Haiku 5.5 モデルページ](https://platform.claude.com/docs/en/models/haiku-5-5/overview)
+- [Claude Mythos 5.2 モデルページ](https://platform.claude.com/docs/en/models/mythos-5-2/overview) ／ [What's new in Claude Fable 5.2](https://platform.claude.com/docs/en/models/fable-5-2/whats-new-fable-5-2)（2026-11-13 確認。Fable 5.2 の行はこの日の公式 pricing ページに基づく）
 - [Platform リリースノート](https://platform.claude.com/docs/en/release-notes/overview)
 - [API credits for Max and Team plans](https://platform.claude.com/docs/en/about-claude/api-credits-for-subscribers)
