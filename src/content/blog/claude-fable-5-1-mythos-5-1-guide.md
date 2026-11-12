@@ -1,7 +1,7 @@
 ---
 title: "Claude Fable 5.1 / Mythos 5.1 完全ガイド — 何がアップデートされ、誰が使うべきか"
 date: 2026-09-03
-updatedDate: 2026-10-17
+updatedDate: 2026-11-13
 category: "Claude技術解説"
 tags: ["Claude Fable 5.1", "Claude Mythos 5.1", "Anthropic", "AIモデル", "Fable 5", "tool_choice", "thinking", "プロンプトキャッシュ", "Claude"]
 excerpt: "2026年9月1日、Anthropicは Claude Fable 5 / Mythos 5 の後継モデル Claude Fable 5.1（claude-fable-5-1）・Claude Mythos 5.1（claude-mythos-5-1）をリリースし、Fable 5.1がFableファミリーの既定モデルになった。価格は入出力ともFable 5と同額（$10/$50 per MTok）だが、キャッシュ読み取りが$0.25/MTokへ90%削減。API仕様面ではtool_choiceの`any`/`tool`指定が非対応化（400エラー）、thinking blocksの保持ルール変更、thinking display新モード「updates」（ベータ）が追加された。EU AI Act Article 50対応のテキストウォーターマーク（2026年8月2日以降リリースのモデルに適用、検出APIは規制当局・メディア・研究機関等に限定したprivate preview）も実装された。Mythos 5.1向けにはLife Sciences Verification Program（米国政府連携の招待制ベータ、ライフサイエンス研究向けに生物学セーフガードを緩和）も新設された。本記事は、Fable 5からの変更点を整理したうえで、既存Fable 5利用者が移行前に確認すべき破壊的変更と、Fable 5.1が向くユースケース・向かないユースケースを解説する。"
@@ -120,6 +120,43 @@ Dreams は、エージェントのメモリストアを Claude に整理させ�
 Fable 5.1 の長い文脈への強さを、メモリの再編成に使うかどうかは運用判断です。公式は各モデルの品質差には触れていないため、本記事でも優劣は断定しません。
 
 出典: [Dreams — Managed Agents](https://platform.claude.com/docs/en/managed-agents/dreams) ／ [Anthropic Platform リリースノート（2026-10-01）](https://platform.claude.com/docs/en/release-notes/overview)
+
+---
+
+## 【2026-11-13追記】後継の Claude Fable 5.2 / Mythos 5.2 が登場（2026-11-09）
+
+**2026年11月9日（PT）**、Anthropic は **Claude Fable 5.2（`claude-fable-5-2`）・Claude Mythos 5.2（`claude-mythos-5-2`）** をリリースしました。Fable 5.1 / Mythos 5.1 の後継で、「公開版が Fable、審査を通った組織向けが Mythos」という構造は変わりません。5.1 と 5.2 の主な違いは次のとおりです（公式の発表ページ・Platform ドキュメント）。
+
+| 項目 | Fable 5.1 / Mythos 5.1 | Fable 5.2 / Mythos 5.2 |
+|:---|:---|:---|
+| 価格（入力 / 出力 per MTok） | $10 / $50 | **$8 / $40**（20%減） |
+| キャッシュ読み取り | $0.25 | **$0.20**（0.025倍は同じ） |
+| Batch | $5 / $25 | **$4 / $20** |
+| fast mode | なし | **$16 / $80**（出力が最大2.5倍速） |
+| 出力速度 | — | 5.1 比で**最大30%速い**（公式） |
+| コンテキスト / 最大出力 | 1M / 128k | 1M / 128k（変わらず） |
+| ブロック（拒否）の頻度 | — | 初期テストで **5.1 比で約55%減**（サイバー約60%減、生物約40%減。claude.ai・Claude Code・Cowork での初期テストと公式が説明） |
+
+**5.1 から移行するときに壊れうる4点**（Platform ドキュメント "What's new in Claude Fable 5.2"）:
+
+1. **前のターンを編集すると thinking ブロックが無効になる検査が、全アカウントに適用**されます（5.1 は 2026-08-31 以降に作成したアカウントのみ）。無効なブロックを返すと 400 エラーです。一時的な回避策として、ベータヘッダー `thinking-binding-controls-2026-08-01` と `prefix_mismatch_behavior: "drop_block"` がありますが、出力トークンが増えうるため暫定扱いです。
+2. **5.2 の thinking ブロックを読めるのは Fable 5.2 と Mythos 5.2 だけ**です。Opus 5.5 や Fable 5.1 へ途中で切り替えると、5.2 の推論は引き継がれません（ブロックは API が自動で落とすのでリクエスト自体は成功し、落とされたブロックは課金されません）。
+3. 旧 `computer_20251124` ツールは、Amazon Bedrock 以外では 400 エラーです。`computer_toolset_20260801` へ移します。
+4. advisor ツールでは、Fable 5.2 の executor に使える advisor は Fable 5.2 または Mythos 5.2 だけです。
+
+そのほか、データ保持は 5.1 と同じく **30日必須で、Anthropic の明示許可がない限りゼロデータ保持（ZDR）は使えません**。`tool_choice` の `any` / `tool` が使えない点や、常時オンの adaptive thinking も 5.1 から引き続きです。
+
+**Mythos 5.2 の位置づけ**: 公式の発表ページによると、Cyber Verification Program と Life Sciences Verification Program で審査された組織が使えます。Claude Enterprise の顧客は、Mythos 5.2 を使う Claude Security を、Cyber プログラムに入らなくても使えるとされています。サイバー分野の詳細は [Claude Mythos Preview & Project Glasswing](/mdTechKnowledge/blog/claude-mythos-glasswing/) に追記しました。
+
+**Claude Code での既定**: Claude Code v2.1.321 で Fable 5.2 が Fable の既定モデルになりました（保存済みの 5.1 は `fable` へ移行。戻すには `/model claude-fable-5-1`）。経緯は [Claude Code バージョン履歴まとめ](/mdTechKnowledge/blog/claude-code-version-history/) を参照してください。
+
+**サブスクの扱い**: 公式の発表ページによると、Pro と Team の標準席では、Fable は週間利用上限の最大50%まで含まれます。前節の「公式発表があり次第更新する」と書いた点は、この記述で一部埋まりました。詳細な枠組みは [Fable 5 のプラン別扱い](/mdTechKnowledge/blog/claude-fable-5-pro-plan-availability/) を参照してください。
+
+**使い分け**: 公式は、ほとんどのコーディングや知的作業ではまず Claude Opus 5.5 から始め、Opus で高い effort でも要件を満たさないときに Fable 5.2 へ上げるよう案内しています。単価は Opus 5.5（$4/$20）の2倍です。
+
+API の詳細（移行時の注意の全体像）は [Anthropic Messages API 新機能まとめ](/mdTechKnowledge/blog/anthropic-messages-api-new-features-2026/) の第31章、料金は [Claude 単価総覧](/mdTechKnowledge/blog/claude-pricing-overview/) を参照してください。5.2 世代を単独で解説する記事は、新規記事候補（Issue #389）として起票済みです。
+
+出典: [Claude Fable 5.2 と Mythos 5.2（Anthropic 公式、2026-11-09）](https://www.anthropic.com/claude-fable-and-mythos-5-2) ／ [What's new in Claude Fable 5.2](https://platform.claude.com/docs/en/models/fable-5-2/whats-new-fable-5-2) ／ [Claude Mythos 5.2 モデルページ](https://platform.claude.com/docs/en/models/mythos-5-2/overview)
 
 ---
 
