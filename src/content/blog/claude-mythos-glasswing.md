@@ -1,7 +1,7 @@
 ---
 title: "Claude Mythos Preview & Project Glasswing — セキュリティ特化LMと重要インフラ防衛プログラム"
 date: 2026-04-26
-updatedDate: 2026-10-24
+updatedDate: 2026-11-13
 category: "Claude技術解説"
 tags: ["Claude", "Mythos", "Glasswing", "セキュリティ", "Anthropic", "重要インフラ", "Bedrock", "Vertex AI", "Claude Security", "サイバー評価インシデント"]
 excerpt: "Anthropicがセキュリティタスク特化型LM「Claude Mythos Preview」と重要インフラ防衛プロジェクト「Project Glasswing」を発表。能力範囲・想定ユースケース・公開条件・既存Claudeとの差別化に加え、AWS Bedrock・Google Vertex AIでのGated Research Preview提供、GlasswingからClaude Security Beta（防御製品）への発展経緯、2026年6月の第2次拡張（約150組織・15カ国以上）と『数週間以内』の一般提供方針、初代 Mythos Preview の 2026-06-30 廃止、輸出管理停止（6/12）→Mythos 5 限定提供（6/27）→全面解除・Fable 5 再開（7/1）、2026年7月30日発表のサイバー評価インシデント（Mythos 5が評価環境の設定ミスで実組織3社に不正アクセス）までの顛末を整理。2026年10月6日にはProject Glasswingが拡張版Cyber Verification Program（Defense／Red Team／Specialized Accessの3層）に統合された経緯と、公式の累積成果（検証済み脆弱性12万9,000件以上）も追記。"
@@ -330,6 +330,20 @@ Fable 5 側の全面解除の詳細は [Fable 5 輸出管理停止の全記録](
 > **読み方**: Glasswing は「Mythos を限られた防御側に先行提供する研究プログラム」から、**審査を通れば中小の防御側や個人研究者にも段階的に開く制度**へ性格が変わりました。一方で最上位の Specialized Access は米政府との協議が前提で、攻撃能力の拡散を段階的に管理する姿勢は変わっていません。
 
 出典: [Expanding the Cyber Verification Program（Anthropic公式）](https://www.anthropic.com/news/cyber-verification-program)（2026-10-06） / [Cyber Verification Program（Claude ヘルプセンター）](https://support.claude.com/en/articles/14604842-cyber-verification-program)
+
+### 【2026-11-13追記】Claude Mythos 5.2 がリリース（2026-11-09）— Cyber Verification Program 等の審査組織向け
+
+**2026年11月9日（PT）**、Anthropic は **Claude Mythos 5.2（`claude-mythos-5-2`）** を Claude Fable 5.2 と同時にリリースしました（公式の Platform ドキュメント）。Mythos 5.2 は **Fable 5.2 と同じ仕様・同じ価格**（コンテキスト 1M・最大出力 128K・$8/$40 per MTok）で、**Anthropic の審査プログラム（Cyber Verification Program など）を通った組織だけ**が使えます。Claude API・Amazon Bedrock・Google Cloud・Microsoft Foundry で提供されます。
+
+- **対象プログラム**: 公式の発表ページによると、Cyber Verification Program と Life Sciences Verification Program で審査された組織です。利用したい組織は、自社の用途に合うプログラムに申請します。
+- **Claude Security との関係**: 公式の発表ページによると、Claude Enterprise の顧客は、Mythos 5.2 を使う Claude Security を、Cyber プログラムに入らなくても使えます。
+- **サイバー分野の評価（公式の発表ページ）**: **CyScenarioBench** で Mythos 5.2 は **76.3%**（Mythos 5.1 は 61.7%、セーフガードなしの Opus 5.5 は 67.6%）。**CVE 再発見**の評価では **89.6%**（Mythos 5.1 は 78.3%、セーフガードなしの Opus 5.5 は 81.3%）で、2026年10月に 1,829 件の CVE で実行した結果、Opus 5.5 より **10.2% 多く**、Mythos 5.1 より **14.4% 多く**の脆弱性を見つけたとされています。公式は、各社のスコアは固有のタスクで測っている点を注記しています。
+- **fast mode**: Mythos 5.2 の fast mode（$16/$80）は、審査プログラムの組織に限られます。
+- **提供期間**: 公式の表では、退役は 2027-11-09 より早くならないとされています。
+
+初代 Mythos Preview（廃止済み）→ Mythos 5 → 5.1 → 5.2 と続く系譜の位置づけは、[Claude Fable 5.1 / Mythos 5.1 完全ガイド](/mdTechKnowledge/blog/claude-fable-5-1-mythos-5-1-guide/) の同日追記、料金は [Claude 単価総覧](/mdTechKnowledge/blog/claude-pricing-overview/) を参照してください。
+
+出典: [Claude Mythos 5.2（Claude Platform ドキュメント）](https://platform.claude.com/docs/en/models/mythos-5-2/overview) ／ [Claude Fable 5.2 と Mythos 5.2（Anthropic 公式）](https://www.anthropic.com/claude-fable-and-mythos-5-2) ／ [Model deprecations（Claude Platform ドキュメント）](https://platform.claude.com/docs/en/about-claude/model-deprecations)
 
 ### Pentagon・連邦政府との関係動向（2026年4〜5月）
 
