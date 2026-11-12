@@ -1,7 +1,7 @@
 ---
 title: "AIトークン単価の価格破壊が止まらない — Claude・GPT-6 Astra・Gemini 3.8・Copilot 単価総覧と「フロンティア×安価」のコスト設計 2026"
 date: 2026-07-18
-updatedDate: 2026-10-09
+updatedDate: 2026-11-13
 category: "Claude技術解説"
 tags: ["トークン単価", "コスト比較", "Claude", "Opus 5.5", "Gemini", "Gemini 3.8 Flash", "GPT-6 Astra", "GPT-6", "GPT-5.6", "GitHub Copilot", "Azure OpenAI", "Kimi K3", "DeepSeek", "Grok", "Qwen", "トークンエコノミー", "モデル使い分け", "エンタープライズ", "FinOps"]
 excerpt: "Claude・OpenAI（GPT-6 / GPT-5.6）・Gemini と、Kimi・Grok・DeepSeek・Qwen・GLM・Mistral の主要モデルを per-MTok トークン単価で横断比較（2026年9月26日時点）。最上位は GPT-6 Astra と Claude Fable 5.1 が出力$50で並び、最軽量の GPT-5-nano・Gemini 2.5 Flash-Lite（$0.40）とは125倍の差がある。9月は GPT-6 Astra（9/3・$10/$50）、GPT-6 Sol / Luna（9/22・$2/$10、$0.10/$0.50）、Gemini 3.8 Flash（9/2 GA・2026年末まで導入価格$0.75/$3.75）、Claude Opus 5.5（9/22・$4/$20）が相次いで登場し、GPT-5.6 は全モデル値下げ（Luna は80%減）。一方で GPT-5.6 Sol と Gemini 3.6〜3.8 Flash の安値は期限付きの導入・プロモ価格である点に注意が必要だ。GitHub Copilot はモデル乗数を廃止して各社の定価でAIクレジットを消費する方式に変わったが、自前のトークン単価を持たない“ラッパー”である点は変わらない。本題は『正確なプロンプト/スキーマ設計はフロンティア、それに従う量産実行は安価モデル』というトークンエコノミーの役割分担で、ルーター・カスケード・オーケストレーション等の具体パターンを提案する。2026-09-26 全面改訂: 各社の最新単価を一次情報で再調査し、早見表の基準を恒久価格化した Sonnet 5（出力$10）に改めた。 2026-09-29更新: 9/28リリースのClaude Sonnet 5.5（$2/$10、Sonnet 5と同額で出力30%超高速）を追加。 2026-10-09更新: 10/7リリースのClaude Haiku 5.5（$0.10/$0.50、100Kトークン超は$0.50/$2.50の2段階。GPT-6 Lunaと同水準に）とSonnet 5.5のキャッシュ読取値下げ（$0.20→$0.10）を反映。"
@@ -213,6 +213,25 @@ draft: false
 - **Batch / キャッシュの標準化**: 即時不要なジョブは Batch、長い共通前提はキャッシュを"規約"にする。
 - **期限付き価格の管理**: プロモ・導入価格（GPT-5.6 Sol、Gemini 3.6〜3.8 Flash）で組んだ予算は、**期限後の正規価格でも破綻しないか**を事前に試算しておく。
 - **レート上限の把握**: [Rate Limits API 完全ガイド](/mdTechKnowledge/blog/anthropic-rate-limits-api-guide/) でティア・残量をプログラム監視。
+
+## 【2026-11-13追記】Claude の最上位が $8/$40 に — Fable 5.2（11/09）
+
+本稿の単価表は **2026年9月26日時点**（Haiku 5.5 などは10/9に追記）です。その後、**2026年11月9日（PT）に Claude Fable 5.2 / Mythos 5.2 が登場**し、Claude の最上位の単価は Fable 5.1 の **$10/$50** から **$8/$40**（入出力とも20%減）になりました（公式 pricing ページ）。
+
+| Claude の最上位 | 入力 | 出力 | 備考 |
+|:---|:---:|:---:|:---|
+| **Fable 5.2** | **$8** | **$40** | 2026-11-09 リリース。キャッシュ読取 $0.20、Batch $4/$20、fast mode $16/$80 |
+| Fable 5.1 | $10 | $50 | 前世代。本稿の本文・早見表はこの値で計算している |
+
+- **本文の読み替え**: 「最上位は GPT-6 Astra と Claude Fable 5.1 が出力 $50 で並ぶ」「Fable 5.1 は Sonnet 5 の5倍」という記述は、9月26日時点の値です。Claude の最上位で比べるなら、出力は **$40 で、Sonnet 5（$10）の4倍**に下がっています。ただし Fable 系は新トークナイザーで同じ文章が約30%多いトークンになる点は変わりません。
+- **他社の単価は未確認**: 本日の更新は Claude の価格だけです。OpenAI・Google など他社の最新単価は、9月26日以降に変わっている可能性があり、今回は再調査していません。比較に使うときは各社の公式ページで確認してください。
+- **公式の使い分け**: Anthropic は、ほとんどの作業ではまず Opus 5.5（$4/$20）から始めるよう案内しています。Fable 5.2 は、高い effort の Opus でも要件を満たさないときの選択肢という位置づけです。
+
+Claude の全モデルの単価・fast mode・キャッシュ倍率は [Claude 単価総覧](/mdTechKnowledge/blog/claude-pricing-overview/)、Fable 5.2 の移行時の注意は [Claude Fable 5.1 / Mythos 5.1 完全ガイド](/mdTechKnowledge/blog/claude-fable-5-1-mythos-5-1-guide/) の同日追記を参照してください。
+
+出典: [Pricing（Claude Platform 公式ドキュメント）](https://platform.claude.com/docs/en/about-claude/pricing)（2026-11-13 確認）
+
+---
 
 ## まとめ
 
