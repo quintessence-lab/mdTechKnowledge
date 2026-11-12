@@ -1,7 +1,7 @@
 ---
 title: "【重要Tips】Claude Cowork / ブラウザ / Claude Code（端末） / Claude Code Web の使い分け早わかり"
 date: 2026-05-03
-updatedDate: 2026-10-31
+updatedDate: 2026-11-13
 category: "Claude技術解説"
 tags: ["Claude", "Claude Cowork", "Claude Code", "初心者向け", "アクセス方法", "使い分け", "課金", "Agent SDK"]
 excerpt: "Claude を使う4つの主要な入り口（Claude Cowork / ブラウザ / Claude Code 端末 / Claude Code Web）について、アクセスURL・実行場所・対象ユーザー・適した用途を初心者向けに整理。2026/6/15予定だったインタラクティブ利用／プログラマティック利用の課金プール分離（施行当日に一時停止・現在は従来どおりサブスク枠）に加え、2026年7月7日のCowork Web/モバイル展開とリモートセッション（PCを閉じてもクラウド側で継続実行）、2026年8月26日のCowork Built-in Browser（デスクトップアプリ専用の隔離ブラウザ）も解説。"
@@ -285,6 +285,21 @@ GitHub と連携し、リポジトリをクローンしてコード編集や PR 
 詳しい仕組み・承認と安全性・使い分けは [Claude Duet 完全ガイド](/mdTechKnowledge/blog/claude-duet-guide/) にまとめています。
 
 出典: [Claude Duet（claude.com）](https://claude.com/resources/articles/claude-duet) ／ [Claude apps リリースノート（2026-10-21）](https://support.claude.com/en/articles/12138966-release-notes)
+
+---
+
+## 【2026-11-13追記】会社が配備する Claude Desktop（3P）は、Chat と Cowork が1つの画面に
+
+本記事の4つの入口は、Claude 本体（claude.ai のアカウント）で使う場合の整理です。これとは別に、**サードパーティ基盤向けに会社が配備する Claude Desktop（Desktop 3P）**では、**Unified Claude**（Chat と Cowork を1つにした画面）が**既定でオン**になる日程が公式ドキュメントに明記されています。
+
+- **何が変わるか**: ホーム画面のメッセージ欄に入力すると、Cowork を動かせる端末では、送ったメッセージが **Cowork セッション**として始まります（bash 実行・サブエージェント・スケジュールタスクを含む）。VM を起動できない端末では、Chat の会話として始まります。**Chat 単独の体験はなくなります**。Code は別のままです。
+- **日程**: 管理者向けの公式ドキュメントによると、**2026年11月10日 12:00 PM（太平洋時間）以降に起動した現行バージョン**の Claude Desktop は、未設定の `desktopHome` を `standard` として読み、**既定でオン**です。
+- **自分が使うとき**: 会社配備の Desktop 3P を使っている人は、Chat と Cowork を選ぶ画面がなくなり、**最初から Cowork の権限（ファイル操作など）で動く**点が変わります。**個人の claude.ai アカウントで使う通常の Desktop や、ブラウザ（claude.ai）の使い方は、この記述の対象ではありません**。
+- **管理者の注意**: この既定は `chatTabEnabled`・`coworkTabEnabled` などが `false` でも適用され、**Cowork を無効にしていた環境でも Cowork がオンになります**。制限するなら `disabledBuiltinTools` や `builtinToolPolicy` を使います。
+
+設定項目と移行の詳細は [Claude Cowork アップデート](/mdTechKnowledge/blog/claude-cowork-updates/) の同日追記にまとめています。
+
+出典: [Unified Claude in Claude Desktop on 3P（claude.com ドキュメント）](https://claude.com/docs/third-party/claude-desktop/unified-claude)
 
 ---
 
