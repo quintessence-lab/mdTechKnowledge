@@ -1,10 +1,10 @@
 ---
 title: "Anthropic Enterprise Analytics API 完全ガイド — 組織別利用データの照会と活用"
 date: 2026-05-02
-updatedDate: 2026-11-07
+updatedDate: 2026-11-19
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Admin API", "Analytics", "エンタープライズ", "FinOps", "Slack連携", "Workload Identity Federation", "OIDC", "Spend Limits API", "RBAC", "ユーザー管理"]
-excerpt: "2026年4月、Anthropic は Claude / Claude Code Remote / Claude Cowork の組織別利用データをプログラム照会できる Enterprise Analytics API を拡張した。Rate Limits API との位置付けの違い、エンドポイント構造、認証、レスポンス、Python/curl 実装例、Slackボット連携、運用ユースケース、制限事項までをまとめて解説する。さらに2026年6月の Workload Identity Federation（WIF＝OIDCトークンによるAPIキー不要認証）対応と、Admin API に追加された issuers / service accounts / federation rules エンドポイントも解説する。 さらに 2026-07-14 Beta のユーザー管理API（組織ロール5種・APIで割当可能なのは user/managed のみ・シート消費・SSO/SCIM併用時の制約）と、Enterprise 専用の Spend Limits API（上限の階層解決・ユーザー単位上書き・増額申請の承認/却下・金額は最小単位の文字列）、2026年8月のAdmin API GA化（8/19ユーザー管理ベータヘッダー不要化、8/26 `client.beta.organization`として全主要SDKから利用可能に）、2026-09-01の`anthropic-version`ヘッダーがAdmin API・Enterprise Analytics API・Compliance APIでも必須化された変更、2026-09-10のSmart Reports（Enterprise beta、利用実態の定性分析）、2026-09-24のClaude for Microsoft 365ローカルセッションのGA化・Compliance API Activity Feedがファイル名/タイトルを返さなくなった破壊的変更も収録。"
+excerpt: "2026年4月、Anthropic は Claude / Claude Code Remote / Claude Cowork の組織別利用データをプログラム照会できる Enterprise Analytics API を拡張した。Rate Limits API との位置付けの違い、エンドポイント構造、認証、レスポンス、Python/curl 実装例、Slackボット連携、運用ユースケース、制限事項までをまとめて解説する。さらに2026年6月の Workload Identity Federation（WIF＝OIDCトークンによるAPIキー不要認証）対応と、Admin API に追加された issuers / service accounts / federation rules エンドポイントも解説する。 さらに 2026-07-14 Beta のユーザー管理API（組織ロール5種・APIで割当可能なのは user/managed のみ・シート消費・SSO/SCIM併用時の制約）と、Enterprise 専用の Spend Limits API（上限の階層解決・ユーザー単位上書き・増額申請の承認/却下・金額は最小単位の文字列）、2026年8月のAdmin API GA化（8/19ユーザー管理ベータヘッダー不要化、8/26 `client.beta.organization`として全主要SDKから利用可能に）、2026-09-01の`anthropic-version`ヘッダーがAdmin API・Enterprise Analytics API・Compliance APIでも必須化された変更、2026-09-10のSmart Reports（Enterprise beta、利用実態の定性分析）、2026-09-24のClaude for Microsoft 365ローカルセッションのGA化・Compliance API Activity Feedがファイル名/タイトルを返さなくなった破壊的変更も収録。 2026-11-19更新: Compliance API のセキュリティポスチャ（11/05 ベータ）を追記。"
 draft: false
 ---
 
@@ -698,6 +698,26 @@ Claude Code のユーザー別コストは、`products[]=claude_code` と `group
 - **補完策**: 許可リストは「どこから使えるか」を絞るだけで、期間は絞りません。公式は、短いキー有効期限の設定や Workload Identity Federation への移行も併せて推奨しています。
 
 出典: [Claude Platform リリースノート（2026-11-05）](https://platform.claude.com/docs/en/release-notes/overview) ／ [Sign a member out everywhere（公式ドキュメント）](https://platform.claude.com/docs/en/manage-claude/user-management#sign-a-member-out-everywhere) ／ [IP allowlisting（公式ドキュメント）](https://platform.claude.com/docs/en/manage-claude/ip-allowlist)
+
+---
+
+## 【2026-11-19追記】Compliance API に「セキュリティポスチャ」のデータ（ベータ・2026-11-05）
+
+2026-11-05（PT）、**Claude Enterprise** の Compliance API に、組織の**セキュリティポスチャ**のデータが加わりました（ベータ。公式リリースノート）。
+
+| 項目 | 内容（公式リリースノート） |
+|---|---|
+| **Activity Feed** | claude.ai の組織設定にある **「Security posture」ページ**で、**証明（attestation）が変更**されたことを記録する |
+| **新しいエンドポイント** | `GET /v1/compliance/organizations/{organization_id}/security_posture` — 組織の**現在の Security posture の結果**を返す |
+| 対象 | Claude Enterprise（ベータ） |
+
+- **位置づけ**: 前の「Compliance API（新規）」の節にあるとおり、Compliance API は集計値ではなく**イベントと状態を取り出す系統**です。今回の追加で、「誰がいつ何をしたか」に加えて、「組織が今どのセキュリティ設定の状態にあるか」を、SIEM や監査の仕組みから取れるようになります。
+- **同日発表のセキュリティセンターとの関係**: 同じ 11/05 に、Claude Enterprise の管理者向けセキュリティ機能（セキュリティセンター〔ベータ〕など）が発表されています（[Claude Security Beta](/mdTechKnowledge/blog/claude-security-beta/) の2026-11-10追記を参照）。ただし、Security posture ページとセキュリティセンターが同じものかどうかは、公式の記述で明示されていないため、本稿では同一とは扱いません。
+- **本稿の範囲外**: 返ってくる項目の一覧やレスポンスの形は、リリースノートに載っていません。実装前に公式の Compliance API のドキュメントで確認してください。
+
+> **Usage and Cost Analytics API について**: 新しい `/v1/organizations/analytics/usage`・`/analytics/cost` と、従来の Usage and Cost API が「legacy」扱いになった点は、上の【2026-11-01追記】にまとめています（2026-10-29 のリリース）。
+
+出典: [Claude Platform リリースノート（2026-11-05）](https://platform.claude.com/docs/en/release-notes/overview)
 
 ---
 
