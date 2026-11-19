@@ -1,10 +1,10 @@
 ---
 title: "Claude Security Beta — Anthropic エンタープライズセキュリティ製品の全貌（2026年5月発表）"
 date: 2026-05-02
-updatedDate: 2026-11-10
+updatedDate: 2026-11-19
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude Security", "Opus 4.7", "セキュリティ", "脆弱性スキャン", "エンタープライズ", "脅威インテリジェンス", "MITRE ATT&CK", "サイバー攻撃", "サイバー評価インシデント", "Inference hooks", "DLP"]
-excerpt: "2026年5月1日、Anthropic は Claude Opus 4.7 を中核に据えたエンタープライズ向けセキュリティ製品 Claude Security のパブリックベータを発表した。コードベース脆弱性スキャン・パッチ生成、CrowdStrike / Microsoft Security / Palo Alto Networks / SentinelOne / TrendAI / Wiz などの技術パートナー、Accenture / BCG / Deloitte / Infosys / PwC などのサービスパートナー連携を含め、全体像を整理する。さらに2026年6月3日公開の脅威インテリジェンスレポート（禁止832アカウントの MITRE ATT&CK マッピング、マルウェア生成67.3%、中リスク以上が33%→56%へ）、2025年11月に阻止された AI 主導サイバースパイ活動の事例、2026年7月30日発表のサイバー評価インシデント（評価環境の設定ミスでClaudeが実組織3社に不正アクセス）、そして2026年8月5日発表のInference hooks（Claude Enterprise beta。DLPサーバーへ推論前にプロンプトを問い合わせ、Netskope/Palo Alto/Proofpoint/Zscaler等と統合）、2026年9月2日発表のEnterprise Frontier Safeguards（EFS。ゼロデータリテンションと不正利用検出を両立する新アーキテクチャ、顧客所有クラウドへのデータ保持、100社超と共同開発・秋以降段階ロールアウト）、2026年9月17日発表のLife Sciences Verification Program（LSVP。検証済みの生命科学組織に生物学関連の安全策を緩和する信頼アクセス。Standard Use／High-risk Useの2種の許可、リアルタイムのブロックから事後監視への移行、30日データ保持必須、Enterprise/Team・API向けベータ）も追補する。"
+excerpt: "2026年5月1日、Anthropic は Claude Opus 4.7 を中核に据えたエンタープライズ向けセキュリティ製品 Claude Security のパブリックベータを発表した。コードベース脆弱性スキャン・パッチ生成、CrowdStrike / Microsoft Security / Palo Alto Networks / SentinelOne / TrendAI / Wiz などの技術パートナー、Accenture / BCG / Deloitte / Infosys / PwC などのサービスパートナー連携を含め、全体像を整理する。さらに2026年6月3日公開の脅威インテリジェンスレポート（禁止832アカウントの MITRE ATT&CK マッピング、マルウェア生成67.3%、中リスク以上が33%→56%へ）、2025年11月に阻止された AI 主導サイバースパイ活動の事例、2026年7月30日発表のサイバー評価インシデント（評価環境の設定ミスでClaudeが実組織3社に不正アクセス）、そして2026年8月5日発表のInference hooks（Claude Enterprise beta。DLPサーバーへ推論前にプロンプトを問い合わせ、Netskope/Palo Alto/Proofpoint/Zscaler等と統合）、2026年9月2日発表のEnterprise Frontier Safeguards（EFS。ゼロデータリテンションと不正利用検出を両立する新アーキテクチャ、顧客所有クラウドへのデータ保持、100社超と共同開発・秋以降段階ロールアウト）、2026年9月17日発表のLife Sciences Verification Program（LSVP。検証済みの生命科学組織に生物学関連の安全策を緩和する信頼アクセス。Standard Use／High-risk Useの2種の許可、リアルタイムのブロックから事後監視への移行、30日データ保持必須、Enterprise/Team・API向けベータ）も追補する。 2026-11-19更新: Claude Security が Mythos 5.2 を含むモデル群で動くこと（Cyber Verification Program への加入は不要）を追記。"
 draft: false
 ---
 
@@ -431,6 +431,21 @@ Issue では「2026-10-21 にエンタープライズ向けパブリックベー
 - **本稿が扱う Claude Security との関係**: Claude Security は「自社コードの脆弱性を見つけて直す」製品、上の機能は「Claude の利用そのものを統制する」機能です。導入判断は別々に行います
 
 出典: [Claude Enterprise のセキュリティ更新（claude.com、2026-11-05）](https://claude.com/resources/articles/claude-enterprise-security-updates) ／ [Claude リリースノート（Anthropic ヘルプセンター）](https://support.claude.com/en/articles/12138966-release-notes)
+
+---
+
+## 【2026-11-19追記】Claude Security は Mythos 5.2 を含むモデル群で動く（2026-11-09）
+
+本稿の冒頭では Claude Security を Claude Opus 4.7 中心の製品として紹介していますが、**2026年11月9日（PT）の Claude Fable 5.2 / Mythos 5.2 の発表**で、Anthropic は Claude Security について次のように書いています。
+
+- **誰が使えるか**: 「**Claude Enterprise の顧客は、Cyber Verification Program のメンバーでなくても**」Claude Security を使えます。
+- **どのモデルで動くか**: Claude Security は「**Claude Mythos 5.2 を含む、Anthropic のモデル群全体**」で動きます。
+- **Mythos 5.2 そのもの**: Mythos 5.2 を自分で API から使うには、Cyber Verification Program などの審査が必要です（[Claude Mythos Preview & Project Glasswing](/mdTechKnowledge/blog/claude-mythos-glasswing/) の2026-11-13追記）。Claude Security を使う Enterprise の顧客は、審査なしで、製品を通してその能力の恩恵を受ける、という整理です。
+- **ベータの扱い**: 発表ページは Claude Security のベータ状態には触れていません（ベータと書かれているのは、別製品の Enterprise Frontier Safeguards です）。提供範囲は、本稿の「2026-10-30追記」の記述を引き続き参照してください。
+
+**関連する別機能**: 2026-11-05 には、Compliance API に**セキュリティポスチャ**のデータ（ベータ・Claude Enterprise）も加わりました。これは Claude Security ではなく、組織の設定状態を監査向けに取り出す仕組みです（[Enterprise Analytics API 完全ガイド](/mdTechKnowledge/blog/anthropic-enterprise-analytics-api/) の2026-11-19追記）。
+
+出典: [Claude Fable 5.2 と Mythos 5.2（Anthropic 公式、2026-11-09）](https://www.anthropic.com/claude-fable-and-mythos-5-2)
 
 ---
 
