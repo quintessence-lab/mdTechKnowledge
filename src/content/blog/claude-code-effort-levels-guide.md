@@ -1,10 +1,10 @@
 ---
 title: "Claude Code の Effort レベルを /effort で選ぶ — low〜max と ultracode（xhigh + workflows）の6段階ガイド"
 date: 2026-06-19
-updatedDate: 2026-09-12
+updatedDate: 2026-11-19
 category: "Claude技術解説"
 tags: ["Claude Code", "effort", "ultracode", "Dynamic Workflows", "xhigh", "Opus 4.8", "設定"]
-excerpt: "Claude Code の /effort コマンドで選べる Effort レベル（low / medium / high / xhigh / max / ultracode）を、実際のスライダー画面とともに解説。各レベルの『速度 vs 知能・トークン消費』のトレードオフ、Opus 4.8 の既定（high）、最上位の ultracode が『xhigh + workflows』＝xhigh 推論に Dynamic Workflows の自動オーケストレーションを足したものである正体、永続レベルとセッション限定レベルの違い、操作方法に加え、v2.1.267で追加された`maxEffortLevel`設定（Bedrock/Vertex/Foundryを含む全プロバイダ横断でeffortの上限をキャップ）までをまとめる。"
+excerpt: "Claude Code の /effort コマンドで選べる Effort レベル（low / medium / high / xhigh / max / ultracode）を、実際のスライダー画面とともに解説。各レベルの『速度 vs 知能・トークン消費』のトレードオフ、Opus 4.8 の既定（high）、最上位の ultracode が『xhigh + workflows』＝xhigh 推論に Dynamic Workflows の自動オーケストレーションを足したものである正体、永続レベルとセッション限定レベルの違い、操作方法に加え、v2.1.267で追加された`maxEffortLevel`設定（Bedrock/Vertex/Foundryを含む全プロバイダ横断でeffortの上限をキャップ）までをまとめる。 2026-11-19更新: Claude Fable 5.2 以降、Claude Code の既定 effort が medium になった点（API の既定は high のまま）を追記。"
 draft: false
 ---
 
@@ -105,6 +105,35 @@ Claude Code では `/effort` で従来どおり段階を選べます。Sonnet 5 
 コスト管理の観点で、`xhigh`/`max`のような高effortレベルを組織全体で使わせたくない場合に、個々のユーザーが`/effort`で誤って高負荷な設定を選んでしまうのを防げます。第2章で触れた「maxとultracodeは使いどころを選ぶ」高コストなレベルに対して、組織側から機械的に歯止めをかける手段と言えます。
 
 出典: [Claude Code CHANGELOG（v2.1.267）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
+
+---
+
+## 7. 【2026-11-19追記】Fable 5.2 では Claude Code の既定が `medium` — API の既定とは違う
+
+**2026年11月9日（PT）**に Claude Fable 5.2 が出て、Claude Code と Claude apps の既定の effort が **`medium`** になりました。Anthropic の発表ページは「Medium effort（Claude apps と Claude Code の既定）では、Fable 5.2 は難しいタスクを Fable 5.1 より少ないトークンで処理する」と説明しています。Claude Code の公式ドキュメント（モデル設定）は、既定を次のように書いています。
+
+> Fable 5.2、Opus 5.5、Sonnet 5.5、Haiku 5.5 の既定は `medium`、Opus 4.7 の既定は `xhigh`。effort レベルの表にある他のモデルの既定は `high`。
+
+| モデル | Claude Code の既定 | Claude API の既定（`effort` 省略時） |
+|:---|:---:|:---:|
+| **Fable 5.2** | **medium** | **high** |
+| Opus 5.5 | medium | medium |
+| Sonnet 5.5 | medium | high |
+| Haiku 5.5 | medium | medium |
+| Opus 4.7 | xhigh | high |
+| 上記以外（Opus 4.8 など、表にあるモデル） | high | high |
+
+**押さえるべき点**
+
+- **Claude Code と API で既定が違うモデルがあります**。Fable 5.2 は、Claude Code では `medium`、Messages API では `high` です。API の公式ドキュメントは、Fable 5.2 でも「まず `high` から始める」としています（`xhigh` は最も難しい長時間のコーディング・エージェント作業で、効果を測れたときに。`max` はモデルの上限を測るときなど）。同じモデルでも、使う入口によって既定が違うことを前提にしてください。
+- **本稿の第1章・第4章の「`high` が既定」は、Opus 4.8 など `high` が既定のモデルの話です**。Fable 5.2・Opus 5.5・Sonnet 5.5・Haiku 5.5 では、Claude Code の既定の出発点が `medium` です。第5章の「Sonnet 5 は `high`」も、Sonnet 5.5 では当てはまりません。
+- **effort はモデルごとに保存されます**。`/effort` のスライダーで `Enter` を押すか、レベルを入力して確定すると、**そのモデルの既定として保存**され、以降のセッションに適用されます。`s` を押すと**そのセッションだけ**に適用されます。以前の `effortLevel`（最上位のキー）は、Opus 5.5 には効きません。Opus 5.5 以降は、自分で選ぶまでそのモデルの既定で始まります。
+- **Claude Code が使う effort は、次の順で決まります**（最初に当てはまるもの）: ① 環境変数 `CLAUDE_CODE_EFFORT_LEVEL` ② セッション中の選択（`/effort`・`/model` ピッカー） ③ `--effort` フラグ ④ 設定（モデル別に保存されたレベル、または `effortLevel`） ⑤ モデルの既定。
+- **Fable 5.2 のプロンプトの注意**（Platform ドキュメント）: 「考えすぎないで」という行は、`medium` 以上では thinking を止めないことがあります。簡単なターンは、プロンプトではなく effort を下げて対処します。`low` や `medium` では、長い多段のタスクで、残りの一覧を示して途中でターンを終えることが多くなります。
+
+Fable 5.2 の API 側の変更点は [Anthropic Messages API 新機能まとめ](/mdTechKnowledge/blog/anthropic-messages-api-new-features-2026/) の第31章、料金は [Claude 単価総覧](/mdTechKnowledge/blog/claude-pricing-overview/) を参照してください。
+
+出典: [Claude Fable 5.2 と Mythos 5.2（Anthropic 公式、2026-11-09）](https://www.anthropic.com/claude-fable-and-mythos-5-2) ／ [Model configuration — Adjust effort level（Claude Code ドキュメント）](https://code.claude.com/docs/en/model-config) ／ [Effort（Claude Platform ドキュメント）](https://platform.claude.com/docs/en/build-with-claude/effort)
 
 ---
 
