@@ -1,10 +1,10 @@
 ---
 title: "Claude Managed Agents 簡易ガイド — アーキテクチャ・比較・ユースケース"
 date: 2026-04-08
-updatedDate: 2026-10-24
+updatedDate: 2026-11-19
 category: "Claude技術解説"
 tags: ["Claude", "Managed Agents", "Agent SDK", "Claude Code", "API", "マルチエージェント", "Memory", "Enterprise", "Self-hosted sandboxes", "MCP tunnels", "Cloudflare", "Modal", "Vercel", "Daytona", "Cloudflare Environments", "Webhooks", "microVM", "V8 Isolate", "Scheduled deployments", "Vault環境変数"]
-excerpt: "Claude Managed Agentsの3層アーキテクチャ（Session/Harness/Sandbox）、p50 TTFT 60%削減のパフォーマンス改善、Memory機能、Dreaming・Outcomes・Multi-agent orchestration、エンタープライズ向けRBAC・OpenTelemetry、2026年5月19日発表のSelf-hosted sandboxes（Cloudflare/Daytona/Modal/Vercel対応、Public Beta）とMCP tunnels（Research Preview、プライベートネットワーク内MCPサーバーへの outbound-only E2E接続）、料金体系（$0.08/session-hour）、Cloudflare Environments（brain/hands 分離・Linux microVM と V8 Isolate を選択可能・ブラウザ/メール/アウトバウンドプロキシ/Cloudflare Mesh・Workers VPC）に加え、2026年8月1日のDreaming Opus 5対応、8月7日のセッション予算（budget_reached）・マルチエージェントrosterへのアドバイザー追加・推論ジオ制御（inference_geo）・GitHubリポジトリからのスキル自動ロード、8月19日のweb検索/取得ドメイン制限・self-hosted sandboxへのmemory store接続・Console session viewer再設計、8月26日のAdmin APIが全主要SDKで`client.beta.organization`として利用可能になった件、2026年9月のCompliance APIによるCowork/Claude Codeローカルセッショントランスクリプト対応（関連情報）、2026年9月10日追加の権限ポリシー`auto`オプション（サーバー側での自動評価・`evaluation`/`evaluated_permission`フィールド）、セッション予算`max_list_cost`の詳細仕様（公開リスト価格ベースの課金・リクエスト間判定によるオーバーシュート・budget_reached時の挙動）、2026年10月7日のlimitedネットワークにおけるallowed_hostsのweb_search/web_fetchへの適用・web_fetchの「既出URLのみ取得」制限までを1ページに整理。"
+excerpt: "Claude Managed Agentsの3層アーキテクチャ（Session/Harness/Sandbox）、p50 TTFT 60%削減のパフォーマンス改善、Memory機能、Dreaming・Outcomes・Multi-agent orchestration、エンタープライズ向けRBAC・OpenTelemetry、2026年5月19日発表のSelf-hosted sandboxes（Cloudflare/Daytona/Modal/Vercel対応、Public Beta）とMCP tunnels（Research Preview、プライベートネットワーク内MCPサーバーへの outbound-only E2E接続）、料金体系（$0.08/session-hour）、Cloudflare Environments（brain/hands 分離・Linux microVM と V8 Isolate を選択可能・ブラウザ/メール/アウトバウンドプロキシ/Cloudflare Mesh・Workers VPC）に加え、2026年8月1日のDreaming Opus 5対応、8月7日のセッション予算（budget_reached）・マルチエージェントrosterへのアドバイザー追加・推論ジオ制御（inference_geo）・GitHubリポジトリからのスキル自動ロード、8月19日のweb検索/取得ドメイン制限・self-hosted sandboxへのmemory store接続・Console session viewer再設計、8月26日のAdmin APIが全主要SDKで`client.beta.organization`として利用可能になった件、2026年9月のCompliance APIによるCowork/Claude Codeローカルセッショントランスクリプト対応（関連情報）、2026年9月10日追加の権限ポリシー`auto`オプション（サーバー側での自動評価・`evaluation`/`evaluated_permission`フィールド）、セッション予算`max_list_cost`の詳細仕様（公開リスト価格ベースの課金・リクエスト間判定によるオーバーシュート・budget_reached時の挙動）、2026年10月7日のlimitedネットワークにおけるallowed_hostsのweb_search/web_fetchへの適用・web_fetchの「既出URLのみ取得」制限までを1ページに整理。 2026-11-19更新: 2026-11-12 開始の Self-hosted Claude Managed Agents（サービス全体を自社インフラで動かす・要問い合わせ）を追記。"
 draft: false
 ---
 
@@ -670,6 +670,21 @@ Claude Code の Dynamic Workflows とは別の仕組みです。違いと上限�
 - 2026-10-20 の Platform リリースノートで、**Managed Agents の `web_fetch` が組織の Web fetch 制限（許可/ブロックドメイン）を強制する**ようになりました。リダイレクト先の URL も、組織のリストとエージェントツールの `allowed_domains` / `blocked_domains` の両方を通る必要があります。Web 検索も組織の設定に従い、両方で許可された結果だけがエージェントに返ります。
 
 出典: [Claude Code CHANGELOG（v2.1.304・v2.1.309）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md) ／ [Claude Platform リリースノート](https://platform.claude.com/docs/en/release-notes/overview)
+
+---
+
+## 【2026-11-19追記】Self-hosted Claude Managed Agents（2026-11-12）— サービス全体を自社インフラで動かす
+
+**2026年11月12日（PT）**、Anthropic は **Self-hosted Claude Managed Agents** を公開しました（公式リリースノート）。これまでの Self-hosted sandboxes（本稿の前半を参照）が「ツールを実行する環境」を自前にするものだったのに対し、**Managed Agents のサービス全体を自社のインフラで動かす**という位置づけです。リリースノートは、self-hosted sandboxes を超えるものだと書いています。
+
+- **自社に置くもの**: エージェント、セッション、セッション履歴を、自社のインフラに保存します。
+- **モデルへのリクエスト**: サーバーは、選んだプロバイダーにモデルのリクエストを送ります。**既定は Anthropic** です。
+- **利用方法**: **リクエストベース**で、リリースノートは「アクセスを依頼するには、Anthropic のアカウントチームに連絡する」としています。
+- **状態の表記**: リリースノートは「We've launched」と書いており、「ベータ」「GA」という語は使っていません。一般提供の日付も示されていません。Issue や報道には「プライベートベータ」「GA」と書くものがありますが、**公式の表記は「公開した（要依頼）」** で、本稿もそれに従います。
+
+オンプレミスやプライベートクラウドで、データの所在地を自社の管理下に置きたい組織が、アカウントチーム経由で相談する形です。仕様の詳細（アーキテクチャ、必要な構成、制限）は、本稿の執筆時点でリリースノート以上の一次情報を確認できていないため、書いていません。
+
+出典: [Claude Platform リリースノート（2026-11-12）](https://platform.claude.com/docs/en/release-notes/overview)
 
 ---
 
