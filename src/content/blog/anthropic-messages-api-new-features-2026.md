@@ -1,10 +1,10 @@
 ---
 title: "Anthropic Messages API 新機能まとめ（2026年5〜10月）— Web検索動的フィルタ・キャッシュ診断・会話途中systemメッセージ・Opus5対応・Browser use tool・Fable 5.1/Mythos 5.1・Opus 5.5対応"
 date: 2026-06-20
-updatedDate: 2026-11-10
+updatedDate: 2026-11-19
 category: "Claude技術解説"
 tags: ["Anthropic", "Claude API", "Messages API", "Web Search", "Cache Diagnostics", "Prompt Caching", "Opus 4.8", "Opus 5", "プロンプトキャッシュ", "Compliance API", "EU AI Act", "Browser use tool", "Python SDK", "Fable 5.1", "Mythos 5.1", "Haiku 5.5", "Models API"]
-excerpt: "2026年5〜10月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）、9月1日の Fable 5.1/Mythos 5.1リリースに伴うtool_choice制限・thinking保持ルール変更・キャッシュ90%値下げ・Per-Message Effort（9月3日Google Cloud対応拡大）、9月14日のOn-demand conversation compaction（任意タイミングでの会話圧縮ベータ）・9月18日のCompliance APIがClaude in Chromeセッションに対応、9月22日のClaude Opus 5.5リリース（thinking無効化不可・tool_choice any/tool廃止等のAPI破壊的変更）・Inline tools beta（会話途中でのツール定義変更）、9月23日のCache Diagnostics GA化、9月24日のRefusal課金の再開（bio/frontier_llm/reasoning_extractionの3カテゴリは出力前の拒否でも課金）・Compliance API Activity Feedが名称・タイトルを返さなくなった破壊的変更・Claude for Microsoft 365セッションのGA化まで、対応モデル・betaヘッダー・コード例つきで横断解説する。 2026-09-29更新: Claude Sonnet 5.5（9/28）のリリースと5つのAPI破壊的変更を第22章に追加。2026-10-03更新: Claude Sonnet 4.5の廃止通知（9/30、リタイアは11/30・移行先Sonnet 5.5）を第23章に追加。2026-10-09更新: Claude Haiku 5.5（10/7、$0.10/$0.50・Haiku 4.5からの破壊的変更）・Sonnet 5.5のキャッシュ読取半額化・Models APIの`line`/`thinking.types.disabled`/`server_tools`フィールドを第24章に追加。"
+excerpt: "2026年5〜10月に Anthropic Messages API・管理系 API へ追加された重要な新機能を公式リリースノート一次ソースで整理。Web検索ツールのGAと動的フィルタリング（精度平均+11%・入力トークン-24%、code_execution併用で無料）、プロンプトキャッシュのミス原因を返す Cache Diagnostics（cache_miss_reason 6種）、Opus 4.8 の会話途中 system メッセージ（キャッシュ維持）、拒否種別を返す stop_details、Workload Identity Federation・APIキー有効期限設定、7月の Admin API User Management ベータ・HIPAA セルフサービス設定、Claude Opus 5 対応の thinking disabled 制限（xhigh/maxで400エラー）・Mid-conversation tool changes・fallbacks defaultモード、8月前半の拒否時課金廃止の明確化・Advisor Tool max_tokensパラメータ・Compliance APIのCowork/Claude Code統合カバー・EU AI Act対応ウォーターマーキングに加え、8月19〜20日集中リリースの Computer use tool GA・新登場 Browser use tool・Files/Skills/Admin API GA・Python SDK v1.0（破壊的変更多数）、9月1日の Fable 5.1/Mythos 5.1リリースに伴うtool_choice制限・thinking保持ルール変更・キャッシュ90%値下げ・Per-Message Effort（9月3日Google Cloud対応拡大）、9月14日のOn-demand conversation compaction（任意タイミングでの会話圧縮ベータ）・9月18日のCompliance APIがClaude in Chromeセッションに対応、9月22日のClaude Opus 5.5リリース（thinking無効化不可・tool_choice any/tool廃止等のAPI破壊的変更）・Inline tools beta（会話途中でのツール定義変更）、9月23日のCache Diagnostics GA化、9月24日のRefusal課金の再開（bio/frontier_llm/reasoning_extractionの3カテゴリは出力前の拒否でも課金）・Compliance API Activity Feedが名称・タイトルを返さなくなった破壊的変更・Claude for Microsoft 365セッションのGA化まで、対応モデル・betaヘッダー・コード例つきで横断解説する。 2026-09-29更新: Claude Sonnet 5.5（9/28）のリリースと5つのAPI破壊的変更を第22章に追加。2026-10-03更新: Claude Sonnet 4.5の廃止通知（9/30、リタイアは11/30・移行先Sonnet 5.5）を第23章に追加。2026-10-09更新: Claude Haiku 5.5（10/7、$0.10/$0.50・Haiku 4.5からの破壊的変更）・Sonnet 5.5のキャッシュ読取半額化・Models APIの`line`/`thinking.types.disabled`/`server_tools`フィールドを第24章に追加。 2026-11-19更新: 第32章に Linked billing（11/17 ベータ）と、Compliance API のセキュリティポスチャ（11/05 ベータ）などを追記。"
 draft: false
 ---
 
@@ -899,6 +899,41 @@ SDK には `client.beta.messages.thread(...)` のヘルパーがあり、`thread
 同じ週に、Claude Console の IP 許可リスト（ベータ、最大1,000件）と、Claude Enterprise メンバーを全デバイスからサインアウトさせる Admin API（ベータ）が追加されました。Messages API・Message Batches・Token Counting・Models・Files・Skills などへのリクエストも、許可リスト外の IP からは `403 permission_error` になります。仕様と運用上の注意は [Enterprise Analytics API 完全ガイド](/mdTechKnowledge/blog/anthropic-enterprise-analytics-api/) の2026-11-07追記にまとめています。
 
 出典: [Claude Platform リリースノート（2026-11-09・2026-11-05）](https://platform.claude.com/docs/en/release-notes/overview) ／ [What's new in Claude Fable 5.2（公式ドキュメント）](https://platform.claude.com/docs/en/models/fable-5-2/whats-new-fable-5-2)
+
+---
+
+## 32. 【2026-11-19追記】Linked billing（2026-11-17）と、11月5〜16日の小さな更新
+
+### Linked billing（ベータ）— アプリの利用料を、顧客の Claude 組織に払ってもらう
+
+**2026-11-17（PT）**、**Linked billing** がベータで始まりました（公式リリースノート）。自分のアプリで Claude を使う**顧客が、自分の Claude 組織の支払いで**その利用料を払えるようにする仕組みです。顧客は組織を一度リンクし、アプリは**リクエストごとに「誰が払うか」を選びます**。
+
+- **ベータヘッダー**: `user-profiles-billing-2026-10-01`（顧客に課金するリクエストに必須）。顧客を指す `anthropic-user-profile-id` ヘッダーも付けます。
+- **課金の指定**: 既定は**アプリ側（自分）が払う**です。顧客に課金するには、リクエストに次を入れます。
+
+```json
+"billing_policy": {"type": "billing_policy", "bill_to": "user_profile"}
+```
+
+  `bill_to: "self"` を指定するか `billing_policy` を省略すると、自分が払います。
+- **対応する入口**: `/v1/messages`、`/v1/chat/completions`、`/v1/messages/count_tokens`（`billing_policy` を受け付けるが無視）。**Message Batches は非対応**で、`bill_to: "user_profile"` のバッチは `errored`（`invalid_request_error`）になり、誰にも課金されません。顧客に課金する `/v1/messages` では、課金対象のコード実行機能は使えません（400）。
+- **対象の顧客**: **Anthropic に直接払っている組織**（プリペイドクレジットまたは請求書払い）だけです。AWS・Google Cloud・Azure 経由の請求の組織や、Claude のサブスクリプションだけの組織は、`403 user_profile_not_billable` で拒否されます。Max・Ultra・Team の月次クレジットや、パートナー・VC・スタートアップ向けのクレジットは、支払いに使えません。使える資金がないときは `402` が返りえます。
+- **どの基盤のルールが適用されるか**: リクエストは**アプリ側の組織で動く**ため、**アプリ側のレート制限・モデルのアクセス・サービス階層・データ保持・暗号鍵**が適用されます。顧客側の ZDR・BAA・CMEK の取り決めは適用されません。公式は、この用途で HIPAA・FERPA・CMEK の対応が必要な顧客はリンクしないよう警告しています。
+- **セットアップ**: ① 管理者が Console で **Bill and link to organizations** の OAuth アプリを作る（クライアントシークレットは発行されず、ID プロバイダーの署名つきクライアントアサーションで認証） ② Workload Identity Federation でオペレーターのサービスアカウントを作る ③ 顧客ごとにユーザープロファイル（`POST /v1/user_profiles`）を作り、`scope: "billing:attribution"` などで認可を申請 ④ 顧客の管理者が承認し、コールバックで受け取った `connection_id` を保存する。
+- **顧客側の制御**: 承認時に**月額の上限**を設定でき、Console のユーザープロファイルの画面の **Unlink** で解除できます（取り消しエンドポイントでも可）。
+- **注意（公式の警告）**: オペレーターのサービスアカウントの既定の認証情報は、アプリ経由でリンクされた**どの顧客にも課金できます**。リクエストが別のプロファイルを指していても、Anthropic はその顧客に課金し、エラーは返しません。ヘッダーが、そのリクエストの顧客と一致していることを確認し、**自分のテストや評価には `bill_to: "user_profile"` を使わない**でください。
+
+詳細は [組織の課金連携（Claude Platform ドキュメント）](https://platform.claude.com/docs/en/manage-claude/oauth-apps/organization-billing-connections) を参照してください。第26章の User profiles の延長にある機能です。
+
+### 11月5日〜16日の小さな更新（公式リリースノート）
+
+| 日付（PT） | 内容 |
+|---|---|
+| 11/05 | **Compliance API にセキュリティポスチャのデータ（ベータ・Claude Enterprise）**: Activity Feed が、claude.ai の組織設定の「Security posture」ページでの**証明（attestation）の変更**を記録し、`GET /v1/compliance/organizations/{organization_id}/security_posture` が組織の現在の結果を返す。詳細は [Enterprise Analytics API 完全ガイド](/mdTechKnowledge/blog/anthropic-enterprise-analytics-api/) |
+| 11/12 | **Self-hosted Claude Managed Agents** を公開（アクセスはアカウントチームに依頼）。詳細は [Claude Managed Agents 簡易ガイド](/mdTechKnowledge/blog/claude-managed-agents-guide/) |
+| 11/16 | **テキスト透かしの対象を拡大**: Claude Opus 4.6・Opus 4.5・Sonnet 4.5・Haiku 4.5 のテキストにも、対応プラットフォームで透かしが付く。リクエストで `temperature`・`top_p`・`top_k` を既定以外の値にすると、透かしが付かないことがある（第30章の続き） |
+
+出典: [Claude Platform リリースノート（2026-11-05・11-12・11-16・11-17）](https://platform.claude.com/docs/en/release-notes/overview) ／ [組織の課金連携（Claude Platform ドキュメント）](https://platform.claude.com/docs/en/manage-claude/oauth-apps/organization-billing-connections)
 
 ---
 
