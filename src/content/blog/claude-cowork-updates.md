@@ -3,8 +3,8 @@ title: "Claude Cowork アップデートまとめ"
 date: 2026-04-26
 category: "Claude技術解説"
 tags: ["Claude", "Cowork", "エージェント", "Claude Desktop", "Computer Use", "KPMG", "Claude for Legal", "Finance Agents"]
-excerpt: "AnthropicのデスクトップAIエージェント機能「Claude Cowork」のリリースから2026年4月GA移行・Live Artifacts・Amazon Bedrock対応・Claude for Small Business・PwC 拡大パートナーシップ・KPMG Digital Gateway（276,000人 / 138 か国 / 2026-05-19）・Claude for Legal（20+ MCPコネクタ・12 practice-area プラグイン、2026-05-12）・Finance Agents 10 テンプレート（2026年5月）・Cowork 5時間制限2倍キャンペーン（2026年6月）・エンタープライズ向けコネクタ一括認可EMA（Okta／2026-06-18ベータ）・Cowork の Web/iOS/Android 展開とリモートセッション（2026-07-07）・Claude for Teachers 米国K-12教育者向け無料プログラム（2026-07-14）・Chrome サイドパネルの完全 Cowork セッション化（会話とスキル/コネクタを desktop/web/mobile と共有、ブラウザ内クリック・フォーム入力等の実アクション対応、Max/Team から展開、2026-08-12）・Claude Tag が新体験へ完全移行（チャンネルメモリ・スタンディングインストラクション・ambient mode、2026-08-03）・Cowork Built-in Browser（デスクトップアプリ専用の隔離ブラウザでナビゲート・クリック・入力、ユーザーのタブ/パスワードは非共有、2026-08-26）・Smart Reports（Enterprise向けベータ、チームの利用状況・コスト・スキル候補を自動分析）・CoworkとChatが1つのClaudeに統合（Claude Docs/Claude Slides新設・Design会話内対応、Pro/Maxから数週間かけてロールアウト、2026-09-16）・Claude Tagがチャンネルでの個人コネクタに対応（レビューモード/オートモード、Teamプランでロールアウト中、2026-09-24）・Claude for Google Workspace（Docs/Sheets/Slidesのサイドバー＋コネクタ、公開ベータ、2026-10-06）・Claude Desktop v2.16120.0〜v2.31226.0のCowork関連更新（スケジュールタスクの既定がAutomatically approveに、macOS 14以降必須、11月10日のUnified Claude全組織オン）までのアップデートをリリース順に整理。"
-updatedDate: 2026-11-10
+excerpt: "AnthropicのデスクトップAIエージェント機能「Claude Cowork」のリリースから2026年4月GA移行・Live Artifacts・Amazon Bedrock対応・Claude for Small Business・PwC 拡大パートナーシップ・KPMG Digital Gateway（276,000人 / 138 か国 / 2026-05-19）・Claude for Legal（20+ MCPコネクタ・12 practice-area プラグイン、2026-05-12）・Finance Agents 10 テンプレート（2026年5月）・Cowork 5時間制限2倍キャンペーン（2026年6月）・エンタープライズ向けコネクタ一括認可EMA（Okta／2026-06-18ベータ）・Cowork の Web/iOS/Android 展開とリモートセッション（2026-07-07）・Claude for Teachers 米国K-12教育者向け無料プログラム（2026-07-14）・Chrome サイドパネルの完全 Cowork セッション化（会話とスキル/コネクタを desktop/web/mobile と共有、ブラウザ内クリック・フォーム入力等の実アクション対応、Max/Team から展開、2026-08-12）・Claude Tag が新体験へ完全移行（チャンネルメモリ・スタンディングインストラクション・ambient mode、2026-08-03）・Cowork Built-in Browser（デスクトップアプリ専用の隔離ブラウザでナビゲート・クリック・入力、ユーザーのタブ/パスワードは非共有、2026-08-26）・Smart Reports（Enterprise向けベータ、チームの利用状況・コスト・スキル候補を自動分析）・CoworkとChatが1つのClaudeに統合（Claude Docs/Claude Slides新設・Design会話内対応、Pro/Maxから数週間かけてロールアウト、2026-09-16）・Claude Tagがチャンネルでの個人コネクタに対応（レビューモード/オートモード、Teamプランでロールアウト中、2026-09-24）・Claude for Google Workspace（Docs/Sheets/Slidesのサイドバー＋コネクタ、公開ベータ、2026-10-06）・Claude Desktop v2.16120.0〜v2.31226.0のCowork関連更新（スケジュールタスクの既定がAutomatically approveに、macOS 14以降必須、11月10日のUnified Claude全組織オン）までのアップデートをリリース順に整理。 2026-11-19更新: Claude Meetings（11/12 ベータ）、Claude Whiteboards・Claude Sheets（11/10 ベータ）、Dashboards から Claude Data への改称（GA）を追記。"
+updatedDate: 2026-11-19
 draft: false
 ---
 
@@ -662,6 +662,42 @@ Enterprise 向けのセキュリティ更新の「おまけ」として、管理
 - **このベータにないもの**: チャットやセッション単位のタグ、支出の按分、タグ名・値の名称変更、タグ別の支出上限
 
 出典: [Introducing Personal Finance in Claude（claude.com、2026-11-05）](https://claude.com/resources/articles/introducing-personal-finance-in-claude) ／ [Claude Enterprise のセキュリティ更新（claude.com、2026-11-05）](https://claude.com/resources/articles/claude-enterprise-security-updates) ／ [Track spend by project with tags（Anthropic ヘルプセンター）](https://support.claude.com/en/articles/18251257-track-spend-by-project-with-tags) ／ [Claude リリースノート（Anthropic ヘルプセンター）](https://support.claude.com/en/articles/12138966-release-notes)
+
+---
+
+## 【2026-11-19追記】Claude Meetings・Whiteboards・Sheets・Claude Data（11月10〜12日）
+
+**2026年11月10日（PT）**に Claude Whiteboards と Claude Sheets がベータで、Claude Dashboards が **Claude Data** と名前を変えて一般提供（GA）になり、**11月12日**には Google Meet に Claude が参加する **Claude Meetings** がベータで始まりました（Anthropic の公式ブログとヘルプセンター）。
+
+### Whiteboards・Sheets・Claude Data（11/10）
+
+| 製品 | 状態 | 内容（公式） |
+|---|---|---|
+| **Claude Whiteboards** | ベータ | チームが Claude と一緒にアイデアを出し合う共有ボード |
+| **Claude Sheets** | ベータ | タブ・数式・書式つきのスプレッドシートを Claude が作成・編集する。現時点では「基本的なスプレッドシート機能」で、フル機能の Excel が必要なら `.xlsx` や CSV へのエクスポート、または Claude for Excel を使う |
+| **Claude Data** | **GA**（旧 Claude Dashboards） | 名前の変更は、データの使われ方がダッシュボードより広いため。**認定クエリ（certified queries）とライブ共有はベータのまま**。倉庫や CRM などのデータコネクタが必要 |
+
+- **提供プラン**: 公式は「すべての有料プランで利用できる」としています。Web・デスクトップ・モバイルで動きます。
+- **既定のオン・オフ**: **Team プランでは3つとも既定でオン**です。**Enterprise プランでは Whiteboards と Sheets が既定でオフ**で、**Claude Data は 2026年11月20日に既定でオン**になります（公式ブログの記述。報道には 11月19日とするものがありますが、公式は 11月20日です）。
+- **ライブ共有の範囲**: ライブ共有されたダッシュボードを見る人には、承認済みのクエリ結果だけが見え、共有した人のアクセス権で他のクエリを実行することはできません。
+
+### Claude Meetings（11/12）
+
+- **何をするか**: Claude が **Google Meet の通話に「見える参加者」として入り**、メモを取り、質問に答え、通話中にドキュメント・ホワイトボード・スライドなどの成果物を作ります。通話中は、接続済みのツール（例: Slack へのメッセージ送信）も使えますが、**各人に初回の許可を求めます**。一時停止・再開・退出はミーティングページから行え、**最長8時間**参加し、退出前に警告します。
+- **使い方**: Google カレンダーを接続し、ミーティングを選んで「Add Claude」を押すか、自動参加を有効にします。
+- **提供先と既定**: Team・Enterprise のベータとして、Claude と Claude Desktop で順次提供。**Team は既定でオン**（オーナーがオフにできる）、**Enterprise は既定でオフ**で、オーナーが組織全体または一部（カスタムロール）に対してオンにします。ゼロデータ保持（ZDR）、HIPAA 対応構成、顧客管理の暗号鍵（CMEK）を使う組織など、**一部の組織はベータの間は対象外**です。
+- **社外の参加者がいる通話**: **Team は既定で参加できる**（オーナーがオフにできる）、**Enterprise はオーナーが先に許可する必要があります**。許可していないとき、Claude は入らず、社外の参加者（他社のノートテイカーボットを含む）が入ってきたら退出します。許可している場合は、メモを取って通話のチャットに通知を投稿しますが、チャットでは返信しません。社外のゲストには、ミーティングページも要約メールも届きません。
+- **データの扱い**: 公式のヘルプは、Claude が**文字起こし・要約・画面の説明を保存し、音声は保存しない**としています。**保存期間は、確認できた範囲では記載がありません**。
+- **料金**: メモ・文字起こし・接続ツールを使わない回答は、Team・Enterprise のプランに含まれます。**ミーティング中に作ったドキュメントとホワイトボードは、2027年2月10日まで無料**です。接続ツールを使うと、その人自身の利用量に数えられ、組織に請求が発生することがあります。
+- **対応するビデオ会議**: 公式のヘルプが説明しているのは Google Meet です。ほかのサービスが「予定」とされる報道もありますが、日付や名前は公式で確認できていません。
+
+### そのほか（Claude apps リリースノート）
+
+- **Claude Desktop のリリースチャンネル選択（11/17）**: 更新で受け取るバージョンを選べます。**Stable が既定**で、新しいバージョンは少なめの頻度で、より多くのテスト後に届きます。**Latest は約1日に1回**新しいバージョンを受け取ります。プランによる制限は記載されていません。
+
+> **本稿で扱わないもの**: Issue には「Claude for Manufacturing（11/12）」もありましたが、公式のリリースノートやヘルプセンターでは確認できなかったため、載せていません。
+
+出典: [Introducing Claude Whiteboards, Claude Sheets, and Claude Data（claude.com、2026-11-10）](https://claude.com/blog/sheets-whiteboards-data) ／ [Add Claude to your meetings — Claude Meetings（Claude ヘルプセンター）](https://support.claude.com/en/articles/18325154) ／ [Claude apps リリースノート](https://support.claude.com/en/articles/12138966-release-notes)
 
 ---
 
