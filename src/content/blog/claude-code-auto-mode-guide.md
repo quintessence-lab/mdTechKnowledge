@@ -1,10 +1,10 @@
 ---
 title: "Claude Code Auto Mode 完全ガイド — --dangerously-skip-permissions を卒業する自律型権限管理"
 date: 2026-06-21
-updatedDate: 2026-11-10
+updatedDate: 2026-11-19
 category: "Claude技術解説"
 tags: ["Claude Code", "Auto Mode", "permission mode", "dangerously-skip-permissions", "分類器", "classifier", "claudeignore", "安全運用"]
-excerpt: "Claude Code の Auto Mode（自律型権限管理）は、すべてを無条件に許可する --dangerously-skip-permissions の安全な代替として 2026-03-24 に登場した。モデルベースの2段階トランスクリプト分類器（Sonnet 4.6 による高速フィルター＋思考連鎖による精査）で各アクションを起動前に評価し、連続3拒否・累計20拒否で自動停止する。2026-08-14 からは Pro/Max/Team プランの新規セッションで Auto Mode が既定の権限モードになった（人間の目視13.6%に対し分類器89%の危険コマンド捕捉率が論拠。Enterprise/API/Bedrock/Vertex/Foundry はオプトイン継続）。2026-08-25のv2.1.246では`/permissions`にAuto modeタブが追加され、分類器ルールをGUIから閲覧・編集可能になった。2026-08-27のv2.1.248では`--restricted`フラグが追加され、実行系ツール・WebFetchをそもそも起動時から除去する、Auto Modeとは別系統の静的な制限モードが利用可能に。2026-09-01のv2.1.257ではContainment Escapeルールが追加され、クラウドメタデータ認証情報取得・egress回避・クロステナントアクセスが環境の明示許可なしには自動承認されなくなった。2026-09-14のv2.1.271ではBash/PowerShell/Monitorへコマンド単位の`allowed_domains`が追加され、2026-09-18のv2.1.278では分類器の実行場所がデフォルトでサーバー側に変更（オーバーヘッド課金なし、`CLAUDE_CODE_AUTO_MODE_SERVER=0`でopt-out可）された。本記事では権限モードの全体像、分類器の仕組み、エスカレーション停止、.claudeignore 連携、卒業の手順までを公式情報ベースで整理する。"
+excerpt: "Claude Code の Auto Mode（自律型権限管理）は、すべてを無条件に許可する --dangerously-skip-permissions の安全な代替として 2026-03-24 に登場した。モデルベースの2段階トランスクリプト分類器（Sonnet 4.6 による高速フィルター＋思考連鎖による精査）で各アクションを起動前に評価し、連続3拒否・累計20拒否で自動停止する。2026-08-14 からは Pro/Max/Team プランの新規セッションで Auto Mode が既定の権限モードになった（人間の目視13.6%に対し分類器89%の危険コマンド捕捉率が論拠。Enterprise/API/Bedrock/Vertex/Foundry はオプトイン継続）。2026-08-25のv2.1.246では`/permissions`にAuto modeタブが追加され、分類器ルールをGUIから閲覧・編集可能になった。2026-08-27のv2.1.248では`--restricted`フラグが追加され、実行系ツール・WebFetchをそもそも起動時から除去する、Auto Modeとは別系統の静的な制限モードが利用可能に。2026-09-01のv2.1.257ではContainment Escapeルールが追加され、クラウドメタデータ認証情報取得・egress回避・クロステナントアクセスが環境の明示許可なしには自動承認されなくなった。2026-09-14のv2.1.271ではBash/PowerShell/Monitorへコマンド単位の`allowed_domains`が追加され、2026-09-18のv2.1.278では分類器の実行場所がデフォルトでサーバー側に変更（オーバーヘッド課金なし、`CLAUDE_CODE_AUTO_MODE_SERVER=0`でopt-out可）された。本記事では権限モードの全体像、分類器の仕組み、エスカレーション停止、.claudeignore 連携、卒業の手順までを公式情報ベースで整理する。 2026-11-19更新: 第5.14章に、v2.1.323〜v2.1.327 の Code Mode（実験的）と auto mode の関係を追記。"
 draft: false
 ---
 
@@ -279,6 +279,45 @@ v2.1.304 で **`/auto-mode-setup`** が追加されました。プロジェク�
 > **読み方**（本稿の整理）: ゲートウェイ経由で、テレメトリや機能フラグを止めた運用をしている場合、v2.1.319 以降は auto mode が「ローカル分類器で自動判断」ではなく「確認または拒否」に倒れます。無人実行（`claude -p`）が終了コード 1 で止まるようになるため、パイプラインに組み込んでいる場合は、サーバー側チェックを有効にする（`=1`）か、従来動作に戻す（`=0`）かを選んでください。
 
 出典: [Claude Code CHANGELOG（v2.1.319・v2.1.321）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
+
+---
+
+## 5.14. 【2026-11-19追記】v2.1.323〜v2.1.327 — Code Mode では分類器は「コード」を審査し、個々のツール呼び出しは審査しない
+
+**v2.1.323（2026-11-12 PT）**で、**Code Mode** が実験的・オプトインで加わりました。Claude が JavaScript を書き、そのコードが複数のツール呼び出しをまとめて行います（公式ドキュメント「Run tool calls from code with Code Mode」）。auto mode と組み合わせると、**審査の単位が変わる**点が重要です。
+
+### Code Mode の概要
+
+- **有効化**: 環境変数 `CLAUDE_CODE_EXPERIMENTAL_CODE_MODE=1`（シェルまたはユーザー設定の `env`）。初回に確認があり、Claude Code が再起動します。プロジェクトの設定ファイルに書いても無視されるため、クローンしたリポジトリが勝手に有効化することはできません。**既定はオフ**で、公式は「どのリリースでも変更または削除されうる」としています。
+- **組織で止める**: マネージド設定の `env` に `CLAUDE_CODE_EXPERIMENTAL_CODE_MODE` を `0` で入れると、組織の全員が使えなくなります。管理者が**オンにすることはできません**。
+- **動作要件**: v2.1.323 以降、Claude のサブスクリプションまたは Console アカウント（**gateway・Bedrock・Claude Platform on AWS・Google Cloud・Microsoft Foundry 経由では不可**）、HIPAA 構成や ZDR を使っていない組織、モデルは Opus 5.5・Sonnet 5.5・Haiku 5.5・Fable 5.2、対話的なターミナルの `claude`（`-p`・Agent SDK・VS Code パネル・Desktop・クラウドセッションでは不可）、ネイティブビルド。OpenTelemetry の出力や `DISABLE_TELEMETRY` などの設定が有効なときも始まりません。
+- **向くタスク**: 多数のファイルにわたる同じ変更、結果を絞り込んでから読ませたい検索、並行して走らせられる独立したコマンド。
+
+### auto mode との関係（公式ドキュメント）
+
+| 観点 | 内容 |
+|---|---|
+| **審査の単位** | auto mode の分類器は、**コードが実行される前に、コード全体を審査**します。**個々のツール呼び出しは審査しません**。実行時に決まる値（検索結果から取ったパスなど）は分類器から見えないため、**止めたい呼び出しには、ルールやフックを残して**ください |
+| **ルールとフック** | コード中の各ツール呼び出しは、`deny`・`ask` のルールと `PreToolUse` フックを、ツールの通常の名前（`Bash` など）で通ります。**コードそのものを検査したいときは、`REPL` に一致する `PreToolUse` フックを書き、`tool_input.code` を読みます** |
+| **auto 以外のモード** | コードは審査なしで始まり、そのモードで確認が出る呼び出しごとに確認が出ます |
+| **2本目のコード** | 前のコードが実行中に2本目を始めると、前のコードは分類器の審査を失い、残りの呼び出しについて確認が出ます。IDE 未接続のときは**カウントダウン付きの確認**（例: 1:59 後に自動でブロック）になり、時間内に答えないとその呼び出しは拒否されます |
+| **長時間のコード** | 待つ場合、コードは**10分で停止**します（権限確認で待つ時間を含む）。バックグラウンドで動かすと、会話を続けられ、**最長2時間**動きます。バックグラウンド実行には、auto または `bypassPermissions` で始める必要があります |
+| **できないこと** | Remote Control、Claude in Chrome、computer use は使えず、セッションを Desktop アプリへ移したり、バックグラウンドセッションにしたりもできません。再開は、Code Mode をオンにしたターミナルだけです |
+
+> **フックの注意**: `PreToolUse` フックが決定を返さない（起動失敗・タイムアウトなど）と、コードからの呼び出しは拒否されます。続行させたいときは、そのフックに `"onFailure": "continue"` を設定します。
+
+### v2.1.323〜v2.1.327 で変わった auto mode まわり（CHANGELOG）
+
+- **v2.1.323**: **auto mode が使えないとき、より緩いモードで始まる問題を修正**し、**Manual モードで始まる**ように変更。
+- **v2.1.326**: **auto mode は、以前は実行されていた一部のシェルコマンドを止める**ように変更。Code Mode では、auto mode でインラインの `!` コマンドが承認を要するときに、スキルやスラッシュコマンドが読み込めない問題を修正（Claude に実行を依頼する形に）。agent teams が有効でも Code Mode をオンにできるように（チームメイトは既定の in-process 表示では Code Mode、分割ペインでは Code Mode なしで始まります）。
+- **v2.1.327**: auto mode が `.\` で始まるスクリプト名の PowerShell 許可ルールを無視する問題を修正。**Code Mode のスクリプトが実行中に、auto mode が許可する2本目のスクリプトを始めると、確認や拒否が出続ける問題を修正**。
+
+### 判断の目安（本稿の整理）
+
+- **Code Mode はまず auto 以外の個人環境で試す**: 分類器がコード単位の審査になるため、「呼び出しごとに止めたい」要件がある環境では、ルールとフックで補う前提です。**実験的機能で、いつ変更・削除されるか分かりません**。
+- **組織で未検証のうちは `0` で止める**: マネージド設定で `CLAUDE_CODE_EXPERIMENTAL_CODE_MODE=0` を配れば、全員が使えなくなります。
+
+出典: [Run tool calls from code with Code Mode（Claude Code ドキュメント）](https://code.claude.com/docs/en/code-mode) ／ [Claude Code CHANGELOG（v2.1.323〜v2.1.327）](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md)
 
 ---
 
